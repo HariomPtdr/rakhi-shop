@@ -79,3 +79,27 @@
   .sh-f{padding:0 24px 24px; border-top:0; background:none}
   .sh-tot{display:none}
 }
+
+/* ── the discount code ── */
+.coupon:empty{display:none}
+.cp-row{display:flex; gap:8px; margin-bottom:12px}
+.cp-row input{
+  flex:1; min-width:0; font:inherit; font-size:16px; letter-spacing:.06em;
+  text-transform:uppercase; padding:11px 13px; border:0; border-radius:var(--r-sm);
+  background:#fffdf8; box-shadow:inset 0 0 0 1px var(--line-2);
+}
+.cp-row input::placeholder{letter-spacing:normal; text-transform:none}
+.cp-row .btn{flex:none; min-height:44px}
+.cp-no{margin:-6px 0 12px; font-size:12.5px; color:#8A2033}
+.cp-on{
+  display:flex; align-items:center; gap:12px; margin-bottom:12px;
+  padding:11px 13px; border-radius:var(--r-sm);
+  background:rgba(27,132,151,.09); box-shadow:inset 0 0 0 1px rgba(27,132,151,.3);
+}
+.cp-on b{font-family:var(--mono); font-size:13px; letter-spacing:.06em}
+.cp-on span{display:block; margin-top:2px; font-size:12px; color:var(--ink-soft)}
+.cp-on button{
+  margin-left:auto; flex:none; border:0; background:none; cursor:pointer;
+  font-family:var(--head); font-size:12px; font-weight:600; color:var(--ink-faint);
+}
+.cp-on button:hover{color:#8A2033}

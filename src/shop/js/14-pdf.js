@@ -76,11 +76,15 @@ function billPdf(){
 
   gap(1); rule(true); gap(14);
   put("Subtotal", M, 8.5);       right(inr(sub()), xAmt, 8.5);   gap(12);
+  if(couponDiscount()){
+    put(`Discount (${coupon.code})`, M, 8.5);
+    right("-" + inr(couponDiscount()), xAmt, 8.5);               gap(12);
+  }
   put("Delivery", M, 8.5);
-  right(ship() === 0 ? "FREE" : inr(ship()), xAmt, 8.5);         gap(6);
+  right(shipNow() === 0 ? "FREE" : inr(shipNow()), xAmt, 8.5);   gap(6);
   rule(false); gap(15);
   put("TOTAL PAYABLE", M, 11, true);
-  right(inr(tot()), xAmt, 11, true);                             gap(20);
+  right(inr(billTotal()), xAmt, 11, true);                       gap(20);
   rule(true); gap(15);
 
   const b = {
@@ -145,7 +149,8 @@ $("#toBill").onclick=()=>{
   $("#drawer").classList.remove("on");
   openSheet("#billModal");
   paintBill();
-  track("begin_checkout", null, {items: nItems(), value: tot()});
+  track("begin_checkout", null, {items: nItems(), value: billTotal()});
+  recheckCoupon();
   /* don't autofocus on a phone — it throws the keyboard over the bill */
   if(matchMedia("(min-width:720px)").matches) $("#bName").focus();
 };
@@ -158,6 +163,7 @@ function closeBill(fromBack){
      the bill on screen stay intact while the sheet is still open. */
   if(placedBill){
     placedBill = "";
+    clearCoupon();                 /* a code is spent with the order */
     cart = [];
     save(); paintCart();
   }

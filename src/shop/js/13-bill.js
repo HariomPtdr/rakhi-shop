@@ -44,7 +44,8 @@ function paintBill(){
   const b={ name:$("#bName").value.trim(), phone:$("#bPhone").value.trim(),
             addr:$("#bAddr").value.trim(), city:$("#bCity").value.trim(),
             pin:$("#bPin").value.trim(),   note:$("#bNote").value.trim() };
-  const s=ship();
+  const s = shipNow();
+  const d = couponDiscount();
   const rows=cart.map((r,i)=>`
     <tr><td>${two(i+1)}. ${esc(r.name)}${r.note?`<br><span style="color:#8f8b82">${esc(r.note)}</span>`:""}</td>
     <td>${r.qty}</td><td>${inr(r.price)}</td><td>${inr(r.price*r.qty)}</td></tr>`).join("");
@@ -57,8 +58,9 @@ function paintBill(){
       <tbody>${rows}</tbody>
       <tfoot>
         <tr><td colspan="3">Subtotal</td><td>${inr(sub())}</td></tr>
+        ${d ? `<tr><td colspan="3">Discount (${esc(coupon.code)})</td><td>− ${inr(d)}</td></tr>` : ""}
         <tr><td colspan="3">Delivery${s===0?" (free)":""}</td><td>${s===0?"₹0":inr(s)}</td></tr>
-        <tr class="gt"><td colspan="3">Total payable</td><td>${inr(tot())}</td></tr>
+        <tr class="gt"><td colspan="3">Total payable</td><td>${inr(billTotal())}</td></tr>
       </tfoot>
     </table>
     <div class="bill-to"><b>Deliver to</b>${esc(b.name||"—")}
@@ -68,7 +70,8 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
     <div class="bill-note">Payment — UPI to ${SHOP.upi}, or cash on delivery.<br>
       An order summary, not a tax invoice. Amounts in INR.</div>`;
 
-  $("#shTot").textContent = inr(tot());
+  $("#shTot").textContent = inr(billTotal());
+  paintCouponBox();
 
   const lines=cart.map((r,i)=>
     `${two(i+1)}. ${r.name}${r.note?` (${r.note})`:""}\n    ${r.qty} x ${inr(r.price)} = ${inr(r.price*r.qty)}`).join("\n");
@@ -79,9 +82,9 @@ Date: ${today()}
 --------------------------------
 ${lines}
 --------------------------------
-Subtotal: ${inr(sub())}
+Subtotal: ${inr(sub())}${d ? `\nDiscount (${coupon.code}): -${inr(d)}` : ""}
 Delivery: ${s===0?"FREE":inr(s)}
-*TOTAL: ${inr(tot())}*
+*TOTAL: ${inr(billTotal())}*
 --------------------------------
 *DELIVER TO*
 Name: ${b.name||"-"}

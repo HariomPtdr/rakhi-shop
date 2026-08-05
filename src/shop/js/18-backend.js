@@ -218,7 +218,8 @@ async function recordOrder(b){
       p_city:    b.city,
       p_pincode: b.pin,
       p_note:    b.note || null,
-      p_items:   cartRows()
+      p_items:   cartRows(),
+      p_coupon:  coupon.ok ? coupon.code : null
     });
     placedBill = billNo;
     $("#shHint").textContent = "Saved to your account · " + billNo;
