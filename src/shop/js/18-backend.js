@@ -94,17 +94,42 @@ function repaintCatalogue(){
     if(pvProduct()) paintProduct(); else closeProduct();
   }
 }
+/* The catalogue is asked for twice if it has to be.
+
+   The full request wants ratings and the photo gallery, which only exist
+   once 05-reviews.sql and 07-images.sql have been run. Until then that
+   request fails as a whole — and a failed catalogue means the shop quietly
+   falls back to the sample list written into this file, showing sample
+   prices. That is a worse outcome than having no stars.
+
+   So a failure falls back to the columns that have always existed, and the
+   shop shows the real catalogue without the extras. */
+const CAT_CORE = "id,kind,name,price,mrp,cat,feat,descr,image_path,art,includes,best,stock";
+const CAT_FULL = CAT_CORE + ",rating_avg,rating_count,product_images(path,sort)";
+
 async function loadCatalogue(){
-  const rows = await SB.rest("products?select=id,kind,name,price,mrp,cat,feat,descr,"
-                           + "image_path,art,includes,best,stock,rating_avg,rating_count,"
-                           + "product_images(path,sort)"
-                           + "&active=eq.true&order=feat.asc&limit=300");
+  let rows;
+  try{
+    rows = await SB.rest("products?select=" + CAT_FULL
+                       + "&active=eq.true&order=feat.asc&limit=300");
+  }catch(err){
+    rows = await SB.rest("products?select=" + CAT_CORE
+                       + "&active=eq.true&order=feat.asc&limit=300");
+  }
   if(applyCatalogue(rows)) repaintCatalogue();
 }
 async function loadSettings(){
-  const rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,"
-                           + "order_by_date,whatsapp,upi,instagram,email,announcement,"
-                           + "orders_paused,pause_note&id=eq.1&limit=1");
+  /* same reasoning as the catalogue: the contact columns arrive with
+     10-shop.sql, and until then asking for them fails the whole row */
+  let rows;
+  try{
+    rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,"
+                       + "order_by_date,whatsapp,upi,instagram,email,announcement,"
+                       + "orders_paused,pause_note&id=eq.1&limit=1");
+  }catch(err){
+    rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,"
+                       + "festival_date,order_by_date&id=eq.1&limit=1");
+  }
   const s = Array.isArray(rows) && rows[0];
   if(!s) return;
   if(Number.isFinite(s.free_ship_above)) SHOP.freeShipAbove = s.free_ship_above;
