@@ -10,11 +10,12 @@ VIEWS.overview = async function(){
   const d = await SB.rpc("admin_overview", {p_days: range});
 
   const daily = (d.daily || []).map(r => ({
-    label: dayText(r.d).slice(0, 6),
+    label: dayText(r.d),
     short: new Date(r.d).getDate() + "",
     value: r.revenue,
     title: dayText(r.d) + " · " + inr(r.revenue) + " · " + r.orders + " " + plural(r.orders, "order")
   }));
+  const prev = d.prev || {};
 
   const f = d.funnel || {};
   const steps = [
@@ -39,25 +40,36 @@ VIEWS.overview = async function(){
     </div>
 
     <div class="kpis">
-      ${kpi(inr(d.revenue), "Revenue", d.orders + " " + plural(d.orders, "order"))}
-      ${kpi(inr(d.aov), "Average order", d.units + " " + plural(d.units, "piece") + " sold")}
+      ${kpi(inr(d.revenue), "Revenue", null, false, delta(d.revenue, prev.revenue || 0))}
+      ${kpi(inr(d.aov), "Average order", null, false, delta(d.aov, prev.aov || 0))}
       ${kpi(String(d.to_ship), "To send out",
             d.pending + " not yet confirmed", d.to_ship > 0)}
-      ${kpi(String(d.new_customers), "New customers",
-            d.buyers + " bought in this period")}
+      ${kpi(String(d.new_customers), "New customers", null, false,
+            delta(d.new_customers, prev.customers || 0))}
     </div>
 
     <div class="grid g3">
       <div class="card">
         <h2>Revenue, day by day</h2>
-        ${barsSVG(daily, {alt:"Revenue per day"})}
+        <p class="finding${d.revenue ? "" : " none"}">${
+          d.revenue
+            ? `${inr(d.revenue)} across ${d.orders} ${plural(d.orders, "order")}${
+                (prev.revenue || 0) > 0
+                  ? ` — the ${range} days before brought ${inr(prev.revenue)}.`
+                  : `, and this is the first period with any.`}`
+            : "No orders in this period yet."
+        }</p>
+        ${barChart(daily, {alt:"Revenue per day", fmt: v => inr(v), peak:false})}
       </div>
       <div class="card">
         <h2>How a visit goes</h2>
         ${funnelHTML(steps)}
-        <p class="empty" style="padding:14px 0 0; text-align:left">
-          ${f.views ? pct(f.orders, f.views) + "% of the rakhis looked at ended in an order." :
-            "Nothing recorded yet — the numbers here fill in as people visit."}</p>
+        <p class="chart-note" style="margin-top:14px">
+          ${f.views
+            ? (f.orders
+                ? pct(f.orders, f.views) + "% of the rakhis looked at ended in an order."
+                : "People are looking but nobody has ordered yet — the gap is where to look first.")
+            : "Nothing recorded yet — this fills in as people visit."}</p>
       </div>
     </div>
 

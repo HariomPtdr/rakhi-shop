@@ -375,3 +375,82 @@ td .pic{margin:0 auto}
 .gal-acts{display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end}
 .gal-acts .chip{border:0; cursor:pointer}
 .gal-acts .chip[disabled]{opacity:.35; cursor:default}
+
+/* ── bar charts, in HTML ──
+   Not SVG. The old ones were two SVGs — one stretched with
+   preserveAspectRatio="none" to fill any width, and a second underneath
+   holding the labels, because stretching the first squashed the text into
+   ribbons. The label SVG then escaped its card and drew over the one below
+   it, which is the misalignment on the old Insights screen.
+
+   Divs in a grid fill the width by themselves, the text is real text at a
+   real size, and nothing can leave the box. */
+.plot{position:relative; padding-left:46px; margin-top:6px}
+.plot-y{
+  position:absolute; left:0; top:0; width:42px; height:146px;
+  display:flex; flex-direction:column; justify-content:space-between;
+  text-align:right; pointer-events:none;
+}
+.plot-y span{
+  font-size:9.5px; color:var(--ink-faint); line-height:1;
+  transform:translateY(-.4em); font-variant-numeric:tabular-nums;
+}
+.plot-area{position:relative; height:146px}
+.plot-grid{position:absolute; inset:0; display:flex; flex-direction:column;
+  justify-content:space-between; pointer-events:none}
+.plot-grid i{display:block; height:1px; background:var(--line)}
+.plot-grid i:last-child{background:var(--line-2)}   /* the baseline is firmer */
+
+.bars{
+  position:relative; height:100%;
+  display:grid; grid-template-columns:repeat(var(--n), minmax(0, 1fr));
+  gap:clamp(1px, .35vw, 4px); align-items:end;
+}
+.bar-col{height:100%; min-width:0; display:flex; align-items:flex-end}
+.bar-track{position:relative; width:100%; height:100%; display:flex; align-items:flex-end}
+.bar-fill{
+  width:100%; border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg, var(--teal), #17707f);
+  transition:filter .15s var(--ease);
+}
+.bar-col:hover .bar-fill{filter:brightness(1.15)}
+.bar-fill.nil{background:var(--line-2); height:1px !important; border-radius:0}
+.bar-val{
+  position:absolute; left:50%; bottom:100%; transform:translateX(-50%);
+  margin-bottom:4px; font-size:9.5px; color:var(--ink-soft); white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.plot-x{
+  display:grid; grid-template-columns:repeat(var(--n), minmax(0, 1fr));
+  gap:clamp(1px, .35vw, 4px); margin-top:7px;
+}
+.plot-x span{
+  font-size:9.5px; color:var(--ink-faint); text-align:center;
+  white-space:nowrap; overflow:visible;
+}
+@media (max-width:600px){
+  .plot-y, .plot-area{height:118px}
+  .plot{padding-left:40px}
+  .bar-val{display:none}
+}
+.chart-note{margin-top:12px; font-size:12px; color:var(--ink-faint)}
+.chart-note b{color:var(--ink-soft); font-family:var(--head)}
+
+/* ── the up/down beside a number ── */
+.kpi i{font-style:normal}
+.kpi i.up   {color:#0E5F6E}
+.kpi i.down {color:#8A2033}
+.kpi i.flat {color:var(--ink-faint)}
+
+/* ── a finding, said in words above its chart ── */
+.finding{
+  font-size:13.5px; line-height:1.6; color:var(--ink-soft);
+  margin:-4px 0 14px; padding-bottom:12px; border-bottom:1px solid var(--line);
+}
+.finding b{color:var(--ink); font-family:var(--head); font-weight:600}
+.finding.none{color:var(--ink-faint)}
+
+/* the share that survived from the step above, beside the count */
+.fstep b{display:flex; align-items:baseline; gap:7px; justify-content:flex-end}
+.fstep b em{font-style:normal; font-size:10.5px; font-weight:400; color:var(--ink-faint)}
+.fstep i{max-width:100%}

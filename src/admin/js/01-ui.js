@@ -85,34 +85,84 @@ function rangePicker(){
 }
 
 /* ── charts ────────────────────────────────────────────────
-   A day-by-day bar chart. Drawn in a 0–100 viewBox and
-   stretched, so it fits any width without measuring anything. */
-function barsSVG(rows, opts){
+   Bars are HTML, not SVG.
+
+   They used to be two SVGs — one stretched with
+   preserveAspectRatio="none" so it would fill any width, and a
+   second one underneath holding the labels, because stretching
+   the first one squashed the text into ribbons. The label SVG
+   then escaped its card and drew over the one below it. That is
+   the misalignment you could see on the Insights screen.
+
+   Divs in a grid have none of those problems: they fill the
+   width by themselves, the text is real text at a real size,
+   and nothing can leave the box. */
+function barChart(rows, opts){
   const o = opts || {};
-  const H = o.height || 132, W = 700, pad = 16;
-  const max = Math.max(1, ...rows.map(r => r.value));
-  const n = rows.length || 1;
-  const gap = n > 60 ? 0.5 : n > 30 ? 1 : 2;
-  const bw = Math.max(1, (W - pad * 2) / n - gap);
-  const every = Math.ceil(n / 7);
+  const n = rows.length;
+  if(!n) return `<p class="empty">${esc(o.empty || "Nothing yet.")}</p>`;
 
-  const bars = rows.map((r, i) => {
-    const h = Math.max(r.value > 0 ? 2 : 0, (r.value / max) * (H - 30));
-    const x = pad + i * ((W - pad * 2) / n);
-    return `<rect class="bar" x="${x.toFixed(1)}" y="${(H - 18 - h).toFixed(1)}"
-      width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="1.5"><title>${
-      esc(r.title || (r.label + ": " + r.value))}</title></rect>`;
-  }).join("");
+  const peak = Math.max(...rows.map(r => r.value));
+  /* Round the top of the scale up to something a person would say — 40,
+     not 37 — so the gridlines land on readable numbers. */
+  const nice = v => {
+    if(v <= 0) return 1;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    const step = [1, 2, 2.5, 5, 10].find(s => v <= s * mag) || 10;
+    return step * mag;
+  };
+  const top = nice(peak);
+  const fmt = o.fmt || (v => String(v));
 
-  const labels = rows.map((r, i) => (i % every === 0 || i === n - 1)
-    ? `<text class="lab" x="${(pad + i * ((W - pad * 2) / n) + bw / 2).toFixed(1)}"
-         y="${H - 5}" text-anchor="middle">${esc(r.short || r.label)}</text>` : "").join("");
+  /* three gridlines: the top, the middle and the baseline */
+  const ticks = [top, top / 2, 0];
 
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
-     role="img" aria-label="${esc(o.alt || "chart")}" style="height:${H}px">
-     <line class="axis" x1="${pad}" y1="${H - 18}" x2="${W - pad}" y2="${H - 18}"/>
-     ${bars}</svg>
-     <svg class="chart" viewBox="0 0 ${W} 14" style="height:14px" aria-hidden="true">${labels}</svg>`;
+  /* Labels every bar when they fit, otherwise roughly six across. Always
+     the first and the last, so the range is readable at a glance. */
+  const every = n <= 12 ? 1 : Math.ceil(n / 6);
+  const showValues = n <= 12 && o.values !== false;
+
+  return `<div class="plot">
+    <div class="plot-y" aria-hidden="true">
+      ${ticks.map(v => `<span>${esc(fmt(v))}</span>`).join("")}
+    </div>
+    <div class="plot-area">
+      <div class="plot-grid" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="bars" style="--n:${n}" role="img" aria-label="${esc(o.alt || "chart")}">
+        ${rows.map((r, i) => {
+          const h = r.value > 0 ? Math.max(1.5, r.value / top * 100) : 0;
+          return `<div class="bar-col" title="${esc(r.title || (r.label + ": " + fmt(r.value)))}">
+            <div class="bar-track">
+              ${showValues && r.value > 0
+                ? `<span class="bar-val">${esc(fmt(r.value))}</span>` : ""}
+              <div class="bar-fill${r.value > 0 ? "" : " nil"}" style="height:${h}%"></div>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="plot-x" style="--n:${n}" aria-hidden="true">
+      ${rows.map((r, i) => `<span>${
+        (i % every === 0 || i === n - 1) ? esc(r.short != null ? r.short : r.label) : ""
+      }</span>`).join("")}
+    </div>
+  </div>
+  ${o.peak === false || peak <= 0 ? "" : (() => {
+      const best = rows.reduce((a, b) => b.value > a.value ? b : a, rows[0]);
+      return `<p class="chart-note">Busiest: <b>${esc(best.label)}</b> — ${esc(fmt(best.value))}</p>`;
+    })()}`;
+}
+
+/* how this number compares with the one before it */
+function delta(now, before, opts){
+  const o = opts || {};
+  if(before === 0 && now === 0) return "";
+  if(before === 0) return `<i class="up">new</i>`;
+  const pct = Math.round((now - before) / before * 100);
+  if(pct === 0) return `<i class="flat">same as before</i>`;
+  const good = o.lowerIsBetter ? pct < 0 : pct > 0;
+  return `<i class="${good ? "up" : "down"}">${pct > 0 ? "▲" : "▼"} ${
+    Math.abs(pct)}% ${o.label || "vs the period before"}</i>`;
 }
 
 /* A ranked list. Reads faster than a pie for "which is biggest" —
@@ -129,24 +179,40 @@ function hbars(rows, opts){
     </div>`).join("")}</div>`;
 }
 
-/* Visitors → looked → added → started a bill → sent it. Each bar is a
-   share of the *first* step, so the drop-off is the thing you see. */
+/* Visitors → looked → added → started a bill → sent it.
+
+   Scaled against the widest step, not the first. "Looked" counts rakhis
+   looked at, and one visitor looks at several — so views routinely exceed
+   visitors, and scaling against visitors sent that bar straight out of the
+   card. Each row also carries what share of the step above it survived,
+   which is the number the shape is there to show. */
 function funnelHTML(steps){
-  const top = Math.max(1, steps[0].value);
-  return `<div class="funnel">${steps.map(s => `
-    <div class="fstep">
+  const widest = Math.max(1, ...steps.map(s => s.value));
+  return `<div class="funnel">${steps.map((s, i) => {
+    const prev = i > 0 ? steps[i - 1].value : 0;
+    /* A share only means something when this step is part of the one above.
+       Rakhis looked at is not — one visitor looks at several — so above
+       100% it is shown as a rate per visitor instead of a nonsense 273%. */
+    let note = "";
+    if(i > 0 && prev > 0){
+      note = s.value > prev
+        ? (s.value / prev).toFixed(1).replace(/\.0$/, "") + " each"
+        : pct(s.value, prev) + "%";
+    }
+    return `<div class="fstep">
       <span>${esc(s.label)}</span>
-      <i style="width:${Math.max(1, s.value / top * 100).toFixed(1)}%"></i>
-      <b>${s.value.toLocaleString("en-IN")}</b>
-    </div>`).join("")}</div>`;
+      <i style="width:${Math.max(1, s.value / widest * 100).toFixed(1)}%"></i>
+      <b>${s.value.toLocaleString("en-IN")}${note ? `<em>${note}</em>` : ""}</b>
+    </div>`;
+  }).join("")}</div>`;
 }
 
 /* ── small things ── */
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
 
-function kpi(value, label, note, hot){
+function kpi(value, label, note, hot, extra){
   return `<div class="kpi${hot ? " hot" : ""}"><b>${value}</b><span>${esc(label)}</span>${
-    note ? `<i>${esc(note)}</i>` : ""}</div>`;
+    note ? `<i>${esc(note)}</i>` : ""}${extra || ""}</div>`;
 }
 
 function statusChipHTML(s){
