@@ -64,34 +64,45 @@ then open `http://localhost:8000` and `http://localhost:8000/admin/`.
 
 ---
 
-## Netlify
+## Netlify — already set up
 
-`netlify.toml` is already here: build command `python3 build.py`, publish
-directory `dist`.
+| | |
+|---|---|
+| Shop | https://ray-art-gallery.netlify.app |
+| Dashboard | https://ray-art-gallery.netlify.app/admin/ |
+| Repository | https://github.com/HariomPtdr/rakhi-shop (private) |
+| Admin | https://app.netlify.com/projects/ray-art-gallery |
 
-### First time
-
-1. Push this folder to GitHub, or drag it into **netlify.com → Add new site →
-   Import an existing project**.
-2. Netlify reads `netlify.toml`, so the build command and publish directory are
-   already right — do not change them.
-3. **Site configuration → Environment variables → Add a variable**, twice:
-
-   | Key | Value |
-   |---|---|
-   | `SUPABASE_URL` | `https://bvyuoznbmffwvzzwdlfs.supabase.co` |
-   | `SUPABASE_ANON_KEY` | your `sb_publishable_…` key |
-
-4. **Deploys → Trigger deploy → Deploy site.** The variables are only read at
-   build time, so a site deployed before you added them needs one more deploy.
-
-### Or from this machine
+**Publishing is a `git push`.** Netlify watches `master`, runs
+`python3 build.py`, and serves `dist/`:
 
 ```sh
-npx netlify-cli deploy --build --prod
+git add -A
+git commit -m "what changed"
+git push
 ```
 
-The first run asks you to log in and to pick or create a site.
+A minute later it is live. The build log is under **Deploys** on the Netlify
+admin page above.
+
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_BUCKET` are set as
+environment variables on the site, so `build.py` writes them into the pages
+during that build. `.env` is only for your own machine and is not in the
+repository.
+
+### Deploying without a push
+
+```sh
+python3 build.py && npx netlify-cli deploy --prod --dir dist
+```
+
+Useful when you want to put something up without committing it. It uploads
+`dist/` exactly as it is on your machine.
+
+### If you change the environment variables
+
+They are read at build time, so an existing site does not pick them up until it
+builds again: **Deploys → Trigger deploy → Deploy site**, or push anything.
 
 ### After it is live
 
