@@ -1,6 +1,12 @@
 # Ray Art Gallery
 
+**Live:** https://ray-art-gallery.netlify.app · **Dashboard:** https://ray-art-gallery.netlify.app/admin/
+
 A handmade-rakhi shop, and the dashboard for running it.
+
+Pushing to `master` builds and publishes it. Netlify runs `python3 build.py`
+and serves `dist/`; the Supabase values come from the site's environment
+variables, so nothing secret is ever in this repository.
 
 Customers browse on a phone, fill a basket, and the page writes their bill and
 opens your WhatsApp with the whole thing typed out. Signed in, their basket,
