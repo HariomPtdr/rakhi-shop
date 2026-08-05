@@ -1,18 +1,27 @@
 # Running the shop — the seller's dashboard
 
-**This one is yours.** It is not linked from the shop, not in the README, and
-not in any search engine — the pages are served `noindex`. Keep the address
-between you and whoever else runs the shop.
+**This one is yours.** It is no longer at `/admin` — that was a lucky guess
+away from anyone. The address is set by `ADMIN_PATH` in `.env` and in Netlify's
+environment variables, and it is not in this repository. Look it up with:
 
-    https://ray-art-gallery.netlify.app/admin/
+```sh
+grep ADMIN_PATH .env
+```
 
-Being unlisted is not what protects it, though, and it should not be relied on
-as if it were. The address is in the shop's own JavaScript and anyone reading
-the page source can find it. What actually stops them is the database: every
-screen here asks Postgres for data, and Postgres answers only an account whose
-profile says `role = 'admin'`. A stranger who types the address in gets a
-sign-in box, and a signed-in customer who types it in is told no. Not being
-advertised simply means nobody wanders in by accident.
+Change it whenever you like: set a new `ADMIN_PATH` in both places, deploy, and
+the old address is a 404. The shop links the owner straight to it from the
+account sheet, so you never have to type it.
+
+It is not linked from the shop for anyone else, not in the README, and served
+`noindex` — and deliberately **not** listed in `robots.txt`, because a
+`Disallow:` line for a secret path is how you publish it.
+
+Being hard to find is not what protects it, though, and should not be relied on
+as if it were. What actually stops people is the database: every screen here
+asks Postgres for data, and Postgres answers only an account whose profile says
+`role = 'admin'`. A stranger who finds the address gets a sign-in box, and a
+signed-in customer who finds it is told no. The unguessable path just means
+nobody wanders in by accident.
 
 Sign in with the account you made the owner (`docs/SUPABASE.md`, step 4). It is
 the same account you use in the shop; signing in on one signs you in on the

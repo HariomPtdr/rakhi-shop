@@ -20,6 +20,12 @@ body{
 *,*::before,*::after{box-sizing:border-box}
 a{color:inherit}
 
+/* An author rule always beats the browser's own [hidden]{display:none},
+   whatever the specificity — so .gate{display:grid} kept the sign-in screen
+   on the page after a successful sign-in, with the dashboard stacked below
+   it. That is why it appeared to "still show the login until you scroll". */
+[hidden]{display:none !important}
+
 /* ── the shell ── */
 .wrap{width:min(1180px, 100% - 28px); margin-inline:auto}
 @media (max-width:640px){.wrap{width:min(1180px, 100% - 20px)}}
@@ -273,3 +279,8 @@ label.lab{display:block; font-family:var(--head); font-size:10px; font-weight:60
 }
 .or::before, .or::after{content:""; flex:1; height:1px; background:var(--line)}
 .gate .fine a{color:var(--ink-soft)}
+
+/* the row of small actions in the products table */
+.rowacts{display:flex; gap:5px; flex-wrap:wrap}
+.rowacts .chip{border:0; cursor:pointer; transition:opacity .2s var(--ease)}
+.rowacts .chip:hover{opacity:.75}

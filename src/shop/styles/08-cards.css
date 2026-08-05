@@ -83,3 +83,12 @@
 @media (prefers-reduced-motion:reduce){.heart.on svg{animation:none}}
 .heart-big{top:10px; right:10px; width:46px; height:46px}
 .heart-big svg{width:23px; height:23px}
+
+/* ── sold out ──
+   The rakhi stays on the shop rather than disappearing: someone who came
+   for it should find it, see that it has gone, and still be able to heart
+   it — which is how the seller learns to make more. */
+.pill-out{background:rgba(181,56,74,.14); color:#8A2033}
+.card-out .shot{opacity:.55}
+.card-out .card-p{text-decoration:line-through; text-decoration-thickness:1px; opacity:.65}
+.btn[disabled]{opacity:.45; cursor:default; pointer-events:none}

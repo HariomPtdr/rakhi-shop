@@ -249,4 +249,26 @@ if(SB_ON){
     }
     track("view_shop");
   })();
+
+  /* ── keeping up with the dashboard ──
+     A price, a stock count or a new rakhi changed in the dashboard should
+     reach whoever is looking at the shop, not wait for them to reload. The
+     catalogue is re-read when the tab comes back to the front, and every
+     five minutes while it stays there.
+
+     Not a websocket: this is a catalogue of a dozen rows that changes a few
+     times a day. One small GET when someone returns to the tab costs less
+     than holding a socket open on a phone all afternoon. */
+  let lastPull = Date.now();
+  const REFRESH_AFTER = 5 * 60 * 1000;
+
+  async function refresh(){
+    lastPull = Date.now();
+    try{ await loadSettings();  }catch(e){}
+    try{ await loadCatalogue(); }catch(e){}
+  }
+  addEventListener("visibilitychange", () => {
+    if(!document.hidden && Date.now() - lastPull > 30000) refresh();
+  });
+  setInterval(() => { if(!document.hidden) refresh(); }, REFRESH_AFTER);
 }

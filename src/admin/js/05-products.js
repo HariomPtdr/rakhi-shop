@@ -72,8 +72,14 @@ function paintProducts(){
                  value="${p.stock == null ? "" : p.stock}" placeholder="—" aria-label="Stock"></td>
             <td class="num"><input class="inp mini" data-price="${esc(p.id)}" inputmode="numeric"
                  value="${p.price}" aria-label="Price"></td>
-            <td><button class="chip ${p.active ? "ok" : "no"}" data-live="${esc(p.id)}" type="button"
-                  style="border:0; cursor:pointer">${p.active ? "Live" : "Hidden"}</button></td>
+            <td><div class="rowacts">
+              <button class="chip ${p.active ? "ok" : "no"}" data-live="${esc(p.id)}" type="button"
+                >${p.active ? "Live" : "Hidden"}</button>
+              <button class="chip" data-photo="${esc(p.id)}" type="button"
+                >${p.image_path ? "Change photo" : "Add photo"}</button>
+              <button class="chip ${p.stock === 0 ? "no" : ""}" data-sold="${esc(p.id)}" type="button"
+                >${p.stock === 0 ? "Back in stock" : "Sold out"}</button>
+            </div></td>
           </tr>`).join("")}
         </tbody></table></div>
       <p class="empty" style="text-align:left; padding:14px 2px 0">
@@ -91,6 +97,12 @@ function paintProducts(){
   });
   view().querySelectorAll("[data-live]").forEach(b => {
     b.onclick = () => toggleLive(b.dataset.live);
+  });
+  view().querySelectorAll("[data-photo]").forEach(b => {
+    b.onclick = () => pickPhoto(b.dataset.photo);
+  });
+  view().querySelectorAll("[data-sold]").forEach(b => {
+    b.onclick = () => toggleSoldOut(b.dataset.sold);
   });
   view().querySelectorAll(".pic").forEach(el => {
     const tr = el.closest("tr");
@@ -130,6 +142,25 @@ async function toggleLive(id){
     row.active = !row.active;
     paintProducts();
     toast(row.active ? "Back on the shop" : "Hidden from the shop");
+  }catch(err){ toast(err.message); }
+}
+
+/* ── sold out ──
+   Stock 0 rather than hiding it: the rakhi stays on the shop, marked sold
+   out, so the people who wanted it can still heart it — and the dashboard
+   can tell you how many did. Hiding it loses that. "Back in stock" clears
+   the count rather than guessing a number, which puts it back to being
+   sold without being counted. */
+async function toggleSoldOut(id){
+  const row = prodRows.find(p => p.id === id);
+  if(!row) return;
+  const now = row.stock === 0 ? null : 0;
+  try{
+    await SB.patch("products?id=eq." + encodeURIComponent(id), {stock: now});
+    row.stock = now;
+    paintProducts();
+    toast(now === 0 ? "Marked sold out — the shop shows it as unavailable"
+                    : "Back on sale, with stock not counted");
   }catch(err){ toast(err.message); }
 }
 

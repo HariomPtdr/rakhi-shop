@@ -48,6 +48,9 @@ const nItems= ()=>cart.reduce((s,r)=>s+r.qty,0);
 
 function addItem(p){
   if(!p) return;
+  /* the seller marked it sold out while this page was open */
+  const live = catalogue(p.id);
+  if(live && live.stock === 0){ toast(p.name + " is sold out"); return; }
   if(mustSignIn("add this to your basket")) return;
   const row=cart.find(r=>r.id===p.id);
   if(row) row.qty = Math.min(MAX_QTY, row.qty + 1);

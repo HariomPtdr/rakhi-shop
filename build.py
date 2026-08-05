@@ -40,7 +40,7 @@ ASSETS = HERE / "assets"
 # Netlify (and any CI) sets real environment variables; .env is the local
 # convenience. The real environment wins so a deploy can never be
 # accidentally pinned to whatever is in a file on someone's laptop.
-WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET")
+WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET", "ADMIN_PATH")
 
 # the same three values under the names other tools like to use
 ALIASES = {
@@ -76,6 +76,13 @@ def read_env():
                         break
     if not env.get("SUPABASE_BUCKET"):
         env["SUPABASE_BUCKET"] = "product-images"
+
+    # Where the dashboard is published. Anything a stranger would not guess.
+    # Slashes are allowed so it can be nested; everything else is stripped,
+    # because this becomes a folder name and part of a URL.
+    path = re.sub(r"[^a-z0-9\-_/]", "", (env.get("ADMIN_PATH") or "admin").lower())
+    path = "/".join(p for p in path.split("/") if p) or "admin"
+    env["ADMIN_PATH"] = path
 
     if env["SUPABASE_ANON_KEY"].startswith("sb_secret") or "service_role" in env["SUPABASE_ANON_KEY"]:
         sys.exit("\n  STOP. That looks like a service_role/secret key.\n"
@@ -154,10 +161,25 @@ shop = assemble("shop", depth=0)
 print(f"  dist/index.html          {len(shop) / 1024:7.0f} KB")
 
 if (SRC / "admin" / "index.html").exists():
-    admin = assemble("admin", depth=1)
-    (DIST / "admin").mkdir()
-    (DIST / "admin" / "index.html").write_text(admin, encoding="utf-8")
-    print(f"  dist/admin/index.html    {len(admin) / 1024:7.0f} KB")
+    admin_path = ENV["ADMIN_PATH"]
+    depth = admin_path.count("/") + 1
+    admin = assemble("admin", depth=depth)
+    out = DIST / admin_path
+    out.mkdir(parents=True)
+    (out / "index.html").write_text(admin, encoding="utf-8")
+    print(f"  dist/{admin_path}/index.html".ljust(25) + f"{len(admin) / 1024:7.0f} KB")
+
+    # Keep it out of every index, wherever it is published. netlify.toml
+    # cannot know the path, so the rule is written here beside the page.
+    #
+    # Deliberately NOT a robots.txt Disallow line: robots.txt is world
+    # readable, so disallowing a secret path is how you publish it. The
+    # header tells a crawler not to index the page without naming it to
+    # anyone who did not already have the address.
+    (DIST / "_headers").write_text(
+        "/%s/*\n  X-Robots-Tag: noindex, nofollow\n"
+        "  Cache-Control: public, max-age=0, must-revalidate\n"
+        % admin_path, encoding="utf-8")
 
 share = embed_assets(shop)
 (DIST / "share.html").write_text(share, encoding="utf-8")

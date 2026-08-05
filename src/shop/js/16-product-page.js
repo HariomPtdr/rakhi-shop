@@ -54,7 +54,8 @@ function paintProduct(){
           <span id="pvQty">${pvQty}</span>
           <button type="button" id="pvUp" aria-label="One more">+</button>
         </span>
-        <button class="btn btn-dark" id="pvAdd">Add to cart</button>
+        <button class="btn btn-dark" id="pvAdd"${p.stock === 0 ? " disabled" : ""}>${
+          p.stock === 0 ? "Sold out" : "Add to cart"}</button>
       </div>
       <div class="pv-ask">
         <a class="btn btn-ghost btn-full" id="pvAsk" href="#" target="_blank" rel="noopener">
@@ -160,6 +161,7 @@ $("#pvIn").addEventListener("click", e=>{
   const add = e.target.closest("#pvAdd");
   if(add){
     const p = pvProduct(); if(!p) return;   /* a stale tap while the page closes */
+    if(p.stock === 0){ toast(p.name + " is sold out"); return; }
     /* this page fills the basket itself rather than going through addItem(),
        because it adds pvQty at once — so it asks for the sign-in itself too */
     if(mustSignIn("add this to your basket")) return;

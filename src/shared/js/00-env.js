@@ -22,5 +22,14 @@
 const ENV = {
   SUPABASE_URL:      "",
   SUPABASE_ANON_KEY: "",
-  SUPABASE_BUCKET:   "product-images"
+  SUPABASE_BUCKET:   "product-images",
+
+  /* Where the seller dashboard is published. Set ADMIN_PATH in .env and in
+     Netlify to something nobody would type by accident; the shop reads it
+     from here to link the owner straight to it.
+
+     This is not what protects the dashboard — the database is, and it
+     refuses anyone whose profile is not role = 'admin'. It just means a
+     stranger cannot find it by adding /admin to the address. */
+  ADMIN_PATH:        "admin"
 };

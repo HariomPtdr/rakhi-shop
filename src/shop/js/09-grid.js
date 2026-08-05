@@ -121,25 +121,29 @@ function visible(){
 function paintGrid(){
   const list=visible();
   $("#rCount").textContent = `${two(list.length)} ${list.length===1?"design":"designs"}`;
-  $("#grid").innerHTML = list.map(p=>`
-    <article class="card panel">
+  $("#grid").innerHTML = list.map(p=>{
+    const out = p.stock === 0;
+    return `
+    <article class="card panel${out ? " card-out" : ""}">
       <div class="card-top">
         <div class="shot">${thumb(p)}</div>
         <span class="idx">№ ${IDX.get(p.id)}</span>
-        <span class="pill ${p.img?"pill-real":"pill-art"}">${p.img?"Photo":"Drawing"}</span>
+        <span class="pill ${out ? "pill-out" : p.img?"pill-real":"pill-art"}">${
+          out ? "Sold out" : p.img?"Photo":"Drawing"}</span>
         ${heartBtn(p.id)}
       </div>
       <h3 class="card-n">${esc(p.name)}</h3>
       <p class="card-d">${esc(p.desc)}</p>
       <div class="card-b">
         <span class="card-p">${inr(p.price)}</span>
-        <span class="card-u">per piece</span>
+        <span class="card-u">${out ? "sold out" : "per piece"}</span>
       </div>
       <div class="card-acts">
-        <button class="btn btn-dark" data-add="${p.id}">Add</button>
+        <button class="btn btn-dark" data-add="${p.id}"${out ? " disabled" : ""}>${
+          out ? "Sold out" : "Add"}</button>
         <button class="btn btn-ghost" data-open="${p.id}">View</button>
       </div>
-    </article>`).join("");
+    </article>`;}).join("");
 }
 let lastBtn=null;
 $("#grid").addEventListener("click", e=>{

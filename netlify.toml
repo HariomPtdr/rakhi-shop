@@ -26,13 +26,9 @@
     X-Frame-Options = "SAMEORIGIN"
     Permissions-Policy = "geolocation=(), camera=(), microphone=(), interest-cohort=()"
 
-# The dashboard must never be indexed. It is protected by the database,
-# not by being hard to find, but there is no reason for it to be in a
-# search result either.
-[[headers]]
-  for = "/admin/*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+# The dashboard's noindex rule is written into dist/_headers by build.py,
+# because only the build knows where ADMIN_PATH put it. Naming the path
+# here would put it in the repository, which is the thing to avoid.
 
 # Fonts and photos are content-addressed by their own names and change
 # only when replaced, so they can be cached hard. The two pages must not
@@ -47,7 +43,3 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-[[headers]]
-  for = "/admin/index.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"

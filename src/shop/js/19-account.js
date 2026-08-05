@@ -224,7 +224,7 @@ function acctBody(){
       </div>
     </div>
     ${profile && profile.role === "admin"
-      ? `<a class="ac-admin" href="admin/">Open the seller dashboard →</a>` : ""}
+      ? `<a class="ac-admin" href="${esc(ENV.ADMIN_PATH)}/">Open the seller dashboard →</a>` : ""}
     <div class="ac-stats">
       <div><b>${acctOrders ? nOrders : "—"}</b><span>${plural(nOrders, "order")}</span></div>
       <div><b>${acctOrders ? inr(spent) : "—"}</b><span>spent</span></div>
@@ -233,9 +233,50 @@ function acctBody(){
     ${acctNoteHtml()}
     <div class="ac-tabs ac-tabs-3" role="tablist">
       <button role="tab" data-tab="orders"   aria-selected="${acctTab === "orders"}">Orders</button>
-      <button role="tab" data-tab="wishlist" aria-selected="${acctTab === "wishlist"}">Wishlist</button>
+      <button role="tab" data-tab="basket"   aria-selected="${acctTab === "basket"}">Basket${
+        nItems() ? ` <i>${nItems()}</i>` : ""}</button>
+      <button role="tab" data-tab="wishlist" aria-selected="${acctTab === "wishlist"}">Saved${
+        wish.length ? ` <i>${wish.length}</i>` : ""}</button>
       <button role="tab" data-tab="details"  aria-selected="${acctTab === "details"}">Details</button>
     </div>`;
+
+  if(acctTab === "basket"){
+    if(!cart.length){
+      return head + `<div class="ac-pane"><p class="ac-empty">Your basket is empty.
+        Everything you add is kept here and on any other phone you sign in from.</p></div>`;
+    }
+    const left = SHOP.freeShipAbove - sub();
+    return head + `<div class="ac-pane">
+      ${cart.map((r, i) => `
+        <div class="ac-wish">
+          <div class="ac-w-i">${thumbFor(r.id)}</div>
+          <div class="ac-w-m">
+            <div class="ac-w-n">${esc(r.name)}</div>
+            ${r.note ? `<div class="ac-w-note">${esc(r.note)}</div>` : ""}
+            <div class="ac-w-p">${inr(r.price)} each</div>
+            <div class="ac-w-r">
+              <span class="stp">
+                <button type="button" data-bdn="${i}" aria-label="One less">−</button>
+                <span>${r.qty}</span>
+                <button type="button" data-bup="${i}" aria-label="One more">+</button>
+              </span>
+              <b class="ac-w-amt">${inr(r.price * r.qty)}</b>
+              <button class="ac-w-x" data-brm="${i}" aria-label="Remove ${esc(r.name)}">Remove</button>
+            </div>
+          </div>
+        </div>`).join("")}
+      <div class="ac-sum">
+        <div><span>Items</span><span>${nItems()}</span></div>
+        <div><span>Subtotal</span><span>${inr(sub())}</span></div>
+        <div><span>Delivery</span><span>${ship() === 0 ? "Free" : inr(ship())}</span></div>
+        <div class="ac-sum-t"><span>Total</span><span>${inr(tot())}</span></div>
+        <p class="ac-empty" style="margin-top:8px">${left > 0
+          ? `Add ${inr(left)} more and delivery is free.`
+          : `Delivery is free on this order.`}</p>
+      </div>
+      <button class="btn btn-dark btn-full" id="acToBill">Create the bill</button>
+    </div>`;
+  }
 
   if(acctTab === "wishlist"){
     const rows = wish.map(wishCard).filter(Boolean).join("");
@@ -333,6 +374,28 @@ $("#acctBody").addEventListener("click", async e => {
 
   const add = e.target.closest("[data-wadd]");
   if(add){ addItem(catalogue(add.dataset.wadd)); return; }
+
+  /* the basket tab: the same stepper and Remove as the cart drawer, so a
+     customer never has to leave their account to fix a quantity */
+  const up = e.target.closest("[data-bup]"), dn = e.target.closest("[data-bdn]"),
+        rm = e.target.closest("[data-brm]");
+  if(up || dn || rm){
+    if(up) cart[up.dataset.bup].qty = Math.min(MAX_QTY, cart[up.dataset.bup].qty + 1);
+    else if(dn){ if(--cart[dn.dataset.bdn].qty < 1) cart.splice(dn.dataset.bdn, 1); }
+    else {
+      const gone = cart[rm.dataset.brm];
+      cart.splice(rm.dataset.brm, 1);
+      if(gone) track("remove_cart", gone.id, {qty: gone.qty});
+    }
+    save(); paintCart(); paintAcct();
+    return;
+  }
+
+  if(e.target.closest("#acToBill")){
+    closeAcct();
+    requestAnimationFrame(() => { openCart(); $("#toBill").click(); });
+    return;
+  }
 
   /* View, on a wishlist row.
      Closing the sheet calls history.back() to drop the entry it pushed, and
