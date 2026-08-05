@@ -68,7 +68,10 @@ VIEWS.orders = async function(){
             <td class="dim">${(o.order_items || []).length} ${plural((o.order_items||[]).length, "line")}
               · ${(o.order_items || []).reduce((s, i) => s + i.qty, 0)} pcs</td>
             <td class="num strong">${inr(o.total)}</td>
-            <td>${o.payment === "upi" ? `<span class="chip">UPI</span>` : `<span class="chip ok">COD</span>`}</td>
+            <td>${o.payment === "upi"
+                 ? (o.paid_at ? `<span class="chip ok">UPI paid</span>`
+                              : `<span class="chip no">UPI due</span>`)
+                 : `<span class="chip">COD</span>`}</td>
             <td>${statusChipHTML(o.status)}${o.tracking_id
                  ? `<br><span class="dim mono" style="font-size:10px">${esc(o.tracking_id)}</span>` : ""}</td>
             <td class="dim nowrap">${esc(dayTimeText(o.created_at))}</td>
@@ -109,7 +112,9 @@ VIEWS.orders = async function(){
       bill_no: o.bill_no, placed: o.created_at, status: o.status,
       name: o.name, phone: o.phone, address: o.address, city: o.city, pincode: o.pincode,
       items: (o.order_items || []).map(i => i.name + " x" + i.qty).join(" | "),
-      subtotal: o.subtotal, shipping: o.shipping, total: o.total,
+      payment: o.payment, paid_at: o.paid_at || "",
+      subtotal: o.subtotal, discount: o.discount || 0, coupon: o.coupon_code || "",
+      shipping: o.shipping, total: o.total,
       courier: o.courier || "", tracking_id: o.tracking_id || "", note: o.note || ""
     })));
   };
@@ -180,8 +185,16 @@ function paintOrder(o, hist){
     <div class="line tot"><span>Total</span><span>${inr(o.total)}</span></div>
     <div class="line"><span class="dim">Paying by</span><span class="strong">${
       o.payment === "upi"
-        ? "UPI — check it has arrived before you send this"
+        ? (o.paid_at
+            ? `UPI — paid ${esc(agoText(o.paid_at))}`
+            : "UPI — not received yet")
         : "Cash on delivery — collect " + inr(o.total)}</span></div>
+    ${o.payment === "upi" ? `<div class="acts">
+      <button class="btn btn-sm${o.paid_at ? " btn-ghost" : ""}" data-paid="${o.paid_at ? "0" : "1"}">${
+        o.paid_at ? "Mark as not paid" : "Mark the money received"}</button>
+      ${!o.paid_at ? `<span class="dim" style="align-self:center; font-size:11.5px">
+        Check your UPI app first — nothing here can tell you it arrived.</span>` : ""}
+    </div>` : ""}
 
     <div class="k">Move it along</div>
     <div class="acts">
@@ -225,6 +238,19 @@ function paintOrder(o, hist){
       }catch(err){ toast(err.message); b.disabled = false; }
     };
   });
+
+  const paidBtn = $("#panelB").querySelector("[data-paid]");
+  if(paidBtn) paidBtn.onclick = async () => {
+    paidBtn.disabled = true;
+    try{
+      const when = paidBtn.dataset.paid === "1" ? new Date().toISOString() : null;
+      await SB.patch("orders?id=eq." + encodeURIComponent(o.id), {paid_at: when});
+      o.paid_at = when;
+      toast(when ? "Marked as paid" : "Marked as not paid");
+      await showOrder(o.id);
+      render();
+    }catch(err){ toast(err.message); paidBtn.disabled = false; }
+  };
 
   const copy = $("#copyAddr");
   if(copy) copy.onclick = async () => {

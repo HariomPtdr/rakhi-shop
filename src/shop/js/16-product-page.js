@@ -91,9 +91,10 @@ function paintProduct(){
           <span id="pvQty">${pvQty}</span>
           <button type="button" id="pvUp" aria-label="One more">+</button>
         </span>
-        <button class="btn btn-dark" id="pvAdd"${p.stock === 0 ? " disabled" : ""}>${
+        <button class="btn btn-ghost" id="pvAdd"${p.stock === 0 ? " disabled" : ""}>${
           p.stock === 0 ? "Sold out" : "Add to cart"}</button>
       </div>
+      ${p.stock === 0 ? "" : `<button class="btn btn-dark btn-full pv-now" id="pvBuy">Buy now</button>`}
       <div class="pv-ask">
         <a class="btn btn-ghost btn-full" id="pvAsk" href="#" target="_blank" rel="noopener">
           <svg class="wa" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
@@ -255,6 +256,25 @@ $("#pvIn").addEventListener("click", e=>{
   if(e.target.closest("#pvNext")){ slideTo(pvShotAt + 1); return; }
   const z = e.target.closest("[data-zoom]");
   if(z){ openZoom(parseInt(z.dataset.zoom, 10) || 0); return; }
+
+  /* Buy now: the same basket, straight to the bill. It adds rather than
+     replaces — silently throwing away a basket someone spent ten minutes
+     filling is not a shortcut, it is a loss. The bill lists everything, so
+     nothing is hidden either way. */
+  if(e.target.closest("#pvBuy")){
+    const p = pvProduct(); if(!p) return;
+    if(p.stock === 0){ toast(p.name + " is sold out"); return; }
+    if(ordersPaused()){ toast(shopPauseNote || "Not taking orders right now."); return; }
+    if(mustSignIn("buy this")) return;
+    const row = cart.find(r => r.id === p.id && !r.note);
+    if(row) row.qty = Math.min(MAX_QTY, row.qty + pvQty);
+    else cart.push({id:p.id, name:p.name, price:p.price, qty:pvQty});
+    save(); paintCart(true);
+    track("add_cart", p.id, {qty: pvQty, via: "buy_now"});
+    closeProduct();
+    requestAnimationFrame(() => $("#toBill").click());
+    return;
+  }
 
   const add = e.target.closest("#pvAdd");
   if(add){

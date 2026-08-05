@@ -253,3 +253,8 @@
 .pv-arrow.next{right:10px}
 @media (hover:hover) and (min-width:900px){.pv-arrow{display:grid}}
 .pv-arrow:hover{background:#fff}
+
+/* Buy now sits under the row, full width — it is the bigger commitment,
+   and giving it its own line stops a thumb hitting it by accident while
+   reaching for the stepper. */
+.pv-now{margin-top:10px}
