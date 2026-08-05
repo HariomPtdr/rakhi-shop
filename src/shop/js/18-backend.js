@@ -21,6 +21,8 @@ const SB_ON = SB.on;
 let profile = null;          // the saved delivery details
 let placedBill = "";         // set once an order has been recorded this visit
 let cartFromServer = false;  // true while the merge is writing into `cart`
+let shopPaused = false;      // the seller has stopped taking orders
+let shopPauseNote = "";
 
 const signedIn = () => SB.signedIn();
 
@@ -100,13 +102,27 @@ async function loadCatalogue(){
   if(applyCatalogue(rows)) repaintCatalogue();
 }
 async function loadSettings(){
-  const rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,order_by_date&id=eq.1&limit=1");
+  const rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,"
+                           + "order_by_date,whatsapp,upi,instagram,email,announcement,"
+                           + "orders_paused,pause_note&id=eq.1&limit=1");
   const s = Array.isArray(rows) && rows[0];
   if(!s) return;
   if(Number.isFinite(s.free_ship_above)) SHOP.freeShipAbove = s.free_ship_above;
   if(Number.isFinite(s.ship_flat))       SHOP.shipFlat      = s.ship_flat;
   if(s.festival_date) SHOP.festivalDate = s.festival_date;
   if(s.order_by_date) SHOP.orderByDate  = s.order_by_date;
+
+  /* the contact details, which used to need a deploy to correct */
+  if(s.whatsapp)  SHOP.whatsapp  = s.whatsapp;
+  if(s.upi)       SHOP.upi       = s.upi;
+  if(s.instagram !== undefined && s.instagram !== null) SHOP.instagram = s.instagram;
+  if(s.email     !== undefined && s.email     !== null) SHOP.email     = s.email;
+  paintContact();
+
+  shopPaused = !!s.orders_paused;
+  shopPauseNote = s.pause_note || "";
+  paintAnnouncement(s.announcement, shopPaused, shopPauseNote);
+  paintCart();
   SHOP.festival = showDay(SHOP.festivalDate);
   SHOP.orderBy  = showDay(SHOP.orderByDate);
   $("#qCut").textContent =

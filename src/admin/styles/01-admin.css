@@ -454,3 +454,12 @@ td .pic{margin:0 auto}
 .fstep b{display:flex; align-items:baseline; gap:7px; justify-content:flex-end}
 .fstep b em{font-style:normal; font-size:10.5px; font-weight:400; color:var(--ink-faint)}
 .fstep i{max-width:100%}
+
+/* a state worth seeing before anything else on the page */
+.notice{
+  display:grid; gap:3px; padding:13px 16px; border-radius:var(--r-md); margin-bottom:16px;
+  background:rgba(217,184,119,.2); box-shadow:inset 0 0 0 1px rgba(156,118,32,.3);
+}
+.notice.warn{background:rgba(181,56,74,.09); box-shadow:inset 0 0 0 1px rgba(181,56,74,.28)}
+.notice b{font-family:var(--head); font-size:13.5px; font-weight:600}
+.notice span{font-size:12.5px; color:var(--ink-soft); line-height:1.55}

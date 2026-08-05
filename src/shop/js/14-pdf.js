@@ -139,6 +139,10 @@ function downloadPdf(file){
 
 $("#toBill").onclick=()=>{
   if(!cart.length) return;
+  if(ordersPaused()){
+    toast(shopPauseNote || "We have stopped taking orders for a few days.");
+    return;
+  }
   billNo = makeBillNo();
   placedBill = "";
   $("#shHint").textContent = "Opens Ray Art Gallery’s WhatsApp chat";

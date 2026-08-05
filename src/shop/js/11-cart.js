@@ -110,9 +110,15 @@ function paintCart(bump){
   $("#sShip").textContent=ship()===0?"Free":inr(ship());
   $("#sTot").textContent=inr(tot());
   const left=SHOP.freeShipAbove-sub();
-  $("#sHint").innerHTML = left>0
-    ? `Add ${inr(left)} more and delivery is <b>free</b>.`
-    : `Delivery is <b>free</b> on this order.`;
+  const paused = typeof ordersPaused === "function" && ordersPaused();
+  $("#sHint").innerHTML = paused
+    ? `<b>Not taking orders right now.</b> ${esc(shopPauseNote || "Back shortly.")}`
+    : left>0
+      ? `Add ${inr(left)} more and delivery is <b>free</b>.`
+      : `Delivery is <b>free</b> on this order.`;
+  const go = $("#toBill");
+  go.disabled = paused;
+  go.textContent = paused ? "Orders are paused" : "Create the bill";
   $("#drF").hidden=false;
 }
 $("#drB").addEventListener("click", e=>{

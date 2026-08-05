@@ -81,3 +81,16 @@
 }
 .btn-full{width:100%}
 .btn .wa{color:var(--wa); flex:none}
+
+/* ── the line across the top ──
+   Above the nav, pushing the page down rather than covering it, so it
+   cannot hide the thing someone came to tap. */
+.announce{
+  position:relative; z-index:55; text-align:center;
+  padding:9px 14px calc(9px + env(safe-area-inset-top));
+  background:var(--ink); color:var(--bg);
+  font-family:var(--head); font-size:12.5px; line-height:1.45;
+}
+.announce.paused{background:#8A2033}
+.announce b{font-weight:700}
+@media (min-width:900px){.announce{font-size:13px}}
