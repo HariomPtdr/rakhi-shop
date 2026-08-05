@@ -60,7 +60,7 @@ function paintProducts(){
           <th class="num">Price</th><th>Live</th>
         </tr></thead>
         <tbody>${rows.map(p => `
-          <tr class="flat" data-id="${esc(p.id)}">
+          <tr data-id="${esc(p.id)}">
             <td>${picHTML(p)}</td>
             <td class="col-name"><div class="prod"><div><b>${esc(p.name)}</b>
               <span>${esc(p.kind === "set" ? "pack" : (p.cat || "—"))} · ${esc(p.id)}</span></div></div></td>
@@ -83,9 +83,9 @@ function paintProducts(){
           </tr>`).join("")}
         </tbody></table></div>
       <p class="empty" style="text-align:left; padding:14px 2px 0">
-        Type over a price or a stock count and press Enter. Blank stock means
-        "do not count it" — the shop keeps selling it either way.
-        Tap a row's picture to change the photo.</p>
+        Tap a row to open the whole rakhi — every detail, its photos, and the
+        card as the shop draws it. Price and stock can be typed over here
+        without opening anything; blank stock means "do not count it".</p>
     </div>`;
 
   view().querySelectorAll("[data-sort]").forEach(b => {
@@ -104,10 +104,13 @@ function paintProducts(){
   view().querySelectorAll("[data-sold]").forEach(b => {
     b.onclick = () => toggleSoldOut(b.dataset.sold);
   });
-  view().querySelectorAll(".pic").forEach(el => {
-    const tr = el.closest("tr");
-    el.style.cursor = "pointer";
-    el.onclick = () => managePhotos(tr.dataset.id);
+  /* the row opens the product — except where the row is already something
+     to press or type into, which is what the chips and the two inputs are */
+  view().querySelectorAll("tbody tr[data-id]").forEach(tr => {
+    tr.onclick = e => {
+      if(e.target.closest("input, button, a")) return;
+      openProductPanel(tr.dataset.id);
+    };
   });
   $("#pNew").onclick = newProduct;
 }
@@ -164,39 +167,10 @@ async function toggleSoldOut(id){
   }catch(err){ toast(err.message); }
 }
 
-/* ── the photo ──
-   Straight into the bucket, then the file name onto the row. The shop
-   reads image_path on its next load, so there is nothing to rebuild. */
-function pickPhoto(id){
-  const inp = document.createElement("input");
-  inp.type = "file"; inp.accept = "image/jpeg,image/png,image/webp";
-  inp.onchange = async () => {
-    const file = inp.files && inp.files[0];
-    if(!file) return;
-    if(file.size > 3 * 1024 * 1024){
-      return toast("That photo is over 3 MB. Shrink it first — 60–90 KB is plenty.");
-    }
-    toast("Uploading…");
-    /* the extension, lowercased, with anything odd thrown away — this
-       becomes part of a public URL */
-    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-    const name = id + "-" + Date.now() + "." + ext;
-    try{
-      await SB.upload(name, file);
-      await SB.patch("products?id=eq." + encodeURIComponent(id), {image_path: name});
-      const row = prodRows.find(p => p.id === id);
-      if(row) row.image_path = name;
-      paintProducts();
-      toast("Photo is live on the shop");
-    }catch(err){
-      toast(err.message);
-      /* the exact words from storage, for when the friendly version is not
-         enough to work out what is wrong */
-      if(err.raw) console.error("Upload failed:", err.status, err.raw);
-    }
-  };
-  inp.click();
-}
+/* One-photo upload used to live here. It set products.image_path directly
+   and never wrote a product_images row, so a photo added that way could not
+   be reordered and did not appear in the slider. addPhotos() in 13-gallery
+   is the only way in now, and it keeps both in step. */
 
 /* ── a new design ── */
 function newProduct(){

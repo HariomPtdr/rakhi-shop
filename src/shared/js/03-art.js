@@ -2,7 +2,12 @@
    The drawing used where a photo isn't ready yet. Built to
    match the real product: floss thread, two wavy seed-bead
    bands, the charm in the middle, a tassel below.
+
+   Shared, not shop-only: the dashboard previews a rakhi the
+   way the shop will draw it, and a preview drawn by a second
+   copy of this code is a preview of something else.
    ══════════════════════════════════════════════════════════ */
+const asSrc = svg => "data:image/svg+xml," + encodeURIComponent(svg);
 function beadBand(y, col){
   let s = "";
   for(let r=0;r<2;r++) for(let i=0;i<7;i++){

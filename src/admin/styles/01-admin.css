@@ -463,3 +463,64 @@ td .pic{margin:0 auto}
 .notice.warn{background:rgba(181,56,74,.09); box-shadow:inset 0 0 0 1px rgba(181,56,74,.28)}
 .notice b{font-family:var(--head); font-size:13.5px; font-weight:600}
 .notice span{font-size:12.5px; color:var(--ink-soft); line-height:1.55}
+
+/* ══════════════════════════════════════════════════════════
+   ONE PRODUCT — the panel opened from a row
+
+   The card sits beside the form on a laptop and above it on a
+   phone, because on a phone the thing you are typing has to be
+   the thing under your thumb.
+   ══════════════════════════════════════════════════════════ */
+.pgrid{display:grid; gap:20px; align-items:start}
+@media (min-width:560px){.pgrid{grid-template-columns:minmax(0,190px) minmax(0,1fr)}}
+
+.pvw-note{font-size:11.5px; line-height:1.55; color:var(--ink-faint); margin:9px 0 0}
+.pvw-note.warn{color:#8A2033}
+
+/* the shop's card, at the size it is really seen */
+.pvw{
+  background:rgba(255,253,248,.9); border-radius:var(--r-lg); padding:9px 9px 12px;
+  box-shadow:inset 0 0 0 1px var(--line), var(--elev-1);
+}
+.pvw-top{position:relative; border-radius:var(--r-md); overflow:hidden; background:#F3EADA}
+.pvw-shot{aspect-ratio:1/1; display:grid; place-items:center}
+.pvw-shot img{width:100%; height:100%; object-fit:cover; display:block}
+.pvw-shot img.art{object-fit:contain; padding:8px}
+.pvw-pill{
+  position:absolute; left:7px; top:7px; font-size:8.5px; letter-spacing:.06em;
+  text-transform:uppercase; font-family:var(--head); font-weight:600;
+  padding:3px 7px; border-radius:var(--r-full);
+  background:rgba(255,253,248,.92); color:var(--ink-soft);
+}
+.pvw-pill.real{background:rgba(27,132,151,.9); color:#fff}
+.pvw-pill.out {background:rgba(20,18,16,.85); color:var(--bg)}
+.pvw-heart{
+  position:absolute; right:7px; top:6px; width:22px; height:22px; border-radius:50%;
+  display:grid; place-items:center; font-size:13px; color:var(--ink-soft);
+  background:rgba(255,253,248,.92);
+}
+.pvw h3{
+  font-family:var(--display); font-size:15px; font-weight:600; line-height:1.25;
+  margin:10px 2px 0; word-break:break-word;
+}
+.pvw-r{display:flex; align-items:center; gap:5px; margin:4px 2px 0; font-size:10.5px;
+  color:var(--ink-faint)}
+.pvw p{
+  font-size:11.5px; line-height:1.5; color:var(--ink-soft); margin:5px 2px 0;
+  /* the card clamps it; a description that vanishes here vanishes there */
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pvw-b{display:flex; align-items:baseline; justify-content:space-between; gap:8px;
+  margin:9px 2px 0}
+.pvw-p{font-family:var(--display); font-size:16px; font-weight:600}
+.pvw-p s{font-size:11px; color:var(--ink-faint); font-weight:400; margin-left:3px}
+.pvw-u{font-size:10px; color:var(--ink-faint)}
+.pvw-acts{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px}
+.pvw-btn{
+  text-align:center; font-family:var(--head); font-size:10.5px; font-weight:600;
+  padding:8px 4px; border-radius:var(--r-full); color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--line-2);
+}
+.pvw-btn.dark{background:var(--ink); color:var(--bg); box-shadow:none}
+.pvw-out .pvw-shot img{filter:grayscale(.55) opacity(.75)}
+.pvw-out .pvw-btn.dark{background:var(--line-2); color:var(--ink-faint)}

@@ -23,6 +23,7 @@ let placedBill = "";         // set once an order has been recorded this visit
 let cartFromServer = false;  // true while the merge is writing into `cart`
 let shopPaused = false;      // the seller has stopped taking orders
 let shopPauseNote = "";
+let couponNote = "";   // the seller's answer to "where do I get a code?"
 
 const signedIn = () => SB.signedIn();
 
@@ -125,7 +126,7 @@ async function loadSettings(){
   try{
     rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,"
                        + "order_by_date,whatsapp,upi,instagram,email,announcement,"
-                       + "orders_paused,pause_note&id=eq.1&limit=1");
+                       + "orders_paused,pause_note,coupon_note&id=eq.1&limit=1");
   }catch(err){
     rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,"
                        + "festival_date,order_by_date&id=eq.1&limit=1");
@@ -144,6 +145,7 @@ async function loadSettings(){
   if(s.email     !== undefined && s.email     !== null) SHOP.email     = s.email;
   paintContact();
 
+  couponNote = s.coupon_note || "";
   shopPaused = !!s.orders_paused;
   shopPauseNote = s.pause_note || "";
   paintAnnouncement(s.announcement, shopPaused, shopPauseNote);

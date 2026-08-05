@@ -258,3 +258,13 @@
    and giving it its own line stops a thumb hitting it by accident while
    reaching for the stepper. */
 .pv-now{margin-top:10px}
+
+/* the quieter second action, and WhatsApp reduced to what it is: a link */
+.pv-add2{margin-top:10px}
+.pv-ask-link{
+  display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+  font-family:var(--head); font-size:13px; font-weight:600; color:var(--ink-soft);
+  text-decoration:none; padding:6px 2px;
+}
+.pv-ask-link .wa{color:var(--wa)}
+.pv-ask-link:hover{color:var(--ink); text-decoration:underline; text-underline-offset:3px}

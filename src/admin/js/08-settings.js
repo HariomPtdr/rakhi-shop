@@ -101,6 +101,24 @@ function paintSettings(){
         </form>
 
         <div style="margin-top:22px">
+          <h2>Where the codes come from</h2>
+          <form id="setCouponNote">
+            <div class="fg">
+              <div><label class="lab" for="sCpNote">Shown behind the <b>?</b> next to the
+                  discount box <span class="dim">(blank hides the ?)</span></label>
+                <textarea class="inp" id="sCpNote" rows="3" maxlength="400"
+                  placeholder="Codes go out on our Instagram and to anyone who has ordered before."
+                  >${esc(s.coupon_note || "")}</textarea></div>
+            </div>
+            <p class="empty" style="text-align:left; padding:10px 0 0">
+              A discount box with nothing beside it tells someone a cheaper price
+              exists and not how to get it. This is your answer to "where do I
+              find a code?" — and a fair reason to follow you.</p>
+            <div class="acts"><button class="btn" type="submit">Save</button></div>
+          </form>
+        </div>
+
+        <div style="margin-top:22px">
           <h2>Taking orders</h2>
           <div class="rows">
             <div class="row"><span>Right now</span>
@@ -195,6 +213,14 @@ function paintSettings(){
       instagram: $("#sIg").value.trim().replace(/^@/, "") || null,
       email:     $("#sMail").value.trim() || null
     }, "Saved — the shop uses these now");
+  });
+
+  $("#setCouponNote").addEventListener("submit", async e => {
+    e.preventDefault();
+    const note = $("#sCpNote").value.trim();
+    await saveSettings({coupon_note: note || null},
+      note ? "Saved — it is behind the ? on the shop now"
+           : "Removed — the ? disappears with it");
   });
 
   $("#setNotice").addEventListener("submit", async e => {

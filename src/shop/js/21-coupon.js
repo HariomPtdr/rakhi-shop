@@ -10,6 +10,7 @@
    So the worst a tampered browser can do is show itself a
    discount it will not get.
    ══════════════════════════════════════════════════════════ */
+let cpHelpOpen = false;
 let coupon = {ok:false, code:"", discount:0, freeShip:false, label:"", reason:"", busy:false};
 
 const couponDiscount = () => coupon.ok ? Math.min(coupon.discount, sub()) : 0;
@@ -47,9 +48,12 @@ function paintCouponBox(){
     <div class="cp-row">
       <input type="text" id="cpInput" placeholder="Discount code" autocomplete="off"
              spellcheck="false" maxlength="24" value="${esc(coupon.code)}">
+      ${couponNote ? `<button class="cp-help" type="button" id="cpHelp"
+          aria-label="Where do I get a code?" aria-expanded="${cpHelpOpen}">?</button>` : ""}
       <button class="btn btn-ghost" type="button" id="cpApply"${coupon.busy ? " disabled" : ""}>${
         coupon.busy ? "Checking…" : "Apply"}</button>
     </div>
+    ${cpHelpOpen && couponNote ? `<p class="cp-note">${esc(couponNote)}</p>` : ""}
     ${coupon.reason ? `<p class="cp-no">${esc(coupon.reason)}</p>` : ""}`;
 }
 
@@ -105,6 +109,7 @@ async function recheckCoupon(){
 }
 
 document.addEventListener("click", e => {
+  if(e.target.closest("#cpHelp")){ cpHelpOpen = !cpHelpOpen; paintCouponBox(); return; }
   if(e.target.closest("#cpApply")){ applyCoupon(); return; }
   if(e.target.closest("#cpRemove")){
     clearCoupon(); lastCheckedSub = -1;

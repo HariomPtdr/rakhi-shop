@@ -163,3 +163,19 @@
 .done p{margin-top:8px; font-size:13.5px; line-height:1.65; color:var(--ink-soft)}
 .done a{color:var(--teal)}
 .done-acts{display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap}
+
+/* ── where do I get a code? ──
+   A discount box with nothing beside it tells someone a cheaper price
+   exists and not how to get it. The answer is the seller's, written in the
+   dashboard, and folded away until it is asked for. */
+.cp-help{
+  flex:none; width:34px; height:44px; border:0; background:none; cursor:pointer;
+  color:var(--ink-faint); font-family:var(--head); font-size:15px; font-weight:700;
+  border-radius:50%; transition:color .2s var(--ease);
+}
+.cp-help:hover, .cp-help[aria-expanded="true"]{color:var(--teal)}
+.cp-note{
+  margin:-4px 0 12px; padding:11px 13px; border-radius:var(--r-sm);
+  font-size:12.5px; line-height:1.6; color:var(--ink-soft);
+  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.2);
+}

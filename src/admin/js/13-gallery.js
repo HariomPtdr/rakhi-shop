@@ -14,6 +14,7 @@ let galleryFor = null, galleryRows = [];
 
 async function managePhotos(id){
   galleryFor = id;
+  editing = null;                 /* photos alone, not the whole product panel */
   const p = prodRows.find(x => x.id === id);
   openPanel("Photos — " + ((p && p.name) || id), `<p class="load">Loading…</p>`);
   await reloadGallery();
@@ -28,6 +29,11 @@ async function reloadGallery(){
 }
 
 function paintGallery(){
+  /* the whole product is open, and its photo list is a section inside it —
+     repainting the panel from here would throw away everything typed into
+     the form beside it */
+  if(productPanelOpen()){ paintPhotos(true); return; }
+
   const p = prodRows.find(x => x.id === galleryFor);
 
   openPanel("Photos — " + ((p && p.name) || galleryFor), `

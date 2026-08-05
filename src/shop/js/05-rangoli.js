@@ -20,7 +20,7 @@ function rangoli(col){
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="${col}">${g}</svg>`;
 }
 const asBg  = svg => 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
-const asSrc = svg => "data:image/svg+xml," + encodeURIComponent(svg);
+/* asSrc lives in shared/03-art.js beside the drawing it is used on */
 
 /* a rangoli strip, used as the rule between sections */
 function rangoliStrip(){
