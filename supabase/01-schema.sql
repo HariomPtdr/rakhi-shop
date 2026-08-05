@@ -642,9 +642,16 @@ create trigger touch_settings before update on public.shop_settings
 --     put one there — from the dashboard or from the Supabase Storage
 --     screen. The upload policies are in 02-admin.sql.
 -- ─────────────────────────────────────────────────────────────────────
-insert into storage.buckets (id, name, public)
-values ('product-images', 'product-images', true)
-on conflict (id) do update set public = true;
+-- 5 MB is far more than a rakhi photo needs (60–90 KB is plenty), but it
+-- leaves room for one straight off a phone. allowed_mime_types is left null
+-- on purpose: a file dragged in from some apps arrives with no type at all,
+-- and a bucket with a mime list rejects those outright.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('product-images', 'product-images', true, 5242880, null)
+on conflict (id) do update
+  set public          = true,
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = null;
 
 drop policy if exists "product images are public" on storage.objects;
 create policy "product images are public" on storage.objects

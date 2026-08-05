@@ -278,7 +278,69 @@ const SB = (function(){
 
     photoUrl: p => URL_ + "/storage/v1/object/public/"
       + encodeURIComponent(BUCKET_) + "/"
-      + String(p).split("/").map(encodeURIComponent).join("/")
+      + String(p).split("/").map(encodeURIComponent).join("/"),
+
+    /* ── putting a file in the bucket ──
+       This has to live here, beside fresh(), and not be written out by hand
+       at the call site. Doing it by hand is how it ended up sending a raw
+       session.access_token with no refresh: every other request goes through
+       authed(), which renews a token a minute before it expires, so an hour
+       into a session everything kept working *except* the upload, which
+       quietly started failing with 401.
+
+       It also reads the error body. Storage answers with a real explanation
+       — an expired JWT, or a row level security policy that refused the
+       insert — and swallowing that in favour of "Upload refused (400)" left
+       nothing to act on. */
+    async upload(path, file, opts){
+      await fresh();
+      if(!session || !session.access_token){
+        throw new Error("You are signed out. Sign in again and retry the upload.");
+      }
+      const o = opts || {};
+      const url = URL_ + "/storage/v1/object/" + encodeURIComponent(BUCKET_) + "/"
+                + String(path).split("/").map(encodeURIComponent).join("/");
+      let res;
+      try{
+        res = await fetch(url, {
+          method: "POST",
+          headers: {
+            apikey: KEY_,
+            Authorization: "Bearer " + session.access_token,
+            /* a file dragged from some apps arrives with no type at all */
+            "Content-Type": file.type || o.contentType || "application/octet-stream",
+            "x-upsert": o.upsert === false ? "false" : "true"
+          },
+          body: file
+        });
+      }catch(err){
+        throw new Error("Could not reach the storage server. Check your connection.");
+      }
+
+      const text = await res.text();
+      let data = null;
+      if(text){ try{ data = JSON.parse(text); }catch(e){ data = text; } }
+
+      if(!res.ok){
+        const raw = (data && typeof data === "object"
+          && (data.message || data.error || data.msg)) || String(data || "");
+        /* the two that actually happen, said in words a shopkeeper can use */
+        const friendly =
+          /jwt|expired|invalid token/i.test(raw) || res.status === 401
+            ? "That sign-in had expired. It has been renewed — press upload once more."
+          : /row-level security|violates|not authorized|permission/i.test(raw) || res.status === 403
+            ? "Storage refused the upload for this account. It needs the seller "
+              + "policies from supabase/02-admin.sql — run that file again."
+          : /exceeded|too large|size/i.test(raw)
+            ? "That file is larger than the bucket allows."
+          : (raw || ("Upload failed (" + res.status + ")"));
+        const err = new Error(friendly);
+        err.status = res.status;
+        err.raw = raw;
+        throw err;
+      }
+      return data;
+    }
   };
   return api;
 })();

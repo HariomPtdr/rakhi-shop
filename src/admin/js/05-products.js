@@ -177,25 +177,23 @@ function pickPhoto(id){
       return toast("That photo is over 3 MB. Shrink it first — 60–90 KB is plenty.");
     }
     toast("Uploading…");
-    const name = id + "-" + Date.now() + "." + (file.name.split(".").pop() || "jpg").toLowerCase();
+    /* the extension, lowercased, with anything odd thrown away — this
+       becomes part of a public URL */
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const name = id + "-" + Date.now() + "." + ext;
     try{
-      const res = await fetch(SB.url() + "/storage/v1/object/" + SB.bucket() + "/" + encodeURIComponent(name), {
-        method: "POST",
-        headers: {
-          apikey: ENV.SUPABASE_ANON_KEY,
-          Authorization: "Bearer " + SB.session().access_token,
-          "Content-Type": file.type,
-          "x-upsert": "true"
-        },
-        body: file
-      });
-      if(!res.ok) throw new Error("Upload refused (" + res.status + "). Is this account the seller?");
+      await SB.upload(name, file);
       await SB.patch("products?id=eq." + encodeURIComponent(id), {image_path: name});
       const row = prodRows.find(p => p.id === id);
       if(row) row.image_path = name;
       paintProducts();
       toast("Photo is live on the shop");
-    }catch(err){ toast(err.message); }
+    }catch(err){
+      toast(err.message);
+      /* the exact words from storage, for when the friendly version is not
+         enough to work out what is wrong */
+      if(err.raw) console.error("Upload failed:", err.status, err.raw);
+    }
   };
   inp.click();
 }
