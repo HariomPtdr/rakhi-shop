@@ -260,6 +260,9 @@ if(SB_ON){
     try{ await loadSettings();  }catch(e){}
     try{ await loadCatalogue(); }catch(e){}
     if(signedIn()){
+      /* an older session that predates the profile picture — ask once */
+      const s = SB.session();
+      if(s && s.stale){ try{ await SB.whoAmI(); }catch(e){} }
       await mergeCart();
       await mergeWish();
       try{ await loadProfile(); }catch(e){}

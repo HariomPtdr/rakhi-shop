@@ -62,7 +62,7 @@ function paintProducts(){
         <tbody>${rows.map(p => `
           <tr class="flat" data-id="${esc(p.id)}">
             <td>${picHTML(p)}</td>
-            <td><div class="prod"><div><b>${esc(p.name)}</b>
+            <td class="col-name"><div class="prod"><div><b>${esc(p.name)}</b>
               <span>${esc(p.kind === "set" ? "pack" : (p.cat || "—"))} · ${esc(p.id)}</span></div></div></td>
             <td class="num dim">${p.views}</td>
             <td class="num dim">${p.wishes}</td>

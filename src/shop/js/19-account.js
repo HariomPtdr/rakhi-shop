@@ -78,7 +78,7 @@ function paintNavAuth(){
     const nm = (profile && profile.full_name) || u.name || u.email || "";
     box.innerHTML = `
       <div class="nav-who">
-        <span class="nav-av">${esc((nm || "?").trim().charAt(0).toUpperCase())}</span>
+        ${avatarHtml("nav-av")}
         <div><b>${esc(nm)}</b><span>${esc(u.email)}</span></div>
       </div>
       <div class="nav-auth-acts">
@@ -205,7 +205,7 @@ function orderCard(o){
     </div>
     <div class="ac-o-l">${lines || "—"}</div>
     ${orderTrack(o)}
-    ${o.tracking_id ? `<div class="ac-o-trk">
+    ${o.tracking_id && o.status !== "cancelled" ? `<div class="ac-o-trk">
        <span>${esc(o.courier || "Courier")}</span>
        <b>${esc(o.tracking_id)}</b>
        <button class="ac-copy" type="button" data-copy="${esc(o.tracking_id)}">Copy</button>

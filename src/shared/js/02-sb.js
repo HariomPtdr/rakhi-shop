@@ -48,7 +48,14 @@ const SB = (function(){
   function read(){
     try{
       const s = JSON.parse(localStorage.getItem(SES_KEY) || "null");
-      if(s && s.access_token && s.refresh_token && s.user && s.user.id) return s;
+      if(s && s.access_token && s.refresh_token && s.user && s.user.id){
+        /* Sessions stored before the avatar was read have no such field, and
+           nothing would ever add one: the session is only rewritten when the
+           token refreshes. So the picture never appeared for anyone already
+           signed in. Mark it and let whoAmI() fill it in on the next load. */
+        if(!("avatar" in s.user)) s.stale = true;
+        return s;
+      }
     }catch(e){}
     return null;
   }
