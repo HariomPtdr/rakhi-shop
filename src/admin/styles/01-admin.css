@@ -349,3 +349,11 @@ td .pic{margin:0 auto}
 .col-name{min-width:180px}
 .prod b{line-height:1.35}
 .prod span{white-space:nowrap}
+
+/* ── reviews ── */
+.stars{display:inline-block; line-height:0; height:var(--s,13px)}
+.stars svg{height:100%; width:auto; display:block}
+.stars .star-bg{fill:rgba(20,18,16,.14)}
+.stars .star-fg{fill:#E0A32A}
+.rev-hidden{opacity:.62}
+.rev-hidden:hover{opacity:1}

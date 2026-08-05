@@ -43,6 +43,10 @@ function paintProduct(){
     <div class="pv-body">
       <div class="pv-no">№ ${IDX.get(p.id)}</div>
       <h1 class="pv-name">${esc(p.name)}</h1>
+      ${p.ratings ? `<button class="pv-rate" id="pvToReviews">
+         ${starsHtml(p.rating, 15)}
+         <span><b>${Number(p.rating).toFixed(1)}</b> · ${p.ratings} ${
+           plural(p.ratings, "review")}</span></button>` : ""}
       <div class="pv-price"><b>${inr(p.price)}</b><span>per piece</span></div>
       <p class="pv-desc">${esc(p.desc)}</p>
 
@@ -74,6 +78,11 @@ function paintProduct(){
         ${days > 1 ? `<span class="tc"><b>${days} days</b> to Raksha Bandhan</span>` : ""}
       </div>
     </div>
+    </div>
+
+    <div class="pv-reviews" id="pvReviews">
+      <div class="pv-k">What people said</div>
+      <div id="pvReviewBody"><p class="ac-empty">Loading…</p></div>
     </div>
 
     <div class="pv-more">
@@ -110,6 +119,7 @@ function openProduct(id, fromHash){
   if(!fromHash && location.hash !== "#p/"+id) location.hash = "p/"+id;
   document.title = `${pvProduct().name} — Ray Art Gallery`;
   track("view_product", id);
+  loadReviews(id);
 }
 function hideProduct(){
   pvEl.classList.remove("on");

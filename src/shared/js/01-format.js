@@ -52,3 +52,20 @@ const statusChip = s => {
 };
 
 const plural = (n, one, many) => n === 1 ? one : (many || one + "s");
+
+/* ── stars ──
+   Drawn as one <svg> with a clip, not five glyphs, so a half star is a
+   half star rather than a rounded lie. size is the height in px. */
+function starsHtml(avg, size){
+  const v = Math.max(0, Math.min(5, Number(avg) || 0));
+  const s = size || 13;
+  const star = "M8 .9 10.2 5.6 15.3 6.3 11.6 9.9 12.5 15 8 12.6 3.5 15 4.4 9.9 .7 6.3 5.8 5.6Z";
+  return `<span class="stars" style="--s:${s}px" role="img" aria-label="${v.toFixed(1)} out of 5">
+    <svg viewBox="0 0 80 16" aria-hidden="true">
+      <defs><clipPath id="cs${s}"><rect x="0" y="0" width="${(v / 5 * 80).toFixed(2)}" height="16"/></clipPath></defs>
+      <g class="star-bg">${[0,16,32,48,64].map(x =>
+        `<path transform="translate(${x},0)" d="${star}"/>`).join("")}</g>
+      <g class="star-fg" clip-path="url(#cs${s})">${[0,16,32,48,64].map(x =>
+        `<path transform="translate(${x},0)" d="${star}"/>`).join("")}</g>
+    </svg></span>`;
+}

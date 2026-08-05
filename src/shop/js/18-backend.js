@@ -62,6 +62,8 @@ function applyCatalogue(rows){
     img:   r.image_path ? SB.photoUrl(r.image_path) : null,
     desc:  r.descr || "",
     stock: (r.stock === null || r.stock === undefined) ? null : r.stock,
+    rating: r.rating_avg == null ? null : Number(r.rating_avg),
+    ratings: r.rating_count || 0,
     art:   (r.art && r.art.thread) ? r.art : {thread:"#C0272D", bead:"#FDFCF7", charm:"moti"}
   }));
 
@@ -88,7 +90,7 @@ function repaintCatalogue(){
 }
 async function loadCatalogue(){
   const rows = await SB.rest("products?select=id,kind,name,price,mrp,cat,feat,descr,"
-                           + "image_path,art,includes,best,stock"
+                           + "image_path,art,includes,best,stock,rating_avg,rating_count"
                            + "&active=eq.true&order=feat.asc&limit=300");
   if(applyCatalogue(rows)) repaintCatalogue();
 }

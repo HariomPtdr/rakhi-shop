@@ -142,3 +142,59 @@
   }
   .pv-more .rc{width:auto}
 }
+
+/* ── stars ── */
+.stars{display:inline-block; line-height:0; height:var(--s,13px)}
+.stars svg{height:100%; width:auto; display:block}
+.stars .star-bg{fill:rgba(20,18,16,.14)}
+.stars .star-fg{fill:#E0A32A}
+
+.card-r{display:flex; align-items:center; gap:6px; margin-top:5px}
+.card-r span{font-size:11px; color:var(--ink-faint)}
+
+.pv-rate{
+  display:inline-flex; align-items:center; gap:8px; margin-top:8px;
+  border:0; background:none; cursor:pointer; padding:2px 0; font:inherit;
+}
+.pv-rate span{font-size:12.5px; color:var(--ink-faint)}
+.pv-rate b{font-family:var(--head); color:var(--ink)}
+
+/* ── the reviews under a rakhi ── */
+.pv-reviews{max-width:760px; margin:34px auto 0; padding:0 clamp(14px,4vw,28px)}
+.rev-list{display:grid; gap:12px; margin-top:14px}
+.rev{
+  padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
+}
+.rev-top{display:flex; align-items:center; gap:9px; flex-wrap:wrap}
+.rev-top b{font-family:var(--head); font-size:13px; font-weight:600}
+.rev-top span{margin-left:auto; font-size:11.5px; color:var(--ink-faint)}
+.rev-b{margin-top:7px; font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
+.rev-reply{
+  margin-top:11px; padding:10px 12px; border-radius:var(--r-sm);
+  background:rgba(27,132,151,.07); border-left:2px solid var(--teal);
+}
+.rev-reply b{font-family:var(--head); font-size:11px; font-weight:600;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--teal)}
+.rev-reply p{margin-top:3px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
+.rev-note{padding:12px 0}
+
+/* ── writing one ── */
+.rev-form{
+  padding:15px 16px; border-radius:var(--r-md); margin-bottom:14px;
+  background:rgba(255,255,255,.6); box-shadow:inset 0 0 0 1px var(--line);
+}
+.rev-form > b{display:block; font-family:var(--head); font-size:14px; font-weight:600}
+.rate-pick{display:flex; gap:4px; margin:11px 0}
+.rate-pick button{
+  border:0; background:none; cursor:pointer; padding:3px; line-height:0;
+  color:rgba(20,18,16,.16); transition:color .15s var(--ease), transform .15s var(--ease);
+}
+.rate-pick button svg{width:26px; height:26px; fill:currentColor}
+.rate-pick button.on{color:#E0A32A}
+.rate-pick button:active{transform:scale(.9)}
+.rev-form textarea{
+  width:100%; font:inherit; font-size:14px; padding:10px 12px; border:0; resize:vertical;
+  border-radius:var(--r-sm); background:#fffdf8; box-shadow:inset 0 0 0 1px var(--line-2);
+}
+.rev-acts{display:flex; gap:8px; margin-top:11px}

@@ -133,6 +133,7 @@ function paintGrid(){
         ${heartBtn(p.id)}
       </div>
       <h3 class="card-n">${esc(p.name)}</h3>
+      ${p.ratings ? `<div class="card-r">${starsHtml(p.rating, 12)}<span>${p.ratings}</span></div>` : ""}
       <p class="card-d">${esc(p.desc)}</p>
       <div class="card-b">
         <span class="card-p">${inr(p.price)}</span>
