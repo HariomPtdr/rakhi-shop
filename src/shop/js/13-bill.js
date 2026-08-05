@@ -73,6 +73,8 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
   $("#shTot").textContent = inr(billTotal());
   paintCouponBox();
   paintPinBox();
+  paintPayBox();
+  paintPayAction();
 
   const lines=cart.map((r,i)=>
     `${two(i+1)}. ${r.name}${r.note?` (${r.note})`:""}\n    ${r.qty} x ${inr(r.price)} = ${inr(r.price*r.qty)}`).join("\n");
@@ -85,7 +87,7 @@ ${lines}
 --------------------------------
 Subtotal: ${inr(sub())}${d ? `\nDiscount (${coupon.code}): -${inr(d)}` : ""}
 Delivery: ${s===0?"FREE":inr(s)}
-*TOTAL: ${inr(billTotal())}*
+*TOTAL: ${inr(billTotal())}*${payIsCod() ? "\nPayment: CASH ON DELIVERY" : `\nPay by UPI to: ${SHOP.upi}`}
 --------------------------------
 *DELIVER TO*
 Name: ${b.name||"-"}

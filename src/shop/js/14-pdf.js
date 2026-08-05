@@ -145,6 +145,14 @@ $("#toBill").onclick=()=>{
   }
   billNo = makeBillNo();
   placedBill = "";
+  payWith = "cod";      /* a new bill starts on cash again */
+  $("#billPrint").hidden = false;
+  $("#billSend").style.pointerEvents = "";
+  $("#billSend").style.opacity = "";
+  ["#payBox", "#couponBox", "#pinBox"].forEach(sel => {
+    const el = $(sel); if(el) el.hidden = false;
+  });
+  $$("#billModal .fg").forEach(el => { el.hidden = false; });
   $("#shHint").textContent = "Opens Ray Art Gallery’s WhatsApp chat";
   if(typeof fillBillFromProfile === "function") fillBillFromProfile();
   /* hand over from the cart to the bill: hide one, show the other.
@@ -195,14 +203,27 @@ $("#billPrint").onclick=()=>{
    next to it as a saved copy.
    ------------------------------------------------------------- */
 $("#billSend").addEventListener("click", e=>{
+  /* Cash on delivery finishes here. Nothing is owed until the rakhi
+     arrives, so there is nothing to send anyone to WhatsApp for. */
+  if(payIsCod()){
+    e.preventDefault();
+    if(placedBill) return;              /* already placed; do not double it */
+    placeCodOrder();
+    return;
+  }
+
   const bad=Object.keys(F).filter(id=>!ok(id,true));
   if(bad.length){
     e.preventDefault(); $("#"+bad[0]).focus();
     toast("Fill name, phone, address, city, pincode"); return;
   }
+  if(ordersPaused()){
+    e.preventDefault();
+    toast(shopPauseNote || "Not taking orders right now."); return;
+  }
   /* refresh the message, then let the link open the shop's chat */
   paintBill();
-  track("place_order", null, {items: nItems(), value: tot(), bill_no: billNo});
+  track("place_order", null, {items: nItems(), value: billTotal(), bill_no: billNo, payment: "upi"});
   flushTrack();                 /* the tab is about to lose focus to WhatsApp */
   /* and, for a signed-in customer, keep a copy of the order they can look
      up later. Never in the way: the chat opens either way. */
@@ -211,7 +232,7 @@ $("#billSend").addEventListener("click", e=>{
       name:$("#bName").value.trim(), phone:$("#bPhone").value.trim(),
       addr:$("#bAddr").value.trim(),  city:$("#bCity").value.trim(),
       pin:$("#bPin").value.trim(),    note:$("#bNote").value.trim()
-    });
+    }, "upi");
   }
 });
 

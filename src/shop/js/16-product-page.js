@@ -45,11 +45,24 @@ function paintProduct(){
     <div class="pv-top">
     <div class="pv-shot">
       <span class="pv-glow" aria-hidden="true"></span>
-      <button class="pv-frame" id="pvZoom" aria-label="View ${esc(p.name)} larger">
-        ${shot.html}
-        <span class="pv-badge ${shot.real ? "real" : "art"}">${shot.tag}</span>
-      </button>
-      <div class="pv-zoomhint" aria-hidden="true"></div>
+      ${gallery.length > 1 ? `
+        <div class="pv-slides" id="pvSlides" role="group" aria-label="Photos of ${esc(p.name)}">
+          ${gallery.map((src, i) => `
+            <button class="pv-slide" data-zoom="${i}" aria-label="Photo ${i + 1} of ${gallery.length}">
+              <img src="${esc(src)}" alt="${esc(p.name)}" ${i ? 'loading="lazy"' : ""}>
+            </button>`).join("")}
+        </div>
+        <span class="pv-badge real">Photo</span>
+        <button class="pv-arrow prev" id="pvPrev" aria-label="Previous photo">‹</button>
+        <button class="pv-arrow next" id="pvNext" aria-label="Next photo">›</button>
+        <div class="pv-dots" id="pvDots" aria-hidden="true">
+          ${gallery.map((_, i) => `<i class="${i === pvShotAt ? "on" : ""}"></i>`).join("")}
+        </div>`
+      : `<button class="pv-frame" id="pvZoom" aria-label="View ${esc(p.name)} larger">
+          ${shot.html}
+          <span class="pv-badge ${shot.real ? "real" : "art"}">${shot.tag}</span>
+        </button>
+        <div class="pv-zoomhint" aria-hidden="true"></div>`}
       ${heartBtn(p.id, true)}
       ${gallery.length > 1 ? `<div class="pv-thumbs" role="group" aria-label="More photos">
         ${gallery.map((src, i) => `
@@ -126,6 +139,41 @@ function paintProduct(){
 + `\n\nHow many days will it take?`);
 }
 
+/* ── the slider ──
+   Scrolling the strip is what moves it, on a phone by swiping and on a
+   desktop by the arrows. Only the dots and the thumbnails are repainted,
+   never the whole page: repainting mid-swipe would snap the strip back to
+   the start under the finger. */
+function slideTo(i){
+  const strip = $("#pvSlides");
+  const g = pvGallery(pvProduct() || {});
+  if(!strip || !g.length) return;
+  const n = Math.max(0, Math.min(i, g.length - 1));
+  strip.scrollTo({left: n * strip.clientWidth, behavior: "smooth"});
+  markSlide(n);
+}
+function markSlide(n){
+  if(n === pvShotAt) return;
+  pvShotAt = n;
+  const dots = $("#pvDots");
+  if(dots) [...dots.children].forEach((d, i) => d.classList.toggle("on", i === n));
+  $$(".pv-th").forEach((b, i) => {
+    b.classList.toggle("on", i === n);
+    b.setAttribute("aria-pressed", String(i === n));
+  });
+}
+function openZoom(i){
+  const p = pvProduct(); if(!p) return;
+  const g = pvGallery(p);
+  const src = g.length ? g[Math.min(i, g.length - 1)] : null;
+  $("#lbIn").innerHTML =
+    (src ? `<img src="${src}" alt="${esc(p.name)}">` : pvArt(p)) +
+    `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}${
+      g.length > 1 ? ` · ${i + 1} of ${g.length}` : ""}</div>` +
+    `<div class="lb-p">${inr(p.price)}</div>`;
+  openSheet("#lb");
+}
+
 function openProduct(id, fromHash){
   if(!PRODUCTS.some(x=>x.id===id)) return;
   if(pvId !== id){ pvId = id; pvQty = 1; pvShotAt = 0; }
@@ -138,6 +186,19 @@ function openProduct(id, fromHash){
   lock();
   if(!fromHash && location.hash !== "#p/"+id) location.hash = "p/"+id;
   document.title = `${pvProduct().name} — Ray Art Gallery`;
+  /* follow the strip as a finger moves it */
+  const strip = $("#pvSlides");
+  if(strip){
+    let tick = false;
+    strip.addEventListener("scroll", () => {
+      if(tick) return;
+      tick = true;
+      requestAnimationFrame(() => {
+        markSlide(Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth)));
+        tick = false;
+      });
+    }, {passive:true});
+  }
   track("view_product", id);
   loadReviews(id);
 }
@@ -189,11 +250,11 @@ $("#pvIn").addEventListener("click", e=>{
   if(e.target.closest("#pvDown")){ pvQty = Math.max(1, pvQty-1);       $("#pvQty").textContent = pvQty; return; }
 
   const th = e.target.closest("[data-shot]");
-  if(th){
-    pvShotAt = parseInt(th.dataset.shot, 10) || 0;
-    paintProduct();
-    return;
-  }
+  if(th){ slideTo(parseInt(th.dataset.shot, 10) || 0); return; }
+  if(e.target.closest("#pvPrev")){ slideTo(pvShotAt - 1); return; }
+  if(e.target.closest("#pvNext")){ slideTo(pvShotAt + 1); return; }
+  const z = e.target.closest("[data-zoom]");
+  if(z){ openZoom(parseInt(z.dataset.zoom, 10) || 0); return; }
 
   const add = e.target.closest("#pvAdd");
   if(add){
@@ -210,19 +271,7 @@ $("#pvIn").addEventListener("click", e=>{
     throwPetals(add);
     return;
   }
-  if(e.target.closest("#pvZoom")){
-    const p = pvProduct(); if(!p) return;
-    /* the photo they are actually looking at, not always the cover */
-    const g = pvGallery(p);
-    const src = g.length ? g[Math.min(pvShotAt, g.length - 1)] : null;
-    $("#lbIn").innerHTML =
-      (src ? `<img src="${src}" alt="${esc(p.name)}">` : pvArt(p)) +
-      `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}${
-        g.length > 1 ? ` · ${pvShotAt + 1} of ${g.length}` : ""}</div>` +
-      `<div class="lb-p">${inr(p.price)}</div>`;
-    openSheet("#lb");
-    return;
-  }
+  if(e.target.closest("#pvZoom")){ openZoom(pvShotAt); return; }
   const go = e.target.closest("[data-go]");
   if(go) openProduct(go.dataset.go);
 });

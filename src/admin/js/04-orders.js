@@ -14,7 +14,7 @@ let ordPage   = 0;
 const ORD_PAGE = 30;
 
 const ORDER_SELECT = "select=id,bill_no,name,phone,address,city,pincode,note,subtotal,shipping,"
-                   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,"
+                   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,payment,discount,coupon_code,"
                    + "order_items(name,qty,price,product_id)";
 
 const oneOrderQuery = id => "orders?" + ORDER_SELECT + "&id=eq." + encodeURIComponent(id) + "&limit=1";
@@ -58,7 +58,7 @@ VIEWS.orders = async function(){
     <div class="card">
       <div class="tbl-scroll"><table class="tbl">
         <thead><tr><th>Bill</th><th>Customer</th><th>Where</th><th>Items</th>
-          <th class="num">Total</th><th>Status</th><th>Placed</th></tr></thead>
+          <th class="num">Total</th><th>Pay</th><th>Status</th><th>Placed</th></tr></thead>
         <tbody>${page.map(o => `
           <tr data-order="${esc(o.id)}">
             <td class="mono nowrap">${esc(o.bill_no)}</td>
@@ -68,10 +68,11 @@ VIEWS.orders = async function(){
             <td class="dim">${(o.order_items || []).length} ${plural((o.order_items||[]).length, "line")}
               · ${(o.order_items || []).reduce((s, i) => s + i.qty, 0)} pcs</td>
             <td class="num strong">${inr(o.total)}</td>
+            <td>${o.payment === "upi" ? `<span class="chip">UPI</span>` : `<span class="chip ok">COD</span>`}</td>
             <td>${statusChipHTML(o.status)}${o.tracking_id
                  ? `<br><span class="dim mono" style="font-size:10px">${esc(o.tracking_id)}</span>` : ""}</td>
             <td class="dim nowrap">${esc(dayTimeText(o.created_at))}</td>
-          </tr>`).join("") || `<tr class="flat"><td colspan="7"><p class="empty">
+          </tr>`).join("") || `<tr class="flat"><td colspan="8"><p class="empty">
             ${ordQuery || ordFilter ? "Nothing matches that." :
               "No orders yet. One appears here the moment a signed-in customer sends a bill."}
           </p></td></tr>`}
@@ -173,8 +174,14 @@ function paintOrder(o, hist){
     ${items.map(i => `<div class="line"><span>${esc(i.name)} × ${i.qty}</span>
        <span>${inr(i.price * i.qty)}</span></div>`).join("")}
     <div class="line"><span class="dim">Subtotal</span><span>${inr(o.subtotal)}</span></div>
+    ${o.discount ? `<div class="line"><span class="dim">Discount${
+      o.coupon_code ? " (" + esc(o.coupon_code) + ")" : ""}</span><span>− ${inr(o.discount)}</span></div>` : ""}
     <div class="line"><span class="dim">Delivery</span><span>${o.shipping ? inr(o.shipping) : "Free"}</span></div>
     <div class="line tot"><span>Total</span><span>${inr(o.total)}</span></div>
+    <div class="line"><span class="dim">Paying by</span><span class="strong">${
+      o.payment === "upi"
+        ? "UPI — check it has arrived before you send this"
+        : "Cash on delivery — collect " + inr(o.total)}</span></div>
 
     <div class="k">Move it along</div>
     <div class="acts">

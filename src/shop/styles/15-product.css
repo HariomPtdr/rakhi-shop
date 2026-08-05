@@ -215,3 +215,41 @@
 .pv-th.on{box-shadow:inset 0 0 0 2px var(--ink)}
 .pv-th:active{transform:scale(.95)}
 @media (min-width:900px){.pv-th{width:66px; height:66px}}
+
+/* ── the slider ──
+   One scroll container with the photos side by side and scroll-snap doing
+   the paging. No timers, no transform maths, and a swipe behaves like a
+   swipe because it is one. */
+.pv-slides{
+  display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+  border-radius:var(--r-lg); background:linear-gradient(160deg,#fffdf8,#f6f2e9);
+  box-shadow:inset 0 0 0 1px var(--line); aspect-ratio:1/1;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.pv-slides::-webkit-scrollbar{display:none}
+.pv-slide{
+  flex:0 0 100%; scroll-snap-align:center; border:0; padding:0; margin:0;
+  background:none; cursor:zoom-in; display:block; height:100%;
+}
+.pv-slide img{width:100%; height:100%; object-fit:cover; display:block}
+
+.pv-dots{
+  position:absolute; left:0; right:0; bottom:12px; display:flex;
+  justify-content:center; gap:6px; pointer-events:none;
+}
+.pv-dots i{
+  width:6px; height:6px; border-radius:50%; background:rgba(255,253,248,.55);
+  box-shadow:0 1px 3px rgba(20,18,16,.4); transition:width .25s var(--ease), background .25s var(--ease);
+}
+.pv-dots i.on{width:18px; border-radius:3px; background:#fffdf8}
+
+.pv-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  width:38px; height:38px; display:none; place-items:center; border:0; cursor:pointer;
+  border-radius:50%; background:rgba(255,253,248,.9); color:var(--ink);
+  font-size:20px; line-height:1; box-shadow:0 2px 10px rgba(20,18,16,.18);
+}
+.pv-arrow.prev{left:10px}
+.pv-arrow.next{right:10px}
+@media (hover:hover) and (min-width:900px){.pv-arrow{display:grid}}
+.pv-arrow:hover{background:#fff}

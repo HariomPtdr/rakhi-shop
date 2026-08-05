@@ -133,3 +133,33 @@
 }
 .pin-on button{color:var(--ink-faint)}
 .pin-on button:hover{color:#8A2033}
+
+/* ── how they are paying ── */
+.pay-k{
+  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint); margin:4px 0 9px;
+}
+.pay-opts{display:grid; gap:8px; margin-bottom:14px}
+@media (min-width:520px){.pay-opts{grid-template-columns:1fr 1fr}}
+.pay-opt{
+  text-align:left; border:0; cursor:pointer; padding:12px 14px; border-radius:var(--r-sm);
+  background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:box-shadow .2s var(--ease), background .2s var(--ease); font:inherit;
+}
+.pay-opt.on{background:#fffdf8; box-shadow:inset 0 0 0 2px var(--ink)}
+.pay-opt b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
+.pay-opt span{display:block; margin-top:3px; font-size:11.5px; color:var(--ink-faint); line-height:1.5}
+.btn.cod .wa{display:none}
+#billSend.busy{opacity:.6}
+
+/* ── the order went through, and it says so here ── */
+.done{text-align:center; padding:26px 18px}
+.done-tick{
+  width:52px; height:52px; margin:0 auto 14px; border-radius:50%; display:grid;
+  place-items:center; background:rgba(27,132,151,.12); color:var(--teal);
+}
+.done-tick svg{width:26px; height:26px}
+.done b{display:block; font-family:var(--display); font-size:21px; font-weight:600}
+.done p{margin-top:8px; font-size:13.5px; line-height:1.65; color:var(--ink-soft)}
+.done a{color:var(--teal)}
+.done-acts{display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap}
