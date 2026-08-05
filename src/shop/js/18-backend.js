@@ -60,6 +60,10 @@ function applyCatalogue(rows){
     cat:   r.cat || "traditional",
     feat:  r.feat || 999,
     img:   r.image_path ? SB.photoUrl(r.image_path) : null,
+    /* the whole gallery, lowest sort first; the first is the cover */
+    imgs:  (r.product_images || [])
+             .slice().sort((a,b) => (a.sort - b.sort) || 0)
+             .map(x => SB.photoUrl(x.path)),
     desc:  r.descr || "",
     stock: (r.stock === null || r.stock === undefined) ? null : r.stock,
     rating: r.rating_avg == null ? null : Number(r.rating_avg),
@@ -90,7 +94,8 @@ function repaintCatalogue(){
 }
 async function loadCatalogue(){
   const rows = await SB.rest("products?select=id,kind,name,price,mrp,cat,feat,descr,"
-                           + "image_path,art,includes,best,stock,rating_avg,rating_count"
+                           + "image_path,art,includes,best,stock,rating_avg,rating_count,"
+                           + "product_images(path,sort)"
                            + "&active=eq.true&order=feat.asc&limit=300");
   if(applyCatalogue(rows)) repaintCatalogue();
 }

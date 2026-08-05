@@ -76,7 +76,7 @@ function paintProducts(){
               <button class="chip ${p.active ? "ok" : "no"}" data-live="${esc(p.id)}" type="button"
                 >${p.active ? "Live" : "Hidden"}</button>
               <button class="chip" data-photo="${esc(p.id)}" type="button"
-                >${p.image_path ? "Change photo" : "Add photo"}</button>
+                >${p.image_path ? "Photos" : "Add photo"}</button>
               <button class="chip ${p.stock === 0 ? "no" : ""}" data-sold="${esc(p.id)}" type="button"
                 >${p.stock === 0 ? "Back in stock" : "Sold out"}</button>
             </div></td>
@@ -99,7 +99,7 @@ function paintProducts(){
     b.onclick = () => toggleLive(b.dataset.live);
   });
   view().querySelectorAll("[data-photo]").forEach(b => {
-    b.onclick = () => pickPhoto(b.dataset.photo);
+    b.onclick = () => managePhotos(b.dataset.photo);
   });
   view().querySelectorAll("[data-sold]").forEach(b => {
     b.onclick = () => toggleSoldOut(b.dataset.sold);
@@ -107,7 +107,7 @@ function paintProducts(){
   view().querySelectorAll(".pic").forEach(el => {
     const tr = el.closest("tr");
     el.style.cursor = "pointer";
-    el.onclick = () => pickPhoto(tr.dataset.id);
+    el.onclick = () => managePhotos(tr.dataset.id);
   });
   $("#pNew").onclick = newProduct;
 }

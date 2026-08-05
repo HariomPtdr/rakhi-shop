@@ -357,3 +357,21 @@ td .pic{margin:0 auto}
 .stars .star-fg{fill:#E0A32A}
 .rev-hidden{opacity:.62}
 .rev-hidden:hover{opacity:1}
+
+/* ── the photo gallery of one rakhi ── */
+.gal{display:grid; gap:9px}
+.gal-row{
+  display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center;
+  padding:9px; border-radius:var(--r-md);
+  background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line);
+}
+.gal-pic{
+  display:block; width:56px; height:56px; flex:none; overflow:hidden;
+  border-radius:var(--r-sm); background:linear-gradient(160deg,#fffdf8,#f6f2e9);
+  box-shadow:inset 0 0 0 1px var(--line);
+}
+.gal-pic img{width:100%; height:100%; object-fit:cover; display:block}
+.gal-m{min-width:0}
+.gal-acts{display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end}
+.gal-acts .chip{border:0; cursor:pointer}
+.gal-acts .chip[disabled]{opacity:.35; cursor:default}

@@ -198,3 +198,20 @@
   border-radius:var(--r-sm); background:#fffdf8; box-shadow:inset 0 0 0 1px var(--line-2);
 }
 .rev-acts{display:flex; gap:8px; margin-top:11px}
+
+/* ── the photo strip under the main shot ── */
+.pv-thumbs{
+  display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:2px;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.pv-thumbs::-webkit-scrollbar{display:none}
+.pv-th{
+  flex:0 0 auto; width:58px; height:58px; padding:0; border:0; cursor:pointer;
+  border-radius:var(--r-sm); overflow:hidden; background:var(--panel);
+  box-shadow:inset 0 0 0 1px var(--line);
+  transition:box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+.pv-th img{width:100%; height:100%; object-fit:cover; display:block}
+.pv-th.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.pv-th:active{transform:scale(.95)}
+@media (min-width:900px){.pv-th{width:66px; height:66px}}

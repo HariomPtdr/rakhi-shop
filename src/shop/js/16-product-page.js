@@ -11,6 +11,8 @@
    ══════════════════════════════════════════════════════════ */
 const pvEl = $("#pv");
 let pvId = null, pvQty = 1;
+/* which photo of the gallery is showing; reset whenever a rakhi opens */
+let pvShotAt = 0;
 
 const pvProduct = () => PRODUCTS.find(p => p.id === pvId);
 const productOpen = () => pvEl.classList.contains("on");
@@ -18,14 +20,25 @@ const productOpen = () => pvEl.classList.contains("on");
 function pvArt(p){
   return `<img class="art" src="${asSrc(art(p.art, true))}" alt="Drawing of ${esc(p.name)}">`;
 }
+/* every photo of this rakhi, cover first. Falls back to the single
+   image_path for a catalogue loaded before galleries existed. */
+function pvGallery(p){
+  if(p.imgs && p.imgs.length) return p.imgs;
+  return p.img ? [p.img] : [];
+}
 function pvShot(p){
-  if(p.img) return {html:`<img src="${p.img}" alt="${esc(p.name)}" data-fb="${p.id}">`, tag:"Photo", real:true};
+  const g = pvGallery(p);
+  if(g.length){
+    const src = g[Math.min(pvShotAt, g.length - 1)];
+    return {html:`<img src="${src}" alt="${esc(p.name)}" data-fb="${p.id}">`, tag:"Photo", real:true};
+  }
   return {html: pvArt(p), tag:"Drawing", real:false};
 }
 
 function paintProduct(){
   const p = pvProduct(); if(!p) return;
   const shot = pvShot(p), days = daysUntil(SHOP.festivalDate);
+  const gallery = pvGallery(p);
   $("#pvCrumb").textContent = `Collection / № ${IDX.get(p.id)}`;
 
   $("#pvIn").innerHTML = `
@@ -38,6 +51,13 @@ function paintProduct(){
       </button>
       <div class="pv-zoomhint" aria-hidden="true"></div>
       ${heartBtn(p.id, true)}
+      ${gallery.length > 1 ? `<div class="pv-thumbs" role="group" aria-label="More photos">
+        ${gallery.map((src, i) => `
+          <button type="button" class="pv-th${i === pvShotAt ? " on" : ""}" data-shot="${i}"
+            aria-label="Photo ${i + 1} of ${gallery.length}" aria-pressed="${i === pvShotAt}">
+            <img src="${esc(src)}" alt="" loading="lazy">
+          </button>`).join("")}
+      </div>` : ""}
     </div>
 
     <div class="pv-body">
@@ -108,7 +128,7 @@ function paintProduct(){
 
 function openProduct(id, fromHash){
   if(!PRODUCTS.some(x=>x.id===id)) return;
-  if(pvId !== id){ pvId = id; pvQty = 1; }
+  if(pvId !== id){ pvId = id; pvQty = 1; pvShotAt = 0; }
   paintProduct();
   pvEl.classList.add("on");
   pvEl.setAttribute("aria-hidden","false");
@@ -168,6 +188,13 @@ $("#pvIn").addEventListener("click", e=>{
   if(e.target.closest("#pvUp")){   pvQty = Math.min(MAX_QTY, pvQty+1); $("#pvQty").textContent = pvQty; return; }
   if(e.target.closest("#pvDown")){ pvQty = Math.max(1, pvQty-1);       $("#pvQty").textContent = pvQty; return; }
 
+  const th = e.target.closest("[data-shot]");
+  if(th){
+    pvShotAt = parseInt(th.dataset.shot, 10) || 0;
+    paintProduct();
+    return;
+  }
+
   const add = e.target.closest("#pvAdd");
   if(add){
     const p = pvProduct(); if(!p) return;   /* a stale tap while the page closes */
@@ -185,9 +212,14 @@ $("#pvIn").addEventListener("click", e=>{
   }
   if(e.target.closest("#pvZoom")){
     const p = pvProduct(); if(!p) return;
+    /* the photo they are actually looking at, not always the cover */
+    const g = pvGallery(p);
+    const src = g.length ? g[Math.min(pvShotAt, g.length - 1)] : null;
     $("#lbIn").innerHTML =
-      (p.img ? `<img src="${p.img}" alt="${esc(p.name)}">` : pvArt(p)) +
-      `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}</div><div class="lb-p">${inr(p.price)}</div>`;
+      (src ? `<img src="${src}" alt="${esc(p.name)}">` : pvArt(p)) +
+      `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}${
+        g.length > 1 ? ` · ${pvShotAt + 1} of ${g.length}` : ""}</div>` +
+      `<div class="lb-p">${inr(p.price)}</div>`;
     openSheet("#lb");
     return;
   }
