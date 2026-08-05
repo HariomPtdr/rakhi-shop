@@ -70,7 +70,19 @@ function showGate(msg){
 function showApp(){
   $("#gate").hidden = true;
   $("#app").hidden = false;
-  $("#whoName").textContent = (me && (me.name || me.email)) || "";
+  const u = SB.user();
+  $("#whoName").textContent = (me && (me.name || me.email)) || (u && u.email) || "";
+}
+
+/* Signed in, and the account is simply not the owner. This used to sign them
+   straight back out and return them to the sign-in box, which read as "your
+   password was wrong" — it never was. The session is left alone and the
+   reason is put on the screen, with the one query that fixes it. */
+function showNotOwner(){
+  const u = SB.user();
+  showApp();
+  $$("#nav button").forEach(b => { b.disabled = true; b.style.opacity = ".4"; });
+  failedPermission((u && u.email) || "that account");
 }
 
 /* Is this account the seller? The answer comes from the database. */
@@ -136,11 +148,7 @@ $("#gateForm").addEventListener("submit", async e => {
   try{
     await SB.signIn(email, pass);
     me = await checkAdmin();
-    if(!me){
-      SB.signOut();
-      throw new Error("That account is signed in, but it is not the shop's owner. "
-                    + "Set its role to 'admin' first — the line is in supabase/03-seed.sql.");
-    }
+    if(!me) return showNotOwner();
     showApp();
     await render();
   }catch(err){

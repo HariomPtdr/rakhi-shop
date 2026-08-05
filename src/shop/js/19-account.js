@@ -34,7 +34,53 @@ function paintAcctBtn(){
     acctOpenBtn.classList.remove("in");
     acctOpenBtn.setAttribute("aria-label", "Sign in");
   }
+  /* the menu says the same thing in words; keep the two in step from one place */
+  paintNavAuth();
 }
+
+/* ── the foot of the menu sheet ──
+   The account is reached from a 42px circle in the header, which is easy to
+   miss. The menu is where someone goes when they are looking for something,
+   so it says plainly whether they are signed in, and offers the one action
+   that follows from that. */
+function paintNavAuth(){
+  const box = $("#navAuth");
+  if(!box) return;
+  if(!SB_ON){ box.innerHTML = ""; return; }
+
+  const u = SB.user();
+  if(signedIn() && u){
+    const nm = (profile && profile.full_name) || u.name || u.email || "";
+    box.innerHTML = `
+      <div class="nav-who">
+        <span class="nav-av">${esc((nm || "?").trim().charAt(0).toUpperCase())}</span>
+        <div><b>${esc(nm)}</b><span>${esc(u.email)}</span></div>
+      </div>
+      <div class="nav-auth-acts">
+        <button class="btn btn-dark" data-navact="account">Your orders</button>
+        <button class="btn btn-ghost" data-navact="out">Sign out</button>
+      </div>`;
+  }else{
+    box.innerHTML = `
+      <p class="nav-auth-lead">Sign in to add rakhis to your basket, save the
+         ones you like, and keep a copy of every order.</p>
+      <div class="nav-auth-acts">
+        <button class="btn btn-dark" data-navact="in">Sign in</button>
+        <button class="btn btn-ghost" data-navact="up">Create account</button>
+      </div>`;
+  }
+}
+
+$("#navAuth").addEventListener("click", e => {
+  const b = e.target.closest("[data-navact]");
+  if(!b) return;
+  const what = b.dataset.navact;
+  if(what === "out"){ signOut(); paintNavAuth(); return; }
+  closeNav();
+  if(what === "in" || what === "up"){ acctView = what; }
+  /* the sheet's history entry pops asynchronously — open after it has */
+  requestAnimationFrame(() => openAcct(what === "account" ? "orders" : undefined));
+});
 
 function acctNoteHtml(){
   if(!acctNote) return "";
@@ -288,8 +334,23 @@ $("#acctBody").addEventListener("click", async e => {
   const add = e.target.closest("[data-wadd]");
   if(add){ addItem(catalogue(add.dataset.wadd)); return; }
 
+  /* View, on a wishlist row.
+     Closing the sheet calls history.back() to drop the entry it pushed, and
+     that pops *asynchronously*. Setting the product's hash in the same tick
+     meant the pop landed afterwards and threw the new hash away again — so
+     the sheet closed and nothing else happened. Wait for the pop, then open. */
   const open = e.target.closest("[data-wopen]");
-  if(open){ closeAcct(); openProduct(open.dataset.wopen); return; }
+  if(open){
+    const id = open.dataset.wopen;
+    if(isOn("#acctModal") && sheetHist){
+      addEventListener("popstate", () => openProduct(id), {once:true});
+      closeAcct();
+    }else{
+      closeAcct();
+      openProduct(id);
+    }
+    return;
+  }
 
   const copy = e.target.closest("[data-copy]");
   if(copy){

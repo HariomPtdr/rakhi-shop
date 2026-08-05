@@ -137,6 +137,7 @@ function closeTop(){
    Tapping one closes the sheet first and then jumps, or the browser scrolls
    the page underneath a sheet that is still covering it. */
 function openNav(){
+  paintNavAuth();                /* the profile may have arrived since last time */
   openSheet("#navModal");
   $("#navOpen").setAttribute("aria-expanded", "true");
 }

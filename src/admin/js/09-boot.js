@@ -12,12 +12,25 @@ async function render(){
   try{
     await fn();
   }catch(err){
-    /* A session can expire while the tab sits open overnight. Say so plainly
-       instead of showing six empty screens. */
-    if(err && (err.status === 401 || err.status === 403)){
+    const msg = String((err && err.message) || "");
+
+    /* 401 is the only one that really means "signed out". A session can
+       expire while the tab sits open overnight; say so and ask again. */
+    if(err && err.status === 401){
       me = null;
       return showGate("That session has ended. Sign in again.");
     }
+
+    /* 403 is different, and treating it as an expired session was wrong:
+       the reports raise "not allowed" when the database does not consider
+       this account the shop's owner. Bouncing to the sign-in box made that
+       look like a login that silently failed, when in fact the login
+       worked and the *permission* is missing. Say which. */
+    if(err && (err.status === 403 || /not allowed/i.test(msg))){
+      const who = (me && me.email) || (SB.user() && SB.user().email) || "that account";
+      return failedPermission(who);
+    }
+
     failed(err);
   }
   /* the range picker is drawn by whichever screen wants one */
@@ -76,10 +89,7 @@ addEventListener("hashchange", () => {
   }catch(err){
     return showGate(err.status === 401 ? "" : err.message);
   }
-  if(!me){
-    SB.signOut();
-    return showGate("That account is not the shop's owner.");
-  }
+  if(!me) return showNotOwner();
   showApp();
   const start = location.hash.replace(/^#/, "");
   go(VIEWS[start] ? start : "overview");

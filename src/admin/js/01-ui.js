@@ -32,6 +32,35 @@ function failed(err){
     <div style="text-align:center"><button class="btn btn-ghost" onclick="render()">Try again</button></div></div>`;
 }
 
+/* Signed in, but the database does not consider this account the owner.
+   Shown in place of the screen rather than as a bounce back to the sign-in
+   box, because the sign-in worked — it is the permission that is missing,
+   and being asked to sign in again would never fix it. */
+function failedPermission(who){
+  view().innerHTML = `<div class="card">
+    <h2>Signed in, but not as the shop's owner</h2>
+    <p class="empty" style="text-align:left">
+      <b>${esc(who)}</b> is signed in, and the database refused the dashboard's
+      questions. That means this account's profile does not say
+      <span class="mono">role = 'admin'</span> yet — it is not a password
+      problem, and signing in again will not change it.</p>
+    <p class="empty" style="text-align:left">
+      Run this once in Supabase → SQL Editor, with this email in it, then
+      reload:</p>
+    <pre class="mono" style="white-space:pre-wrap; font-size:11px; line-height:1.65;
+         background:rgba(255,255,255,.6); padding:12px; border-radius:var(--r-sm)">insert into public.admin_emails (email)
+values (lower('${esc(who)}'))
+on conflict (email) do nothing;
+
+update public.profiles p set role = 'admin'
+  from auth.users u
+ where u.id = p.id and lower(u.email) = lower('${esc(who)}');</pre>
+    <div class="acts" style="justify-content:center">
+      <button class="btn btn-ghost btn-sm" onclick="render()">Try again</button>
+      <button class="btn btn-ghost btn-sm" onclick="SB.signOut(); location.reload()">Sign out</button>
+    </div></div>`;
+}
+
 /* ── the slide-in panel: one order, one customer, one product ── */
 function openPanel(title, html){
   $("#panelT").textContent = title;
