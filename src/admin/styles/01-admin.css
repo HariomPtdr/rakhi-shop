@@ -284,3 +284,55 @@ label.lab{display:block; font-family:var(--head); font-size:10px; font-weight:60
 .rowacts{display:flex; gap:5px; flex-wrap:wrap}
 .rowacts .chip{border:0; cursor:pointer; transition:opacity .2s var(--ease)}
 .rowacts .chip:hover{opacity:.75}
+
+/* ── the bell ── */
+.bell{
+  position:relative; display:grid; place-items:center; width:36px; height:36px;
+  border:0; cursor:pointer; border-radius:50%; background:rgba(255,255,255,.6);
+  color:var(--ink); box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:background .2s var(--ease);
+}
+.bell:hover{background:#fffdf8}
+.bell-n{
+  position:absolute; top:-3px; right:-3px; min-width:17px; height:17px; padding:0 4px;
+  display:grid; place-items:center; border-radius:var(--r-full);
+  background:var(--rose); color:#fff; font-family:var(--head); font-size:9.5px;
+  box-shadow:0 0 0 2px var(--bg);
+}
+.bell.ring svg{animation:bellring 1.4s var(--ease) 1}
+@keyframes bellring{
+  0%,100%{transform:rotate(0)} 15%{transform:rotate(11deg)} 30%{transform:rotate(-9deg)}
+  45%{transform:rotate(6deg)} 60%{transform:rotate(-4deg)}
+}
+@media (prefers-reduced-motion:reduce){.bell.ring svg{animation:none}}
+
+.bellwrap{
+  position:fixed; top:56px; right:12px; z-index:70; width:min(400px, calc(100vw - 24px));
+  opacity:0; pointer-events:none; transform:translateY(-8px);
+  transition:opacity .2s var(--ease), transform .2s var(--ease);
+}
+.bellwrap.on{opacity:1; pointer-events:auto; transform:none}
+.bell-panel{
+  background:var(--bg); border-radius:var(--r-lg); overflow:hidden;
+  box-shadow:inset 0 0 0 1px var(--line), 0 18px 44px -12px rgba(20,18,16,.35);
+}
+.bell-h{
+  padding:13px 16px; border-bottom:1px solid var(--line);
+  font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint);
+}
+.bell-list{max-height:min(62vh, 480px); overflow-y:auto}
+.bell-row{
+  display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:start;
+  width:100%; text-align:left; border:0; cursor:pointer; background:none;
+  padding:12px 16px; border-bottom:1px solid var(--line);
+  transition:background .15s var(--ease); font:inherit;
+}
+.bell-row:last-child{border-bottom:0}
+.bell-row:hover{background:rgba(255,255,255,.6)}
+.bell-row.unread{background:rgba(27,132,151,.06)}
+.bell-row .chip{margin-top:2px}
+.bell-body{min-width:0}
+.bell-body b{display:block; font-family:var(--head); font-size:13px; font-weight:600; line-height:1.4}
+.bell-body span{display:block; margin-top:2px; font-size:12px; color:var(--ink-faint); line-height:1.5}
+.bell-when{flex:none; font-size:11px; color:var(--ink-faint); white-space:nowrap; margin-top:3px}

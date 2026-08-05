@@ -72,6 +72,9 @@ function showApp(){
   $("#app").hidden = false;
   const u = SB.user();
   $("#whoName").textContent = (me && (me.name || me.email)) || (u && u.email) || "";
+  /* only once the database has agreed this account is the owner — the bell
+     reads seller rows, and a non-owner would just collect 403s */
+  if(me) startBell();
 }
 
 /* Signed in, and the account is simply not the owner. This used to sign them

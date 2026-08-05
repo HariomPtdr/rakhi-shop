@@ -179,6 +179,25 @@ function touchSeen(){
 }
 
 /* ── orders ── */
+/* ── what has happened to their orders ──
+   Written by a trigger when the seller moves an order along, so it is there
+   whether or not the customer had the shop open at the time. */
+async function loadNotifs(){
+  if(!signedIn()) return [];
+  return SB.rest("notifications?select=id,kind,title,body,order_id,read_at,created_at"
+               + "&order=created_at.desc&limit=40");
+}
+/* just the count, for the dot on the account button */
+let unreadCount = 0;
+async function pollUnread(){
+  if(!SB_ON || !signedIn()) return;
+  try{
+    const rows = await SB.rest("notifications?select=id&read_at=is.null&limit=30");
+    unreadCount = Array.isArray(rows) ? rows.length : 0;
+    paintAcctBtn();
+  }catch(e){}
+}
+
 async function loadOrders(){
   return SB.rest("orders?select=id,bill_no,total,subtotal,shipping,status,created_at,status_at,"
                + "courier,tracking_id,name,city,pincode,order_items(name,qty,price)"
@@ -246,6 +265,7 @@ if(SB_ON){
       try{ await loadProfile(); }catch(e){}
       touchSeen();
       paintAcctBtn();
+      pollUnread();
     }
     track("view_shop");
   })();
@@ -266,6 +286,7 @@ if(SB_ON){
     lastPull = Date.now();
     try{ await loadSettings();  }catch(e){}
     try{ await loadCatalogue(); }catch(e){}
+    pollUnread();
   }
   addEventListener("visibilitychange", () => {
     if(!document.hidden && Date.now() - lastPull > 30000) refresh();

@@ -60,6 +60,19 @@ const SB = (function(){
     }catch(e){}
     listeners.forEach(fn => { try{ fn(session); }catch(e){} });
   }
+  /* Google hands back a name and a profile picture; an email sign-up hands
+     back neither. Both are read the same way here so the rest of the app
+     never has to know which was used. */
+  function shapeUser(u){
+    const m = u.user_metadata || {};
+    return {
+      id:     u.id,
+      email:  u.email || "",
+      name:   m.full_name || m.name || "",
+      avatar: m.avatar_url || m.picture || ""
+    };
+  }
+
   function shape(j){
     if(!j || !j.access_token) return null;
     const u = j.user || {};
@@ -67,7 +80,7 @@ const SB = (function(){
       access_token:  j.access_token,
       refresh_token: j.refresh_token || "",
       expires_at:    nowSec() + (parseInt(j.expires_in, 10) || 3600),
-      user: u.id ? {id:u.id, email:u.email || "", name:(u.user_metadata || {}).full_name || ""} : null
+      user: u.id ? shapeUser(u) : null
     };
   }
 
@@ -247,8 +260,7 @@ const SB = (function(){
       if(!session) return null;
       const u = await call("/auth/v1/user");
       if(u && u.id){
-        session.user = {id:u.id, email:u.email || "",
-                        name:(u.user_metadata || {}).full_name || (u.user_metadata || {}).name || ""};
+        session.user = shapeUser(u);
         write(session);
       }
       return api.user();

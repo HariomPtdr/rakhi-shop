@@ -70,3 +70,12 @@ body.pv-on .fab{opacity:0; pointer-events:none}
   .nav-me:hover{background:var(--ink); color:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink)}
   .nav-me.in:hover{background:#fff; color:var(--ink)}
 }
+
+/* the account button wearing their own picture, and the unread dot */
+.nav-me.has-pic{background-size:cover; background-position:center; color:transparent}
+.nav-me.has-pic b{display:none}
+.nav-me.has-news::after{
+  content:""; position:absolute; top:1px; right:1px; width:10px; height:10px;
+  border-radius:50%; background:var(--rose); box-shadow:0 0 0 2px var(--bg);
+}
+.nav-me{position:relative}

@@ -13,23 +13,48 @@
    and send a bill on WhatsApp exactly as before — they simply
    do not get a copy afterwards.
    ══════════════════════════════════════════════════════════ */
-let acctView = "in";      // "in" · "up" · "forgot"
+let acctView = "in";      // "in" · "up" · "forgot" · "reset"
 let acctNote = null;      // {text, good} shown at the top of the sheet
-let acctTab  = "orders";  // "orders" · "wishlist" · "details"
+let acctTab  = "orders";  // orders · updates · basket · wishlist · details
 let acctOrders = null;    // cached for this opening of the sheet
+let acctNotifs = null;    // the same, for the updates tab
+let cancelling = null;    // the order id whose "are you sure" is open
+
+/* The picture Google gave us, or the first letter of their name. The
+   picture is the one thing an account can show that says "this is really
+   yours" at a glance, so it is worth the one <img>. */
+function avatarHtml(cls){
+  const u = SB.user() || {};
+  const nm = (profile && profile.full_name) || u.name || u.email || "?";
+  const letter = esc(nm.trim().charAt(0).toUpperCase() || "?");
+  if(u.avatar){
+    /* referrerpolicy: Google's CDN serves a 403 placeholder when a referrer
+       it does not recognise is sent. onerror falls back to the letter. */
+    return `<span class="${cls}"><img src="${esc(u.avatar)}" alt="" referrerpolicy="no-referrer"
+      onerror="this.remove()"><i>${letter}</i></span>`;
+  }
+  return `<span class="${cls}"><i>${letter}</i></span>`;
+}
 
 const acctOpenBtn = $("#acctOpen");
 
 function paintAcctBtn(){
   if(!SB_ON) return;
   const el = $("#acctInitial"), svg = acctOpenBtn.querySelector("svg"), u = SB.user();
+  /* a dot when something has happened they have not read */
+  acctOpenBtn.classList.toggle("has-news", signedIn() && unreadCount > 0);
   if(signedIn() && u){
     const src = (profile && profile.full_name) || u.name || u.email || "?";
     el.textContent = src.trim().charAt(0).toUpperCase();
+    /* their own picture, when Google gave us one */
+    acctOpenBtn.style.backgroundImage = u.avatar ? `url("${u.avatar}")` : "";
+    acctOpenBtn.classList.toggle("has-pic", !!u.avatar);
     el.hidden = false; svg.style.display = "none";
     acctOpenBtn.classList.add("in");
     acctOpenBtn.setAttribute("aria-label", "Your account — signed in");
   }else{
+    acctOpenBtn.style.backgroundImage = "";
+    acctOpenBtn.classList.remove("has-pic");
     el.hidden = true; svg.style.display = "";
     acctOpenBtn.classList.remove("in");
     acctOpenBtn.setAttribute("aria-label", "Sign in");
@@ -169,6 +194,9 @@ function orderCard(o){
   const items = (o.order_items || []);
   const lines = items.map(i => `${esc(i.name)} × ${i.qty}`).join(" · ");
   const ask = wa(`Hello Ray Art Gallery, about my order ${o.bill_no} (${inr(o.total)}).`);
+  /* the same rule the database enforces, so the button is never offered
+     where cancel_order() would refuse it */
+  const canCancel = o.status === "placed" || o.status === "confirmed";
   return `<div class="ac-order">
     <div class="ac-o-top">
       <span class="ac-o-no">${esc(o.bill_no)}</span>
@@ -184,9 +212,60 @@ function orderCard(o){
      </div>` : ""}
     <div class="ac-o-foot">
       <span>${o.shipping ? inr(o.subtotal) + " + " + inr(o.shipping) + " delivery" : "Delivery free"}</span>
+      ${canCancel ? `<button class="ac-cancel" data-cancel="${esc(o.id)}">Cancel order</button>` : ""}
       <a class="ac-ask" href="${ask}" target="_blank" rel="noopener">Ask about this order</a>
     </div>
+    ${cancelling === o.id ? cancelForm(o) : ""}
   </div>`;
+}
+
+/* ── calling off an order ──
+   Asked, not just done. A cancel is irreversible from the customer's side
+   and the seller may already be making it, so it takes a deliberate second
+   tap — and the reason goes to the seller, who can then do something about
+   whatever caused it. */
+const CANCEL_REASONS = [
+  "I ordered it by mistake",
+  "I want a different design or colour",
+  "It will not arrive in time",
+  "I found a problem with my address",
+  "Something else"
+];
+
+function cancelForm(o){
+  return `<div class="ac-cancelbox">
+    <b>Cancel ${esc(o.bill_no)}?</b>
+    <p>It is still ${esc((STATUS[o.status] || {}).label || o.status).toLowerCase()}, so it can
+       be called off. Once it is with the courier it cannot. This cannot be undone —
+       you would need to order again.</p>
+    <label class="ac-c-lab" for="acWhy">Why, so we can do better</label>
+    <select class="ac-c-sel" id="acWhy">
+      ${CANCEL_REASONS.map(r => `<option>${esc(r)}</option>`).join("")}
+    </select>
+    <div class="ac-c-acts">
+      <button class="btn btn-ghost" data-cancelno="1">Keep the order</button>
+      <button class="btn btn-dark ac-c-go" data-cancelyes="${esc(o.id)}">Yes, cancel it</button>
+    </div>
+  </div>`;
+}
+
+async function doCancel(id){
+  const why = ($("#acWhy") && $("#acWhy").value) || "";
+  const btn = $(".ac-c-go");
+  if(btn){ btn.disabled = true; btn.textContent = "Cancelling…"; }
+  try{
+    await SB.rpc("cancel_order", {p_order: id, p_reason: why});
+    cancelling = null;
+    acctOrders = null;                       /* re-read, so the status is the server's */
+    acctNotifs = null;
+    toast("Order cancelled");
+    paintAcct();
+    loadAcctData();
+  }catch(err){
+    cancelling = null;
+    paintAcct();
+    note(err.message || "Could not cancel it just now.");
+  }
 }
 
 function wishCard(id){
@@ -215,9 +294,11 @@ function acctBody(){
     .reduce((s, o) => s + (o.total || 0), 0);
   const nOrders = (acctOrders || []).filter(o => o.status !== "cancelled").length;
 
+  const unread = (acctNotifs || []).filter(n => !n.read_at).length;
+
   const head = `
     <div class="ac-who">
-      <span class="ac-av">${esc((nm || (u && u.email) || "?").trim().charAt(0).toUpperCase())}</span>
+      ${avatarHtml("ac-av")}
       <div>
         <b>${esc(nm || "Your account")}</b>
         <span>${esc(u ? u.email : "")}</span>
@@ -231,14 +312,33 @@ function acctBody(){
       <div><b>${wish.length}</b><span>saved</span></div>
     </div>
     ${acctNoteHtml()}
-    <div class="ac-tabs ac-tabs-3" role="tablist">
+    <div class="ac-tabs ac-tabs-3 ac-tabs-scroll" role="tablist">
       <button role="tab" data-tab="orders"   aria-selected="${acctTab === "orders"}">Orders</button>
+      <button role="tab" data-tab="updates"  aria-selected="${acctTab === "updates"}">Updates${
+        unread ? ` <i class="dot">${unread}</i>` : ""}</button>
       <button role="tab" data-tab="basket"   aria-selected="${acctTab === "basket"}">Basket${
         nItems() ? ` <i>${nItems()}</i>` : ""}</button>
       <button role="tab" data-tab="wishlist" aria-selected="${acctTab === "wishlist"}">Saved${
         wish.length ? ` <i>${wish.length}</i>` : ""}</button>
       <button role="tab" data-tab="details"  aria-selected="${acctTab === "details"}">Details</button>
     </div>`;
+
+  if(acctTab === "updates"){
+    if(!acctNotifs) return head + `<div class="ac-pane"><p class="ac-empty">Loading…</p></div>`;
+    if(!acctNotifs.length){
+      return head + `<div class="ac-pane"><p class="ac-empty">Nothing yet. When an order
+        is confirmed, sent or delivered, it is written here — and the tracking
+        id comes with it.</p></div>`;
+    }
+    return head + `<div class="ac-pane">${acctNotifs.map(n => `
+      <div class="ac-notif${n.read_at ? "" : " unread"}">
+        <div class="ac-n-top">
+          <b>${esc(n.title)}</b>
+          <span>${esc(agoText(n.created_at))}</span>
+        </div>
+        ${n.body ? `<p>${esc(n.body)}</p>` : ""}
+      </div>`).join("")}</div>`;
+  }
 
   if(acctTab === "basket"){
     if(!cart.length){
@@ -326,15 +426,42 @@ function paintAcct(){
   const body = $("#acctBody");
   if(!body) return;
   body.innerHTML = signedIn() ? acctBody() : acctSignedOut();
+  if(signedIn()) loadAcctData();
+}
 
-  if(signedIn() && acctTab === "orders" && !acctOrders){
+/* Orders and updates are fetched once per opening of the sheet and then
+   kept, so switching tabs is instant. Anything that changes them — placing
+   an order, cancelling one — clears the copy rather than patching it, so
+   what is shown is always what the server says. */
+function loadAcctData(){
+  if(!signedIn()) return;
+
+  if(acctTab === "orders" && !acctOrders){
+    acctOrders = [];                                  /* stops a second fetch */
     loadOrders().then(rows => {
       acctOrders = Array.isArray(rows) ? rows : [];
       if(isOn("#acctModal") && signedIn()) paintAcct();
     }).catch(() => {
+      acctOrders = null;
       const box = $("#acOrders");
       if(box) box.innerHTML = `<p class="ac-empty">Could not load your orders just now.</p>`;
     });
+  }
+
+  if(acctTab === "updates" && !acctNotifs){
+    acctNotifs = [];
+    loadNotifs().then(rows => {
+      acctNotifs = Array.isArray(rows) ? rows : [];
+      if(isOn("#acctModal") && signedIn()) paintAcct();
+      /* opening the tab is reading them */
+      const unread = acctNotifs.filter(n => !n.read_at).map(n => n.id);
+      if(unread.length){
+        SB.rpc("mark_notifications_read", {p_ids: unread})
+          .then(() => { acctNotifs.forEach(n => { n.read_at = n.read_at || new Date().toISOString(); });
+                        paintAcctBtn(); })
+          .catch(() => {});
+      }
+    }).catch(() => { acctNotifs = null; });
   }
 }
 
@@ -414,6 +541,12 @@ $("#acctBody").addEventListener("click", async e => {
     }
     return;
   }
+
+  const cx = e.target.closest("[data-cancel]");
+  if(cx){ cancelling = cx.dataset.cancel; paintAcct(); return; }
+  if(e.target.closest("[data-cancelno]")){ cancelling = null; paintAcct(); return; }
+  const cy = e.target.closest("[data-cancelyes]");
+  if(cy){ doCancel(cy.dataset.cancelyes); return; }
 
   const copy = e.target.closest("[data-copy]");
   if(copy){
