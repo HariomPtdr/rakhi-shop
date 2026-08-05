@@ -53,6 +53,9 @@ function paintHearts(){
 function toggleWish(id){
   const p = catalogue(id);
   if(!p) return;
+  /* A wishlist that only lives on one phone is a wishlist waiting to be
+     lost, so this asks for an account the same way the basket does. */
+  if(mustSignIn("save this rakhi")) return;
   const on = !wished(id);
   wish = on ? [id].concat(wish.filter(x => x !== id)) : wish.filter(x => x !== id);
   saveWish();

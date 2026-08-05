@@ -160,6 +160,9 @@ $("#pvIn").addEventListener("click", e=>{
   const add = e.target.closest("#pvAdd");
   if(add){
     const p = pvProduct(); if(!p) return;   /* a stale tap while the page closes */
+    /* this page fills the basket itself rather than going through addItem(),
+       because it adds pvQty at once — so it asks for the sign-in itself too */
+    if(mustSignIn("add this to your basket")) return;
     lastBtn = add;
     const row = cart.find(r => r.id===p.id && !r.note);
     if(row) row.qty = Math.min(MAX_QTY, row.qty + pvQty);

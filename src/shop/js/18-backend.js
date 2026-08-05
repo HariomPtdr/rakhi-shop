@@ -24,6 +24,25 @@ let cartFromServer = false;  // true while the merge is writing into `cart`
 
 const signedIn = () => SB.signedIn();
 
+/* ── the shop is for people with an account ──
+   Adding to the basket and saving a rakhi both ask for a sign-in first. One
+   function decides it so the grid, the rail, the product page and the heart
+   can never disagree, and so that turning it off later is one line.
+
+   With no database configured there is nothing to sign in to, and the shop
+   behaves as it always did — the basket lives on the phone. */
+function mustSignIn(action){
+  if(!SB_ON || signedIn()) return false;
+  acctView = "in";
+  /* openAcct() clears any note on the way in — so the reason goes on
+     afterwards, or the sheet appears with no explanation of why it did */
+  openAcct();
+  /* the calm variant, not the red one — nothing has gone wrong here */
+  note("Sign in to " + action + ". It takes a moment, and everything you pick "
+     + "then follows you to any phone.", true);
+  return true;
+}
+
 /* ── the catalogue, if the database has one ─────────────────
    Falls back to the list written into 03-catalogue.js, so a
    Supabase outage shows a full shop rather than an empty one. */

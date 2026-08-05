@@ -3,24 +3,12 @@
       same look, none of the filter cost. ── */
 .bg{position:fixed; inset:0; z-index:-2; pointer-events:none}
 
-/* the page's own rakhi: a thread across the top with a bead
-   that travels along it as you scroll */
-.thread{position:fixed; top:0; left:0; right:0; height:3px; z-index:60; pointer-events:none; background:rgba(20,18,16,.06)}
-.thread-fill{
-  height:100%; width:0; position:relative;
-  background:linear-gradient(90deg, var(--teal), var(--tan) 62%, var(--rose));
-}
-/* Chrome/Safari can tie an animation straight to scroll position — the bar
-   then costs the main thread nothing at all. JS below is the fallback. */
-@supports (animation-timeline: scroll()){
-  .thread-fill{animation:fillbar linear both; animation-timeline:scroll(root block)}
-  @keyframes fillbar{from{width:0} to{width:100%}}
-}
-.thread-bead{
-  position:absolute; right:-6px; top:50%; width:12px; height:12px; margin-top:-6px; border-radius:50%;
-  background:radial-gradient(circle at 34% 28%, #fff, #FBF6EC 42%, #DCCDA9);
-  box-shadow:0 0 0 1px rgba(20,18,16,.2), 0 2px 7px rgba(20,18,16,.28);
-}
+/* The scroll-progress thread that used to run across the top of the page has
+   been removed. It was decoration on a page nobody reads to the end in one
+   go, and on a phone it sat in the same three pixels as the notch and the
+   sticky header — three fixed things competing for the top of a small
+   screen. The bead and the JS that drove it are gone with it. */
+
 /* festive washes: haldi, sindoor, resham thread.
    Kept out of the middle of the screen so headlines stay clean. */
 .bg::before{

@@ -38,3 +38,49 @@
 }
 .cart-n.bump{animation:bump .34s var(--ease)}
 @keyframes bump{0%{transform:scale(.6)}55%{transform:scale(1.32)}100%{transform:scale(1)}}
+
+/* ── the menu button ──
+   Shown exactly when the five links are not: below 1000px. Above it, the
+   links are in the bar and this would be a second way to the same place. */
+.nav-burger{
+  display:grid; place-items:center; flex:none; z-index:2;
+  width:42px; height:42px; border:0; cursor:pointer; border-radius:50%;
+  background:rgba(255,255,255,.55); color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:background .25s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-burger:hover{background:#fffdf8}
+@media (min-width:1000px){.nav-burger{display:none}}
+
+/* ── no cart button on a phone ──
+   The sticky bar along the bottom is the cart there, and it slides up the
+   moment something goes into it — two cart controls on a 390px header is
+   one too many. It comes back at 720px, which is exactly where that bottom
+   bar stops being drawn, so there is never a screen with neither.
+
+   Hidden rather than removed: the count inside it is still painted on every
+   change, and the header has no room for a special case. */
+@media (max-width:719px){
+  .cart-btn{display:none}
+}
+@media (max-width:360px){
+  .brand-n{font-size:12px; letter-spacing:.05em}
+  .nav-burger{width:38px; height:38px}
+  .nav-in{gap:7px; padding:7px 8px 7px 11px}
+}
+
+/* ── the menu itself ── */
+.nav-sheet{display:grid; padding:6px 0 4px}
+.nav-sheet a{
+  display:block; padding:15px 20px; text-decoration:none;
+  border-bottom:1px solid var(--line); transition:background .2s var(--ease);
+}
+.nav-sheet a:last-child{border-bottom:0}
+.nav-sheet a:active{background:rgba(255,255,255,.6)}
+@media (hover:hover){.nav-sheet a:hover{background:rgba(255,255,255,.6)}}
+.nav-sheet b{
+  display:block; font-family:var(--head); font-size:15px; font-weight:600;
+  letter-spacing:.01em;
+}
+.nav-sheet span{display:block; margin-top:2px; font-size:12.5px; color:var(--ink-faint)}

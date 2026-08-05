@@ -112,34 +112,12 @@ new IntersectionObserver(es=>{
   es.forEach(en=>document.body.classList.toggle("lit", en.isIntersecting || scrollY > 400));
 },{rootMargin:"-30% 0px"}).observe(collEl);
 
-/* the bead travels the thread as you scroll — one rAF, transform only */
-const fill=$("#threadFill");
-/* if CSS is driving the bar, skip the JS path entirely */
-const cssScroll = window.CSS && CSS.supports && CSS.supports("animation-timeline","scroll()");
-let ticking=false, maxScroll=0;
-function measure(){ if(!cssScroll) maxScroll = document.documentElement.scrollHeight - innerHeight; }
-function onScroll(){
-  if(cssScroll || ticking) return;
-  ticking=true;
-  requestAnimationFrame(()=>{
-    fill.style.width=(maxScroll>0 ? Math.min(100, (scrollY/maxScroll)*100) : 0)+"%";
-    ticking=false;
-  });
-}
-if(!cssScroll){
-  addEventListener("scroll", onScroll, {passive:true});
-  addEventListener("resize", ()=>{ measure(); onScroll(); }, {passive:true});
-}
-/* the page grows as sections reveal, so re-measure when it settles */
-/* same reasoning: measure the page after the first paint, not during it */
-requestAnimationFrame(()=>requestAnimationFrame(()=>{
-  startPetals();
-  if(!cssScroll){
-    measure(); onScroll();
-    new ResizeObserver(()=>{ measure(); onScroll(); }).observe(document.body);
-    addEventListener("load", ()=>{ measure(); onScroll(); });
-  }
-}));
+/* The scroll-progress bar is gone, and with it a scroll listener, a resize
+   listener, a ResizeObserver on the body and a rAF on every scroll frame.
+   Nothing on a phone is cheaper than work that is not done. */
+
+/* measure the page after the first paint, not during it */
+requestAnimationFrame(()=>requestAnimationFrame(startPetals));
 
 /* gold glow follows the pointer across a card (pointer devices only) */
 if(matchMedia("(hover:hover)").matches)

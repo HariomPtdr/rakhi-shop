@@ -41,7 +41,8 @@ const isOn = sel => $(sel).classList.contains("on");
    — anyOpen:   is anything up at all? decides only the body scroll lock.
    The product page is not a sheet. It holds the lock but must never keep
    the scrim alive, or closing the zoom over it strands the dim layer. */
-const sheetOpen = () => isOn("#drawer") || isOn("#billModal") || isOn("#lb") || isOn("#acctModal");
+const sheetOpen = () => isOn("#drawer") || isOn("#billModal") || isOn("#lb")
+                     || isOn("#acctModal") || isOn("#navModal");
 const anyOpen = () => sheetOpen()
                    || (typeof productOpen === "function" && productOpen());
 
@@ -62,6 +63,7 @@ addEventListener("popstate", ()=>{
   sheetHist = false;                 // the entry is already gone
   $("#lb").classList.remove("on");
   $("#acctModal").classList.remove("on");
+  $("#navModal").classList.remove("on");
   $("#billModal").classList.remove("on");
   $("#drawer").classList.remove("on");
   $("#scrim").classList.remove("on");
@@ -125,9 +127,37 @@ $("#pvCart").onclick=openCart;
 function closeTop(){
   if(isOn("#lb"))        return closeLb();
   if(isOn("#acctModal")) return closeAcct();
+  if(isOn("#navModal"))  return closeNav();
   if(isOn("#billModal")) return closeBill();
   closeCart();
 }
+
+/* ── the menu ──
+   The header's five links do not fit on a phone, so they live here instead.
+   Tapping one closes the sheet first and then jumps, or the browser scrolls
+   the page underneath a sheet that is still covering it. */
+function openNav(){
+  openSheet("#navModal");
+  $("#navOpen").setAttribute("aria-expanded", "true");
+}
+function closeNav(fromBack){
+  if(!isOn("#navModal")) return;
+  $("#navModal").classList.remove("on");
+  $("#navOpen").setAttribute("aria-expanded", "false");
+  afterClose(fromBack);
+}
+$("#navOpen").onclick  = openNav;
+$("#navClose").onclick = () => closeNav();
+$("#navModal").addEventListener("click", e => { if(e.target.id === "navModal") closeNav(); });
+$("#navSheet").addEventListener("click", e => {
+  const a = e.target.closest("a[href^='#']");
+  if(!a) return;
+  e.preventDefault();
+  const target = document.querySelector(a.getAttribute("href"));
+  closeNav();
+  /* after the scroll lock is released, not before */
+  requestAnimationFrame(() => { if(target) target.scrollIntoView({behavior:"smooth"}); });
+});
 $("#scrim").onclick = closeTop;
 document.addEventListener("keydown", e=>{
   if(e.key !== "Escape") return;
