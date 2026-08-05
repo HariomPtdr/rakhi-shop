@@ -254,23 +254,25 @@ const SB = (function(){
       return api.user();
     },
 
-    /* Which providers the project actually has switched on. Asked once and
-       remembered for the tab, so a Google button is only ever shown when
-       pressing it will work. */
+    /* Which providers the project actually has switched on, so a Google
+       button is only ever shown when pressing it will work.
+
+       Asked once per page load and no longer than that. It used to be kept
+       in sessionStorage, which was wrong twice over: a tab opened before
+       Google was switched on went on hiding the button for as long as it
+       stayed open, and one failed request cached the failure and hid the
+       button for good. A failure is not remembered either — the next call
+       asks again. It is one small request on a screen that is already
+       waiting for the person to type. */
     async providers(){
       if(providerCache) return providerCache;
       try{
-        const cached = sessionStorage.getItem("rag_providers");
-        if(cached) return (providerCache = JSON.parse(cached));
-      }catch(e){}
-      try{
         const s = await call("/auth/v1/settings", {auth:false, timeout:6000});
         providerCache = (s && s.external) || {};
+        return providerCache;
       }catch(e){
-        providerCache = {};
+        return {};
       }
-      try{ sessionStorage.setItem("rag_providers", JSON.stringify(providerCache)); }catch(e){}
-      return providerCache;
     },
     hasProvider: name => !!(providerCache && providerCache[name]),
 
