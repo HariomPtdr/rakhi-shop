@@ -1,0 +1,21 @@
+/* ══════════════════════════════════════════════════════════
+   ⚙️  SHOP SETTINGS — edit only this block
+   ══════════════════════════════════════════════════════════ */
+const SHOP = {
+  whatsapp:      "919319848309",      // 91 + the 10-digit number, no + or spaces
+  upi:           "rayartgallery@upi", // printed on the bill
+  instagram:     "ray_art_24",        // handle without the @. Leave "" to hide the button.
+  email:         "patidarh178@gmail.com",  // shown in the footer. Leave "" to hide it.
+  /* Dates live here once, as ISO. The text on screen is worked out from
+     them, so "28 Aug" can never drift out of step with 2026-08-28. */
+  festivalDate:  "2026-08-28",        // Raksha Bandhan — confirm from the panchang
+  orderByDate:   "2026-08-21",        // last date for normal delivery
+  freeShipAbove: 499,
+  shipFlat:      49,
+  billPrefix:    "RAG",
+  /* The hero rail slides on its own every 5.2s. It stops permanently as soon
+     as anyone swipes, taps an arrow or a dot, and never moves at all for
+     visitors who have "reduce motion" switched on. Set to false to have it
+     sit still and wait to be swiped. */
+  heroSlide:     true
+};

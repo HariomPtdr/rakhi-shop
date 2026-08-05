@@ -1,0 +1,70 @@
+/* ── marquee ── */
+.mq{
+  margin-top:clamp(30px,7vw,80px); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  padding:15px 0; overflow:hidden; display:flex; user-select:none;
+}
+.mq-t{
+  display:flex; flex:none; gap:34px; padding-right:34px; align-items:center;
+  font-family:var(--head); font-size:19px; letter-spacing:2.4px; text-transform:uppercase;
+  color:var(--ink-faint); white-space:nowrap; animation:slide 52s linear infinite;
+}
+.mq-t b{color:var(--tan-deep); font-weight:400}
+.mq:hover .mq-t{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-100%)}}
+
+/* ── filter row ── */
+.tools{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:22px 0 18px; padding-bottom:14px; border-bottom:1px solid var(--line)}
+@media (min-width:640px){.tools{gap:12px; margin:34px 0 26px; padding-bottom:20px}}
+.chips{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; padding:2px 0}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:none; font-family:var(--body); font-size:11.5px; font-weight:700; letter-spacing:1.1px;
+  text-transform:uppercase; padding:11px 17px; border-radius:var(--r-full); cursor:pointer;
+  min-height:42px; display:inline-flex; align-items:center;
+  background:rgba(255,255,255,.62); box-shadow:inset 0 0 0 1px var(--line);
+  color:var(--ink-soft); border:0; white-space:nowrap; transition:all .28s var(--ease);
+}
+.chip:hover{color:var(--ink); box-shadow:inset 0 0 0 1px var(--line-2)}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); box-shadow:none}
+.tools-r{display:flex; align-items:center; gap:9px; width:100%}
+.tools-r .sortwrap{margin-left:auto}
+@media (min-width:640px){.tools-r{margin-left:auto; width:auto} .tools-r .sortwrap{margin-left:0}}
+/* A native <select> draws its list with the operating system, and that list
+   cannot be styled — it appeared as a grey menu with a blue highlight, nothing
+   like the rest of the page. This is a real listbox instead. */
+.sortwrap{position:relative}
+.sortbtn{
+  display:inline-flex; align-items:center; gap:8px; min-height:40px;
+  font-family:var(--body); font-size:13px; font-weight:600; letter-spacing:.3px;
+  padding:10px 14px; border:0; border-radius:var(--r-full);
+  box-shadow:inset 0 0 0 1px var(--line-2); background:rgba(255,253,248,.8);
+  color:var(--ink); cursor:pointer; white-space:nowrap;
+}
+.sortbtn svg{transition:transform .28s var(--ease); color:var(--ink-faint)}
+.sortbtn[aria-expanded="true"]{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.sortbtn[aria-expanded="true"] svg{transform:rotate(180deg)}
+@media (hover:hover){.sortbtn:hover{box-shadow:inset 0 0 0 1px var(--ink-faint)}}
+
+.sortmenu{
+  position:absolute; z-index:30; top:calc(100% + 7px); right:0; min-width:198px;
+  list-style:none; margin:0; padding:6px;
+  background:var(--bg); border-radius:var(--r-lg);
+  box-shadow:inset 0 0 0 1px var(--line-2), var(--elev-3);
+  animation:sortIn .18s var(--ease);
+}
+@keyframes sortIn{from{opacity:0; transform:translateY(-6px)}to{opacity:1; transform:none}}
+.sortmenu li{
+  display:flex; align-items:center; gap:9px; padding:11px 12px;
+  border-radius:var(--r-sm); font-size:14px; color:var(--ink-soft);
+  cursor:pointer; min-height:44px; white-space:nowrap;
+}
+.sortmenu li::before{                 /* the tick on the chosen one */
+  content:""; width:14px; height:8px; flex:none; opacity:0;
+  border-left:2px solid var(--ink); border-bottom:2px solid var(--ink);
+  transform:rotate(-45deg) translateY(-2px);
+}
+.sortmenu li[aria-selected="true"]{color:var(--ink); font-weight:700}
+.sortmenu li[aria-selected="true"]::before{opacity:1}
+.sortmenu li.hot{background:rgba(217,184,119,.2)}
+@media (hover:hover){.sortmenu li:hover{background:rgba(217,184,119,.2)}}
+.count{font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint)}

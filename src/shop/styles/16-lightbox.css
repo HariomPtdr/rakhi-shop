@@ -1,0 +1,22 @@
+/* ── lightbox ── */
+.lb{position:fixed; inset:0; z-index:70; display:none; place-items:center; padding:26px; background:rgba(245,242,236,.94); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px)}
+.lb.on{display:grid}
+.lb-in{text-align:center; max-width:520px}
+.lb img{max-height:68vh; margin:0 auto; border-radius:var(--r-lg); box-shadow:var(--elev-3)}
+.lb svg,.lb img.art{width:min(64vw,300px); height:auto; margin:0 auto}
+.lb-n{font-family:var(--head); font-size:26px; letter-spacing:1px; text-transform:uppercase; margin-top:20px}
+.lb-p{font-family:var(--display); font-size:30px; margin-top:4px}
+.lb-x{position:absolute; top:20px; right:20px; width:42px; height:42px; border-radius:50%; border:0; cursor:pointer; background:var(--ink); color:var(--bg); font-size:17px}
+
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translate(-50%,18px); z-index:80;
+  background:var(--ink); color:var(--bg); padding:13px 22px; border-radius:var(--r-full);
+  font-family:var(--head); font-size:10.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
+  opacity:0; pointer-events:none; transition:all .35s var(--ease); box-shadow:var(--elev-3);
+  max-width:88vw; text-align:center;
+}
+.toast.on{opacity:1; transform:translate(-50%,0)}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+.rv{opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease)}
+.rv.in{opacity:1; transform:none}

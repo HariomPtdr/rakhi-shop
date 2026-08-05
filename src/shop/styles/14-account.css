@@ -1,0 +1,164 @@
+/* ══════════════════════════════════════════════════════════
+   ACCOUNT
+   Signing in exists for one reason: so a basket and a list of
+   past orders survive the phone being closed. The sheet says
+   that plainly instead of selling a "membership".
+   ══════════════════════════════════════════════════════════ */
+.ac-lead{font-size:14px; color:var(--ink-soft); margin-bottom:18px; max-width:46ch}
+.ac-tabs{display:flex; gap:6px; margin-bottom:18px}
+.ac-tabs button{
+  flex:1; border:0; cursor:pointer; padding:11px 8px; border-radius:var(--r-full);
+  font-family:var(--body); font-weight:600; font-size:11px; letter-spacing:1px; text-transform:uppercase;
+  background:rgba(255,255,255,.5); color:var(--ink-soft); box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:background .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.ac-tabs button[aria-selected="true"]{background:var(--ink); color:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink)}
+.ac-msg{
+  margin:0 0 15px; padding:11px 13px; border-radius:var(--r-md); font-size:13px; line-height:1.5;
+  background:rgba(181,56,74,.09); color:#8A2033; box-shadow:inset 0 0 0 1px rgba(181,56,74,.22);
+}
+.ac-msg.good{background:rgba(27,132,151,.1); color:#0E5F6E; box-shadow:inset 0 0 0 1px rgba(27,132,151,.24)}
+.ac-who{
+  display:flex; align-items:center; gap:12px; padding-bottom:16px; margin-bottom:18px;
+  border-bottom:1px solid var(--line);
+}
+.ac-av{
+  width:44px; height:44px; border-radius:50%; flex:none; display:grid; place-items:center;
+  background:var(--ink); color:var(--bg); font-family:var(--body); font-weight:700; font-size:17px;
+}
+/* scoped to the text block: an unscoped `.ac-who span` also matched the
+   avatar and quietly shrank the initial inside it */
+.ac-who div{min-width:0}
+.ac-who div b{display:block; font-family:var(--head); font-size:14px; font-weight:600}
+.ac-who div span{display:block; font-size:12.5px; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis}
+.ac-k{
+  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint); margin:22px 0 10px;
+}
+.ac-k:first-child{margin-top:0}
+.ac-orders{display:grid; gap:10px}
+.ac-order{
+  padding:13px 14px; border-radius:var(--r-md);
+  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
+}
+.ac-o-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.ac-o-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.3px}
+.ac-o-d{font-size:11.5px; color:var(--ink-faint)}
+.ac-o-t{margin-left:auto; font-family:var(--display); font-size:19px}
+.ac-o-l{margin-top:7px; font-size:12.5px; color:var(--ink-soft); line-height:1.55}
+.ac-chip{
+  display:inline-block; font-family:var(--head); font-size:8.5px; font-weight:600;
+  letter-spacing:.09em; text-transform:uppercase; padding:4px 9px; border-radius:var(--r-full);
+  background:rgba(217,184,119,.28); color:var(--tan-deep);
+}
+.ac-chip.ok{background:rgba(27,132,151,.16); color:#0E5F6E}
+.ac-chip.out{background:rgba(20,18,16,.85); color:var(--bg)}
+.ac-chip.no{background:rgba(181,56,74,.14); color:#8A2033}
+.ac-empty{font-size:13.5px; color:var(--ink-faint); line-height:1.6}
+.ac-acts{display:grid; gap:9px; margin-top:22px}
+@media (min-width:520px){.ac-acts.two{grid-template-columns:1fr auto}}
+.ac-fine{font-size:12px; color:var(--ink-faint); line-height:1.6; margin-top:16px}
+.ac-mid{text-align:center; margin-top:12px}
+.ac-fine a{color:var(--ink-soft); text-underline-offset:3px}
+
+/* ── the three numbers worth knowing about yourself ── */
+.ac-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px}
+.ac-stats div{
+  text-align:center; padding:11px 6px; border-radius:var(--r-md);
+  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
+}
+.ac-stats b{display:block; font-family:var(--display); font-size:19px; line-height:1.15}
+.ac-stats span{
+  display:block; margin-top:3px; font-family:var(--head); font-size:9px; font-weight:600;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint);
+}
+.ac-tabs-3 button{font-size:10px; letter-spacing:.7px}
+.ac-pane{display:grid; gap:10px}
+.ac-admin{
+  display:block; margin-bottom:14px; padding:11px 13px; border-radius:var(--r-md);
+  font-family:var(--head); font-size:12.5px; font-weight:600; text-decoration:none;
+  background:var(--ink); color:var(--bg);
+}
+
+/* ── where an order has got to ──
+   Four beads on one thread, the same idea as the ordering steps on the
+   home page, so "shipped" is a place on a line rather than a word. */
+.ac-track{display:flex; margin:11px 0 2px; gap:2px}
+.ac-track.cancelled{margin-top:11px}
+.ac-step{flex:1; text-align:center; position:relative; min-width:0}
+.ac-step i{
+  display:block; width:9px; height:9px; border-radius:50%; margin:0 auto 6px;
+  background:var(--line-2); position:relative; z-index:1;
+}
+.ac-step::before{
+  content:""; position:absolute; top:4px; left:-50%; width:100%; height:1.5px;
+  background:var(--line-2);
+}
+.ac-step:first-child::before{display:none}
+.ac-step.done i{background:var(--teal)}
+.ac-step.done::before{background:var(--teal)}
+.ac-step.now i{box-shadow:0 0 0 4px rgba(27,132,151,.16)}
+.ac-step b{
+  font-family:var(--head); font-size:8.5px; font-weight:600; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; display:block;
+}
+.ac-step.done b{color:var(--ink-soft)}
+.ac-o-trk{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:11px;
+  padding:8px 10px; border-radius:var(--r-sm); background:rgba(27,132,151,.07);
+}
+.ac-o-trk span{font-family:var(--head); font-size:10px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint)}
+.ac-o-trk b{font-family:var(--mono); font-size:12.5px; letter-spacing:.4px}
+.ac-copy{
+  margin-left:auto; border:0; background:none; cursor:pointer; padding:4px 2px;
+  font-family:var(--head); font-size:11px; font-weight:600; color:var(--teal);
+}
+.ac-o-foot{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:11px;
+  padding-top:10px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink-faint);
+}
+.ac-ask{margin-left:auto; color:var(--ink-soft); font-size:12px}
+
+/* ── the wishlist, laid out like the cart it is one tap from ── */
+.ac-wish{
+  display:flex; gap:12px; padding:11px; border-radius:var(--r-md);
+  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
+}
+.ac-w-i{width:64px; height:64px; flex:none; border-radius:var(--r-sm); overflow:hidden; background:var(--panel)}
+.ac-w-i img, .ac-w-i svg{width:100%; height:100%; object-fit:cover; display:block}
+.ac-w-m{min-width:0; flex:1}
+.ac-w-n{font-family:var(--head); font-size:13.5px; font-weight:600; line-height:1.35}
+.ac-w-p{margin-top:2px; font-family:var(--display); font-size:16px}
+.ac-w-out{
+  font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.08em;
+  text-transform:uppercase; color:#8A2033; vertical-align:middle; margin-left:5px;
+}
+.ac-w-r{display:flex; align-items:center; gap:7px; margin-top:9px; flex-wrap:wrap}
+.ac-w-r .btn{padding:7px 13px; font-size:11.5px; min-height:36px}
+.ac-w-x{
+  border:0; background:none; cursor:pointer; padding:6px 2px; margin-left:auto;
+  font-family:var(--head); font-size:11px; font-weight:600; color:var(--ink-faint);
+}
+.ac-w-x:hover{color:#8A2033}
+
+/* ── continue with Google ──
+   Google's own mark on a white surface, as their brand terms require. It is
+   only ever drawn when the project has the provider switched on, so it cannot
+   lead anywhere broken. */
+.btn-google{
+  display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+  min-height:46px; padding:11px 16px; border:0; cursor:pointer; border-radius:var(--r-full);
+  font-family:var(--head); font-size:13.5px; font-weight:600; color:var(--ink);
+  background:#fff; box-shadow:inset 0 0 0 1px var(--line-2), 0 1px 2px rgba(20,18,16,.06);
+  transition:box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+@media (hover:hover){.btn-google:hover{box-shadow:inset 0 0 0 1px var(--line-2), var(--elev-2)}}
+.btn-google:active{transform:scale(.99)}
+.btn-google svg{flex:none}
+.ac-or{
+  display:flex; align-items:center; gap:12px; margin:16px 0;
+  font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-faint);
+}
+.ac-or::before, .ac-or::after{content:""; flex:1; height:1px; background:var(--line)}

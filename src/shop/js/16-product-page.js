@@ -1,0 +1,183 @@
+/* ══════════════════════════════════════════════════════════
+   PRODUCT PAGE — a hash route, not a separate file.
+
+   #p/nazar opens the Nazar rakhi. Every rakhi gets a link you can
+   send to one customer on WhatsApp, the back button behaves, and
+   the page still ships as one file with no extra requests.
+
+   A listed rakhi is shown exactly as it is made — no colour picker
+   here. Choosing your own thread and beads is the made-to-order
+   route on the home page, over WhatsApp.
+   ══════════════════════════════════════════════════════════ */
+const pvEl = $("#pv");
+let pvId = null, pvQty = 1;
+
+const pvProduct = () => PRODUCTS.find(p => p.id === pvId);
+const productOpen = () => pvEl.classList.contains("on");
+
+function pvArt(p){
+  return `<img class="art" src="${asSrc(art(p.art, true))}" alt="Drawing of ${esc(p.name)}">`;
+}
+function pvShot(p){
+  if(p.img) return {html:`<img src="${p.img}" alt="${esc(p.name)}" data-fb="${p.id}">`, tag:"Photo", real:true};
+  return {html: pvArt(p), tag:"Drawing", real:false};
+}
+
+function paintProduct(){
+  const p = pvProduct(); if(!p) return;
+  const shot = pvShot(p), days = daysUntil(SHOP.festivalDate);
+  $("#pvCrumb").textContent = `Collection / № ${IDX.get(p.id)}`;
+
+  $("#pvIn").innerHTML = `
+    <div class="pv-top">
+    <div class="pv-shot">
+      <span class="pv-glow" aria-hidden="true"></span>
+      <button class="pv-frame" id="pvZoom" aria-label="View ${esc(p.name)} larger">
+        ${shot.html}
+        <span class="pv-badge ${shot.real ? "real" : "art"}">${shot.tag}</span>
+      </button>
+      <div class="pv-zoomhint" aria-hidden="true"></div>
+      ${heartBtn(p.id, true)}
+    </div>
+
+    <div class="pv-body">
+      <div class="pv-no">№ ${IDX.get(p.id)}</div>
+      <h1 class="pv-name">${esc(p.name)}</h1>
+      <div class="pv-price"><b>${inr(p.price)}</b><span>per piece</span></div>
+      <p class="pv-desc">${esc(p.desc)}</p>
+
+      <div class="pv-rule"></div>
+
+      <div class="pv-buy">
+        <span class="stp">
+          <button type="button" id="pvDown" aria-label="One less">−</button>
+          <span id="pvQty">${pvQty}</span>
+          <button type="button" id="pvUp" aria-label="One more">+</button>
+        </span>
+        <button class="btn btn-dark" id="pvAdd">Add to cart</button>
+      </div>
+      <div class="pv-ask">
+        <a class="btn btn-ghost btn-full" id="pvAsk" href="#" target="_blank" rel="noopener">
+          <svg class="wa" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
+          Ask about this on WhatsApp</a>
+      </div>
+
+      <ul class="pv-promise">
+        <li>You approve a photo before we ship it</li>
+        <li>Pay by UPI or on delivery — nothing upfront</li>
+        <li>Made to order by hand, so no two are identical</li>
+      </ul>
+      <div class="pv-facts">
+        <span class="tc">Free over <b>₹499</b></span>
+        <span class="tc">Ships <b>all India</b></span>
+        ${days > 1 ? `<span class="tc"><b>${days} days</b> to Raksha Bandhan</span>` : ""}
+      </div>
+    </div>
+    </div>
+
+    <div class="pv-more">
+      <div class="pv-k">More rakhis</div>
+      <div class="rail-wrap"><div class="rail" id="pvRail" role="group" aria-label="More rakhis"></div></div>
+    </div>`;
+
+  $("#pvRail").innerHTML = PRODUCTS.filter(x=>x.id!==p.id).slice(0,6).map(x=>`
+    <article class="rc">
+      <div class="rc-shot">
+        ${thumb(x)}<span class="rc-tag ${x.img?"real":"art"}">${x.img?"Photo":"Drawing"}</span>
+        ${heartBtn(x.id)}
+      </div>
+      <h3 class="rc-n">${esc(x.name)}</h3>
+      <div class="rc-b"><span class="rc-p">${inr(x.price)}</span>
+        <button class="btn btn-dark" data-go="${x.id}">View</button></div>
+    </article>`).join("");
+
+  $("#pvAsk").href = wa(
+`Hello Ray Art Gallery, I am asking about № ${IDX.get(p.id)} — ${p.name} (${inr(p.price)}).`
++ `\n\nHow many days will it take?`);
+}
+
+function openProduct(id, fromHash){
+  if(!PRODUCTS.some(x=>x.id===id)) return;
+  if(pvId !== id){ pvId = id; pvQty = 1; }
+  paintProduct();
+  pvEl.classList.add("on");
+  pvEl.setAttribute("aria-hidden","false");
+  document.body.classList.add("pv-on");
+  paintStill();                        /* drop the drift petals off the lifted canvas */
+  pvEl.scrollTop = 0;
+  lock();
+  if(!fromHash && location.hash !== "#p/"+id) location.hash = "p/"+id;
+  document.title = `${pvProduct().name} — Ray Art Gallery`;
+  track("view_product", id);
+}
+function hideProduct(){
+  pvEl.classList.remove("on");
+  pvEl.setAttribute("aria-hidden","true");
+  document.body.classList.remove("pv-on");
+  paintStill();                        /* and put them back behind the shop */
+  pvId = null;
+  /* leaving must never reveal a dim layer that belonged to a sheet
+     opened over this page */
+  if(!sheetOpen()){ $("#scrim").classList.remove("on"); unlock(); }
+  document.title = "Ray Art Gallery — Handmade Rakhi";
+}
+/* The browser's own back button should step back through the rakhis you
+   looked at — that is what people expect. The arrow in the bar means
+   something different: leave the product view entirely. So it drops the
+   hash instead of walking history backwards into the previous product. */
+function closeProduct(fromHash){
+  if(!productOpen()) return;
+  hideProduct();
+  if(!fromHash && location.hash){
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+}
+
+/* the hash is the single source of truth for which rakhi is showing */
+function syncRoute(){
+  const m = /^#p\/([\w-]+)$/.exec(location.hash);
+  if(m) openProduct(m[1], true);
+  else if(productOpen()) hideProduct();
+}
+addEventListener("hashchange", syncRoute);
+
+$("#pvBack").onclick = ()=>closeProduct();
+$("#pvShare").onclick = async ()=>{
+  const p = pvProduct(); if(!p) return;
+  const text = `${p.name} — ${inr(p.price)} · Ray Art Gallery\n${location.href}`;
+  if(navigator.share){
+    try{ await navigator.share({title:p.name, text}); return; }
+    catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+};
+
+/* one delegated handler for the whole product page */
+$("#pvIn").addEventListener("click", e=>{
+  if(e.target.closest("#pvUp")){   pvQty = Math.min(MAX_QTY, pvQty+1); $("#pvQty").textContent = pvQty; return; }
+  if(e.target.closest("#pvDown")){ pvQty = Math.max(1, pvQty-1);       $("#pvQty").textContent = pvQty; return; }
+
+  const add = e.target.closest("#pvAdd");
+  if(add){
+    const p = pvProduct(); if(!p) return;   /* a stale tap while the page closes */
+    lastBtn = add;
+    const row = cart.find(r => r.id===p.id && !r.note);
+    if(row) row.qty = Math.min(MAX_QTY, row.qty + pvQty);
+    else cart.push({id:p.id, name:p.name, price:p.price, qty:pvQty});
+    save(); paintCart(true); toast(`Added — ${p.name}`);
+    throwPetals(add);
+    return;
+  }
+  if(e.target.closest("#pvZoom")){
+    const p = pvProduct(); if(!p) return;
+    $("#lbIn").innerHTML =
+      (p.img ? `<img src="${p.img}" alt="${esc(p.name)}">` : pvArt(p)) +
+      `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}</div><div class="lb-p">${inr(p.price)}</div>`;
+    openSheet("#lb");
+    return;
+  }
+  const go = e.target.closest("[data-go]");
+  if(go) openProduct(go.dataset.go);
+});
+
+$$(".rv").forEach(el=>io.observe(el));

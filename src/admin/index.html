@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Ray Art Gallery</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FBF6EC">
+<!-- ══════════════════════════════════════════════════════════════
+     THE SELLER DASHBOARD
+
+     Orders as they arrive, the catalogue, the customers, and the
+     numbers underneath all three.
+
+     It is at a plain address on purpose. Being hard to find is not
+     security; every screen here asks the database, and the database
+     answers only an account whose profile row says role = 'admin'.
+     Anyone else who opens this page — signed in or not — is told no
+     by Postgres, not by JavaScript.
+     ══════════════════════════════════════════════════════════════ -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23141210'/%3E%3Ccircle cx='50' cy='50' r='27' fill='none' stroke='%23D9B877' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='9' fill='%231B8497'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../shared/styles/00-tokens.css">
+<link rel="stylesheet" href="styles/01-admin.css">
+</head>
+<body>
+
+<!-- ═══════════ the gate ═══════════ -->
+<div class="gate" id="gate" hidden>
+  <div class="gate-in">
+    <svg width="56" height="56" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="34" fill="none" stroke="#9C7620" stroke-width="7"/>
+      <circle cx="50" cy="50" r="11" fill="#1B8497"/>
+    </svg>
+    <h1>Ray Art Gallery</h1>
+    <p>The seller dashboard. Sign in with the account you made the shop's owner.</p>
+    <div id="gateMsg"></div>
+    <form id="gateForm" novalidate>
+      <div><label class="lab" for="gEmail">Email</label>
+        <input class="inp" type="email" id="gEmail" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>
+      <div id="gatePassRow"><label class="lab" for="gPass">Password</label>
+        <input class="inp" type="password" id="gPass" autocomplete="current-password" placeholder="Your password"></div>
+      <button class="btn" id="gGo" type="submit">Sign in</button>
+    </form>
+    <p class="fine" style="margin-top:14px"><a href="#" id="gForgot">Forgotten your password?</a></p>
+    <div id="gateGoogle"></div>
+    <p class="fine">This is the same account you use in the shop. If it says the
+       dashboard is not for this account, its role has not been set yet —
+       <b>supabase/03-seed.sql</b> has the one line that does it.</p>
+  </div>
+</div>
+
+<!-- ═══════════ the dashboard ═══════════ -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="../">
+        <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="34" fill="none" stroke="#9C7620" stroke-width="8"/>
+          <circle cx="50" cy="50" r="12" fill="#1B8497"/>
+        </svg>
+        <span><b>Ray Art Gallery</b><span>Seller dashboard</span></span>
+      </a>
+      <div class="who">
+        <b id="whoName">—</b>
+        <button class="btn btn-ghost btn-sm" id="signOut" type="button">Sign out</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <nav class="nav" id="nav" role="tablist" aria-label="Dashboard sections">
+        <button role="tab" data-view="overview"  aria-selected="true">Overview</button>
+        <button role="tab" data-view="orders"    aria-selected="false">Orders</button>
+        <button role="tab" data-view="products"  aria-selected="false">Products</button>
+        <button role="tab" data-view="customers" aria-selected="false">Customers</button>
+        <button role="tab" data-view="insights"  aria-selected="false">Insights</button>
+        <button role="tab" data-view="settings"  aria-selected="false">Settings</button>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap" id="view"><p class="load">Loading…</p></main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelT" aria-hidden="true">
+  <div class="panel-h">
+    <h3 id="panelT">Order</h3>
+    <button class="x" id="panelX" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="panel-b" id="panelB"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="../shared/js/00-env.js"></script>
+<script src="../shared/js/01-format.js"></script>
+<script src="../shared/js/02-sb.js"></script>
+
+<script src="js/01-ui.js"></script>
+<script src="js/02-gate.js"></script>
+<script src="js/03-overview.js"></script>
+<script src="js/04-orders.js"></script>
+<script src="js/05-products.js"></script>
+<script src="js/06-customers.js"></script>
+<script src="js/07-insights.js"></script>
+<script src="js/08-settings.js"></script>
+<script src="js/09-boot.js"></script>
+</body>
+</html>

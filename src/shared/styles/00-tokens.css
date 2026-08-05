@@ -1,0 +1,73 @@
+/* ══════════════════════════════════════════════════════════
+   RAY ART GALLERY — handmade rakhi
+   Cream editorial + glass, carried over from the
+   Hariom Patidar portfolio. Fonts are inlined at build time:
+   the finished page makes zero network requests.
+   ══════════════════════════════════════════════════════════ */
+/* Spectral — Production Type, commissioned for reading on screen. A sturdy
+   low-contrast serif rather than a display face, so it holds up at every size.
+   Libre Franklin — a revival of Franklin Gothic (Benton, 1902). Both were
+   chosen for having an actual lineage instead of being the default pick. */
+@font-face{font-family:"Spectral";font-style:normal;font-weight:400;font-display:swap;
+  src:url("../../../assets/fonts/spectral-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Spectral";font-style:italic;font-weight:400;font-display:swap;
+  src:url("../../../assets/fonts/spectral-400-italic.woff2") format("woff2")}
+@font-face{font-family:"Spectral";font-style:normal;font-weight:600;font-display:swap;
+  src:url("../../../assets/fonts/spectral-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:400 700;font-display:swap;
+  src:url("../../../assets/fonts/franklin-400-700-normal.woff2") format("woff2-variations")}
+
+:root{
+  color-scheme: light;
+  /* the ground is card stock; every colour comes off a rakhi —
+     resham thread, ivory seed bead, gold frame, sindoor, haldi */
+  --bg:#FBF6EC;
+  --ink:#141210;
+  --ink-soft:#5A544C;
+  --ink-faint:#736C5D;   /* 4.99:1 on the card surface — passes WCAG AA for small text */
+  --line:rgba(20,18,16,.09);
+  --line-2:rgba(20,18,16,.15);
+  --glass:rgba(255,253,248,.58);
+  --glass-border:rgba(255,255,255,.7);
+  --panel:rgba(255,253,248,.66);
+  --teal:#1B8497;          /* resham thread */
+  --teal-soft:#CFE9EF;
+  --gold:#B98C2E;
+  --tan:#D9B877;           /* gold frame */
+  --tan-deep:#9C7620;
+  --rose:#B5384A;          /* sindoor */
+  --accent:#1B8497;
+  --wa:#25D366;
+
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-full:999px;
+  --sheen:0 1px 0 rgba(255,255,255,.8) inset;
+  --elev-1:0 12px 30px -18px rgba(80,60,20,.22);
+  --elev-2:0 24px 50px -28px rgba(80,60,20,.26);
+  --elev-3:0 40px 70px -30px rgba(80,60,20,.34);
+  --ease:cubic-bezier(.16,1,.3,1);
+
+  --display:"Spectral",Georgia,"Times New Roman",serif;   /* headings, prices */
+  --head:"Libre Franklin",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --body:"Libre Franklin",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+*{margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body);
+  font-size:15px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+/* no 300ms tap delay, no accidental double-tap zoom on controls */
+button,a,summary,label,.chip,.sortmenu li{touch-action:manipulation}
+/* while a sheet is open the page behind must not scroll */
+body.locked{overflow:hidden; position:fixed; inset:0 0 auto 0; width:100%}
+/* anything with an id is a scroll target — clear the sticky header */
+section[id]{scroll-margin-top:86px}
+img{max-width:100%; display:block}
+a{color:inherit; text-decoration:none}
+::selection{background:var(--ink); color:var(--bg)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+input:focus-visible,textarea:focus-visible{outline:none}

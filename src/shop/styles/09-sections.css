@@ -1,0 +1,151 @@
+/* ── sets ── */
+.sets{display:grid; gap:clamp(14px,1.8vw,20px); margin-top:38px; grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.set{padding:clamp(22px,2.6vw,30px); display:flex; flex-direction:column}
+.set-best{box-shadow:var(--sheen), var(--elev-2), inset 0 0 0 1.5px var(--tan)}
+.set-tag{
+  align-self:flex-start; font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
+  background:var(--tan); color:#3a2c07; padding:5px 12px; border-radius:var(--r-full); margin-bottom:15px;
+}
+.set-n{font-family:var(--display); font-weight:600; font-size:20px; letter-spacing:-.01em; line-height:1.2}
+.set-p{display:flex; align-items:baseline; gap:11px; margin:15px 0 18px; flex-wrap:wrap}
+.set-p b{font-family:var(--display); font-weight:400; font-size:44px; line-height:.85}
+.set-p s{color:var(--ink-faint); font-family:var(--mono); font-size:12px}
+.set-p em{font-style:normal; font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--tan-deep)}
+.set-l{list-style:none; display:grid; gap:9px; font-size:13.5px; color:var(--ink-soft); flex:1; margin-bottom:22px}
+.set-l li{display:flex; gap:10px}
+.set-l li::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--tan); flex:none; margin-top:8px}
+
+/* ── made to order ── */
+.made{display:grid; gap:clamp(24px,4vw,52px); margin-top:28px}
+@media (min-width:940px){.made{grid-template-columns:1.15fr .85fr; align-items:start}}
+.vocab-k{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:9px}
+.vocab-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px}
+
+/* One cell per colour. The labels used to be positioned outside the dot and
+   ran into each other — a grid cell wide enough for the longest name means
+   they simply cannot collide. */
+.vocab-row.threads{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(56px,1fr));
+  gap:14px 6px; margin-bottom:22px;
+}
+.sw{
+  display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center;
+  font-family:var(--head); font-size:7.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
+  color:var(--ink-faint); line-height:1.2;
+}
+.sw i{
+  width:34px; height:34px; border-radius:50%;
+  box-shadow:inset 0 0 0 1px rgba(20,18,16,.15), var(--elev-1);
+}
+@media (min-width:940px){
+  .vocab-row.threads{grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:16px 8px}
+  .sw i{width:38px; height:38px}
+  .sw{font-size:8px}
+}
+.vocab-row.charms{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(146px,1fr)); gap:8px;
+}
+.tagx{
+  display:inline-flex; align-items:center; gap:8px; padding:6px 14px 6px 6px;
+  border-radius:var(--r-full); background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line);
+  font-size:12.5px; font-weight:600; letter-spacing:.2px;
+}
+.tagx.plain{padding:8px 14px}
+.tagx svg,.tagx img.ico{width:21px; height:21px; flex:none}
+.made-box{padding:clamp(24px,3vw,32px)}
+.made-box .lead{font-family:var(--display); font-size:clamp(24px,2.6vw,31px); line-height:1.18; margin-bottom:12px; position:relative; z-index:2}
+.made-box>p{color:var(--ink-soft); font-size:14px; margin-bottom:22px; position:relative; z-index:2}
+.made-steps{list-style:none; display:grid; gap:13px; margin:0 0 26px; position:relative; z-index:2}
+.made-steps li{display:flex; gap:12px; font-size:13.5px; color:var(--ink-soft)}
+.made-steps b{font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.085em; color:var(--tan-deep); padding-top:2px; flex:none; font-weight:400}
+.made-box .btn{position:relative; z-index:2}
+
+/* ── steps: a single thread runs across all four, with a bead
+      at each one. The thread draws itself as you scroll in. ── */
+/* one thread through all four steps: down the side on a phone,
+   across the top on a wider screen */
+.ladder{position:relative; margin-top:26px; padding-left:34px}
+.ladder-line{
+  position:absolute; left:8px; top:0; bottom:0; width:3px; border-radius:2px;
+  background:linear-gradient(180deg, var(--teal), var(--tan) 46%, var(--rose));
+  transform:scaleY(0); transform-origin:top center;
+  transition:transform 1.5s var(--ease);
+}
+.rv.in .ladder-line{transform:scaleY(1)}
+.steps{display:grid; gap:24px}
+.step{position:relative}
+.step::before{                       /* the bead on the thread */
+  content:""; position:absolute; top:3px; left:-34px; width:19px; height:19px; border-radius:50%;
+  background:radial-gradient(circle at 34% 28%, #fff, var(--bg) 40%, #DCC9A0);
+  box-shadow:0 0 0 1px rgba(20,18,16,.22), 0 3px 8px rgba(20,18,16,.22);
+  transform:scale(0); transition:transform .6s var(--ease);
+}
+.rv.in .step::before{transform:scale(1)}
+.step:nth-child(2)::before{transition-delay:.18s}
+.step:nth-child(3)::before{transition-delay:.36s}
+.step:nth-child(4)::before{transition-delay:.54s}
+.step::after{display:none}
+@media (min-width:760px){
+  .ladder{margin-top:clamp(38px,5vw,58px); padding-left:0; padding-top:46px}
+  .ladder-line{
+    left:0; right:0; top:22px; bottom:auto; width:auto; height:3px;
+    background:linear-gradient(90deg, var(--teal), var(--tan) 46%, var(--rose));
+    transform:scaleX(0); transform-origin:left center;
+  }
+  .rv.in .ladder-line{transform:scaleX(1)}
+  .steps{grid-template-columns:repeat(4,1fr); gap:clamp(22px,2.6vw,30px)}
+  .step{padding-top:8px}
+  .step::before{top:-33px; left:0; width:17px; height:17px}
+  .step::after{
+    display:block; content:""; position:absolute; top:-13px; left:3px; width:11px; height:7px;
+    border-radius:0 0 60% 60%; background:var(--tan-deep); opacity:.5;
+  }
+}
+.step-ico{width:26px; height:26px; color:var(--tan-deep); margin-bottom:9px}
+@media (min-width:760px){.step-ico{width:30px; height:30px; margin-bottom:12px}}
+.step-ico svg{width:100%; height:100%; display:block}
+.step-k{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; color:var(--ink-faint)}
+.step-n{font-family:var(--head); font-size:16px; font-weight:600; margin:7px 0 6px; line-height:1.3}
+.step p{font-size:13.5px; color:var(--ink-soft); line-height:1.55}
+
+/* ── rangoli drawn between sections ── */
+.divider{display:flex; justify-content:center; padding:6px 0}
+.divider svg{width:min(300px,68%); height:34px; color:var(--tan-deep)}
+.divider path,.divider circle,.divider line{
+  stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:round;
+  stroke-dasharray:var(--len,200); stroke-dashoffset:var(--len,200);
+  transition:stroke-dashoffset 1.8s var(--ease);
+}
+.divider.in path,.divider.in circle,.divider.in line{stroke-dashoffset:0}
+.divider .dot{fill:currentColor; stroke:none; opacity:0; transition:opacity .8s var(--ease) .7s}
+.divider.in .dot{opacity:.85}
+
+/* ── bulk ── */
+.bulk{margin-top:0; padding:clamp(26px,3.4vw,44px); display:grid; gap:28px}
+@media (min-width:860px){.bulk{grid-template-columns:1fr auto; align-items:center}}
+.bulk .sec-h{font-size:clamp(26px,7.4vw,40px)}
+.bulk-l{list-style:none; display:grid; gap:11px; margin-top:20px}
+.bulk-l li{display:flex; gap:11px; font-size:14px; color:var(--ink-soft)}
+.bulk-l b{color:var(--ink); font-weight:700}
+.bulk-l li::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--teal); flex:none; margin-top:9px}
+
+/* ── faq ── */
+.faq{margin-top:36px; max-width:82ch}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  list-style:none; cursor:pointer; padding:18px 40px 18px 0; position:relative;
+  font-family:var(--head); font-size:15.5px; font-weight:600; line-height:1.45;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:""; position:absolute; right:6px; top:24px; width:12px; height:12px;
+  border-right:1.5px solid var(--ink-soft); border-bottom:1.5px solid var(--ink-soft);
+  transform:rotate(45deg); transition:transform .35s var(--ease);
+}
+.faq details[open] summary::after{transform:rotate(225deg)}
+.faq p{color:var(--ink-soft); font-size:14.5px; padding-bottom:20px; max-width:70ch}
+.faq-cta{margin-top:30px; padding:26px clamp(22px,3vw,34px); display:flex; flex-wrap:wrap; gap:18px; align-items:center}
+.faq-cta>div{flex:1; min-width:220px; position:relative; z-index:2}
+.faq-cta .h{font-family:var(--display); font-weight:600; font-size:19px; letter-spacing:-.01em; line-height:1.25}
+.faq-cta p{color:var(--ink-soft); font-size:13.5px; padding:0; margin-top:6px}
+.faq-cta .btn{position:relative; z-index:2}

@@ -1,0 +1,59 @@
+/* ── backdrop: hairline grid + soft mesh.
+      The mesh is radial-gradients rather than blurred divs —
+      same look, none of the filter cost. ── */
+.bg{position:fixed; inset:0; z-index:-2; pointer-events:none}
+
+/* the page's own rakhi: a thread across the top with a bead
+   that travels along it as you scroll */
+.thread{position:fixed; top:0; left:0; right:0; height:3px; z-index:60; pointer-events:none; background:rgba(20,18,16,.06)}
+.thread-fill{
+  height:100%; width:0; position:relative;
+  background:linear-gradient(90deg, var(--teal), var(--tan) 62%, var(--rose));
+}
+/* Chrome/Safari can tie an animation straight to scroll position — the bar
+   then costs the main thread nothing at all. JS below is the fallback. */
+@supports (animation-timeline: scroll()){
+  .thread-fill{animation:fillbar linear both; animation-timeline:scroll(root block)}
+  @keyframes fillbar{from{width:0} to{width:100%}}
+}
+.thread-bead{
+  position:absolute; right:-6px; top:50%; width:12px; height:12px; margin-top:-6px; border-radius:50%;
+  background:radial-gradient(circle at 34% 28%, #fff, #FBF6EC 42%, #DCCDA9);
+  box-shadow:0 0 0 1px rgba(20,18,16,.2), 0 2px 7px rgba(20,18,16,.28);
+}
+/* festive washes: haldi, sindoor, resham thread.
+   Kept out of the middle of the screen so headlines stay clean. */
+.bg::before{
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(62vw 40vw at 108% -6%, rgba(250,214,140,.66), transparent 66%),
+    radial-gradient(58vw 34vw at -12% 2%,  rgba(168,220,231,.40), transparent 64%),
+    radial-gradient(70vw 40vw at 50% 112%, rgba(236,164,150,.42), transparent 68%);
+}
+/* diya light — a warm lamp burning just below the page */
+.bg::after{
+  content:""; position:absolute; left:50%; bottom:-32vh; width:120vw; height:80vh;
+  transform:translateX(-50%);
+  background:radial-gradient(closest-side, rgba(255,186,84,.30), rgba(255,186,84,.10) 46%, transparent 72%);
+  transition:opacity 1.2s var(--ease), transform 1.2s var(--ease);
+}
+body.lit .bg::after{opacity:1; transform:translateX(-50%) scale(1.16)}
+
+/* rangoli drawn on the floor, turning very slowly */
+.mandala{position:absolute; opacity:.05; color:var(--tan-deep)}
+@media (min-width:900px){.mandala{opacity:.075}}
+.mandala{background-repeat:no-repeat; background-size:100% 100%}
+.m1{width:min(84vw,660px); aspect-ratio:1; top:-16vh; right:-34vw}
+.m2{width:min(64vw,450px); aspect-ratio:1; bottom:-14vh; left:-26vw; color:var(--teal); opacity:.055}
+/* only a pointer device with room to spare gets the slow rotation */
+@media (min-width:900px) and (hover:hover){
+  .m1{right:-11vw; animation:turn 240s linear infinite; will-change:transform}
+  .m2{left:-9vw;  animation:turn 320s linear infinite reverse; will-change:transform}
+}
+@keyframes turn{to{transform:rotate(360deg)}}
+
+/* marigold petals drifting through the page */
+.petals{position:fixed; inset:0; z-index:-1; pointer-events:none; width:100%; height:100%}
+/* the product page sits at 52, so the burst has to be lifted over it —
+   still under the cart and the bill (55+) */
+body.pv-on .petals{z-index:53}

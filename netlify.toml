@@ -1,0 +1,53 @@
+# ════════════════════════════════════════════════════════════════════
+#  Netlify
+#
+#  Netlify runs build.py, which reads SUPABASE_URL and
+#  SUPABASE_ANON_KEY from the site's environment variables and writes
+#  them into the pages it produces. Set them once in
+#      Site configuration → Environment variables
+#  and every deploy from then on picks them up. They are never in git.
+#
+#  Python 3 is on Netlify's build image already; there is nothing to
+#  install and no node_modules.
+# ════════════════════════════════════════════════════════════════════
+
+[build]
+  command = "python3 build.py"
+  publish = "dist"
+
+# The shop and the dashboard are two ordinary files. Nothing is
+# server-rendered, so there is nothing to rewrite.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), interest-cohort=()"
+
+# The dashboard must never be indexed. It is protected by the database,
+# not by being hard to find, but there is no reason for it to be in a
+# search result either.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Fonts and photos are content-addressed by their own names and change
+# only when replaced, so they can be cached hard. The two pages must not
+# be: a price change has to reach the next visitor.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/admin/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

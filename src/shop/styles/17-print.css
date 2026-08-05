@@ -1,0 +1,46 @@
+/* ── printing the bill ───────────────────────────────
+   On a phone the sheet is position:absolute with its own
+   scrolling body. Both have to be undone for print, or the
+   printer gets one empty viewport-sized box. The locked body
+   has to be released too — it is position:fixed while a sheet
+   is open, which pushes everything off the page.
+   ─────────────────────────────────────────────────── */
+@media print{
+  @page{margin:14mm}
+  html,body{background:#fff !important; height:auto !important}
+  body.locked{position:static !important; top:auto !important; inset:auto !important; overflow:visible !important}
+  body>*:not(.modal){display:none !important}
+  .bg,.thread,.petals,.scrim,.cartbar,.fab,.toast,.lb,.drawer{display:none !important}
+
+  .modal{
+    position:static !important; inset:auto !important; display:block !important;
+    padding:0 !important; overflow:visible !important; background:none !important;
+  }
+  .sheet{
+    position:static !important; inset:auto !important; display:block !important;
+    height:auto !important; max-height:none !important; max-width:none !important;
+    margin:0 !important; border:0 !important; border-radius:0 !important;
+    background:none !important; box-shadow:none !important;
+    -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  }
+  .sheet::before,.sheet::after{display:none !important}
+  .grab,.sh-h,.sh-f,.fg{display:none !important}
+  .sh-b{
+    padding:0 !important; overflow:visible !important;
+    flex:none !important; height:auto !important; max-height:none !important;
+  }
+  .bill{
+    margin:0 !important; padding:0 !important; border:0 !important;
+    background:none !important; box-shadow:none !important;
+    font-size:11pt; color:#000;
+  }
+  .bill-h b{font-size:20pt}
+  .bill table{font-size:10pt}
+  .bill td,.bill th{border-color:#000 !important}
+  .bill-note{color:#000 !important}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
+  .rv{opacity:1; transform:none}
+}

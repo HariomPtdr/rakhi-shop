@@ -1,0 +1,83 @@
+/* ── shells ── */
+.wrap{max-width:1240px; margin:0 auto; padding:0 clamp(18px,4vw,44px)}
+.sec{padding:44px 0}
+@media (min-width:760px){.sec{padding:clamp(56px,6.8vw,96px) 0}}
+.eyebrow{
+  font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
+  color:var(--ink-faint); display:flex; align-items:center; gap:10px;
+}
+.eyebrow::after{
+  content:""; height:10px; flex:1; max-width:104px; opacity:.75;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10'%3E%3Cg fill='%231B8497'%3E%3Ccircle cx='8' cy='5' r='1.7'/%3E%3Ccircle cx='2.4' cy='5' r='.9'/%3E%3Ccircle cx='13.6' cy='5' r='.9'/%3E%3Ccircle cx='8' cy='1.4' r='.9'/%3E%3Ccircle cx='8' cy='8.6' r='.9'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat-x; background-position:left center;
+}
+.sec-h{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(30px,9.6vw,54px);      /* 2.3x body — reads as a heading */
+  line-height:1.12; letter-spacing:-.018em; margin-top:10px;
+}
+.sec-h em{font-style:italic; font-weight:400}
+.sec-p{max-width:56ch; color:var(--ink-soft); font-size:clamp(15px,1.5vw,16.5px); margin-top:14px}
+
+/* ── glass / panel ── */
+.glass{
+  position:relative; isolation:isolate; background:rgba(255,253,248,.94);
+  border:1px solid var(--glass-border); box-shadow:var(--sheen), var(--elev-2);
+  border-radius:var(--r-xl); overflow:hidden;
+}
+@media (min-width:900px){
+  .glass{
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(18px) saturate(1.6); backdrop-filter:blur(18px) saturate(1.6);
+  }
+}
+.glass::before{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(115deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 26%);
+  mix-blend-mode:overlay; opacity:.55;
+}
+.glass::after{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background-image:var(--grain); opacity:.035; mix-blend-mode:overlay;
+}
+/* the same surface without the blur, so a grid of them stays smooth to scroll */
+.panel{
+  position:relative; background:var(--panel); border:1px solid var(--glass-border);
+  box-shadow:var(--sheen), var(--elev-1); border-radius:var(--r-xl);
+  transition:box-shadow .5s var(--ease), transform .5s var(--ease), border-color .5s var(--ease);
+}
+/* follows the pointer — background layer, so it never covers the text.
+   Pointer devices only; touch has no hover. */
+@media (hover:hover){
+  .panel:hover{
+    border-color:rgba(217,184,119,.75);
+    background:
+      radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(217,184,119,.3), transparent 62%),
+      var(--panel);
+  }
+}
+.panel:active{border-color:rgba(217,184,119,.75)}
+
+/* ── buttons ── */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  font-family:var(--body); font-weight:600; font-size:12.5px; letter-spacing:.075em;
+  text-transform:uppercase; padding:15px 26px; border-radius:var(--r-full);
+  cursor:pointer; border:0; white-space:nowrap;
+  transition:background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease);
+}
+/* A phone has no hover, so the press itself has to be the feedback —
+   a 1px nudge is too small to notice on a touchscreen. */
+.btn:active{transform:scale(.97)}
+.btn-dark{background:var(--ink); color:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn-ghost{box-shadow:inset 0 0 0 1px var(--line-2); color:var(--ink-soft); background:rgba(255,255,255,.4)}
+/* Hover must not swap the two roles. The solid button stays solid and the
+   outlined one stays outlined — otherwise a dark and a ghost button sitting
+   together look like the same button. Gated on a real pointer, so a tap on
+   a phone cannot leave a button stuck in its hover state. */
+@media (hover:hover){
+  .btn-dark:hover{background:#fff; color:var(--ink)}     /* fills white, keeps its ink outline */
+  .btn-ghost:hover{background:#fff; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--ink)}
+}
+.btn-full{width:100%}
+.btn .wa{color:var(--wa); flex:none}

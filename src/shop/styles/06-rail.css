@@ -1,0 +1,82 @@
+/* ── the featured rail ──────────────────────────────────
+   A swipeable row with the next card peeking in. That peek is
+   what tells people to swipe, which is why it does not need to
+   move on its own.
+   ─────────────────────────────────────────────────────── */
+.rail-wrap{margin-top:0}
+.rail{
+  display:flex; gap:11px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain; padding:2px 2px 4px;
+}
+.rail::-webkit-scrollbar{display:none}
+.rc{
+  flex:none; width:min(66%,244px); scroll-snap-align:start;
+  background:var(--panel); border:1px solid var(--glass-border);
+  border-radius:var(--r-lg); box-shadow:var(--sheen), var(--elev-1);
+  padding:8px 8px 10px; display:flex; flex-direction:column;
+}
+@media (min-width:520px){.rc{width:min(46%,240px)}}
+
+/* Arrows only where there is a pointer — a mouse cannot swipe a scroll
+   container, and on touch the swipe itself is the control. */
+.rail-wrap{position:relative}
+.rail-nav{display:none}
+@media (hover:hover) and (min-width:940px){
+  .rail-nav{
+    display:grid; place-items:center; position:absolute; top:38%;
+    width:38px; height:38px; border:0; border-radius:50%; cursor:pointer;
+    background:var(--bg); color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--line-2), var(--elev-1);
+    transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+    z-index:3;
+  }
+  .rail-nav:hover{background:var(--ink); color:var(--bg)}
+  .rail-nav:active{transform:scale(.94)}
+  .rail-nav.prev{left:-13px}
+  .rail-nav.next{right:-13px}
+}
+.rc-shot{
+  position:relative; display:block; width:100%; border:0; padding:0;
+  border-radius:var(--r-md); overflow:hidden; aspect-ratio:4/3;
+  background:linear-gradient(160deg,#fffdf8,#f6f2e9);
+  box-shadow:inset 0 0 0 1px var(--line);
+}
+.rc-shot img{width:100%; height:100%; object-fit:cover; object-position:58% 40%; display:block}
+.rc-shot img.art{object-fit:contain}
+.rc-tag{
+  position:absolute; top:8px; left:8px; z-index:2;
+  font-family:var(--head); font-size:8px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
+  padding:3px 8px; border-radius:var(--r-full);
+}
+.rc-tag.real{background:var(--ink); color:var(--bg)}
+.rc-tag.art{background:rgba(251,246,236,.94); color:var(--ink-faint); box-shadow:inset 0 0 0 1px var(--line)}
+.rc-n{
+  font-family:var(--head); font-size:13.5px; font-weight:600; letter-spacing:-.005em;
+  line-height:1.3; margin:9px 2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.rc-b{display:flex; align-items:center; gap:6px; margin:5px 2px 0}
+.rc-p{font-family:var(--display); font-size:22px; line-height:1; margin-right:auto}
+/* two buttons and a price inside a 240px card: narrow padding, and they
+   share whatever is left rather than overflowing it */
+.rc-b .btn{flex:0 1 auto; min-width:0; padding:9px 12px; min-height:38px; font-size:10px; letter-spacing:.9px}
+
+/* Full screen only: taller, portrait cards. This block sits *after* the
+   base card rules on purpose — placed before them it lost the cascade and
+   silently did nothing. */
+@media (min-width:940px){
+  .rc{width:min(47%,232px)}
+  .rc-shot{aspect-ratio:4/5}
+  .rc-n{font-size:14.5px; margin-top:11px}
+  .rc-b{margin-top:7px}
+  .rc-p{font-size:24px}
+}
+
+/* position dots, so a swipe has a readable state */
+.dots{display:flex; justify-content:center; gap:7px; margin-top:9px}
+.dots[hidden],.rail-nav[hidden]{display:none !important}
+.dots button{
+  width:7px; height:7px; padding:0; border:0; border-radius:50%; cursor:pointer;
+  background:var(--line-2); transition:background .3s var(--ease), width .3s var(--ease);
+}
+.dots button[aria-selected="true"]{background:var(--tan-deep); width:20px; border-radius:4px}
