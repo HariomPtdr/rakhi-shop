@@ -103,3 +103,33 @@
   font-family:var(--head); font-size:12px; font-weight:600; color:var(--ink-faint);
 }
 .cp-on button:hover{color:#8A2033}
+
+/* ── the optional pin ── */
+.pinbox:empty{display:none}
+.pin-ask{
+  display:flex; align-items:flex-start; gap:11px; width:100%; text-align:left;
+  margin-bottom:12px; padding:12px 14px; border:0; cursor:pointer;
+  border-radius:var(--r-sm); background:rgba(255,255,255,.6);
+  box-shadow:inset 0 0 0 1px var(--line-2); color:var(--ink); font:inherit;
+  transition:box-shadow .2s var(--ease);
+}
+.pin-ask:hover{box-shadow:inset 0 0 0 1px var(--tan-deep)}
+.pin-ask[disabled]{opacity:.6; cursor:default}
+.pin-ask svg{flex:none; margin-top:2px; color:var(--tan-deep)}
+.pin-ask b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
+.pin-ask i{display:block; margin-top:2px; font-style:normal; font-size:12px; color:var(--ink-faint)}
+.pin-on{
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+  padding:11px 13px; border-radius:var(--r-sm);
+  background:rgba(27,132,151,.08); box-shadow:inset 0 0 0 1px rgba(27,132,151,.28);
+}
+.pin-on svg{flex:none; color:var(--teal)}
+.pin-on div{flex:1; min-width:0}
+.pin-on b{display:block; font-family:var(--head); font-size:13px; font-weight:600}
+.pin-on span{display:block; font-size:11.5px; color:var(--ink-faint)}
+.pin-on a, .pin-on button{
+  flex:none; border:0; background:none; cursor:pointer; padding:4px 2px;
+  font-family:var(--head); font-size:12px; font-weight:600; color:var(--teal);
+}
+.pin-on button{color:var(--ink-faint)}
+.pin-on button:hover{color:#8A2033}

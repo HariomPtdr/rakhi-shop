@@ -72,6 +72,7 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
 
   $("#shTot").textContent = inr(billTotal());
   paintCouponBox();
+  paintPinBox();
 
   const lines=cart.map((r,i)=>
     `${two(i+1)}. ${r.name}${r.note?` (${r.note})`:""}\n    ${r.qty} x ${inr(r.price)} = ${inr(r.price*r.qty)}`).join("\n");

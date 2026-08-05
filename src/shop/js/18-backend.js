@@ -158,7 +158,7 @@ async function mergeCart(){
 /* ── profile ── */
 async function loadProfile(){
   if(!signedIn()) return;
-  const rows = await SB.rest("profiles?select=full_name,phone,address,city,pincode,role,created_at&id=eq."
+  const rows = await SB.rest("profiles?select=full_name,phone,address,city,pincode,role,created_at,lat,lng&id=eq."
                            + encodeURIComponent(SB.user().id) + "&limit=1");
   profile = (Array.isArray(rows) && rows[0]) || null;
   fillBillFromProfile();

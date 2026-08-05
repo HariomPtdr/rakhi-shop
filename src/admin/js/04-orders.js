@@ -14,7 +14,7 @@ let ordPage   = 0;
 const ORD_PAGE = 30;
 
 const ORDER_SELECT = "select=id,bill_no,name,phone,address,city,pincode,note,subtotal,shipping,"
-                   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,"
+                   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,"
                    + "order_items(name,qty,price,product_id)";
 
 const oneOrderQuery = id => "orders?" + ORDER_SELECT + "&id=eq." + encodeURIComponent(id) + "&limit=1";
@@ -156,6 +156,17 @@ function paintOrder(o, hist){
       <a class="btn btn-sm" href="${esc(waLink(o.phone, msg))}" target="_blank" rel="noopener">WhatsApp</a>
       <a class="btn btn-ghost btn-sm" href="tel:+91${esc(o.phone)}">Call</a>
       <button class="btn btn-ghost btn-sm" id="copyAddr" type="button">Copy address</button>
+    </div>
+    <div class="acts">
+      ${o.lat != null && o.lng != null ? `
+        <a class="btn btn-sm" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/?api=1&query=${o.lat}%2C${o.lng}">📍 Exact pin</a>
+        <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/dir/?api=1&destination=${o.lat}%2C${o.lng}">Directions</a>`
+      : `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/search/?api=1&query=${
+             encodeURIComponent([o.address, o.city, o.pincode].filter(Boolean).join(", "))}">Find on the map</a>
+         <span class="dim" style="align-self:center; font-size:11.5px">no exact pin — searched by address</span>`}
     </div>
 
     <div class="k">What they ordered</div>
