@@ -56,15 +56,14 @@ listed.
 - **Redirect URLs** — add these, one per line:
 
   ```
-  https://your-site.netlify.app
-  https://your-site.netlify.app/admin/
-  http://localhost:8000
-  http://localhost:8000/admin/
+  https://your-site.netlify.app/**
+  http://localhost:8000/**
   ```
 
-The two `localhost` lines let you test on this machine. Add your custom domain
-here too the day you set one up, or sign-in will bounce back to the Netlify
-address instead.
+The `/**` covers every page on the site, the dashboard included, without
+naming any of them here. The `localhost` line lets you test on this machine.
+Add your custom domain the day you set one up, or sign-in will bounce back to
+the Netlify address instead.
 
 ## 3c. Sign in with Google — optional
 

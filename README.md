@@ -1,8 +1,8 @@
 # Ray Art Gallery
 
-**Live:** https://ray-art-gallery.netlify.app · **Dashboard:** https://ray-art-gallery.netlify.app/admin/
+**Live:** https://ray-art-gallery.netlify.app
 
-A handmade-rakhi shop, and the dashboard for running it.
+A handmade-rakhi shop, and a private dashboard for running it.
 
 Pushing to `master` builds and publishes it. Netlify runs `python3 build.py`
 and serves `dist/`; the Supabase values come from the site's environment
@@ -10,9 +10,9 @@ variables, so nothing secret is ever in this repository.
 
 Customers browse on a phone, fill a basket, and the page writes their bill and
 opens your WhatsApp with the whole thing typed out. Signed in, their basket,
-their saved rakhis and their orders follow them to any phone. You get `/admin`:
-the orders as they arrive, the catalogue, the customers, and the numbers
-underneath all three.
+their saved rakhis and their orders follow them to any phone. The seller gets a
+dashboard of their own: the orders as they arrive, the catalogue, the
+customers, and the numbers underneath all three.
 
 No framework, no npm, no build tooling beyond one Python file. The published
 shop is a single HTML file that makes **zero network requests** until it asks
@@ -33,7 +33,7 @@ Then, in order:
 |---|---|
 | **[docs/SUPABASE.md](docs/SUPABASE.md)** | Create the database, and make yourself the seller. Twenty minutes, once. |
 | **[docs/DEPLOY.md](docs/DEPLOY.md)** | The two environment values, and putting it on Netlify. |
-| **[docs/DASHBOARD.md](docs/DASHBOARD.md)** | Running the shop from `/admin`, screen by screen. |
+| **[docs/DASHBOARD.md](docs/DASHBOARD.md)** | Running the shop from the seller dashboard, screen by screen. |
 | **[docs/STRUCTURE.md](docs/STRUCTURE.md)** | Where the code is and why it is in that order. |
 
 ---
@@ -46,11 +46,12 @@ a heart on every card, and an account section with orders, a wishlist and saved
 delivery details. It works with the database switched off: the basket lives on
 the phone and the catalogue is written into the page.
 
-**The dashboard** at `/admin` — six screens: Overview, Orders, Products,
-Customers, Insights, Settings. Orders move Placed → Confirmed → Shipped →
-Delivered with one button, and the tracking id you save appears in the
-customer's own account. Prices and stock are edited in place. Photos upload
-straight from the products table.
+**The seller dashboard** — six screens: Overview, Orders, Products, Customers,
+Insights, Settings. Orders move Placed → Confirmed → Shipped → Delivered with
+one button, and the tracking id you save appears in the customer's own account.
+Prices and stock are edited in place. Photos upload straight from the products
+table. It opens for one kind of account only: one the database says is the
+shop's owner. Its address is in `docs/DASHBOARD.md`, not here.
 
 **Authentication** — Supabase Auth, one session shared by the shop and the
 dashboard. Email and password, **Continue with Google** (drawn only when the

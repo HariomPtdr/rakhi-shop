@@ -69,9 +69,9 @@ then open `http://localhost:8000` and `http://localhost:8000/admin/`.
 | | |
 |---|---|
 | Shop | https://ray-art-gallery.netlify.app |
-| Dashboard | https://ray-art-gallery.netlify.app/admin/ |
+| Seller dashboard | see `docs/DASHBOARD.md` |
 | Repository | https://github.com/HariomPtdr/rakhi-shop (private) |
-| Admin | https://app.netlify.com/projects/ray-art-gallery |
+| Netlify | https://app.netlify.com/projects/ray-art-gallery |
 
 **Publishing is a `git push`.** Netlify watches `master`, runs
 `python3 build.py`, and serves `dist/`:
@@ -107,7 +107,7 @@ builds again: **Deploys → Trigger deploy → Deploy site**, or push anything.
 ### After it is live
 
 - The shop is at `https://<your-site>.netlify.app/`
-- The dashboard is at `https://<your-site>.netlify.app/admin/`
+- The seller dashboard is where `docs/DASHBOARD.md` says
 - Set your own domain under **Domain management**. HTTPS is automatic.
 - In `src/shop/index.html`, replace the two `https://example.com` values in the
   `og:` tags and the canonical link with the real address, then build again.

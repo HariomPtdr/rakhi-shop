@@ -1,4 +1,18 @@
-# Running the shop from `/admin`
+# Running the shop — the seller's dashboard
+
+**This one is yours.** It is not linked from the shop, not in the README, and
+not in any search engine — the pages are served `noindex`. Keep the address
+between you and whoever else runs the shop.
+
+    https://ray-art-gallery.netlify.app/admin/
+
+Being unlisted is not what protects it, though, and it should not be relied on
+as if it were. The address is in the shop's own JavaScript and anyone reading
+the page source can find it. What actually stops them is the database: every
+screen here asks Postgres for data, and Postgres answers only an account whose
+profile says `role = 'admin'`. A stranger who types the address in gets a
+sign-in box, and a signed-in customer who types it in is told no. Not being
+advertised simply means nobody wanders in by accident.
 
 Sign in with the account you made the owner (`docs/SUPABASE.md`, step 4). It is
 the same account you use in the shop; signing in on one signs you in on the
