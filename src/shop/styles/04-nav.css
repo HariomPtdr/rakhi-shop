@@ -120,7 +120,10 @@
    stretched the full width — where it read as a second Sign out. Five equal
    columns keep them on one line instead; the chips give up width, which is
    the cheaper thing to lose. */
-.nav-tabs{display:grid; grid-template-columns:repeat(5, 1fr); gap:5px; margin:14px 0 0}
+/* the 9px is the gap the buttons below already use between themselves; at 0
+   the chip rings and the Sign out ring met on the same line and read as one
+   overlapping the other */
+.nav-tabs{display:grid; grid-template-columns:repeat(5, 1fr); gap:5px; margin:14px 0 9px}
 .nav-tab{
   min-width:0; border:0; cursor:pointer; padding:10px 5px; white-space:nowrap;
   border-radius:var(--r-full); font-family:var(--head); font-size:10px; font-weight:600;
