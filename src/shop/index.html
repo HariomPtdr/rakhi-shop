@@ -59,6 +59,7 @@
 <link rel="stylesheet" href="styles/15-product.css">
 <link rel="stylesheet" href="styles/16-lightbox.css">
 <link rel="stylesheet" href="styles/17-print.css">
+<link rel="stylesheet" href="styles/18-order.css">
 </head>
 <body>
 <body>
@@ -511,6 +512,18 @@
   </div>
 </div>
 
+<!-- one order, its own page: the account list recognises, this explains -->
+<section class="op" id="op" aria-label="Your order" aria-hidden="true">
+  <div class="op-bar">
+    <button class="pv-back" id="opBack" aria-label="Back to your orders">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <span class="pv-crumb">Your order</span>
+  </div>
+  <div class="op-in" id="opIn"></div>
+</section>
+
 <!-- one product page, filled in per rakhi from the hash route -->
 <section class="pv" id="pv" aria-label="Rakhi details" aria-hidden="true">
   <div class="pv-bar">
@@ -593,5 +606,6 @@
 <script src="js/24-payment.js"></script>
 <script src="js/25-address.js"></script>
 <script src="js/26-razorpay.js"></script>
+<script src="js/27-order-page.js"></script>
 </body>
 </html>

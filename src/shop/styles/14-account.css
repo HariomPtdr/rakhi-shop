@@ -313,3 +313,39 @@
 }
 .ac-pin-acts button:hover{color:var(--ink)}
 
+
+/* an update is about an order, and is a way into it */
+.ac-notif.tappable{cursor:pointer}
+.ac-notif.tappable:hover{box-shadow:inset 0 0 0 1px var(--line-2)}
+.ac-n-go{
+  display:inline-block; margin-top:8px; font-family:var(--head); font-size:12px;
+  font-weight:600; color:var(--teal);
+}
+
+/* the status word on a list card, where the tracker used to be */
+.ac-o-st{
+  font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-faint); padding:5px 10px;
+  border-radius:var(--r-full); background:rgba(20,18,16,.05);
+}
+.ac-o-st.ok{background:rgba(27,132,151,.14); color:#0E5F6E}
+.ac-o-st.out{background:rgba(20,18,16,.85); color:var(--bg)}
+.ac-o-st.no{background:rgba(181,56,74,.12); color:#8A2033}
+
+/* ── an order in the list: what it was, where it is, what to do ── */
+.ac-order{display:flex; gap:12px; align-items:flex-start}
+.ac-o-pic{
+  width:56px; height:56px; flex:none; border-radius:var(--r-sm); overflow:hidden;
+  background:rgba(217,184,119,.16); display:block;
+}
+.ac-o-pic img{width:100%; height:100%; object-fit:cover; display:block}
+.ac-o-pic img.art{object-fit:contain; padding:3px}
+.ac-o-mid{flex:1; min-width:0}
+.ac-o-mid .ac-o-l{margin-top:5px}
+.ac-o-mid .ac-o-st{margin-top:8px; display:inline-block}
+.ac-o-acts{display:grid; gap:6px; flex:none}
+.ac-o-acts .btn{width:100%; justify-content:center; white-space:nowrap}
+@media (max-width:520px){
+  .ac-order{flex-wrap:wrap}
+  .ac-o-acts{width:100%; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); margin-top:4px}
+}

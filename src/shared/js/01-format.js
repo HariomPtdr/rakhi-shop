@@ -38,14 +38,24 @@ const agoText = iso => {
 
 /* The five states an order can be in, in the order they happen.
    Kept in step with the check constraint on orders.status. */
+/* short is what the five-step tracker shows on a phone, where a label has
+   about seventy pixels; label is what everything else says */
 const STATUS = {
-  placed:    {label:"Placed",    cls:"",    step:0, hint:"Order received, not confirmed yet"},
-  confirmed: {label:"Confirmed", cls:"ok",  step:1, hint:"Confirmed with the customer"},
-  shipped:   {label:"Shipped",   cls:"ok",  step:2, hint:"Handed to the courier"},
-  delivered: {label:"Delivered", cls:"out", step:3, hint:"Delivered"},
-  cancelled: {label:"Cancelled", cls:"no",  step:-1, hint:"Cancelled"}
+  placed:    {label:"Placed",    short:"Placed",    cls:"",   step:0,
+              hint:"Order received, not confirmed yet"},
+  confirmed: {label:"Confirmed", short:"Confirmed", cls:"ok", step:1,
+              hint:"Confirmed and being made"},
+  shipped:   {label:"Shipped",   short:"Sent",      cls:"ok", step:2,
+              hint:"Handed to the courier"},
+  out_for_delivery:
+             {label:"Out for delivery", short:"Out", cls:"ok", step:3,
+              hint:"With the courier, reaching them today"},
+  delivered: {label:"Delivered", short:"Delivered", cls:"out", step:4,
+              hint:"Delivered"},
+  cancelled: {label:"Cancelled", short:"Cancelled", cls:"no", step:-1,
+              hint:"Cancelled"}
 };
-const STATUS_FLOW = ["placed", "confirmed", "shipped", "delivered"];
+const STATUS_FLOW = ["placed", "confirmed", "shipped", "out_for_delivery", "delivered"];
 const statusChip = s => {
   const x = STATUS[s] || {cls:"", label:s || "Placed"};
   return [x.cls, x.label];

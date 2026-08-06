@@ -188,7 +188,7 @@ function orderTrack(o){
   const at = STATUS[o.status] ? STATUS[o.status].step : 0;
   return `<div class="ac-track">${STATUS_FLOW.map((s, i) => `
     <span class="ac-step${i <= at ? " done" : ""}${i === at ? " now" : ""}">
-      <i aria-hidden="true"></i><b>${STATUS[s].label}</b>
+      <i aria-hidden="true"></i><b>${STATUS[s].short || STATUS[s].label}</b>
     </span>`).join("")}</div>`;
 }
 
@@ -202,6 +202,8 @@ function orderWhere(o){
     confirmed: o.payment === "upi" ? "Paid. Confirmed and being made."
                                    : "Confirmed and being made.",
     shipped:   o.courier ? "On its way with " + o.courier + "." : "On its way.",
+    out_for_delivery: "Out for delivery — it reaches you today."
+      + (o.payment === "cod" ? " Please keep " + inr(o.total) + " ready." : ""),
     delivered: "Delivered on " + when + ".",
     cancelled: "Cancelled on " + when + "."
   }[o.status];
@@ -211,49 +213,37 @@ function orderWhere(o){
 function orderCard(o){
   const items = (o.order_items || []);
   const lines = items.map(i => `${esc(i.name)} × ${i.qty}`).join(" · ");
-  /* A review can only be written once an order has been delivered — the
-     database enforces it. This is where someone actually is when that
-     becomes true, so this is where to ask. */
-  const rate = o.status === "delivered"
-    ? items.filter(i => i.product_id).map(i =>
-        `<button class="ac-rate" type="button" data-wopen="${esc(i.product_id)}"
-           >Rate the ${esc(i.name)} →</button>`).join("")
-    : "";
-  const ask = wa(`Hello Ray Art Gallery, about my order ${o.bill_no} (${inr(o.total)}).`);
-  /* the same rule the database enforces, so the button is never offered
-     where cancel_order() would refuse it */
-  const canCancel = o.status === "placed" || o.status === "confirmed";
+  /* the first rakhi in the order is the one that makes it recognisable —
+     people remember what they bought, not what the bill was numbered */
+  const first = items.find(i => i.product_id && catalogue(i.product_id));
+  const pic   = first ? catalogue(first.product_id) : null;
+  const done  = o.status === "delivered";
+  const rateable = done && first;
+
+  /* A list is for recognising an order and getting on with it. Everything
+     that explains — where it has got to, what is in it, where it is going,
+     what has been said about it — is one tap away on the order's own page,
+     where there is room to say it properly. */
   return `<div class="ac-order">
-    <div class="ac-o-top">
-      <span class="ac-o-no">${esc(o.bill_no)}</span>
-      <span class="ac-o-d">${esc(dayText(o.created_at))}</span>
-      <span class="ac-o-t">${inr(o.total)}</span>
-    </div>
-    <div class="ac-o-l">${lines || "—"}</div>
-    ${orderTrack(o)}
-    ${orderWhere(o)}
-    ${rate ? `<div class="ac-rates">${rate}</div>` : ""}
-    ${o.tracking_id && o.status !== "cancelled" ? `<div class="ac-o-trk">
-       <span>${esc(o.courier || "Courier")}</span>
-       <b>${esc(o.tracking_id)}</b>
-       <button class="ac-copy" type="button" data-copy="${esc(o.tracking_id)}">Copy</button>
-     </div>` : ""}
-    ${canCancel ? `<div class="ac-o-to">
-      <div>
-        <b>Going to</b>
-        <span>${esc(o.address || "—")}${o.city ? ", " + esc(o.city) : ""} ${esc(o.pincode || "")}</span>
-        ${o.note ? `<i>“${esc(o.note)}”</i>` : ""}
-        ${o.lat != null ? `<i class="pinned">Exact location attached</i>` : ""}
+    <span class="ac-o-pic">${pic ? thumb(pic) : ""}</span>
+    <div class="ac-o-mid">
+      <div class="ac-o-top">
+        <span class="ac-o-no">${esc(o.bill_no)}</span>
+        <span class="ac-o-d">${esc(dayText(o.created_at))}</span>
+        <span class="ac-o-t">${inr(o.total)}</span>
       </div>
-      <button type="button" data-editaddr="${esc(o.id)}">Change</button>
-    </div>` : ""}
-    <div class="ac-o-foot">
-      <span>${o.shipping ? inr(o.subtotal) + " + " + inr(o.shipping) + " delivery" : "Delivery free"}</span>
-      ${canCancel ? `<button class="ac-cancel" data-cancel="${esc(o.id)}">Cancel order</button>` : ""}
-      <a class="ac-ask" href="${ask}" target="_blank" rel="noopener">Ask about this order</a>
+      <div class="ac-o-l">${lines || "—"}</div>
+      <span class="ac-o-st ${esc((STATUS[o.status] || {}).cls || "")}">${
+        esc((STATUS[o.status] || {}).label || o.status)}</span>
     </div>
-    ${editingAddr === o.id ? addrForm(o) : ""}
-    ${cancelling === o.id ? cancelForm(o) : ""}
+    <div class="ac-o-acts">
+      <button class="btn btn-dark btn-sm" data-oview="${esc(o.id)}">${
+        done ? "View order" : "Track order"}</button>
+      ${rateable ? `<button class="btn btn-ghost btn-sm" data-ofeed="${esc(first.product_id)}"
+        >Feedback</button>` : ""}
+      ${done && first ? `<button class="btn btn-ghost btn-sm" data-oagain="${esc(o.id)}"
+        >Buy again</button>` : ""}
+    </div>
   </div>`;
 }
 
@@ -320,10 +310,8 @@ async function saveOrderAddress(id){
       p_note: v("eaNote")
     });
     editingAddr = null;
-    acctOrders = null;
     toast("Address updated — we have been told");
-    paintAcct();
-    loadAcctData();
+    await orderChanged();
   }catch(err){
     if(btn){ btn.disabled = false; btn.textContent = "Save the address"; }
     note(/function|404|schema cache/i.test(err.message || "")
@@ -375,15 +363,13 @@ async function doCancel(id){
   try{
     await SB.rpc("cancel_order", {p_order: id, p_reason: why});
     cancelling = null;
-    acctOrders = null;                       /* re-read, so the status is the server's */
-    acctNotifs = null;
+    acctNotifs = null;                       /* re-read, so the status is the server's */
     toast("Order cancelled");
-    paintAcct();
-    loadAcctData();
+    await orderChanged();
   }catch(err){
     cancelling = null;
-    paintAcct();
-    note(err.message || "Could not cancel it just now.");
+    if(orderPageOpen()) paintOrderPage(); else paintAcct();
+    toast(err.message || "Could not cancel it just now.");
   }
 }
 
@@ -450,13 +436,16 @@ function acctBody(){
         id comes with it. Anything Ray Art Gallery needs to tell you about an
         order lands here too.</p></div>`;
     }
+    /* every update is about an order, so every update is a way into it */
     return head + `<div class="ac-pane">${acctNotifs.map(n => `
-      <div class="ac-notif${n.read_at ? "" : " unread"}">
+      <div class="ac-notif${n.read_at ? "" : " unread"}${n.order_id ? " tappable" : ""}"
+           ${n.order_id ? `data-oview="${esc(n.order_id)}"` : ""}>
         <div class="ac-n-top">
           <b>${esc(n.title)}</b>
           <span>${esc(agoText(n.created_at))}</span>
         </div>
         ${n.body ? `<p>${esc(n.body)}</p>` : ""}
+        ${n.order_id ? `<span class="ac-n-go">See the order →</span>` : ""}
       </div>`).join("")}</div>`;
   }
 
@@ -658,6 +647,40 @@ $("#acctBody").addEventListener("click", async e => {
     }else{
       closeAcct();
       openProduct(id);
+    }
+    return;
+  }
+
+  const fb = e.target.closest("[data-ofeed]");
+  if(fb){
+    /* the review form lives on the rakhi's own page, where the database
+       has already been asked whether this person may write one */
+    const id = fb.dataset.ofeed;
+    if(isOn("#acctModal") && sheetHist){
+      addEventListener("popstate", () => openProduct(id), {once: true});
+      closeAcct();
+    }else{ closeAcct(); openProduct(id); }
+    return;
+  }
+
+  const ag = e.target.closest("[data-oagain]");
+  if(ag){
+    const order = (acctOrders || []).find(x => x.id === ag.dataset.oagain);
+    if(order) buyTheseAgain(order);
+    return;
+  }
+
+  const ov = e.target.closest("[data-oview]");
+  if(ov){
+    /* the sheet's history entry pops asynchronously; wait for it, or the
+       order page's hash is thrown away by the pop that follows */
+    const id = ov.dataset.oview;
+    if(isOn("#acctModal") && sheetHist){
+      addEventListener("popstate", () => openOrderPage(id), {once: true});
+      closeAcct();
+    }else{
+      closeAcct();
+      openOrderPage(id);
     }
     return;
   }

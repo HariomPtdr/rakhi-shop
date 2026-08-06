@@ -67,7 +67,8 @@ VIEWS.orders = async function(){
   const page = rows.slice(0, ORD_PAGE);
 
   const tabs = [["", "All"]].concat(
-    ["placed","confirmed","shipped","delivered","cancelled"].map(s => [s, STATUS[s].label]));
+    ["placed","confirmed","shipped","out_for_delivery","delivered","cancelled"]
+      .map(s => [s, STATUS[s].label]));
 
   view().innerHTML = `
     <div class="head">
@@ -192,7 +193,8 @@ function paintOrder(o, hist, laterPin, msgs){
   /* the pin on the order, or the one on their account if the order has none */
   const pin = (o.lat != null && o.lng != null) ? {lat:o.lat, lng:o.lng, own:true}
             : (laterPin ? {lat:laterPin.lat, lng:laterPin.lng, own:false} : null);
-  const next = {placed:"confirmed", confirmed:"shipped", shipped:"delivered"}[o.status];
+  const next = {placed:"confirmed", confirmed:"shipped",
+                shipped:"out_for_delivery", out_for_delivery:"delivered"}[o.status];
   const msg = `Namaste ${o.name.split(" ")[0]}, about your Ray Art Gallery order ${o.bill_no}`
             + (o.tracking_id ? ` — it is on its way, tracking ${o.tracking_id}.` : ".");
 
