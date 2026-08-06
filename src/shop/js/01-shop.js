@@ -15,6 +15,7 @@ const SHOP = {
   /* How long it takes to get there. Written here once and read by the
      product page, so the promise on every rakhi says the same thing. The
      city is where the rakhis are actually made, which is why it is quicker. */
+  codEnabled:    true,               // the seller can turn cash off in Settings
   localCity:     "Indore",
   localPin:      "452",               // pincodes starting with this are local
   localDays:     2,

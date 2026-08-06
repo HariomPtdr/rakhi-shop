@@ -129,14 +129,19 @@ async function loadSettings(){
      things that were working. */
   const CORE = "free_ship_above,ship_flat,festival_date,order_by_date";
   const SHOP_COLS = CORE + ",whatsapp,upi,instagram,email,announcement,orders_paused,pause_note";
+  const NEWEST = SHOP_COLS + ",coupon_note,cod_enabled";
   let rows;
   try{
-    rows = await SB.rest("shop_settings?select=" + SHOP_COLS + ",coupon_note&id=eq.1&limit=1");
+    rows = await SB.rest("shop_settings?select=" + NEWEST + "&id=eq.1&limit=1");
   }catch(err){
     try{
-      rows = await SB.rest("shop_settings?select=" + SHOP_COLS + "&id=eq.1&limit=1");
+      rows = await SB.rest("shop_settings?select=" + SHOP_COLS + ",coupon_note&id=eq.1&limit=1");
     }catch(err2){
-      rows = await SB.rest("shop_settings?select=" + CORE + "&id=eq.1&limit=1");
+      try{
+        rows = await SB.rest("shop_settings?select=" + SHOP_COLS + "&id=eq.1&limit=1");
+      }catch(err3){
+        rows = await SB.rest("shop_settings?select=" + CORE + "&id=eq.1&limit=1");
+      }
     }
   }
   const s = Array.isArray(rows) && rows[0];
@@ -154,6 +159,9 @@ async function loadSettings(){
   paintContact();
 
   couponNote = s.coupon_note || "";
+  /* undefined until 16-payment-mode.sql is run, and cash stays on until then */
+  if(s.cod_enabled !== undefined && s.cod_enabled !== null) SHOP.codEnabled = !!s.cod_enabled;
+  if(!SHOP.codEnabled && payIsCod()) payWith = "upi";
   shopPaused = !!s.orders_paused;
   shopPauseNote = s.pause_note || "";
   paintAnnouncement(s.announcement, shopPaused, shopPauseNote);
@@ -270,7 +278,7 @@ async function pollUnread(){
 
 async function loadOrders(){
   return SB.rest("orders?select=id,bill_no,total,subtotal,shipping,status,created_at,status_at,"
-               + "courier,tracking_id,name,phone,address,city,pincode,note,lat,lng,"
+               + "courier,tracking_id,name,phone,address,city,pincode,note,lat,lng,payment,paid_at,"
                + "order_items(name,qty,price,product_id)"
                + "&order=created_at.desc&limit=25");
 }

@@ -124,7 +124,7 @@ function paintGrid(){
   $("#grid").innerHTML = list.map(p=>{
     const out = p.stock === 0;
     return `
-    <article class="card panel${out ? " card-out" : ""}">
+    <article class="card panel${out ? " card-out" : ""}" data-go="${p.id}">
       <div class="card-top">
         <div class="shot">${thumb(p)}</div>
         <span class="idx">№ ${IDX.get(p.id)}</span>

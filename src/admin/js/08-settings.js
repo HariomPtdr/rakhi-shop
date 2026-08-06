@@ -101,6 +101,31 @@ function paintSettings(){
         </form>
 
         <div style="margin-top:22px">
+          <h2>How they can pay</h2>
+          <div class="rows">
+            <div class="row"><span>Cash on delivery</span>
+              <span class="strong">${s.cod_enabled === false
+                ? `<span class="chip no">Not offered</span>`
+                : `<span class="chip ok">Offered</span>`}</span></div>
+            <div class="row"><span>UPI</span>
+              <span class="strong"><span class="chip ok">Always on</span></span></div>
+          </div>
+          <form id="setCod" style="margin-top:10px">
+            <div class="acts">
+              <button class="btn${s.cod_enabled === false ? "" : " btn-ghost"}" type="submit">${
+                s.cod_enabled === false ? "Start taking cash again" : "Stop taking cash"}</button>
+            </div>
+          </form>
+          <p class="empty" style="text-align:left">
+            A courier who collects cash charges for it, and a ₹49 rakhi does not
+            always carry that. With cash off, the shop offers UPI only — and the
+            database refuses a cash order as well, so a stale page cannot slip one
+            through. A UPI order stays unconfirmed until you mark the money
+            received on the order; marking it confirms the order in the same
+            action.</p>
+        </div>
+
+        <div style="margin-top:22px">
           <h2>Where the codes come from</h2>
           <form id="setCouponNote">
             <div class="fg">
@@ -213,6 +238,14 @@ function paintSettings(){
       instagram: $("#sIg").value.trim().replace(/^@/, "") || null,
       email:     $("#sMail").value.trim() || null
     }, "Saved — the shop uses these now");
+  });
+
+  $("#setCod").addEventListener("submit", async e => {
+    e.preventDefault();
+    const next = s.cod_enabled === false;      /* false means it is off now */
+    await saveSettings({cod_enabled: next},
+      next ? "Cash on delivery is back — the shop offers both again"
+           : "Cash off — the shop takes UPI only now");
   });
 
   $("#setCouponNote").addEventListener("submit", async e => {

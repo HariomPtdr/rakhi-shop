@@ -249,9 +249,10 @@ function paintOrder(o, hist, laterPin, msgs){
         : "Cash on delivery — collect " + inr(o.total)}</span></div>
     ${o.payment === "upi" ? `<div class="acts">
       <button class="btn btn-sm${o.paid_at ? " btn-ghost" : ""}" data-paid="${o.paid_at ? "0" : "1"}">${
-        o.paid_at ? "Mark as not paid" : "Mark the money received"}</button>
+        o.paid_at ? "Mark as not paid" : "Money received — confirm the order"}</button>
       ${!o.paid_at ? `<span class="dim" style="align-self:center; font-size:11.5px">
-        Check your UPI app first — nothing here can tell you it arrived.</span>` : ""}
+        Check your UPI app first — nothing here can tell you it arrived.
+        Marking it confirms the order and tells them.</span>` : ""}
     </div>` : ""}
 
     <div class="k">Move it along</div>

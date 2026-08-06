@@ -24,6 +24,22 @@ function paintPayBox(){
   const box = $("#payBox");
   if(!box) return;
 
+  /* The seller can stop taking cash from Settings — a courier who collects
+     it charges for the privilege, and that is a decision that changes with
+     the season. With cash off there is nothing to choose between, so the
+     shop says how it is paid for instead of pretending to ask. */
+  if(!SHOP.codEnabled){
+    payWith = "upi";
+    box.innerHTML = `
+      <div class="pay-k">How you will pay</div>
+      <div class="pay-only">
+        <b>By UPI, on WhatsApp</b>
+        <span>We send the bill with the UPI id. The order is confirmed the
+          moment your payment reaches us — usually within the hour.</span>
+      </div>`;
+    return;
+  }
+
   box.innerHTML = `
     <div class="pay-k">How would you like to pay?</div>
     <div class="pay-opts" role="radiogroup" aria-label="How would you like to pay?">
@@ -35,7 +51,7 @@ function paintPayBox(){
       <button type="button" class="pay-opt${payIsCod() ? "" : " on"}" data-pay="upi"
               role="radio" aria-checked="${!payIsCod()}">
         <b>Pay now by UPI</b>
-        <span>We send the bill on WhatsApp with the UPI id.</span>
+        <span>We send the bill on WhatsApp. Confirmed once it reaches us.</span>
       </button>
     </div>`;
 }
@@ -43,7 +59,9 @@ function paintPayBox(){
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-pay]");
   if(!b) return;
-  payWith = b.dataset.pay === "upi" ? "upi" : "cod";
+  const want = b.dataset.pay === "upi" ? "upi" : "cod";
+  if(want === "cod" && !SHOP.codEnabled) return;
+  payWith = want;
   paintBill();
 });
 
@@ -61,7 +79,7 @@ function paintPayAction(){
   }else{
     btn.classList.remove("cod");
     btn.innerHTML = `<svg class="wa" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg> Send the bill and pay`;
-    if(hint && !placedBill) hint.textContent = "Opens Ray Art Gallery’s WhatsApp chat";
+    if(hint && !placedBill) hint.textContent = "Confirmed once your payment reaches us";
   }
 }
 
@@ -131,6 +149,52 @@ function showOrderDone(b){
   const send = $("#billSend");
   send.innerHTML = "Done";
   send.classList.add("cod");
+  send.style.pointerEvents = "none";
+  send.style.opacity = ".55";
+  $("#billPrint").hidden = true;
+
+  const pdf = $("#donePdf");
+  if(pdf) pdf.onclick = () => { downloadPdf(); toast("PDF saved to your phone"); };
+  const acct = $("#doneAcct");
+  if(acct) acct.onclick = e => { e.preventDefault(); closeBill(); requestAnimationFrame(() => openAcct("orders")); };
+}
+
+/* ── the UPI journey, which finishes on WhatsApp ──
+   The chat opens either way; this is what is behind it when they come back.
+   Saying "sent" and nothing else leaves someone wondering whether they have
+   ordered anything at all — and with no gateway here, they have not, until
+   the money arrives and the seller says so. */
+function showPaymentSent(b){
+  const ask = wa(`Hello Ray Art Gallery, I have sent the payment for ${billNo}.`);
+  $("#bill").innerHTML = `
+    <div class="bill-done">
+      <div class="done-tick wait" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+      </div>
+      <b>Your bill is on WhatsApp.</b>
+      <p>${esc(billNo)} · ${inr(billTotal())} to pay by UPI.</p>
+      <p class="done-call"><b>Pay in the chat</b>, and the order is confirmed the
+        moment it reaches us — usually within the hour. Nothing is made before
+        that, so nothing is lost if you change your mind.
+        You can follow it in <a href="#account" id="doneAcct">your orders</a>.</p>
+      <div class="done-acts">
+        <a class="btn btn-dark" href="${esc(ask)}" target="_blank" rel="noopener">
+          Open the chat again</a>
+        <button class="btn btn-ghost" id="donePdf" type="button">Save PDF copy</button>
+      </div>
+    </div>`;
+
+  ["#payBox", "#couponBox", "#pinBox", "#addrBox", "#addrFields"].forEach(sel => {
+    const el = $(sel); if(el) el.hidden = true;
+  });
+  $$("#billModal .fg").forEach(el => { el.hidden = true; });
+
+  $("#shTot").textContent = inr(billTotal());
+  $("#shHint").textContent = "Waiting for your payment · " + billNo;
+  const send = $("#billSend");
+  send.innerHTML = "Sent";
   send.style.pointerEvents = "none";
   send.style.opacity = ".55";
   $("#billPrint").hidden = true;

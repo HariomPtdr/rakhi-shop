@@ -5,7 +5,7 @@ let RAIL = [];
 function paintRail(){
   RAIL = [...PRODUCTS].sort((a,b)=>a.feat-b.feat).slice(0,4);
   $("#rail").innerHTML = RAIL.map(p=>`
-    <article class="rc">
+    <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
         ${thumb(p)}
         <span class="rc-tag ${p.img?"real":"art"}">${p.img?"Photo":"Drawing"}</span>

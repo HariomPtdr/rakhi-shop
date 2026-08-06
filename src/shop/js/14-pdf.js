@@ -132,11 +132,16 @@ $("#billSend").addEventListener("click", e=>{
   /* and, for a signed-in customer, keep a copy of the order they can look
      up later. Never in the way: the chat opens either way. */
   if(typeof recordOrder === "function"){
-    recordOrder({
+    const b = {
       name:$("#bName").value.trim(), phone:$("#bPhone").value.trim(),
       addr:$("#bAddr").value.trim(),  city:$("#bCity").value.trim(),
       pin:$("#bPin").value.trim(),    note:$("#bNote").value.trim()
-    }, "upi");
+    };
+    recordOrder(b, "upi");
+    /* and behind the chat, something that says what happens next. The order
+       exists but is not confirmed: no gateway here, so the seller confirms
+       it when the money actually arrives. */
+    showPaymentSent(b);
   }
 });
 

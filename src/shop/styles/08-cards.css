@@ -92,3 +92,6 @@
 .card-out .shot{opacity:.55}
 .card-out .card-p{text-decoration:line-through; text-decoration-thickness:1px; opacity:.65}
 .btn[disabled]{opacity:.45; cursor:default; pointer-events:none}
+
+/* the whole card opens the rakhi, so it should look like it does */
+.card[data-go], .rc[data-go]{cursor:pointer}

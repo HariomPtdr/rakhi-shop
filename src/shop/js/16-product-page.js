@@ -135,7 +135,7 @@ function paintProduct(){
   })).sort((a, b) => a.score - b.score).slice(0, 8).map(x => x.p);
 
   $("#pvRail").innerHTML = near.map(x=>`
-    <article class="rc">
+    <article class="rc" data-go="${x.id}">
       <div class="rc-shot">
         ${thumb(x)}<span class="rc-tag ${x.img?"real":"art"}">${x.img?"Photo":"Drawing"}</span>
         ${heartBtn(x.id)}

@@ -41,6 +41,14 @@ document.addEventListener("click", e => {
     addItem(PRODUCTS.find(p => p.id === a.dataset.add));
     return;
   }
+  /* the whole card opens the rakhi, not only the View button — the picture
+     and the name are what people actually aim at. Everything on a card that
+     does something else of its own has to be excluded, or hearting a rakhi
+     would also walk you into it. */
   const g = e.target.closest("[data-go]");
-  if(g) openProduct(g.dataset.go);
+  if(!g) return;
+  if(e.target.closest(".heart, [data-add], input, select, textarea")) return;
+  const other = e.target.closest("a, button");
+  if(other && other !== g && !other.hasAttribute("data-go")) return;
+  openProduct(g.dataset.go);
 });
