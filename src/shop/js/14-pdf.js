@@ -116,6 +116,15 @@ $("#billSend").addEventListener("click", e=>{
     return;
   }
 
+  /* With a gateway configured, paying does not leave the page at all:
+     the order goes in and the payment sheet opens on top of it. */
+  if(RZP_ON){
+    e.preventDefault();
+    if(placedBill) return;
+    placeAndPay();
+    return;
+  }
+
   const bad=Object.keys(F).filter(id=>!ok(id,true));
   if(bad.length){
     e.preventDefault(); $("#"+bad[0]).focus();

@@ -167,6 +167,13 @@ const SB = (function(){
     signedIn: () => !!(session && session.access_token && session.user),
     user:     () => (session && session.user) || null,
 
+    /* A token good for the next minute at least, for the rare thing that has
+       to talk to something other than Supabase on the customer's behalf —
+       the payment functions ask the database "is this really their order?"
+       with it. Refreshed first, or an hour-old page starts a payment nobody
+       is signed in for. */
+    token: async () => { const s = await fresh(); return (s && s.access_token) || null; },
+
     call,                                             /* raw, no refresh */
     authed,                                           /* refreshes first */
     rest:  q => authed("/rest/v1/" + q),

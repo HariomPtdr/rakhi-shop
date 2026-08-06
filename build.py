@@ -40,7 +40,8 @@ ASSETS = HERE / "assets"
 # Netlify (and any CI) sets real environment variables; .env is the local
 # convenience. The real environment wins so a deploy can never be
 # accidentally pinned to whatever is in a file on someone's laptop.
-WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET", "ADMIN_PATH")
+WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET", "ADMIN_PATH",
+          "RAZORPAY_KEY_ID")
 
 # the same three values under the names other tools like to use
 ALIASES = {

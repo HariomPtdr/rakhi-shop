@@ -31,5 +31,12 @@ const ENV = {
      This is not what protects the dashboard — the database is, and it
      refuses anyone whose profile is not role = 'admin'. It just means a
      stranger cannot find it by adding /admin to the address. */
-  ADMIN_PATH:        "admin"
+  ADMIN_PATH:        "admin",
+
+  /* Razorpay's *public* key id, the one their own checkout script expects to
+     find in the page. The key secret is not here and must never be: it lives
+     in Netlify's environment variables, where the two functions under
+     netlify/functions read it. Left empty, the shop falls back to sending
+     the bill on WhatsApp exactly as it did before. */
+  RAZORPAY_KEY_ID:   ""
 };

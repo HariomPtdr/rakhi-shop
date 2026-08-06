@@ -284,10 +284,15 @@ async function loadOrders(){
 }
 /* Best effort, always after the WhatsApp message is on its way: the message
    is the order, this is the copy the customer can look up later. */
-async function recordOrder(b){
-  if(!SB_ON || !signedIn() || !cart.length) return;
+async function recordOrder(b, payment){
+  if(!SB_ON || !signedIn() || !cart.length) return null;
   try{
-    await SB.rpc("place_order", {
+    /* The second argument was being dropped on the floor: place_order
+       defaults to cash, so every order — including every one sent to
+       WhatsApp to be paid by UPI — was stored as cash on delivery. The
+       dashboard then showed a COD chip against orders nobody was ever
+       going to hand cash to. */
+    const row = await SB.rpc("place_order", {
       p_bill_no: billNo,
       p_name:    b.name,
       p_phone:   b.phone,
@@ -296,14 +301,18 @@ async function recordOrder(b){
       p_pincode: b.pin,
       p_note:    b.note || null,
       p_items:   cartRows(),
-      p_coupon:  coupon.ok ? coupon.code : null
+      p_coupon:  coupon.ok ? coupon.code : null,
+      p_payment: payment === "upi" ? "upi" : "cod"
     });
     placedBill = billNo;
     $("#shHint").textContent = "Saved to your account · " + billNo;
     saveProfile({full_name:b.name, phone:b.phone, address:b.addr, city:b.city, pincode:b.pin})
       .catch(() => {});
+    /* the row itself, so a payment can be started against it */
+    return Array.isArray(row) ? row[0] : row;
   }catch(e){
     if(!/duplicate|unique/i.test(e.message || "")) toast("Sent. Could not save a copy to your account.");
+    return null;
   }
 }
 

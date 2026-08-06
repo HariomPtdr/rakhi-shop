@@ -43,3 +43,17 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+
+# ── the two payment endpoints ──
+# Razorpay needs a server for exactly two things: making an order with the
+# real amount, and checking the signature afterwards. Both need the key
+# secret, which is why neither can live in the page. Node 18 has fetch and
+# crypto built in, so there is nothing to install here either.
+#
+# Set in Site configuration → Environment variables:
+#     RAZORPAY_KEY_ID             rzp_test_… or rzp_live_…
+#     RAZORPAY_KEY_SECRET         never anywhere else
+#     SUPABASE_SERVICE_ROLE_KEY   so a paid order can be marked paid
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

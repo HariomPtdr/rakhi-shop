@@ -3,7 +3,7 @@
    ══════════════════════════════════════════════════════════ */
 const SHOP = {
   whatsapp:      "919319848309",      // 91 + the 10-digit number, no + or spaces
-  upi:           "rayartgallery@upi", // printed on the bill
+  upi:           "ray.tejra-1@okicici",  // only until the settings row loads
   instagram:     "ray_art_24",        // handle without the @. Leave "" to hide the button.
   email:         "patidarh178@gmail.com",  // shown in the footer. Leave "" to hide it.
   /* Dates live here once, as ISO. The text on screen is worked out from

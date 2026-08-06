@@ -13,28 +13,36 @@ let ordQuery  = "";
 let ordPage   = 0;
 const ORD_PAGE = 30;
 
-/* address_at arrives with 14-address.sql. Asking for a column that is not
+/* Columns that arrive with a later SQL file. Asking for one that is not
    there yet fails the whole select, and an Orders screen that will not load
-   is a much worse outcome than not knowing when an address was corrected —
-   so the first refusal drops it and everything else still works. */
-let hasAddressAt = true;
+   is a much worse outcome than not knowing when an address was corrected or
+   which Razorpay payment settled a bill. The first refusal names the column;
+   it is dropped and the query is asked again. */
+const OPTIONAL_COLS = {
+  address_at:     true,      /* 14-address.sql   */
+  rzp_payment_id: true       /* 18-razorpay.sql  */
+};
 
 const ORDER_SELECT = () =>
   "select=id,bill_no,name,phone,address,city,pincode,note,subtotal,shipping,"
   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,"
-  + (hasAddressAt ? "address_at," : "")
+  + Object.keys(OPTIONAL_COLS).filter(c => OPTIONAL_COLS[c]).map(c => c + ",").join("")
   + "payment,discount,coupon_code,"
   + "order_items(name,qty,price,product_id)";
 
 /* every order query goes through here, so the retry is written once */
 async function askOrders(build){
-  try{
-    return await SB.rest(build());
-  }catch(err){
-    if(!hasAddressAt || !/address_at/i.test(err.message || "")) throw err;
-    hasAddressAt = false;
-    return await SB.rest(build());
+  for(let tries = 0; tries < Object.keys(OPTIONAL_COLS).length + 1; tries++){
+    try{
+      return await SB.rest(build());
+    }catch(err){
+      const missing = Object.keys(OPTIONAL_COLS)
+        .find(c => OPTIONAL_COLS[c] && new RegExp(c, "i").test(err.message || ""));
+      if(!missing) throw err;
+      OPTIONAL_COLS[missing] = false;
+    }
   }
+  return await SB.rest(build());
 }
 
 const oneOrderQuery = id => "orders?" + ORDER_SELECT() + "&id=eq." + encodeURIComponent(id) + "&limit=1";
@@ -251,10 +259,11 @@ function paintOrder(o, hist, laterPin, msgs){
     <div class="line"><span class="dim">Paying by</span><span class="strong">${
       o.payment === "upi"
         ? (o.paid_at
-            ? `UPI — paid ${esc(agoText(o.paid_at))}`
-            : "UPI — not received yet")
+            ? `Paid ${esc(agoText(o.paid_at))}${o.rzp_payment_id
+                ? ` · <span class="mono">${esc(o.rzp_payment_id)}</span>` : " · by UPI"}`
+            : "Not received yet")
         : "Cash on delivery — collect " + inr(o.total)}</span></div>
-    ${o.payment === "upi" ? `<div class="acts">
+    ${o.payment === "upi" && !o.rzp_payment_id ? `<div class="acts">
       <button class="btn btn-sm${o.paid_at ? " btn-ghost" : ""}" data-paid="${o.paid_at ? "0" : "1"}">${
         o.paid_at ? "Mark as not paid" : "Money received — confirm the order"}</button>
       ${!o.paid_at ? `<span class="dim" style="align-self:center; font-size:11.5px">
