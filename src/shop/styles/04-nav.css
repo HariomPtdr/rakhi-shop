@@ -6,6 +6,11 @@
   padding:8px 9px 8px 14px; border-radius:var(--r-full);
 }
 @media (min-width:900px){.nav-in{gap:14px; padding:11px 12px 11px 20px}}
+/* Phones drop the backdrop blur to keep scrolling smooth, which leaves the
+   pill 6% see-through — enough for the display-size headline to ghost through
+   it as the page scrolls past. Opaque here costs nothing and keeps the bar
+   readable; the blur still does its work on wide screens. */
+@media (max-width:899px){.nav-in{background:#FFFDF8}}
 .brand{display:flex; align-items:center; gap:11px; margin-right:auto; z-index:2; min-height:42px}
 .brand-mk{width:34px; height:34px; flex:none}
 @media (min-width:900px){.brand-mk{width:40px; height:40px}}
@@ -111,18 +116,26 @@
    Chips rather than five more full-width rows: this menu already carries the
    shop's own sections, and doubling its length to say the same things twice
    would be worse than the single button they replace. */
-.nav-tabs{display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 0}
+/* Five chips left to wrap on their own put the fifth alone on a line,
+   stretched the full width — where it read as a second Sign out. Five equal
+   columns keep them on one line instead; the chips give up width, which is
+   the cheaper thing to lose. */
+.nav-tabs{display:grid; grid-template-columns:repeat(5, 1fr); gap:5px; margin:14px 0 0}
 .nav-tab{
-  flex:1 1 auto; min-width:0; border:0; cursor:pointer; padding:10px 12px;
-  border-radius:var(--r-full); font-family:var(--head); font-size:11.5px; font-weight:600;
-  letter-spacing:.04em; color:var(--ink-soft); background:rgba(255,255,255,.6);
-  box-shadow:inset 0 0 0 1px var(--line-2); white-space:nowrap;
+  min-width:0; border:0; cursor:pointer; padding:10px 5px; white-space:nowrap;
+  border-radius:var(--r-full); font-family:var(--head); font-size:10px; font-weight:600;
+  letter-spacing:0; color:var(--ink-soft); background:rgba(255,255,255,.6);
+  box-shadow:inset 0 0 0 1px var(--line-2);
   transition:background .2s var(--ease), color .2s var(--ease);
 }
 .nav-tab:hover{background:#fff; color:var(--ink)}
 .nav-tab i{
-  display:inline-grid; place-items:center; min-width:16px; height:16px; padding:0 4px;
-  margin-left:4px; border-radius:var(--r-full); background:rgba(20,18,16,.08);
-  font-size:9.5px; font-style:normal; vertical-align:middle; color:var(--ink-soft);
+  display:inline-grid; place-items:center; min-width:13px; height:13px; padding:0 2px;
+  margin-left:2px; border-radius:var(--r-full); background:rgba(20,18,16,.08);
+  font-size:8.5px; font-style:normal; vertical-align:middle; color:var(--ink-soft);
 }
+/* Five across leaves each chip about 63px on a 375px phone. The count used
+   to end flush against the ring, close enough to read as sitting on it —
+   these are the numbers that keep a gap on the narrowest screen sold. */
+@media (max-width:389px){.nav-tabs{gap:4px} .nav-tab{font-size:9.5px; padding-inline:3px}}
 .nav-tab.has-news i{background:var(--rose); color:#fff}

@@ -40,6 +40,10 @@ async function showOrderPage(id){
   opBusy = true;
   $("#op").classList.add("on");
   $("#op").setAttribute("aria-hidden", "false");
+  /* It is its own scrolling box, and a box keeps where it was left. Opened
+     from halfway down the account list it would open halfway down the order —
+     under the bar, mid-sentence. Every order starts at its own top. */
+  $("#op").scrollTop = 0;
   document.body.style.overflow = "hidden";
   $("#opIn").innerHTML = `<p class="ac-empty">Loading…</p>`;
 
@@ -71,6 +75,7 @@ async function showOrderPage(id){
 
   opBusy = false;
   paintOrderPage();
+  $("#op").scrollTop = 0;      /* again: the real content is taller than "Loading…" */
 }
 
 function closeOrderPage(){

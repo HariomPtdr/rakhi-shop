@@ -130,4 +130,7 @@
 .op-acts .btn{flex:none}
 @media (max-width:520px){.op-acts{display:grid; grid-template-columns:1fr 1fr}
   .op-acts .btn{width:100%; justify-content:center}
-  .op-acts .btn-dark{grid-column:1/-1}}
+  /* the two that are their own decision get the whole row: buying again at
+     the top, cancelling at the foot. Half a button beside a hole read as a
+     layout that had run out of room */
+  .op-acts .btn-dark, .op-acts .op-cancel{grid-column:1/-1}}

@@ -12,8 +12,17 @@
   display:flex; flex-direction:column;
   border-radius:var(--r-xl) var(--r-xl) 0 0;
   transform:translateY(101%); transition:transform .42s var(--ease);
+  /* Parked off-screen is not the same as gone: left visible, everything in
+     the closed cart stays focusable, so Tab walks into a drawer nobody can
+     see and a screen reader reads a basket that is not open. Delayed so the
+     slide out still plays before it is taken away. */
+  visibility:hidden; pointer-events:none;
+  transition:transform .42s var(--ease), visibility 0s linear .42s;
 }
-.drawer.on{transform:none}
+.drawer.on{
+  transform:none; visibility:visible; pointer-events:auto;
+  transition:transform .42s var(--ease), visibility 0s;
+}
 @media (min-width:720px){
   .drawer{
     top:14px; right:14px; bottom:14px; left:auto; width:min(430px,100%);

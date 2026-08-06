@@ -204,11 +204,29 @@
 .ac-tabs-scroll button{flex:0 0 auto; padding-inline:13px}
 /* Five pills hugging their own words and bunching at the left looked like
    something had failed to load. Once there is room for them they share the
-   row equally, which is what a row of tabs is; below that they stay a strip
-   that scrolls, because squeezing "Updates" to fit is worse than sliding. */
+   row equally, which is what a row of tabs is. */
 @media (min-width:440px){
   .ac-tabs-scroll{overflow-x:visible}
   .ac-tabs-scroll button{flex:1 1 0; padding-inline:8px; min-width:0}
+}
+/* Narrower than that they used to slide, which left "Details" half off the
+   edge — a tab you cannot see is a tab nobody presses. Five equal columns
+   keep the whole set on one line; the pills give up width rather than the
+   row giving up a tab. */
+@media (max-width:439px){
+  .ac-tabs-scroll{
+    display:grid; grid-template-columns:repeat(5, 1fr); gap:5px;
+    overflow-x:visible; margin-inline:0; padding-inline:0;
+  }
+  .ac-tabs-scroll button{
+    padding:9px 5px; min-width:0; font-size:9.5px; letter-spacing:.2px; white-space:nowrap;
+  }
+  .ac-tabs button i.dot{min-width:13px; height:13px; padding:0 2px; margin-left:2px; font-size:8px}
+}
+/* the smallest phones still in use want another half-point off */
+@media (max-width:389px){
+  .ac-tabs-scroll{gap:4px}
+  .ac-tabs-scroll button{font-size:8.5px; letter-spacing:0; padding-inline:3px}
 }
 .ac-tabs button i.dot{
   display:inline-grid; place-items:center; min-width:16px; height:16px; padding:0 4px;

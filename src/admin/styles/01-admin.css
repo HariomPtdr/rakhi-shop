@@ -185,8 +185,16 @@ label.lab{display:block; font-family:var(--head); font-size:10px; font-weight:60
   background:var(--bg); box-shadow:-18px 0 48px rgba(20,18,16,.18);
   transform:translateX(101%); transition:transform .34s var(--ease);
   display:flex; flex-direction:column;
+  /* Off-screen is not closed: left visible, every field in the parked panel
+     stays in the tab order, so a keyboard walks off the page into a form
+     nobody can see. Taken away only once the slide has finished. */
+  visibility:hidden; pointer-events:none;
+  transition:transform .34s var(--ease), visibility 0s linear .34s;
 }
-.panel.on{transform:none}
+.panel.on{
+  transform:none; visibility:visible; pointer-events:auto;
+  transition:transform .34s var(--ease), visibility 0s;
+}
 @media (max-width:600px){
   .panel{top:auto; height:92dvh; width:100%; border-radius:var(--r-xl) var(--r-xl) 0 0;
     transform:translateY(101%)}
