@@ -79,14 +79,32 @@ function paintNavAuth(){
   const u = SB.user();
   if(signedIn() && u){
     const nm = (profile && profile.full_name) || u.name || u.email || "";
+    /* The menu is where somebody looks when they are looking for something,
+       so everything the account holds is named here rather than hidden
+       behind one button called "Your orders". As chips rather than five more
+       full-width rows: this menu already has the shop's five sections in it,
+       and doubling its length to say the same things twice would be worse
+       than the button it replaces. Each one opens the account on that tab —
+       the same screens, not a second copy of them. */
+    const where = [
+      ["orders",   "Orders",  ""],
+      ["updates",  "Updates", unreadCount ? String(unreadCount) : ""],
+      ["basket",   "Basket",  nItems() ? String(nItems()) : ""],
+      ["wishlist", "Saved",   wish.length ? String(wish.length) : ""],
+      ["details",  "Details", ""]
+    ];
     box.innerHTML = `
       <div class="nav-who">
         ${avatarHtml("nav-av")}
         <div><b>${esc(nm)}</b><span>${esc(u.email)}</span></div>
       </div>
+      <div class="nav-tabs">
+        ${where.map(([tab, label, n]) => `
+          <button class="nav-tab${tab === "updates" && unreadCount ? " has-news" : ""}"
+                  data-navtab="${tab}">${label}${n ? ` <i>${esc(n)}</i>` : ""}</button>`).join("")}
+      </div>
       <div class="nav-auth-acts">
-        <button class="btn btn-dark" data-navact="account">Your orders</button>
-        <button class="btn btn-ghost" data-navact="out">Sign out</button>
+        <button class="btn btn-ghost btn-full" data-navact="out">Sign out</button>
       </div>`;
   }else{
     box.innerHTML = `
@@ -100,6 +118,13 @@ function paintNavAuth(){
 }
 
 $("#navAuth").addEventListener("click", e => {
+  const tab = e.target.closest("[data-navtab]");
+  if(tab){
+    const which = tab.dataset.navtab;
+    closeNav();
+    requestAnimationFrame(() => openAcct(which));
+    return;
+  }
   const b = e.target.closest("[data-navact]");
   if(!b) return;
   const what = b.dataset.navact;
@@ -381,12 +406,16 @@ function wishCard(id){
   return `<div class="ac-wish">
     <div class="ac-w-i">${thumbFor(p.id)}</div>
     <div class="ac-w-m">
-      <div class="ac-w-n">${esc(p.name)}</div>
-      <div class="ac-w-p">${inr(p.price)}${out ? ` <span class="ac-w-out">Sold out</span>` : ""}</div>
+      <div class="ac-w-top">
+        <span class="ac-w-n">${esc(p.name)}</span>
+        <span class="ac-w-p">${inr(p.price)}</span>
+      </div>
+      ${out ? `<div class="ac-w-note ac-w-out">Sold out just now</div>` : ""}
       <div class="ac-w-r">
-        <button class="btn btn-dark" data-wadd="${esc(p.id)}"${out ? " disabled" : ""}>Add to cart</button>
-        <button class="btn btn-ghost" data-wopen="${esc(p.id)}">View</button>
-        <button class="ac-w-x" data-wish="${esc(p.id)}" aria-label="Remove ${esc(p.name)} from your wishlist">Remove</button>
+        <button class="btn btn-dark btn-sm" data-wadd="${esc(p.id)}"${out ? " disabled" : ""}>Add</button>
+        <button class="btn btn-ghost btn-sm" data-wopen="${esc(p.id)}">View</button>
+        <button class="ac-w-x" data-wish="${esc(p.id)}"
+                aria-label="Remove ${esc(p.name)} from your saved rakhis">Remove</button>
       </div>
     </div>
   </div>`;
@@ -461,16 +490,18 @@ function acctBody(){
         <div class="ac-wish">
           <div class="ac-w-i">${thumbFor(r.id)}</div>
           <div class="ac-w-m">
-            <div class="ac-w-n">${esc(r.name)}</div>
-            ${r.note ? `<div class="ac-w-note">${esc(r.note)}</div>` : ""}
-            <div class="ac-w-p">${inr(r.price)} each</div>
+            <div class="ac-w-top">
+              <span class="ac-w-n">${esc(r.name)}</span>
+              <span class="ac-w-p">${inr(r.price * r.qty)}</span>
+            </div>
+            <div class="ac-w-note">${inr(r.price)} each${
+              r.note ? ` · ${esc(r.note)}` : ""}</div>
             <div class="ac-w-r">
               <span class="stp">
                 <button type="button" data-bdn="${i}" aria-label="One less">−</button>
                 <span>${r.qty}</span>
                 <button type="button" data-bup="${i}" aria-label="One more">+</button>
               </span>
-              <b class="ac-w-amt">${inr(r.price * r.qty)}</b>
               <button class="ac-w-x" data-brm="${i}" aria-label="Remove ${esc(r.name)}">Remove</button>
             </div>
           </div>

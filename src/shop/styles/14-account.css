@@ -125,20 +125,27 @@
   display:flex; gap:12px; padding:11px; border-radius:var(--r-md);
   background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
 }
-.ac-w-i{width:64px; height:64px; flex:none; border-radius:var(--r-sm); overflow:hidden; background:var(--panel)}
+.ac-w-i{width:60px; height:60px; flex:none; border-radius:var(--r-sm); overflow:hidden;
+  background:rgba(217,184,119,.16)}
 .ac-w-i img, .ac-w-i svg{width:100%; height:100%; object-fit:cover; display:block}
+/* a photograph fills its square; a drawing has to be shown whole, or the
+   charm somebody saved the rakhi for is the part that gets cropped off */
+.ac-w-i img.art, .ac-w-i svg{object-fit:contain; padding:3px}
 .ac-w-m{min-width:0; flex:1}
-.ac-w-n{font-family:var(--head); font-size:13.5px; font-weight:600; line-height:1.35}
-.ac-w-p{margin-top:2px; font-family:var(--display); font-size:16px}
+.ac-w-top{display:flex; align-items:baseline; gap:10px}
+.ac-w-n{flex:1; min-width:0; font-family:var(--head); font-size:13.5px; font-weight:600; line-height:1.35}
+.ac-w-p{flex:none; font-family:var(--display); font-size:16px}
 .ac-w-out{
   font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.08em;
   text-transform:uppercase; color:#8A2033; vertical-align:middle; margin-left:5px;
 }
-.ac-w-r{display:flex; align-items:center; gap:7px; margin-top:9px; flex-wrap:wrap}
-.ac-w-r .btn{padding:7px 13px; font-size:11.5px; min-height:36px}
+.ac-w-r{display:flex; align-items:center; gap:8px; margin-top:9px; flex-wrap:wrap}
+.ac-w-r .btn{padding:7px 14px; font-size:11.5px; min-height:34px}
+/* Remove sat against the far edge with a hole in the middle of the row.
+   It belongs with the other two, quieter than both. */
 .ac-w-x{
-  border:0; background:none; cursor:pointer; padding:6px 2px; margin-left:auto;
-  font-family:var(--head); font-size:11px; font-weight:600; color:var(--ink-faint);
+  border:0; background:none; cursor:pointer; padding:6px 4px;
+  font-family:var(--head); font-size:11.5px; font-weight:600; color:var(--ink-faint);
 }
 .ac-w-x:hover{color:#8A2033}
 
@@ -164,7 +171,8 @@
 .ac-or::before, .ac-or::after{content:""; flex:1; height:1px; background:var(--line)}
 
 /* ── the basket, inside the account ── */
-.ac-w-note{margin-top:2px; font-size:11.5px; color:var(--ink-faint)}
+.ac-w-note{margin-top:3px; font-size:11.5px; color:var(--ink-faint)}
+.ac-w-note.ac-w-out{color:#8A2033}
 .ac-w-amt{margin-left:2px; font-family:var(--display); font-size:15px}
 .ac-tabs button i{font-style:normal; opacity:.75}
 .ac-sum{
