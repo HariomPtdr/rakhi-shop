@@ -139,20 +139,10 @@ function paintGrid(){
         <span class="card-p">${inr(p.price)}</span>
         <span class="card-u">${out ? "sold out" : "per piece"}</span>
       </div>
-      <div class="card-acts">
-        <button class="btn btn-dark" data-add="${p.id}"${out ? " disabled" : ""}>${
-          out ? "Sold out" : "Add"}</button>
-        <button class="btn btn-ghost" data-open="${p.id}">View</button>
-      </div>
+      <div class="card-acts">${cardActs(p)}</div>
     </article>`;}).join("");
 }
-let lastBtn=null;
-$("#grid").addEventListener("click", e=>{
-  const a=e.target.closest("[data-add]");
-  if(a){ lastBtn=a; addItem(PRODUCTS.find(p=>p.id===a.dataset.add)); return; }
-  const o=e.target.closest("[data-open]");
-  if(o) openProduct(o.dataset.open);
-});
+/* Add and View are handled once for every card, in 06b-cardacts.js */
 const closeLb=fromBack=>{
   if(!isOn("#lb")) return;
   $("#lb").classList.remove("on");

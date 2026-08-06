@@ -130,7 +130,16 @@ async function showOrder(id, known){
 
     const hist = await SB.rest("order_status_log?select=from_status,to_status,note,created_at"
                              + "&order_id=eq." + encodeURIComponent(o.id) + "&order=created_at.asc");
-    paintOrder(o, hist);
+    /* what has already been said about this order, so nothing gets said twice.
+       Empty until 13-messages.sql is run — the policy that lets the seller
+       read them comes with it. */
+    let msgs = [];
+    try{
+      msgs = await SB.rest("notifications?select=id,body,created_at,read_at"
+                         + "&order_id=eq." + encodeURIComponent(o.id)
+                         + "&kind=eq.message&order=created_at.desc") || [];
+    }catch(e){}
+    paintOrder(o, hist, null, msgs);
 
     /* The pin is copied onto the order when it is placed, so an order placed
        before they attached their location has none. The account may still
@@ -139,7 +148,7 @@ async function showOrder(id, known){
       try{
         const p = (await SB.rest("profiles?select=lat,lng,located_at&id=eq."
                                + encodeURIComponent(o.user_id) + "&limit=1"))[0];
-        if(p && p.lat != null && p.lng != null) paintOrder(o, hist, p);
+        if(p && p.lat != null && p.lng != null) paintOrder(o, hist, p, msgs);
       }catch(e){}
     }
   }catch(err){
@@ -147,8 +156,9 @@ async function showOrder(id, known){
   }
 }
 
-function paintOrder(o, hist, laterPin){
+function paintOrder(o, hist, laterPin, msgs){
   const items = o.order_items || [];
+  const sent  = msgs || [];
   /* the pin on the order, or the one on their account if the order has none */
   const pin = (o.lat != null && o.lng != null) ? {lat:o.lat, lng:o.lng, own:true}
             : (laterPin ? {lat:laterPin.lat, lng:laterPin.lng, own:false} : null);
@@ -176,6 +186,7 @@ function paintOrder(o, hist, laterPin){
       <a class="btn btn-sm" href="${esc(waLink(o.phone, msg))}" target="_blank" rel="noopener">WhatsApp</a>
       <a class="btn btn-ghost btn-sm" href="tel:+91${esc(o.phone)}">Call</a>
       <button class="btn btn-ghost btn-sm" id="copyAddr" type="button">Copy address</button>
+      <button class="btn btn-ghost btn-sm" id="billPdf" type="button">Bill PDF</button>
     </div>
     <div class="acts">
       ${pin ? `
@@ -192,7 +203,14 @@ function paintOrder(o, hist, laterPin){
     </div>
 
     <div class="k">What they ordered</div>
-    ${items.map(i => `<div class="line"><span>${esc(i.name)} × ${i.qty}</span>
+    <!-- each line opens that rakhi's own page, so "how many of these have I
+         sold, and is it still in stock" is one tap from the order that
+         raised the question -->
+    ${items.map(i => `<div class="line">
+       ${i.product_id
+         ? `<button class="linkish" type="button" data-prod="${esc(i.product_id)}"
+              >${esc(i.name)} × ${i.qty}</button>`
+         : `<span>${esc(i.name)} × ${i.qty}</span>`}
        <span>${inr(i.price * i.qty)}</span></div>`).join("")}
     <div class="line"><span class="dim">Subtotal</span><span>${inr(o.subtotal)}</span></div>
     ${o.discount ? `<div class="line"><span class="dim">Discount${
@@ -219,6 +237,35 @@ function paintOrder(o, hist, laterPin){
         ? `<button class="btn btn-ghost btn-sm" data-set="cancelled">Cancel order</button>` : ""}
       ${o.status === "cancelled" ? `<button class="btn btn-ghost btn-sm" data-set="placed">Reopen</button>` : ""}
     </div>
+
+    <!-- ── a word to the customer ──
+         Status changes write their own notification. This is for the
+         sentence that does not fit one: the thread that ran out, the
+         pincode that is a digit short, the parcel going out tomorrow. It
+         sits against the order in their account whether or not they saw
+         it on their phone. A conversation still belongs on WhatsApp. -->
+    <div class="k">Tell them something</div>
+    ${o.user_id ? `
+      <form id="msgForm">
+        <div class="fg">
+          <div><textarea class="inp" id="oMsg" rows="2" maxlength="500"
+            placeholder="Posting tomorrow morning — it will reach you before the 24th."></textarea></div>
+        </div>
+        <div class="acts">
+          <button class="btn btn-sm" type="submit">Send to their account</button>
+          <a class="btn btn-ghost btn-sm" href="${esc(waLink(o.phone, msg))}"
+             target="_blank" rel="noopener">Say it on WhatsApp instead</a>
+        </div>
+      </form>
+      ${sent.length ? `<div class="hist" style="margin-top:14px">${sent.map(m => `
+        <div class="hev"><i></i><div>
+          <b>${esc(m.body)}</b>
+          <span>${esc(dayTimeText(m.created_at))} · ${
+            m.read_at ? "read " + esc(agoText(m.read_at)) : "not read yet"}</span>
+        </div></div>`).join("")}</div>` : ""}`
+    : `<p class="empty" style="text-align:left; padding:0">This order was placed
+        without an account, so there is nowhere to send a notification. WhatsApp
+        is the only way to reach them.</p>`}
 
     <div class="k">Courier</div>
     <form id="trkForm">
@@ -274,6 +321,57 @@ function paintOrder(o, hist, laterPin){
     try{ await navigator.clipboard.writeText(text); toast("Address copied"); }
     catch(e){ toast("Could not copy"); }
   };
+
+  /* the same piece of paper the customer got, drawn by the shared builder */
+  const pdfBtn = $("#billPdf");
+  if(pdfBtn) pdfBtn.onclick = () => {
+    const bill = {
+      billNo: o.bill_no,
+      date:   new Date(o.created_at).toLocaleDateString("en-IN",
+                {day:"2-digit", month:"short", year:"numeric"}),
+      lines:  items.map(i => ({name: i.name, qty: i.qty, price: i.price})),
+      subtotal: o.subtotal,
+      discount: o.discount || 0,
+      discountCode: o.coupon_code || "",
+      shipping: o.shipping,
+      total:  o.total,
+      to: {name: o.name, addr: o.address, city: o.city, pin: o.pincode,
+           phone: o.phone, note: o.note},
+      footer: [
+        o.payment === "upi"
+          ? (o.paid_at ? "Paid by UPI." : "To be paid by UPI.")
+          : "Cash on delivery - collect " + inr(o.total) + ".",
+        "An order summary, not a tax invoice. Amounts in INR."
+      ]
+    };
+    savePdfFile(billPdfFile(bill, "RayArtGallery-" + o.bill_no + ".pdf"));
+    toast("Bill saved");
+  };
+
+  /* an ordered line opens that rakhi's page */
+  $("#panelB").querySelectorAll("[data-prod]").forEach(b => {
+    b.onclick = () => openProductPanel(b.dataset.prod);
+  });
+
+  const msgForm = $("#msgForm");
+  if(msgForm) msgForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const box = $("#oMsg"), body = box.value.trim();
+    if(!body) return toast("Write something first.");
+    const btn = msgForm.querySelector("button[type=submit]");
+    btn.disabled = true;
+    try{
+      await SB.rpc("message_customer", {p_order: o.id, p_body: body});
+      box.value = "";
+      toast("Sent — it is in their account now");
+      await showOrder(o.id);
+    }catch(err){
+      toast(/function|404|schema cache/i.test(err.message || "")
+        ? "Run supabase/13-messages.sql first — this needs it."
+        : err.message);
+      btn.disabled = false;
+    }
+  });
 
   $("#trkForm").addEventListener("submit", async e => {
     e.preventDefault();

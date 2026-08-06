@@ -13,9 +13,7 @@ function paintRail(){
       </div>
       <h3 class="rc-n">${esc(p.name)}</h3>
       <div class="rc-b">
-        <span class="rc-p">${inr(p.price)}</span>
-        <button class="btn btn-ghost" data-go="${p.id}">View</button>
-        <button class="btn btn-dark" data-add="${p.id}">Add</button>
+        <span class="rc-p">${inr(p.price)}</span>${cardActs(p)}
       </div>
     </article>`).join("");
 }
@@ -103,13 +101,7 @@ railEl.addEventListener("keydown", e=>{
   if(e.key === "ArrowLeft"){  e.preventDefault(); railGo(railAt - 1); }
 });
 
-/* add / zoom, shared with the grid's handlers */
-railEl.addEventListener("click", e=>{
-  const a = e.target.closest("[data-add]");
-  if(a){ lastBtn = a; addItem(PRODUCTS.find(p=>p.id===a.dataset.add)); return; }
-  const g = e.target.closest("[data-go]");
-  if(g) openProduct(g.dataset.go);
-});
+/* Add and View are handled once for every card, in 06b-cardacts.js */
 
 buildDots();
 let railFit;

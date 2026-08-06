@@ -527,3 +527,12 @@ td .pic{margin:0 auto}
 .pvw-btn.dark{background:var(--ink); color:var(--bg); box-shadow:none}
 .pvw-out .pvw-shot img{filter:grayscale(.55) opacity(.75)}
 .pvw-out .pvw-btn.dark{background:var(--line-2); color:var(--ink-faint)}
+
+/* a line of text that is really a button — used for an ordered item that
+   opens its own page */
+.linkish{
+  border:0; background:none; padding:0; cursor:pointer; font:inherit; text-align:left;
+  color:var(--ink); text-decoration:underline; text-underline-offset:3px;
+  text-decoration-color:var(--line-2); text-decoration-thickness:1px;
+}
+.linkish:hover{text-decoration-color:var(--teal); color:var(--teal)}

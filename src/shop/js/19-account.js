@@ -19,6 +19,7 @@ let acctTab  = "orders";  // orders · updates · basket · wishlist · details
 let acctOrders = null;    // cached for this opening of the sheet
 let acctNotifs = null;    // the same, for the updates tab
 let cancelling = null;    // the order id whose "are you sure" is open
+let cancelWhy  = 0;       // which reason is picked, by index
 
 /* The picture Google gave us, or the first letter of their name. The
    picture is the one thing an account can show that says "this is really
@@ -263,10 +264,16 @@ function cancelForm(o){
     <p>It is still ${esc((STATUS[o.status] || {}).label || o.status).toLowerCase()}, so it can
        be called off. Once it is with the courier it cannot. This cannot be undone —
        you would need to order again.</p>
-    <label class="ac-c-lab" for="acWhy">Why, so we can do better</label>
-    <select class="ac-c-sel" id="acWhy">
-      ${CANCEL_REASONS.map(r => `<option>${esc(r)}</option>`).join("")}
-    </select>
+    <span class="ac-c-lab">Why, so we can do better</span>
+    <!-- Buttons, not a <select>. A native dropdown on a phone opens as a
+         slab of system chrome in the middle of a page that has been made to
+         look like nothing else on the phone, and five short reasons do not
+         need to be hidden behind a tap in the first place. -->
+    <div class="ac-why" role="radiogroup" aria-label="Why, so we can do better">
+      ${CANCEL_REASONS.map((r, i) => `
+        <button type="button" role="radio" data-why="${esc(r)}"
+                aria-checked="${i === cancelWhy}" class="${i === cancelWhy ? "on" : ""}">${esc(r)}</button>`).join("")}
+    </div>
     <div class="ac-c-acts">
       <button class="btn btn-ghost" data-cancelno="1">Keep the order</button>
       <button class="btn btn-dark ac-c-go" data-cancelyes="${esc(o.id)}">Yes, cancel it</button>
@@ -275,7 +282,7 @@ function cancelForm(o){
 }
 
 async function doCancel(id){
-  const why = ($("#acWhy") && $("#acWhy").value) || "";
+  const why = CANCEL_REASONS[cancelWhy] || "";
   const btn = $(".ac-c-go");
   if(btn){ btn.disabled = true; btn.textContent = "Cancelling…"; }
   try{
@@ -353,7 +360,8 @@ function acctBody(){
     if(!acctNotifs.length){
       return head + `<div class="ac-pane"><p class="ac-empty">Nothing yet. When an order
         is confirmed, sent or delivered, it is written here — and the tracking
-        id comes with it.</p></div>`;
+        id comes with it. Anything Ray Art Gallery needs to tell you about an
+        order lands here too.</p></div>`;
     }
     return head + `<div class="ac-pane">${acctNotifs.map(n => `
       <div class="ac-notif${n.read_at ? "" : " unread"}">
@@ -568,7 +576,19 @@ $("#acctBody").addEventListener("click", async e => {
   }
 
   const cx = e.target.closest("[data-cancel]");
-  if(cx){ cancelling = cx.dataset.cancel; paintAcct(); return; }
+  if(cx){ cancelling = cx.dataset.cancel; cancelWhy = 0; paintAcct(); return; }
+
+  /* picking a reason repaints only the row of reasons — repainting the whole
+     account would scroll the box they are reading out from under them */
+  const why = e.target.closest("[data-why]");
+  if(why){
+    cancelWhy = CANCEL_REASONS.indexOf(why.dataset.why);
+    [...why.parentElement.children].forEach((b, i) => {
+      b.classList.toggle("on", i === cancelWhy);
+      b.setAttribute("aria-checked", String(i === cancelWhy));
+    });
+    return;
+  }
   if(e.target.closest("[data-cancelno]")){ cancelling = null; paintAcct(); return; }
   const cy = e.target.closest("[data-cancelyes]");
   if(cy){ doCancel(cy.dataset.cancelyes); return; }

@@ -27,8 +27,18 @@ let galleryReady = false;  // its photo list has actually come back
 const productPanelOpen = () => !!(editing && $("#pvPreview"));
 
 async function openProductPanel(id){
+  /* opened from an order line as well as from the products table, and that
+     screen may never have been visited — so fetch the numbers if they are
+     not already here rather than doing nothing */
+  if(!prodRows.find(p => p.id === id)){
+    openPanel("Loading…", `<p class="load">Loading…</p>`);
+    try{
+      const d = await SB.rpc("admin_product_stats", {p_days: range});
+      prodRows = d.products || [];
+    }catch(e){ return openPanel("That rakhi", `<p class="empty">${esc(e.message)}</p>`); }
+  }
   const stats = prodRows.find(p => p.id === id);
-  if(!stats) return;
+  if(!stats) return openPanel("That rakhi", `<p class="empty">It is not in the catalogue any more.</p>`);
 
   editing = Object.assign({}, stats);
   galleryFor = id;

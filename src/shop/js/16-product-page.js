@@ -135,8 +135,7 @@ function paintProduct(){
         ${heartBtn(x.id)}
       </div>
       <h3 class="rc-n">${esc(x.name)}</h3>
-      <div class="rc-b"><span class="rc-p">${inr(x.price)}</span>
-        <button class="btn btn-dark" data-go="${x.id}">View</button></div>
+      <div class="rc-b"><span class="rc-p">${inr(x.price)}</span>${cardActs(x)}</div>
     </article>`).join("");
 
   $("#pvAsk").href = wa(
@@ -296,8 +295,6 @@ $("#pvIn").addEventListener("click", e=>{
     return;
   }
   if(e.target.closest("#pvZoom")){ openZoom(pvShotAt); return; }
-  const go = e.target.closest("[data-go]");
-  if(go) openProduct(go.dataset.go);
 });
 
 $$(".rv").forEach(el=>io.observe(el));
