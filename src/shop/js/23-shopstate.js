@@ -31,6 +31,36 @@ function paintContact(){
     if(SHOP.email){ mail.href = "mailto:" + SHOP.email; mail.hidden = false; }
     else mail.hidden = true;
   }
+
+  /* the free-delivery line in the footer, from the same number as the bill */
+  const fs = $("#footShip");
+  if(fs){
+    fs.textContent = SHOP.freeShipAbove > 0
+      ? `Prices in INR · free delivery over ${inr(SHOP.freeShipAbove)}`
+      : "Prices in INR · free delivery on everything";
+  }
+
+  /* ── reporting a fault ──
+     Everything the person cannot be expected to describe — which page, which
+     phone, which browser — is filled in for them. All they have to write is
+     what went wrong. */
+  const bug = $("#bugLink");
+  if(bug){
+    const to = SHOP.email || "";
+    if(!to){ bug.hidden = true; return; }
+    const body = [
+      "What happened:", "", "",
+      "What I expected:", "", "",
+      "— sent from the shop —",
+      "Page: " + location.href,
+      "Screen: " + innerWidth + "×" + innerHeight,
+      "Browser: " + navigator.userAgent
+    ].join("\n");
+    bug.href = "mailto:" + to
+      + "?subject=" + encodeURIComponent("Ray Art Gallery — a bug or an idea")
+      + "&body=" + encodeURIComponent(body);
+    bug.hidden = false;
+  }
 }
 
 /* ── the line across the top ── */
