@@ -12,6 +12,13 @@ const SHOP = {
   orderByDate:   "2026-08-21",        // last date for normal delivery
   freeShipAbove: 499,
   shipFlat:      49,
+  /* How long it takes to get there. Written here once and read by the
+     product page, so the promise on every rakhi says the same thing. The
+     city is where the rakhis are actually made, which is why it is quicker. */
+  localCity:     "Indore",
+  localPin:      "452",               // pincodes starting with this are local
+  localDays:     2,
+  awayDays:      7,
   billPrefix:    "RAG",
   /* The hero rail slides on its own every 5.2s. It stops permanently as soon
      as anyone swipes, taps an arrow or a dot, and never moves at all for

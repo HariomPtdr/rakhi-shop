@@ -128,20 +128,21 @@
 }
 .pv-facts{display:flex; flex-wrap:wrap; gap:7px; margin-top:18px}
 
-/* more rakhis */
+/* more rakhis
+   One row, always. It used to become a wrapping grid on a wide screen,
+   which turned a footnote at the bottom of a product page into a second
+   catalogue two rows deep — and buried the reviews under it. A row that
+   runs off the edge says "there is more over here" and takes one line to
+   say it. */
 .pv-more{margin-top:34px}
-/* On a phone this stays a swipe rail. On desktop there is nothing to swipe
-   with and no arrows here, so it lays out as a plain row of three. */
-@media (min-width:940px){
-  .pv-more{margin-top:52px}
-  /* same track size as the collection grid, so a card here is exactly the
-     size of a card there */
-  .pv-more .rail{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr));
-    gap:clamp(12px,1.8vw,22px); overflow:visible;
-  }
-  .pv-more .rc{width:auto}
+@media (min-width:940px){.pv-more{margin-top:52px}}
+.pv-more .rail{
+  display:flex; gap:clamp(10px,1.6vw,18px);
+  overflow-x:auto; scroll-snap-type:x proximity;
+  padding-bottom:6px; scrollbar-width:thin;
 }
+.pv-more .rc{scroll-snap-align:start}
+@media (min-width:940px){.pv-more .rc{width:min(232px,42vw)}}
 
 /* ── stars ── */
 .stars{display:inline-block; line-height:0; height:var(--s,13px)}
@@ -268,3 +269,13 @@
 }
 .pv-ask-link .wa{color:var(--wa)}
 .pv-ask-link:hover{color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+
+/* how long it takes to get there */
+.pv-eta{
+  display:flex; gap:11px; align-items:flex-start; margin-top:18px;
+  padding:12px 14px; border-radius:var(--r-md);
+  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.18);
+}
+.pv-eta svg{flex:none; margin-top:1px; color:var(--teal)}
+.pv-eta b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
+.pv-eta span{display:block; margin-top:3px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}

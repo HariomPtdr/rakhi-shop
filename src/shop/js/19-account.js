@@ -20,6 +20,7 @@ let acctOrders = null;    // cached for this opening of the sheet
 let acctNotifs = null;    // the same, for the updates tab
 let cancelling = null;    // the order id whose "are you sure" is open
 let cancelWhy  = 0;       // which reason is picked, by index
+let editingAddr = null;   // the order id whose address is being corrected
 
 /* The picture Google gave us, or the first letter of their name. The
    picture is the one thing an account can show that says "this is really
@@ -236,13 +237,98 @@ function orderCard(o){
        <b>${esc(o.tracking_id)}</b>
        <button class="ac-copy" type="button" data-copy="${esc(o.tracking_id)}">Copy</button>
      </div>` : ""}
+    ${canCancel ? `<div class="ac-o-to">
+      <div>
+        <b>Going to</b>
+        <span>${esc(o.address || "—")}${o.city ? ", " + esc(o.city) : ""} ${esc(o.pincode || "")}</span>
+        ${o.note ? `<i>“${esc(o.note)}”</i>` : ""}
+        ${o.lat != null ? `<i class="pinned">Exact location attached</i>` : ""}
+      </div>
+      <button type="button" data-editaddr="${esc(o.id)}">Change</button>
+    </div>` : ""}
     <div class="ac-o-foot">
       <span>${o.shipping ? inr(o.subtotal) + " + " + inr(o.shipping) + " delivery" : "Delivery free"}</span>
       ${canCancel ? `<button class="ac-cancel" data-cancel="${esc(o.id)}">Cancel order</button>` : ""}
       <a class="ac-ask" href="${ask}" target="_blank" rel="noopener">Ask about this order</a>
     </div>
+    ${editingAddr === o.id ? addrForm(o) : ""}
     ${cancelling === o.id ? cancelForm(o) : ""}
   </div>`;
+}
+
+/* ── correcting where it is going ──
+   A wrong pincode is the commonest reason a parcel comes back, and it is
+   always spotted a minute after the order goes in. Allowed until somebody
+   hands it to a courier — the database enforces the same rule, and tells
+   the seller what changed, so a label already written is never quietly
+   wrong. */
+function addrForm(o){
+  return `<div class="ac-addrbox">
+    <b>Where should ${esc(o.bill_no)} go?</b>
+    <p>You can change this until it is handed to the courier. We are told, so
+       nothing goes out to the old address.</p>
+    <div class="fg two">
+      <div class="fld"><label for="eaName">Name</label>
+        <input type="text" id="eaName" value="${esc(o.name || "")}" autocomplete="name"></div>
+      <div class="fld"><label for="eaPhone">Phone</label>
+        <input type="tel" id="eaPhone" inputmode="numeric" maxlength="10"
+               value="${esc(o.phone || "")}" autocomplete="tel"></div>
+    </div>
+    <div class="fg"><div class="fld"><label for="eaAddr">Delivery address</label>
+      <textarea id="eaAddr" autocomplete="street-address">${esc(o.address || "")}</textarea></div></div>
+    <div class="fg two">
+      <div class="fld"><label for="eaCity">City</label>
+        <input type="text" id="eaCity" value="${esc(o.city || "")}"></div>
+      <div class="fld"><label for="eaPin">Pincode</label>
+        <input type="tel" id="eaPin" inputmode="numeric" maxlength="6" value="${esc(o.pincode || "")}"></div>
+    </div>
+    <div class="fg"><div class="fld"><label for="eaNote">Instructions for the courier</label>
+      <textarea id="eaNote" placeholder="Second floor, ring the bell twice. Or: leave it with the shop below."
+        >${esc(o.note || "")}</textarea></div></div>
+
+    <div class="ac-pin">
+      ${o.lat != null
+        ? `<span class="ac-pin-on">A location is attached to this order.
+             <a href="${esc(mapsLink(o.lat, o.lng))}" target="_blank" rel="noopener">Check it</a></span>`
+        : `<span class="dim">No exact location on this order yet.</span>`}
+      <div class="ac-pin-acts">
+        <button type="button" data-orderpin="${esc(o.id)}">Use my location</button>
+        <button type="button" data-pastepin="${esc(o.id)}">Paste a map link</button>
+      </div>
+    </div>
+
+    <div class="ac-c-acts">
+      <button class="btn btn-ghost" data-addrno="1">Leave it</button>
+      <button class="btn btn-dark ac-a-go" data-addryes="${esc(o.id)}">Save the address</button>
+    </div>
+  </div>`;
+}
+
+async function saveOrderAddress(id){
+  const v = i => ($("#" + i) ? $("#" + i).value.trim() : "");
+  const btn = $(".ac-a-go");
+  if(!/^[6-9][0-9]{9}$/.test(v("eaPhone"))) return note("That phone number does not look right.");
+  if(!/^[0-9]{6}$/.test(v("eaPin")))        return note("A pincode is six digits.");
+  if(!v("eaName") || !v("eaAddr") || !v("eaCity")) return note("Fill the name, address and city.");
+
+  if(btn){ btn.disabled = true; btn.textContent = "Saving…"; }
+  try{
+    await SB.rpc("update_order_address", {
+      p_order: id, p_name: v("eaName"), p_phone: v("eaPhone"),
+      p_address: v("eaAddr"), p_city: v("eaCity"), p_pincode: v("eaPin"),
+      p_note: v("eaNote")
+    });
+    editingAddr = null;
+    acctOrders = null;
+    toast("Address updated — we have been told");
+    paintAcct();
+    loadAcctData();
+  }catch(err){
+    if(btn){ btn.disabled = false; btn.textContent = "Save the address"; }
+    note(/function|404|schema cache/i.test(err.message || "")
+      ? "This needs supabase/14-address.sql to be run first."
+      : (err.message || "Could not save that just now."));
+  }
 }
 
 /* ── calling off an order ──
@@ -575,8 +661,18 @@ $("#acctBody").addEventListener("click", async e => {
     return;
   }
 
+  const ea = e.target.closest("[data-editaddr]");
+  if(ea){ editingAddr = ea.dataset.editaddr; cancelling = null; paintAcct(); return; }
+  if(e.target.closest("[data-addrno]")){ editingAddr = null; paintAcct(); return; }
+  const ay = e.target.closest("[data-addryes]");
+  if(ay){ saveOrderAddress(ay.dataset.addryes); return; }
+  const op = e.target.closest("[data-orderpin]");
+  if(op){ pinThisOrder(op.dataset.orderpin); return; }
+  const pp = e.target.closest("[data-pastepin]");
+  if(pp){ pastePinFor(pp.dataset.pastepin); return; }
+
   const cx = e.target.closest("[data-cancel]");
-  if(cx){ cancelling = cx.dataset.cancel; cancelWhy = 0; paintAcct(); return; }
+  if(cx){ cancelling = cx.dataset.cancel; editingAddr = null; cancelWhy = 0; paintAcct(); return; }
 
   /* picking a reason repaints only the row of reasons — repainting the whole
      account would scroll the box they are reading out from under them */

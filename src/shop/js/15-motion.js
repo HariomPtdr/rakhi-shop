@@ -140,6 +140,7 @@ function countdown(){
   else if(days === 0) txt = "Raksha Bandhan is today";
   else                txt = `Raksha Bandhan · ${SHOP.festival}`;
   $("#mFest").textContent = txt;
+  paintTrust();          /* the same day count, in the pills */
 }
 countdown();
 setInterval(countdown, 60000);

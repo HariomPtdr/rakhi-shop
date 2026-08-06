@@ -216,3 +216,10 @@
   text-underline-offset:3px; text-decoration-thickness:1px;
 }
 .addr-alts button:hover{color:var(--ink)}
+
+/* the second way to attach a location, for when the phone will not */
+.pin-paste{
+  display:block; margin:-6px 0 12px; padding:4px 2px; border:0; background:none;
+  cursor:pointer; font-family:var(--head); font-size:12px; font-weight:600; color:var(--teal);
+}
+.pin-paste:hover{color:var(--ink)}

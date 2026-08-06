@@ -13,14 +13,34 @@ let ordQuery  = "";
 let ordPage   = 0;
 const ORD_PAGE = 30;
 
-const ORDER_SELECT = "select=id,bill_no,name,phone,address,city,pincode,note,subtotal,shipping,"
-                   + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,payment,discount,coupon_code,"
-                   + "order_items(name,qty,price,product_id)";
+/* address_at arrives with 14-address.sql. Asking for a column that is not
+   there yet fails the whole select, and an Orders screen that will not load
+   is a much worse outcome than not knowing when an address was corrected —
+   so the first refusal drops it and everything else still works. */
+let hasAddressAt = true;
 
-const oneOrderQuery = id => "orders?" + ORDER_SELECT + "&id=eq." + encodeURIComponent(id) + "&limit=1";
+const ORDER_SELECT = () =>
+  "select=id,bill_no,name,phone,address,city,pincode,note,subtotal,shipping,"
+  + "total,status,courier,tracking_id,admin_note,created_at,status_at,user_id,lat,lng,"
+  + (hasAddressAt ? "address_at," : "")
+  + "payment,discount,coupon_code,"
+  + "order_items(name,qty,price,product_id)";
+
+/* every order query goes through here, so the retry is written once */
+async function askOrders(build){
+  try{
+    return await SB.rest(build());
+  }catch(err){
+    if(!hasAddressAt || !/address_at/i.test(err.message || "")) throw err;
+    hasAddressAt = false;
+    return await SB.rest(build());
+  }
+}
+
+const oneOrderQuery = id => "orders?" + ORDER_SELECT() + "&id=eq." + encodeURIComponent(id) + "&limit=1";
 
 function orderQuery(limit, offset){
-  let q = "orders?" + ORDER_SELECT + "&order=created_at.desc&limit=" + limit + "&offset=" + offset;
+  let q = "orders?" + ORDER_SELECT() + "&order=created_at.desc&limit=" + limit + "&offset=" + offset;
   if(ordFilter) q += "&status=eq." + encodeURIComponent(ordFilter);
   if(ordQuery){
     const t = ordQuery.replace(/[(),*]/g, " ").trim();
@@ -34,7 +54,7 @@ function orderQuery(limit, offset){
 
 VIEWS.orders = async function(){
   /* one more than a page, so "is there a next page" needs no count query */
-  const rows = await SB.rest(orderQuery(ORD_PAGE + 1, ordPage * ORD_PAGE));
+  const rows = await askOrders(() => orderQuery(ORD_PAGE + 1, ordPage * ORD_PAGE));
   const more = rows.length > ORD_PAGE;
   const page = rows.slice(0, ORD_PAGE);
 
@@ -64,7 +84,9 @@ VIEWS.orders = async function(){
             <td class="mono nowrap">${esc(o.bill_no)}</td>
             <td class="nowrap"><span class="strong">${esc(o.name)}</span><br>
                 <span class="dim mono">${esc(o.phone)}</span></td>
-            <td class="dim nowrap">${esc(o.city)}<br><span class="mono">${esc(o.pincode)}</span></td>
+            <td class="dim nowrap">${esc(o.city)}${o.lat != null
+                 ? ` <span title="an exact location is attached">📍</span>` : ""}
+                <br><span class="mono">${esc(o.pincode)}</span></td>
             <td class="dim">${(o.order_items || []).length} ${plural((o.order_items||[]).length, "line")}
               · ${(o.order_items || []).reduce((s, i) => s + i.qty, 0)} pcs</td>
             <td class="num strong">${inr(o.total)}</td>
@@ -107,7 +129,7 @@ VIEWS.orders = async function(){
   });
 
   $("#ordCsv").onclick = async () => {
-    const all = await SB.rest(orderQuery(1000, 0));
+    const all = await askOrders(() => orderQuery(1000, 0));
     downloadCSV("orders.csv", all.map(o => ({
       bill_no: o.bill_no, placed: o.created_at, status: o.status,
       name: o.name, phone: o.phone, address: o.address, city: o.city, pincode: o.pincode,
@@ -125,7 +147,7 @@ async function showOrder(id, known){
   openPanel("Order", `<p class="load">Loading…</p>`);
   let o = known;
   try{
-    if(!o) o = (await SB.rest(oneOrderQuery(id)))[0];
+    if(!o) o = (await askOrders(() => oneOrderQuery(id)))[0];
     if(!o) return openPanel("Order", `<p class="empty">That order is gone.</p>`);
 
     const hist = await SB.rest("order_status_log?select=from_status,to_status,note,created_at"
@@ -178,7 +200,9 @@ function paintOrder(o, hist, laterPin, msgs){
     <div class="rows">
       <div class="row"><span>Name</span><span class="strong">${esc(o.name)}</span></div>
       <div class="row"><span>Phone</span><span class="mono">${esc(o.phone)}</span></div>
-      <div class="row"><span>Address</span><span>${esc(o.address)}</span></div>
+      <div class="row"><span>Address</span><span>${esc(o.address)}${o.address_at
+        ? `<br><span class="dim" style="font-size:11.5px">changed by the customer ${
+            esc(agoText(o.address_at))} — check the label</span>` : ""}</span></div>
       <div class="row"><span>City</span><span>${esc(o.city)} — ${esc(o.pincode)}</span></div>
       ${o.note ? `<div class="row"><span>Their note</span><span>${esc(o.note)}</span></div>` : ""}
     </div>

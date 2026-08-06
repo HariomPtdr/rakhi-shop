@@ -77,9 +77,13 @@
   padding:1px 0; -webkit-overflow-scrolling:touch;
 }
 .trust::-webkit-scrollbar{display:none}
+/* One pill, used in the hero and again on every product page. It was
+   translucent, so the same pill picked up whatever was behind it and the two
+   places never quite matched. Opaque now — a fact should look the same
+   wherever it is stated. */
 .tc{
-  flex:none; white-space:nowrap; font-size:11.5px; color:var(--ink-soft);
+  flex:none; white-space:nowrap; font-size:11.5px; line-height:1.35; color:var(--ink-soft);
   padding:8px 13px; border-radius:var(--r-full);
-  background:rgba(255,253,248,.7); box-shadow:inset 0 0 0 1px var(--line);
+  background:#FFFDF8; box-shadow:inset 0 0 0 1px var(--line);
 }
 .tc b{color:var(--ink); font-weight:700}

@@ -23,6 +23,29 @@ const showDay = iso =>
 SHOP.festival = showDay(SHOP.festivalDate);
 SHOP.orderBy  = showDay(SHOP.orderByDate);
 
+/* ── the little pills of fact ──
+   Free-delivery threshold and the days to the festival appear in the hero
+   and again on every product page. They were written into the HTML twice,
+   with ₹499 typed out — so changing the threshold in Settings changed the
+   bill and left both pills lying. One renderer now, called from one place
+   whenever anything it reads has changed. */
+function trustPills(){
+  const days = daysUntil(SHOP.festivalDate);
+  const out = [
+    SHOP.freeShipAbove > 0
+      ? `<span class="tc" role="listitem">Free over <b>${inr(SHOP.freeShipAbove)}</b></span>`
+      : `<span class="tc" role="listitem">Free delivery <b>on everything</b></span>`,
+    `<span class="tc" role="listitem">Ships <b>all India</b></span>`
+  ];
+  if(days > 1)        out.push(`<span class="tc" role="listitem"><b>${days} days</b> to Raksha Bandhan</span>`);
+  else if(days === 1) out.push(`<span class="tc" role="listitem">Raksha Bandhan is <b>tomorrow</b></span>`);
+  else if(days === 0) out.push(`<span class="tc" role="listitem">Raksha Bandhan is <b>today</b></span>`);
+  return out.join("");
+}
+function paintTrust(){
+  $$(".trust").forEach(el => { el.innerHTML = trustPills(); });
+}
+
 $("#yr").textContent = new Date().getFullYear();
 $("#qCut").textContent =
   `Yes, if you order by ${SHOP.orderBy}. Delivery takes three to six days to most pincodes. ` +

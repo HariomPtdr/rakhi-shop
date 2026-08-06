@@ -37,7 +37,7 @@ function pvShot(p){
 
 function paintProduct(){
   const p = pvProduct(); if(!p) return;
-  const shot = pvShot(p), days = daysUntil(SHOP.festivalDate);
+  const shot = pvShot(p);
   const gallery = pvGallery(p);
   $("#pvCrumb").textContent = `Collection / № ${IDX.get(p.id)}`;
 
@@ -105,16 +105,14 @@ function paintProduct(){
         <svg class="wa" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
         Ask about this on WhatsApp</a>
 
+      ${etaHtml()}
+
       <ul class="pv-promise">
         <li>You approve a photo before we ship it</li>
         <li>Pay by UPI or on delivery — nothing upfront</li>
         <li>Made to order by hand, so no two are identical</li>
       </ul>
-      <div class="pv-facts">
-        <span class="tc">Free over <b>₹499</b></span>
-        <span class="tc">Ships <b>all India</b></span>
-        ${days > 1 ? `<span class="tc"><b>${days} days</b> to Raksha Bandhan</span>` : ""}
-      </div>
+      <div class="pv-facts trust" role="list">${trustPills()}</div>
     </div>
     </div>
 
@@ -128,7 +126,15 @@ function paintProduct(){
       <div class="rail-wrap"><div class="rail" id="pvRail" role="group" aria-label="More rakhis"></div></div>
     </div>`;
 
-  $("#pvRail").innerHTML = PRODUCTS.filter(x=>x.id!==p.id).slice(0,6).map(x=>`
+  /* the ones worth showing next, not simply the first six in the catalogue:
+     the same kind first, then whatever is nearest in price */
+  const near = PRODUCTS.filter(x => x.id !== p.id).map(x => ({
+    p: x,
+    score: (x.cat === p.cat ? 0 : 100) + Math.abs(x.price - p.price) / 10
+             + (x.stock === 0 ? 500 : 0) + (x.img ? -8 : 0)
+  })).sort((a, b) => a.score - b.score).slice(0, 8).map(x => x.p);
+
+  $("#pvRail").innerHTML = near.map(x=>`
     <article class="rc">
       <div class="rc-shot">
         ${thumb(x)}<span class="rc-tag ${x.img?"real":"art"}">${x.img?"Photo":"Drawing"}</span>
@@ -141,6 +147,47 @@ function paintProduct(){
   $("#pvAsk").href = wa(
 `Hello Ray Art Gallery, I am asking about № ${IDX.get(p.id)} — ${p.name} (${inr(p.price)}).`
 + `\n\nHow many days will it take?`);
+}
+
+/* ── how long it will take ──
+   The rakhis are made in Indore, so an Indore address is a day or two and
+   the rest of the country is a week. Saying both is honest; saying which
+   one applies to the person reading is useful, so when the account already
+   knows where they are, that line is the one in bold.
+
+   Nothing here is a guarantee — it says "about", because a courier in the
+   week before Raksha Bandhan is not a promise anyone should make. */
+function isLocal(){
+  if(!profile) return false;
+  const city = (profile.city || "").trim().toLowerCase();
+  const pin  = (profile.pincode || "").trim();
+  return city === SHOP.localCity.toLowerCase() || pin.startsWith(SHOP.localPin);
+}
+
+function etaHtml(){
+  const known = !!(profile && (profile.city || profile.pincode));
+  const local = known && isLocal();
+  const where = known ? (profile.city || "").trim() : "";
+
+  return `<div class="pv-eta">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/>
+      <circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>
+    </svg>
+    <div>
+      <b>${known
+        ? (local
+            ? `About ${SHOP.localDays} days to ${esc(where || SHOP.localCity)}`
+            : `Within a week to ${esc(where || "your city")}`)
+        : `${SHOP.localCity} in about ${SHOP.localDays} days`}</b>
+      <span>${known
+        ? (local
+            ? `We make them here in ${esc(SHOP.localCity)}, so yours has the shortest way to go.`
+            : `Made to order in ${esc(SHOP.localCity)} and posted the same week — about ${SHOP.awayDays} days to most pincodes.`)
+        : `Everywhere else in India within a week. Sign in and we will say which one is yours.`}</span>
+    </div>
+  </div>`;
 }
 
 /* ── the slider ──

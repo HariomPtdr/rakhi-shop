@@ -270,7 +270,8 @@ async function pollUnread(){
 
 async function loadOrders(){
   return SB.rest("orders?select=id,bill_no,total,subtotal,shipping,status,created_at,status_at,"
-               + "courier,tracking_id,name,city,pincode,order_items(name,qty,price,product_id)"
+               + "courier,tracking_id,name,phone,address,city,pincode,note,lat,lng,"
+               + "order_items(name,qty,price,product_id)"
                + "&order=created_at.desc&limit=25");
 }
 /* Best effort, always after the WhatsApp message is on its way: the message
