@@ -21,6 +21,7 @@ let acctNotifs = null;    // the same, for the updates tab
 let cancelling = null;    // the order id whose "are you sure" is open
 let cancelWhy  = 0;       // which reason is picked, by index
 let editingAddr = null;   // the order id whose address is being corrected
+let detailsEditing = false;  // the saved address is being changed, not just read
 
 /* The picture Google gave us, or the first letter of their name. The
    picture is the one thing an account can show that says "this is really
@@ -495,31 +496,66 @@ function acctBody(){
   }
 
   if(acctTab === "details"){
+    /* An address that is already saved is a fact, not a form. Five boxes
+       standing open every time say "check this", when the honest state is
+       "this is where your rakhis go, change it if that is wrong". Nothing
+       to add is a different screen again: one button, not five empty
+       boxes. */
+    const p = profile || {};
+    const hasAddr = !!(p.full_name && p.phone && p.address && p.city && p.pincode);
+
     return head + `<div class="ac-pane">
+      <div class="ac-sec-k" style="margin-bottom:12px">Delivery address</div>
+
+      ${!detailsEditing && hasAddr ? `
+        <div class="addr-card">
+          <span class="addr-tick" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9 17.5 20 6.5"/></svg>
+          </span>
+          <div>
+            <b>${esc(p.full_name)}</b>
+            <p>${esc(p.address)}<br>${esc(p.city)} — ${esc(p.pincode)}</p>
+            <span class="addr-ph">${esc(p.phone)}</span>
+          </div>
+        </div>
+        <p class="ac-fine">Every bill fills itself in from this. Changing it does not
+          change an order already placed — open that order and change it there.</p>
+        <div class="ac-acts">
+          <button class="btn btn-ghost btn-full" id="pEdit" type="button">Change address</button>
+        </div>` : ""}
+
+      ${!detailsEditing && !hasAddr ? `
+        <p class="ac-fine" style="margin-top:0">Nothing saved yet. Add it once and every
+          bill you make fills itself in — you will not type it again.</p>
+        <div class="ac-acts">
+          <button class="btn btn-dark btn-full" id="pEdit" type="button">Add your address</button>
+        </div>` : ""}
+
+      ${detailsEditing ? `
       <form id="acctProfile" novalidate>
         <div class="fg two">
           <div class="fld"><label for="pName">Full name</label>
             <input type="text" id="pName" autocomplete="name" value="${esc(nm)}"></div>
           <div class="fld"><label for="pPhone">Phone</label>
             <input type="tel" id="pPhone" autocomplete="tel" inputmode="numeric" maxlength="10"
-                   value="${esc((profile && profile.phone) || "")}"></div>
+                   value="${esc(p.phone || "")}"></div>
         </div>
         <div class="fg"><div class="fld"><label for="pAddr">Address</label>
-          <textarea id="pAddr" autocomplete="street-address">${esc((profile && profile.address) || "")}</textarea></div></div>
+          <textarea id="pAddr" autocomplete="street-address">${esc(p.address || "")}</textarea></div></div>
         <div class="fg two">
           <div class="fld"><label for="pCity">City</label>
-            <input type="text" id="pCity" autocomplete="address-level2" value="${esc((profile && profile.city) || "")}"></div>
+            <input type="text" id="pCity" autocomplete="address-level2" value="${esc(p.city || "")}"></div>
           <div class="fld"><label for="pPin">Pincode</label>
             <input type="tel" id="pPin" autocomplete="postal-code" inputmode="numeric" maxlength="6"
-                   value="${esc((profile && profile.pincode) || "")}"></div>
+                   value="${esc(p.pincode || "")}"></div>
         </div>
-        <p class="ac-fine">Saved once, and every bill you make fills itself in from it.
-          Changing it here does not change an order already placed — open that
-          order and change it there.</p>
-        <div class="ac-acts">
-          <button class="btn btn-dark btn-full" id="pSave" type="submit">Save details</button>
+        <div class="ac-acts two">
+          <button class="btn btn-dark" id="pSave" type="submit">${
+            hasAddr ? "Save the address" : "Save it"}</button>
+          ${hasAddr ? `<button class="btn btn-ghost" id="pCancel" type="button">Leave it</button>` : ""}
         </div>
-      </form>
+      </form>` : ""}
 
       <div class="ac-sec">
         <div class="ac-sec-k">Password</div>
@@ -615,6 +651,7 @@ function loadAcctData(){
 }
 
 function openAcct(tab){
+  detailsEditing = false;      /* a fresh look, not a half-finished edit */
   if(!SB_ON) return;
   acctNote = null;
   if(tab) acctTab = tab;
@@ -690,6 +727,9 @@ $("#acctBody").addEventListener("click", async e => {
     }
     return;
   }
+
+  if(e.target.closest("#pEdit")){ detailsEditing = true; paintAcct(); return; }
+  if(e.target.closest("#pCancel")){ detailsEditing = false; paintAcct(); return; }
 
   const fb = e.target.closest("[data-ofeed]");
   if(fb){
@@ -856,8 +896,9 @@ async function submitProfile(){
     await saveProfile(p);
     fillBillFromProfile();
     paintAcctBtn();
-    note("Saved.", true);
-    toast("Details saved");
+    detailsEditing = false;                /* back to reading it, not editing it */
+    paintAcct();
+    toast("Address saved");
   }catch(err){
     note(err.message || "Could not save just now.");
   }
