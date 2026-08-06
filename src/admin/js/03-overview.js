@@ -53,8 +53,9 @@ VIEWS.overview = async function(){
 
     ${owed.length ? `<div class="notice">
       <b>${owed.length} ${plural(owed.length, "order")} waiting to be paid — ${inr(owedTotal)}</b>
-      <span>Sent on WhatsApp, not yet received. Nothing is made until you mark
-        the money in, which confirms the order at the same time.</span>
+      <span>Placed but not paid for. Nothing is made until the payment goes
+        through, and it confirms the order by itself the moment it does —
+        there is nothing here for you to do but wait, or nudge them.</span>
       <div class="acts"><button class="btn btn-sm" id="ovUnpaid" type="button"
         >See them</button></div>
     </div>` : ""}

@@ -539,3 +539,14 @@ td .pic{margin:0 auto}
 
 /* how heavy a photo is, said where the seller can act on it */
 .gal-size{display:block; font-size:10.5px; margin-top:3px}
+
+/* a payment that has actually arrived */
+.paid{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px;
+  padding:11px 13px; border-radius:var(--r-sm);
+  background:rgba(27,132,151,.08); box-shadow:inset 0 0 0 1px rgba(27,132,151,.26);
+}
+.paid > div:first-child{flex:1; min-width:0}
+.paid b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
+.paid span{display:block; font-size:11.5px; color:var(--ink-faint); margin-top:2px}
+.paid-acts{display:flex; gap:7px; flex-wrap:wrap}

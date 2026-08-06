@@ -63,7 +63,7 @@ async function payForOrder(orderId, opts){
 
   const ok = await loadRazorpay();
   if(!ok){
-    toast("Could not reach the payment page. Pay on WhatsApp instead.");
+    toast("Could not reach the payment page. Check your connection and try again.");
     return false;
   }
 

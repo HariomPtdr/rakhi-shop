@@ -107,8 +107,8 @@ function paintSettings(){
               <span class="strong">${s.cod_enabled === false
                 ? `<span class="chip no">Not offered</span>`
                 : `<span class="chip ok">Offered</span>`}</span></div>
-            <div class="row"><span>UPI</span>
-              <span class="strong"><span class="chip ok">Always on</span></span></div>
+            <div class="row"><span>Card, UPI, netbanking</span>
+              <span class="strong"><span class="chip ok">Razorpay</span></span></div>
           </div>
           <form id="setCod" style="margin-top:10px">
             <div class="acts">
@@ -118,11 +118,14 @@ function paintSettings(){
           </form>
           <p class="empty" style="text-align:left">
             A courier who collects cash charges for it, and a ₹49 rakhi does not
-            always carry that. With cash off, the shop offers UPI only — and the
-            database refuses a cash order as well, so a stale page cannot slip one
-            through. A UPI order stays unconfirmed until you mark the money
-            received on the order; marking it confirms the order in the same
-            action.</p>
+            always carry that. With cash off, the shop takes card and UPI only —
+            and the database refuses a cash order as well, so a stale page cannot
+            slip one through.</p>
+          <p class="empty" style="text-align:left; padding-top:0">
+            Paying online is handled by Razorpay: the customer pays on the shop,
+            the payment is verified on our side, and the order confirms itself.
+            Nothing here needs marking by hand, and the money settles into your
+            bank account on Razorpay's usual schedule.</p>
         </div>
 
         <div style="margin-top:22px">

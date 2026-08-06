@@ -17,6 +17,7 @@ function makeBillNo(){
   const tail = Math.floor(Math.random()*1296).toString(36).toUpperCase().padStart(2,"0");
   return `${SHOP.billPrefix}-${ymd}-${two(seq)}${tail}`;
 }
+let billAsText = "";     // the bill in words, for a question about it
 const today=()=>new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
 
 const F={
@@ -41,6 +42,10 @@ Object.keys(F).forEach(id=>{
 $("#bNote").addEventListener("input", paintBill);
 
 function paintBill(){
+  /* settled before anything is drawn: the receipt line says how it is being
+     paid for, and it was being written before the choice had been checked
+     against what the shop actually offers */
+  settlePayWith();
   const b={ name:$("#bName").value.trim(), phone:$("#bPhone").value.trim(),
             addr:$("#bAddr").value.trim(), city:$("#bCity").value.trim(),
             pin:$("#bPin").value.trim(),   note:$("#bNote").value.trim() };
@@ -67,7 +72,9 @@ function paintBill(){
 ${esc(b.addr||"—")}
 ${esc(b.city||"—")} ${esc(b.pin||"")}
 Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
-    <div class="bill-note">Payment — UPI to ${SHOP.upi}, or cash on delivery.<br>
+    <div class="bill-note">${payIsCod()
+        ? "Payment — cash on delivery, to the courier."
+        : "Payment — online: UPI, card, wallet or netbanking."}<br>
       An order summary, not a tax invoice. Amounts in INR.</div>`;
 
   $("#shTot").textContent = inr(billTotal());
@@ -77,9 +84,12 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
   paintPayBox();
   paintPayAction();
 
-  const lines=cart.map((r,i)=>
-    `${two(i+1)}. ${r.name}${r.note?` (${r.note})`:""}\n    ${r.qty} x ${inr(r.price)} = ${inr(r.price*r.qty)}`).join("\n");
-  $("#billSend").href=wa(
+  /* Not a wa.me link any more — the button places the order and opens the
+     payment sheet. The message is kept for the "message us" link on the
+     confirmation, where a question is the point rather than a payment. */
+  const lines = cart.map((r, i) =>
+    `${two(i + 1)}. ${r.name}${r.note ? ` (${r.note})` : ""}\n    ${r.qty} x ${inr(r.price)} = ${inr(r.price * r.qty)}`).join("\n");
+  billAsText =
 `*RAY ART GALLERY — ORDER*
 Bill No: ${billNo}
 Date: ${today()}
@@ -87,15 +97,13 @@ Date: ${today()}
 ${lines}
 --------------------------------
 Subtotal: ${inr(sub())}${d ? `\nDiscount (${coupon.code}): -${inr(d)}` : ""}
-Delivery: ${s===0?"FREE":inr(s)}
-*TOTAL: ${inr(billTotal())}*${payIsCod() ? "\nPayment: CASH ON DELIVERY" : `\nPay by UPI to: ${SHOP.upi}`}
+Delivery: ${s === 0 ? "FREE" : inr(s)}
+*TOTAL: ${inr(billTotal())}*${payIsCod() ? "\nPayment: CASH ON DELIVERY" : "\nPayment: PAID ONLINE"}
 --------------------------------
 *DELIVER TO*
-Name: ${b.name||"-"}
-Phone: ${b.phone||"-"}
-Address: ${b.addr||"-"}
-City: ${b.city||"-"}
-Pincode: ${b.pin||"-"}${b.note?`\nNote: ${b.note}`:""}
---------------------------------
-Please confirm this order and share the payment details.`);
+Name: ${b.name || "-"}
+Phone: ${b.phone || "-"}
+Address: ${b.addr || "-"}
+City: ${b.city || "-"}
+Pincode: ${b.pin || "-"}${b.note ? `\nNote: ${b.note}` : ""}`;
 }

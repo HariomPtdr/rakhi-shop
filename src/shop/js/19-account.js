@@ -245,14 +245,12 @@ function orderCard(o){
     ${orderWhere(o)}
     ${o.payment === "upi" && !o.paid_at && o.status === "placed" ? `
       <div class="ac-pay">
-        <span>${RZP_ON
-          ? inr(o.total) + " — UPI, card, wallet or netbanking"
-          : inr(o.total) + " by UPI to <b>" + esc(SHOP.upi) + "</b>"}</span>
+        <span>${inr(o.total)} — UPI, card, wallet or netbanking</span>
         ${RZP_ON
           ? `<button class="btn btn-dark btn-sm" data-paynow="${esc(o.id)}">Pay now</button>`
-          : `<a class="btn btn-dark btn-sm" target="_blank" rel="noopener"
-               href="${esc(wa(`Hello Ray Art Gallery, about paying for my order ${o.bill_no} (${inr(o.total)}).`))}"
-              >Pay on WhatsApp</a>`}
+          : `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+               href="${esc(wa(`Hello Ray Art Gallery, I would like to pay for my order ${o.bill_no} (${inr(o.total)}).`))}"
+              >Ask us how to pay</a>`}
       </div>` : ""}
     ${rate ? `<div class="ac-rates">${rate}</div>` : ""}
     ${o.tracking_id && o.status !== "cancelled" ? `<div class="ac-o-trk">

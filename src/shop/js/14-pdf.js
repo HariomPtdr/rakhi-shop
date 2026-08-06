@@ -28,7 +28,8 @@ function billForPdf(){
       phone: $("#bPhone").value.trim(), note: $("#bNote").value.trim()
     },
     footer: [
-      `Payment - UPI to ${SHOP.upi}, or cash on delivery.`,
+      payIsCod() ? "Cash on delivery - pay the courier when it arrives."
+                 : "Paid online by UPI, card or netbanking.",
       "An order summary, not a tax invoice. Amounts in INR."
     ]
   };
@@ -46,7 +47,7 @@ $("#toBill").onclick=()=>{
   }
   billNo = makeBillNo();
   placedBill = "";
-  payWith = "cod";      /* a new bill starts on cash again */
+  payWith = payMethods()[0] || "online";   /* whatever the shop offers first */
   addrMode = "saved";   /* and on the address they usually use */
   $("#billPrint").hidden = false;
   $("#billSend").style.pointerEvents = "";
@@ -106,52 +107,15 @@ $("#billPrint").onclick=()=>{
    written into the message instead, and the PDF stays available
    next to it as a saved copy.
    ------------------------------------------------------------- */
-$("#billSend").addEventListener("click", e=>{
-  /* Cash on delivery finishes here. Nothing is owed until the rakhi
-     arrives, so there is nothing to send anyone to WhatsApp for. */
-  if(payIsCod()){
-    e.preventDefault();
-    if(placedBill) return;              /* already placed; do not double it */
-    placeCodOrder();
-    return;
-  }
-
-  /* With a gateway configured, paying does not leave the page at all:
-     the order goes in and the payment sheet opens on top of it. */
-  if(RZP_ON){
-    e.preventDefault();
-    if(placedBill) return;
-    placeAndPay();
-    return;
-  }
-
-  const bad=Object.keys(F).filter(id=>!ok(id,true));
-  if(bad.length){
-    e.preventDefault(); $("#"+bad[0]).focus();
-    toast("Fill name, phone, address, city, pincode"); return;
-  }
-  if(ordersPaused()){
-    e.preventDefault();
-    toast(shopPauseNote || "Not taking orders right now."); return;
-  }
-  /* refresh the message, then let the link open the shop's chat */
-  paintBill();
-  track("place_order", null, {items: nItems(), value: billTotal(), bill_no: billNo, payment: "upi"});
-  flushTrack();                 /* the tab is about to lose focus to WhatsApp */
-  /* and, for a signed-in customer, keep a copy of the order they can look
-     up later. Never in the way: the chat opens either way. */
-  if(typeof recordOrder === "function"){
-    const b = {
-      name:$("#bName").value.trim(), phone:$("#bPhone").value.trim(),
-      addr:$("#bAddr").value.trim(),  city:$("#bCity").value.trim(),
-      pin:$("#bPin").value.trim(),    note:$("#bNote").value.trim()
-    };
-    recordOrder(b, "upi");
-    /* and behind the chat, something that says what happens next. The order
-       exists but is not confirmed: no gateway here, so the seller confirms
-       it when the money actually arrives. */
-    showPaymentSent(b);
-  }
+/* The order is placed on this page either way now. Cash finishes here;
+   paying opens Razorpay's sheet on top of the bill. Nothing goes to WhatsApp
+   to be paid by hand any more — that asked the customer to trust a UPI id in
+   a chat and the seller to reconcile it from memory. */
+$("#billSend").addEventListener("click", e => {
+  e.preventDefault();
+  if(placedBill) return;                 /* already placed; do not double it */
+  if(payIsCod()) placeCodOrder();
+  else           placeAndPay();
 });
 
 $("#shareLink").onclick=e=>{

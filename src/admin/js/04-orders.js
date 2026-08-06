@@ -256,19 +256,31 @@ function paintOrder(o, hist, laterPin, msgs){
       o.coupon_code ? " (" + esc(o.coupon_code) + ")" : ""}</span><span>− ${inr(o.discount)}</span></div>` : ""}
     <div class="line"><span class="dim">Delivery</span><span>${o.shipping ? inr(o.shipping) : "Free"}</span></div>
     <div class="line tot"><span>Total</span><span>${inr(o.total)}</span></div>
-    <div class="line"><span class="dim">Paying by</span><span class="strong">${
+    <div class="line"><span class="dim">Payment</span><span class="strong">${
       o.payment === "upi"
-        ? (o.paid_at
-            ? `Paid ${esc(agoText(o.paid_at))}${o.rzp_payment_id
-                ? ` · <span class="mono">${esc(o.rzp_payment_id)}</span>` : " · by UPI"}`
-            : "Not received yet")
+        ? (o.paid_at ? "Paid online · " + esc(agoText(o.paid_at)) : "Not paid yet")
         : "Cash on delivery — collect " + inr(o.total)}</span></div>
-    ${o.payment === "upi" && !o.rzp_payment_id ? `<div class="acts">
-      <button class="btn btn-sm${o.paid_at ? " btn-ghost" : ""}" data-paid="${o.paid_at ? "0" : "1"}">${
-        o.paid_at ? "Mark as not paid" : "Money received — confirm the order"}</button>
-      ${!o.paid_at ? `<span class="dim" style="align-self:center; font-size:11.5px">
-        Check your UPI app first — nothing here can tell you it arrived.
-        Marking it confirms the order and tells them.</span>` : ""}
+    ${o.payment === "upi" && o.paid_at ? `
+      <div class="paid">
+        <div>
+          <b>${inr(o.total)} received</b>
+          <span>${esc(dayTimeText(o.paid_at))}</span>
+          ${o.rzp_payment_id
+            ? `<span class="mono">${esc(o.rzp_payment_id)}</span>` : ""}
+        </div>
+        ${o.rzp_payment_id ? `
+          <div class="paid-acts">
+            <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+               href="https://dashboard.razorpay.com/app/payments/${esc(o.rzp_payment_id)}"
+              >Open in Razorpay</a>
+            <button class="chip" type="button" data-copy="${esc(o.rzp_payment_id)}">Copy id</button>
+          </div>` : ""}
+      </div>` : ""}
+    ${o.payment === "upi" && !o.paid_at ? `<div class="acts">
+      <span class="dim" style="align-self:center; font-size:11.5px">
+        Nothing to do — the order confirms itself the moment they pay, and
+        they can pay it from their own orders at any time.</span>
+      <button class="btn btn-ghost btn-sm" data-paid="1">Mark paid by hand</button>
     </div>` : ""}
 
     <div class="k">Move it along</div>
@@ -355,6 +367,13 @@ function paintOrder(o, hist, laterPin, msgs){
       render();
     }catch(err){ toast(err.message); paidBtn.disabled = false; }
   };
+
+  $("#panelB").querySelectorAll("[data-copy]").forEach(b => {
+    b.onclick = async () => {
+      try{ await navigator.clipboard.writeText(b.dataset.copy); toast("Payment id copied"); }
+      catch(e){ toast("Could not copy"); }
+    };
+  });
 
   const copy = $("#copyAddr");
   if(copy) copy.onclick = async () => {
