@@ -147,6 +147,15 @@ function paintProduct(){
   $("#pvAsk").href = wa(
 `Hello Ray Art Gallery, I am asking about № ${IDX.get(p.id)} — ${p.name} (${inr(p.price)}).`
 + `\n\nHow many days will it take?`);
+
+  /* The reviews live inside the markup this function just replaced, so any
+     repaint wipes them — and the catalogue arriving from the database
+     repaints the page. That is why a product opened from a shared link sat
+     on "Loading…": the reviews had loaded, and then been painted over.
+     Asking here means they are fetched exactly when the page is drawn.
+     Guarded because on a cold load of #p/<id> this runs before the reviews
+     file has been parsed; that file asks once for itself when it loads. */
+  if(typeof loadReviews === "function") loadReviews(p.id);
 }
 
 /* ── how long it will take ──
@@ -251,7 +260,6 @@ function openProduct(id, fromHash){
     }, {passive:true});
   }
   track("view_product", id);
-  loadReviews(id);
 }
 function hideProduct(){
   pvEl.classList.remove("on");

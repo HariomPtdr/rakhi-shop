@@ -179,3 +179,10 @@ async function removeReview(){
     loadCatalogue().catch(() => {});
   }catch(err){ toast(err.message); }
 }
+
+/* A product page opened before this file was parsed — a cold load straight
+   to #p/<id> — is still waiting for its reviews. Ask now. */
+if(typeof productOpen === "function" && productOpen()){
+  const p = pvProduct();
+  if(p) loadReviews(p.id);
+}
