@@ -207,9 +207,13 @@ function showOrderDone(b, paidNow){
       <p>${esc(billNo)} · ${inr(billTotal())}${paidNow ? " paid." : " to pay when it arrives."}</p>
       <p class="done-call"><b>We will call you</b> on
          ${esc($("#bPhone").value.trim() || "your number")}, usually the same day.
-         Anything else — a change, a question, a design — message us on WhatsApp.
-         You can follow it in <a href="#account" id="doneAcct">your orders</a>.</p>
+         Anything else — a change, a question, a design — message us on WhatsApp.</p>
       <div class="done-acts">
+        <button class="btn btn-dark" id="doneOrders" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 6.5h16M4 12h16M4 17.5h10"/></svg>
+          See my orders</button>
         <a class="btn btn-ghost" href="${esc(ask)}" target="_blank" rel="noopener">Message us</a>
         <button class="btn btn-ghost" id="donePdf" type="button">Save PDF copy</button>
       </div>
@@ -229,11 +233,15 @@ function showAwaitingPayment(b){
       <b>Your order is waiting to be paid.</b>
       <p>${esc(billNo)} · ${inr(billTotal())}</p>
       <p class="done-call"><b>Nothing has been charged.</b> The order is saved.
-        Pay it now, or whenever you like from
-        <a href="#account" id="doneAcct">your orders</a> — it is confirmed the
+        Pay it now, or whenever you like from your orders — it is confirmed the
         moment the payment goes through, and nothing is made before that.</p>
       <div class="done-acts">
         <button class="btn btn-dark" id="donePayNow" type="button">Pay ${inr(billTotal())}</button>
+        <button class="btn btn-ghost" id="doneOrders" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 6.5h16M4 12h16M4 17.5h10"/></svg>
+          See my orders</button>
         <button class="btn btn-ghost" id="donePdf" type="button">Save PDF copy</button>
       </div>
     </div>`;
@@ -264,9 +272,13 @@ function finishBillScreen(hint, buttonText){
 
   const pdf = $("#donePdf");
   if(pdf) pdf.onclick = () => { downloadPdf(); toast("PDF saved to your phone"); };
+
+  /* Straight to the list the order is now in. The bill closes first and the
+     account opens on the next frame, because closing pops a history entry
+     and opening in the same tick loses the one just pushed. */
+  const seeOrders = () => { closeBill(); requestAnimationFrame(() => openAcct("orders")); };
+  const orders = $("#doneOrders");
+  if(orders) orders.onclick = seeOrders;
   const acct = $("#doneAcct");
-  if(acct) acct.onclick = e => {
-    e.preventDefault(); closeBill();
-    requestAnimationFrame(() => openAcct("orders"));
-  };
+  if(acct) acct.onclick = e => { e.preventDefault(); seeOrders(); };
 }
