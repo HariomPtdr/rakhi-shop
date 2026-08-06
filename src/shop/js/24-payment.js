@@ -65,6 +65,7 @@ function paintPayBox(){
         <span>${only === "online"
           ? "Paid on this page. Your order is confirmed the moment it goes through."
           : "Pay the courier when it reaches you. Nothing now."}</span>
+        ${only === "online" ? secureLine() : ""}
       </div>`;
     return;
   }
@@ -76,6 +77,7 @@ function paintPayBox(){
               role="radio" aria-checked="${!payIsCod()}">
         <b>Pay now</b>
         <span>UPI, card, wallet or netbanking. Confirmed at once.</span>
+        ${secureLine()}
       </button>
       <button type="button" class="pay-opt${payIsCod() ? " on" : ""}" data-pay="cod"
               role="radio" aria-checked="${payIsCod()}">
@@ -93,6 +95,19 @@ document.addEventListener("click", e => {
   payWith = want;
   paintBill();
 });
+
+/* Said once, where the money is actually asked for. Not decoration: a small
+   shop asking for a card number has to say who is holding it, and the honest
+   answer is that we never see it — the sheet belongs to Razorpay and the
+   card never touches this page. */
+function secureLine(){
+  return `<span class="pay-secure">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="4" y="10.5" width="16" height="10" rx="2"/>
+      <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+    Secured by Razorpay · we never see your card</span>`;
+}
 
 /* ── what the send button becomes ── */
 function paintPayAction(){
@@ -190,7 +205,7 @@ async function placeAndPay(){
   track("place_order", null, {items: nItems(), value: billTotal(), bill_no: billNo, payment: "upi"});
   flushTrack();
 
-  const paid = await payForOrder(order.id, {onPaid: () => showOrderDone(b, true)});
+  const paid = await payForOrder(order.id, {button: btn, onPaid: () => showOrderDone(b, true)});
   if(!paid){
     /* the order has been taken back out; put the bill back the way it was so
        they can simply press Pay again */

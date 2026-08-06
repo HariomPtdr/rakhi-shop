@@ -244,3 +244,11 @@
 .pay-only span{display:block; margin-top:4px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
 /* waiting, rather than done */
 .done-tick.wait{background:rgba(217,184,119,.28); color:var(--tan-deep)}
+
+/* who is holding the card, said where it is asked for */
+.pay-secure{
+  display:flex; align-items:center; gap:5px; margin-top:7px;
+  font-size:10.5px; letter-spacing:.02em; color:var(--ink-faint);
+}
+.pay-secure svg{flex:none; color:var(--teal)}
+.pay-opt .pay-secure{margin-top:6px}

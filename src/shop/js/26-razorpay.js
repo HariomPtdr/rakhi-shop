@@ -57,12 +57,28 @@ async function callFn(name, body, withToken){
 /* ── pay for an order that already exists ──
    Used from the bill the moment it is placed, and from the account for an
    order somebody left unpaid. Both end in the same place. */
+let paying = false;                       /* one payment at a time, ever */
+
 async function payForOrder(orderId, opts){
   const o = opts || {};
   if(!RZP_ON) return false;
+  if(paying) return false;                /* a double tap is not two payments */
+  paying = true;
+
+  /* Their script is a few hundred kilobytes over a phone connection, and a
+     button that does nothing for two seconds is a button people press
+     again. */
+  const btn = o.button;
+  const wasHtml = btn ? btn.innerHTML : null;
+  if(btn){ btn.disabled = true; btn.innerHTML = "Opening…"; }
+  const release = () => {
+    paying = false;
+    if(btn){ btn.disabled = false; btn.innerHTML = wasHtml; }
+  };
 
   const ok = await loadRazorpay();
   if(!ok){
+    release();
     toast("Could not reach the payment page. Check your connection and try again.");
     return false;
   }
@@ -71,11 +87,15 @@ async function payForOrder(orderId, opts){
   try{
     made = await callFn("rzp-create-order", {order_id: orderId}, true);
   }catch(err){
+    release();
     toast(err.message);
     return false;
   }
+  release();
 
+  paying = true;                          /* held until the sheet is done with */
   return new Promise(resolve => {
+    const done = v => { paying = false; resolve(v); };
     const rzp = new window.Razorpay({
       key: made.key_id,
       order_id: made.order_id,
@@ -104,18 +124,19 @@ async function payForOrder(orderId, opts){
           if(typeof o.onPaid === "function") o.onPaid(done);
           else toast("Paid — your order is confirmed");
           if(isOn("#acctModal")){ paintAcct(); loadAcctData(); }
-          resolve(true);
+          done(true);
         }catch(err){
           /* the money may well have gone through — never say it did not */
           toast(err.message + " Keep this: " + r.razorpay_payment_id);
-          resolve(false);
+          done(false);
         }
       },
 
       modal: {
         ondismiss: async () => {
-          await undoOrder(orderId, "Payment cancelled — nothing was charged");
-          resolve(false);
+          const paidAnyway = await undoOrder(orderId, "Payment cancelled — nothing was charged");
+          if(paidAnyway && typeof o.onPaid === "function") o.onPaid({ok: true, late: true});
+          done(!!paidAnyway);
         }
       }
     });
@@ -139,6 +160,23 @@ async function payForOrder(orderId, opts){
    spent is unspent — and the basket is put back exactly as it was, ready to
    try again. */
 async function undoOrder(orderId, why){
+  /* ── the one race worth waiting for ──
+     Somebody can pay and then close the sheet before the confirmation gets
+     back, and the webhook can land a moment later. Discarding then would
+     delete an order that has been paid for. So the order is read once more
+     first, and if the money is in, this is a confirmation and not a
+     cancellation. */
+  try{
+    const rows = await SB.rest("orders?select=id,paid_at,status&id=eq."
+                             + encodeURIComponent(orderId) + "&limit=1");
+    const row = Array.isArray(rows) && rows[0];
+    if(row && row.paid_at){
+      acctOrders = null;
+      toast("Paid — your order is confirmed");
+      return true;                       /* nothing to undo */
+    }
+  }catch(e){}
+
   try{
     await SB.rpc("discard_unpaid_order", {p_order: orderId});
   }catch(err){
@@ -151,4 +189,5 @@ async function undoOrder(orderId, why){
   if(typeof pushCart === "function") pushCart();     /* the basket, back on the server */
   paintCart();
   toast(why + " — your basket is as it was");
+  return false;
 }
