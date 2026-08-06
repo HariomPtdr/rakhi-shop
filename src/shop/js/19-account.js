@@ -513,12 +513,52 @@ function acctBody(){
             <input type="tel" id="pPin" autocomplete="postal-code" inputmode="numeric" maxlength="6"
                    value="${esc((profile && profile.pincode) || "")}"></div>
         </div>
-        <p class="ac-fine">Saved once, and every bill you make fills itself in from it.</p>
-        <div class="ac-acts two">
-          <button class="btn btn-dark" id="pSave" type="submit">Save details</button>
-          <button class="btn btn-ghost" id="acOut" type="button">Sign out</button>
+        <p class="ac-fine">Saved once, and every bill you make fills itself in from it.
+          Changing it here does not change an order already placed — open that
+          order and change it there.</p>
+        <div class="ac-acts">
+          <button class="btn btn-dark btn-full" id="pSave" type="submit">Save details</button>
         </div>
-      </form></div>`;
+      </form>
+
+      <div class="ac-sec">
+        <div class="ac-sec-k">Password</div>
+        <form id="acctPass" novalidate>
+          <div class="fg two">
+            <div class="fld"><label for="pNew">New password</label>
+              <input type="password" id="pNew" autocomplete="new-password"
+                     placeholder="At least 8 characters"></div>
+            <div class="fld"><label for="pNew2">Again</label>
+              <input type="password" id="pNew2" autocomplete="new-password"
+                     placeholder="The same one"></div>
+          </div>
+          <p class="ac-fine">${SB.user() && SB.user().avatar
+            ? "You signed in with Google. Setting a password here lets you sign in either way."
+            : "Changing it signs you in with the new one next time. This phone stays signed in."}</p>
+          <div class="ac-acts">
+            <button class="btn btn-ghost btn-full" id="pPassSave" type="submit">Change password</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="ac-sec">
+        <div class="ac-sec-k">Help</div>
+        <p class="ac-fine" style="margin-top:0">Anything at all — a change to an order, a
+          design you cannot find, something that will not work. We answer on
+          WhatsApp, usually within the hour.</p>
+        <div class="ac-acts two">
+          <a class="btn btn-dark" href="${esc(wa("Hello Ray Art Gallery, I need some help."))}"
+             target="_blank" rel="noopener">
+            <svg class="wa" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
+            Chat on WhatsApp</a>
+          ${SHOP.email ? `<a class="btn btn-ghost" href="mailto:${esc(SHOP.email)}">Email us</a>` : ""}
+        </div>
+      </div>
+
+      <div class="ac-sec">
+        <div class="ac-acts"><button class="btn btn-ghost btn-full" id="acOut" type="button"
+          >Sign out</button></div>
+      </div></div>`;
   }
 
   /* orders */
@@ -724,6 +764,7 @@ $("#acctBody").addEventListener("submit", e => {
   e.preventDefault();
   if(e.target.id === "acctForm")    return submitAuth();
   if(e.target.id === "acctProfile") return submitProfile();
+  if(e.target.id === "acctPass")    return changePassword();
   if(e.target.id === "acctReset")   return submitNewPassword();
 });
 
@@ -820,6 +861,29 @@ async function submitProfile(){
   }catch(err){
     note(err.message || "Could not save just now.");
   }
+}
+
+/* ── the password, from inside the account ──
+   The forgotten-password path exists for people who cannot get in. This is
+   for people who are already in and simply want a different one — or who
+   signed in with Google and would like a password as well, so they are not
+   locked out of their own orders the day they lose that account. */
+async function changePassword(){
+  const a = ($("#pNew").value  || "").trim();
+  const b = ($("#pNew2").value || "").trim();
+  if(a.length < 8)  return note("A password needs at least 8 characters.");
+  if(a !== b)       return note("Those two are not the same.");
+
+  busy("#pPassSave", true, "Changing…");
+  try{
+    await SB.updatePassword(a);
+    $("#pNew").value = ""; $("#pNew2").value = "";
+    note("Password changed. Use it the next time you sign in.", true);
+    toast("Password changed");
+  }catch(err){
+    note(err.message || "Could not change it just now.");
+  }
+  busy("#pPassSave", false, "Change password");
 }
 
 /* ── coming back from Google, or from the reset email ──

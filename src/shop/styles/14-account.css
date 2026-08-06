@@ -349,3 +349,14 @@
   .ac-order{flex-wrap:wrap}
   .ac-o-acts{width:100%; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); margin-top:4px}
 }
+
+/* the sections under the details: password, help, signing out */
+.ac-sec{margin-top:26px; padding-top:20px; border-top:1px solid var(--line)}
+.ac-sec-k{
+  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px;
+}
+.ac-sec .ac-acts{margin-top:14px}
+.ac-acts.two{display:grid; gap:9px}
+@media (min-width:460px){.ac-acts.two{grid-template-columns:1fr 1fr}}
+.ac-acts.two .btn{width:100%; justify-content:center}
