@@ -100,7 +100,7 @@ async function placeCodOrder(){
 function showOrderDone(b){
   const ask = wa(`Hello Ray Art Gallery, about my order ${billNo}.`);
   $("#bill").innerHTML = `
-    <div class="done">
+    <div class="bill-done">
       <div class="done-tick" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
              stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9 17.5 20 6.5"/></svg>
@@ -117,7 +117,7 @@ function showOrderDone(b){
   /* Everything that was for deciding is done deciding. Leaving the payment
      chooser, the code box and the address fields on screen under a
      confirmation reads as though the order did not really go through. */
-  ["#payBox", "#couponBox", "#pinBox"].forEach(sel => {
+  ["#payBox", "#couponBox", "#pinBox", "#addrBox", "#addrFields"].forEach(sel => {
     const el = $(sel); if(el) el.hidden = true;
   });
   $$("#billModal .fg").forEach(el => { el.hidden = true; });

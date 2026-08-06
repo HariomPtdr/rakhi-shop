@@ -253,3 +253,12 @@
   width:100%; text-align:center; line-height:1;
 }
 .ac-av img, .nav-av img{grid-area:1/1; z-index:1}
+
+/* where the order has got to, said in words under the dots */
+.ac-o-where{margin:9px 2px 0; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
+.ac-rates{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:9px}
+.ac-rate{
+  border:0; background:none; padding:5px 0; cursor:pointer; text-align:left;
+  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--teal);
+}
+.ac-rate:hover{color:var(--ink)}

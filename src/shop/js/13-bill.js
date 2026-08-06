@@ -72,6 +72,7 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
 
   $("#shTot").textContent = inr(billTotal());
   paintCouponBox();
+  paintAddrBox();
   paintPinBox();
   paintPayBox();
   paintPayAction();

@@ -451,6 +451,11 @@
   <div class="sheet glass">
     <div class="sh-h"><h2 id="bT">Your bill</h2><button class="x" id="billClose" aria-label="Close">✕</button></div>
     <div class="sh-b">
+      <!-- Someone who has ordered before should not retype their address to
+           order again. The saved one is offered as a card; the five fields
+           only come out if they are sending it somewhere else. -->
+      <div class="addrbox" id="addrBox"></div>
+      <div id="addrFields">
       <div class="fg two">
         <div class="fld"><label for="bName">Full name <i>*</i></label>
           <input type="text" id="bName" autocomplete="name" placeholder="Priyanka Sharma">
@@ -470,14 +475,19 @@
           <input type="tel" id="bPin" autocomplete="postal-code" inputmode="numeric" maxlength="6" placeholder="452001">
           <div class="err">Enter a valid 6-digit pincode</div></div>
       </div>
+      </div><!-- /addrFields -->
+      <div class="pinbox" id="pinBox"></div>
       <div class="fg"><div class="fld"><label for="bNote">Note <span style="text-transform:none; letter-spacing:0">(optional)</span></label>
         <textarea id="bNote" placeholder="Needed by 24 Aug, or keep both threads turquoise"></textarea></div></div>
+      <!-- How they pay and any code they have are decisions, not the running
+           total, so they scroll with the rest of the form. Pinned to the
+           bottom they took over half a phone screen and left the address in a
+           letterbox. -->
+      <div class="paybox" id="payBox"></div>
+      <div class="coupon" id="couponBox"></div>
       <div class="bill" id="bill"></div>
     </div>
     <div class="sh-f">
-      <div class="paybox" id="payBox"></div>
-      <div class="pinbox" id="pinBox"></div>
-      <div class="coupon" id="couponBox"></div>
       <div class="sh-tot"><span>Total payable</span><b id="shTot">₹0</b></div>
       <p class="sh-hint" id="shHint">Opens Ray Art Gallery&rsquo;s WhatsApp chat</p>
       <div class="sh-btns">
@@ -569,5 +579,6 @@
 <script src="js/22-location.js"></script>
 <script src="js/23-shopstate.js"></script>
 <script src="js/24-payment.js"></script>
+<script src="js/25-address.js"></script>
 </body>
 </html>

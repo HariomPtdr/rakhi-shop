@@ -131,13 +131,27 @@ async function showOrder(id, known){
     const hist = await SB.rest("order_status_log?select=from_status,to_status,note,created_at"
                              + "&order_id=eq." + encodeURIComponent(o.id) + "&order=created_at.asc");
     paintOrder(o, hist);
+
+    /* The pin is copied onto the order when it is placed, so an order placed
+       before they attached their location has none. The account may still
+       have one — worth showing, marked as what it is. */
+    if(o.lat == null && o.user_id){
+      try{
+        const p = (await SB.rest("profiles?select=lat,lng,located_at&id=eq."
+                               + encodeURIComponent(o.user_id) + "&limit=1"))[0];
+        if(p && p.lat != null && p.lng != null) paintOrder(o, hist, p);
+      }catch(e){}
+    }
   }catch(err){
     openPanel("Order", `<p class="empty">${esc(err.message)}</p>`);
   }
 }
 
-function paintOrder(o, hist){
+function paintOrder(o, hist, laterPin){
   const items = o.order_items || [];
+  /* the pin on the order, or the one on their account if the order has none */
+  const pin = (o.lat != null && o.lng != null) ? {lat:o.lat, lng:o.lng, own:true}
+            : (laterPin ? {lat:laterPin.lat, lng:laterPin.lng, own:false} : null);
   const next = {placed:"confirmed", confirmed:"shipped", shipped:"delivered"}[o.status];
   const msg = `Namaste ${o.name.split(" ")[0]}, about your Ray Art Gallery order ${o.bill_no}`
             + (o.tracking_id ? ` — it is on its way, tracking ${o.tracking_id}.` : ".");
@@ -164,11 +178,13 @@ function paintOrder(o, hist){
       <button class="btn btn-ghost btn-sm" id="copyAddr" type="button">Copy address</button>
     </div>
     <div class="acts">
-      ${o.lat != null && o.lng != null ? `
+      ${pin ? `
         <a class="btn btn-sm" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/search/?api=1&query=${o.lat}%2C${o.lng}">📍 Exact pin</a>
+           href="https://www.google.com/maps/search/?api=1&query=${pin.lat}%2C${pin.lng}">📍 Exact pin</a>
         <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/dir/?api=1&destination=${o.lat}%2C${o.lng}">Directions</a>`
+           href="https://www.google.com/maps/dir/?api=1&destination=${pin.lat}%2C${pin.lng}">Directions</a>
+        ${pin.own ? "" : `<span class="dim" style="align-self:center; font-size:11.5px">
+           from their account — attached after this order was placed</span>`}`
       : `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
            href="https://www.google.com/maps/search/?api=1&query=${
              encodeURIComponent([o.address, o.city, o.pincode].filter(Boolean).join(", "))}">Find on the map</a>

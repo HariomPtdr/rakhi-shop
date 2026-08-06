@@ -146,6 +146,7 @@ $("#toBill").onclick=()=>{
   billNo = makeBillNo();
   placedBill = "";
   payWith = "cod";      /* a new bill starts on cash again */
+  addrMode = "saved";   /* and on the address they usually use */
   $("#billPrint").hidden = false;
   $("#billSend").style.pointerEvents = "";
   $("#billSend").style.opacity = "";

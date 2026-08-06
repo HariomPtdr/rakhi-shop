@@ -190,9 +190,32 @@ function orderTrack(o){
     </span>`).join("")}</div>`;
 }
 
+/* ── where it has got to, in one sentence ──
+   Four dots and a word are a picture of the process, not an answer to
+   "so where is my rakhi". This is the answer. */
+function orderWhere(o){
+  const when = dayText(o.status_at || o.created_at);
+  const line = {
+    placed:    "We confirm every order by hand — usually within a day.",
+    confirmed: "Confirmed and being made.",
+    shipped:   o.courier ? "On its way with " + o.courier + "." : "On its way.",
+    delivered: "Delivered on " + when + ".",
+    cancelled: "Cancelled on " + when + "."
+  }[o.status];
+  return line ? `<p class="ac-o-where">${esc(line)}</p>` : "";
+}
+
 function orderCard(o){
   const items = (o.order_items || []);
   const lines = items.map(i => `${esc(i.name)} × ${i.qty}`).join(" · ");
+  /* A review can only be written once an order has been delivered — the
+     database enforces it. This is where someone actually is when that
+     becomes true, so this is where to ask. */
+  const rate = o.status === "delivered"
+    ? items.filter(i => i.product_id).map(i =>
+        `<button class="ac-rate" type="button" data-wopen="${esc(i.product_id)}"
+           >Rate the ${esc(i.name)} →</button>`).join("")
+    : "";
   const ask = wa(`Hello Ray Art Gallery, about my order ${o.bill_no} (${inr(o.total)}).`);
   /* the same rule the database enforces, so the button is never offered
      where cancel_order() would refuse it */
@@ -205,6 +228,8 @@ function orderCard(o){
     </div>
     <div class="ac-o-l">${lines || "—"}</div>
     ${orderTrack(o)}
+    ${orderWhere(o)}
+    ${rate ? `<div class="ac-rates">${rate}</div>` : ""}
     ${o.tracking_id && o.status !== "cancelled" ? `<div class="ac-o-trk">
        <span>${esc(o.courier || "Courier")}</span>
        <b>${esc(o.tracking_id)}</b>

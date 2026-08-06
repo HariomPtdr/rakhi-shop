@@ -208,16 +208,28 @@ async function loadProfile(){
 }
 async function saveProfile(p){
   if(!signedIn()) return;
-  await SB.patch("profiles?id=eq." + encodeURIComponent(SB.user().id), p);
+  const id = SB.user().id;
+  const rows = await SB.patch("profiles?id=eq." + encodeURIComponent(id), p);
+  /* A profile row appears by trigger when the account is made — but an
+     account made before that trigger existed has none, and PATCH matching
+     no rows is not an error. Without this the save looked like it worked
+     and nothing was written, which is how a location could be "attached"
+     on the phone and missing from the order. */
+  if(Array.isArray(rows) && rows.length === 0){
+    await SB.insert("profiles", Object.assign({id, email: SB.user().email}, p),
+                    {prefer: "resolution=merge-duplicates,return=minimal"});
+  }
   profile = Object.assign({}, profile, p);
 }
-/* the bill asks for exactly what the profile already knows */
-function fillBillFromProfile(){
+/* the bill asks for exactly what the profile already knows.
+   force: put the saved values back even over something typed — used when
+   they pick the saved address after starting to write a different one. */
+function fillBillFromProfile(force){
   if(!profile) return;
   const map = {bName:"full_name", bPhone:"phone", bAddr:"address", bCity:"city", bPin:"pincode"};
   for(const id in map){
     const el = $("#" + id), v = profile[map[id]];
-    if(el && v && !el.value.trim()) el.value = v;
+    if(el && v && (force || !el.value.trim())) el.value = v;
   }
 }
 /* "last seen" is what turns a customer list into something worth reading.
@@ -250,7 +262,7 @@ async function pollUnread(){
 
 async function loadOrders(){
   return SB.rest("orders?select=id,bill_no,total,subtotal,shipping,status,created_at,status_at,"
-               + "courier,tracking_id,name,city,pincode,order_items(name,qty,price)"
+               + "courier,tracking_id,name,city,pincode,order_items(name,qty,price,product_id)"
                + "&order=created_at.desc&limit=25");
 }
 /* Best effort, always after the WhatsApp message is on its way: the message

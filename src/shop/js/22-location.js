@@ -60,9 +60,15 @@ async function getPin(){
   if(!navigator.geolocation){
     return toast("This phone cannot share a location.");
   }
+  /* Geolocation is only offered on a secure page. Opened over plain http the
+     call fails with a permission error, which reads as "you said no" when
+     nobody was ever asked. */
+  if(!window.isSecureContext){
+    return toast("Locations only work on the secure (https) address.");
+  }
   pinBusy = true; paintPinBox();
 
-  navigator.geolocation.getCurrentPosition(async pos => {
+  const ok = async pos => {
     /* six decimals is about a tenth of a metre — more than a courier
        needs, and all the column stores */
     const lat = Number(pos.coords.latitude.toFixed(6));
@@ -71,17 +77,32 @@ async function getPin(){
       await saveProfile({lat, lng, located_at: new Date().toISOString()});
       toast("Location attached to your address");
     }catch(err){
-      toast("Could not save that just now.");
+      /* the real reason, not a shrug — this is the one that used to hide a
+         column that did not exist behind "just now" */
+      toast(err && err.message ? "Could not save it: " + err.message
+                               : "Could not save that just now.");
     }
     pinBusy = false;
     paintPinBox();
-  }, err => {
+  };
+
+  const give = err => {
     pinBusy = false;
     paintPinBox();
     toast(err && err.code === 1
       ? "Location permission was refused — the address alone is fine."
       : "Could not find you just now. The address alone is fine.");
-  }, {enableHighAccuracy: true, timeout: 12000, maximumAge: 60000});
+  };
+
+  /* First ask for the accurate fix. Indoors that often just runs out of
+     time, so a timeout is answered with the ordinary network-level one
+     rather than treated as a refusal — a pin from the phone mast is still
+     a better start for a courier than nothing. */
+  navigator.geolocation.getCurrentPosition(ok, err => {
+    if(err && err.code === 1) return give(err);
+    navigator.geolocation.getCurrentPosition(ok, give,
+      {enableHighAccuracy: false, timeout: 20000, maximumAge: 300000});
+  }, {enableHighAccuracy: true, timeout: 10000, maximumAge: 60000});
 }
 
 async function clearPin(){
