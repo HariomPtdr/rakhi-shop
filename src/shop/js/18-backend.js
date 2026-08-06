@@ -122,14 +122,22 @@ async function loadCatalogue(){
 async function loadSettings(){
   /* same reasoning as the catalogue: the contact columns arrive with
      10-shop.sql, and until then asking for them fails the whole row */
+  /* Asked for in three widening steps rather than two. Dropping straight
+     from "everything" to "the four original columns" on one missing column
+     would take the WhatsApp number, the UPI id and the announcement down
+     with it — so a column added but not yet run would quietly cost the shop
+     things that were working. */
+  const CORE = "free_ship_above,ship_flat,festival_date,order_by_date";
+  const SHOP_COLS = CORE + ",whatsapp,upi,instagram,email,announcement,orders_paused,pause_note";
   let rows;
   try{
-    rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,festival_date,"
-                       + "order_by_date,whatsapp,upi,instagram,email,announcement,"
-                       + "orders_paused,pause_note,coupon_note&id=eq.1&limit=1");
+    rows = await SB.rest("shop_settings?select=" + SHOP_COLS + ",coupon_note&id=eq.1&limit=1");
   }catch(err){
-    rows = await SB.rest("shop_settings?select=free_ship_above,ship_flat,"
-                       + "festival_date,order_by_date&id=eq.1&limit=1");
+    try{
+      rows = await SB.rest("shop_settings?select=" + SHOP_COLS + "&id=eq.1&limit=1");
+    }catch(err2){
+      rows = await SB.rest("shop_settings?select=" + CORE + "&id=eq.1&limit=1");
+    }
   }
   const s = Array.isArray(rows) && rows[0];
   if(!s) return;
