@@ -147,9 +147,35 @@ $("#shareLink").onclick=e=>{
   else window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,"_blank","noopener");
 };
 
-/* rangoli into the background — a single painted layer, not 336 DOM nodes */
-$("#m1").style.backgroundImage = asBg(rangoli("#9C7620"));
-$("#m2").style.backgroundImage = asBg(rangoli("#1B8497"));
-const strip = rangoliStrip();
-$$(".divider.rangoli").forEach(d=>{ d.innerHTML = strip; io.observe(d); });
-Object.keys(STEP_ICONS).forEach(id=>{ const el=$("#"+id); if(el) el.innerHTML=STEP_ICONS[id]; });
+/* ── the decoration, after the shop ──
+   Two 400×400 rangoli, five dividers of about sixty nodes each and the four
+   step icons: none of it is the reason anyone opened the page, and all of it
+   used to be drawn before the first paint. The two mandalas were measured as
+   the largest thing painted on the screen — the browser was waiting for
+   decoration to decide the page had loaded.
+
+   Now the rakhis paint first and the ornament arrives on the next idle
+   moment. On a phone that is the difference between a page that appears and
+   a page that hangs. The strips are one painted background rather than five
+   copies of a sixty-node SVG, which takes ~300 elements out of the document
+   and off every later layout pass. */
+function paintOrnament(){
+  $("#m1").style.backgroundImage = asBg(rangoli("#9C7620"));
+  $("#m2").style.backgroundImage = asBg(rangoli("#1B8497"));
+  /* the strips are drawn as you reach them. Five of them at sixty nodes
+     each is three hundred elements in every layout pass, for a rule between
+     sections that nobody has scrolled to yet. */
+  const strip = rangoliStrip();
+  const near = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => {
+      if(!en.isIntersecting) return;
+      en.target.innerHTML = strip;
+      obs.unobserve(en.target);
+      io.observe(en.target);          /* and the existing one draws it in */
+    });
+  }, {rootMargin: "250px"});
+  $$(".divider.rangoli").forEach(d => near.observe(d));
+  Object.keys(STEP_ICONS).forEach(id => { const el = $("#" + id); if(el) el.innerHTML = STEP_ICONS[id]; });
+}
+if("requestIdleCallback" in window) requestIdleCallback(paintOrnament, {timeout: 1800});
+else setTimeout(paintOrnament, 300);

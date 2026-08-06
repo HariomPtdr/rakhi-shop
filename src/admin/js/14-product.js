@@ -126,11 +126,13 @@ function paintPhotos(loaded){
       <span class="gal-pic"><img src="${esc(SB.photoUrl(r.path))}" alt=""></span>
       <div class="gal-m">
         ${i === 0 ? `<span class="chip ok">Cover</span>` : `<span class="dim">Photo ${i + 1}</span>`}
+        <span class="dim gal-size" data-size="${esc(r.path)}"></span>
       </div>
       <div class="gal-acts">
         <button class="chip" data-up="${i}" type="button" ${i === 0 ? "disabled" : ""}>↑</button>
         <button class="chip" data-down="${i}" type="button" ${
           i === galleryRows.length - 1 ? "disabled" : ""}>↓</button>
+        <button class="chip" data-shrink="${esc(r.path)}" type="button" hidden>Shrink</button>
         <button class="chip no" data-rm="${esc(r.path)}" type="button">Remove</button>
       </div>
     </div>`).join("")
@@ -143,6 +145,9 @@ function paintPhotos(loaded){
     b.onclick = () => movePhoto(Number(b.dataset.down), 1));
   box.querySelectorAll("[data-rm]").forEach(b =>
     b.onclick = () => removePhoto(b.dataset.rm));
+  box.querySelectorAll("[data-shrink]").forEach(b =>
+    b.onclick = () => shrinkStored(b.dataset.shrink));
+  weighPhotos(box);
   paintPreview();
 }
 
@@ -340,4 +345,26 @@ async function saveProduct(){
       ? "The struck-out price has to be higher than the price."
       : err.message);
   }finally{ btn.disabled = false; }
+}
+
+/* ── how heavy each photo is ──
+   A seller cannot see the weight of a picture, and the one that is costing
+   every customer three seconds looks exactly like the one that is not. So
+   the panel asks the bucket for the size of each file and says it out loud,
+   and offers to fix any that is over a quarter of a megabyte. */
+async function weighPhotos(box){
+  const cells = [...box.querySelectorAll("[data-size]")];
+  for(const cell of cells){
+    const path = cell.dataset.size;
+    try{
+      const res = await fetch(SB.photoUrl(path), {method: "HEAD", cache: "no-store"});
+      const n = Number(res.headers.get("content-length") || 0);
+      if(!n) continue;
+      const heavy = n > 260 * 1024;
+      cell.textContent = kb(n) + (heavy ? " — heavy on mobile data" : "");
+      cell.style.color = heavy ? "#8A2033" : "";
+      const btn = box.querySelector(`[data-shrink="${CSS.escape(path)}"]`);
+      if(btn) btn.hidden = !heavy;
+    }catch(e){}
+  }
 }

@@ -66,8 +66,9 @@ function paintGallery(){
         ${galleryRows.length} ${plural(galleryRows.length, "photo")}</span>` : ""}
     </div>
     <p class="empty" style="text-align:left">
-      Several at once is fine. Keep each around 60–90 KB or the shop is slow on
-      mobile data — anything over 3 MB is refused.</p>`);
+      Several at once is fine, straight off the camera — each one is redrawn
+      to about 150 KB before it is sent, because a customer on mobile data
+      pays for every megabyte of a photo shown 500 pixels wide.</p>`);
 
   $("#galAdd").onclick = addPhotos;
   $("#panelB").querySelectorAll("[data-up]").forEach(b => {
@@ -122,19 +123,21 @@ function addPhotos(){
     const files = [...(inp.files || [])];
     if(!files.length) return;
 
-    const tooBig = files.filter(f => f.size > 3 * 1024 * 1024);
-    if(tooBig.length){
-      return toast(tooBig.length + " " + plural(tooBig.length, "photo")
-                 + " over 3 MB — shrink and try again");
-    }
-
+    /* No size limit any more: whatever comes off the camera is redrawn to
+       something a phone on mobile data can afford before it is sent. */
     let n = 0, sort = galleryRows.length;
     for(const file of files){
-      toast(`Uploading ${n + 1} of ${files.length}…`);
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      toast(`Preparing ${n + 1} of ${files.length}…`);
+      const small = await shrinkImage(file, file.name);
+      const shrunk = small !== file;
+      const ext = shrunk ? "jpg"
+        : ((file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg");
       const name = galleryFor + "-" + Date.now() + "-" + n + "." + ext;
+      toast(shrunk
+        ? `Uploading ${n + 1} of ${files.length} — ${kb(file.size)} → ${kb(small.size)}`
+        : `Uploading ${n + 1} of ${files.length}…`);
       try{
-        await SB.upload(name, file);
+        await SB.upload(name, small, shrunk ? {contentType: "image/jpeg"} : undefined);
         await SB.insert("product_images", {product_id: galleryFor, path: name, sort: sort++});
         n++;
       }catch(err){

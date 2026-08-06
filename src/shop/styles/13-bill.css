@@ -223,3 +223,14 @@
   cursor:pointer; font-family:var(--head); font-size:12px; font-weight:600; color:var(--teal);
 }
 .pin-paste:hover{color:var(--ink)}
+/* the promise that somebody will ring, which is what most people want to
+   read after "your order is in" */
+.done-call{
+  margin-top:12px; padding:11px 13px; border-radius:var(--r-sm); text-align:left;
+  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.2);
+  font-size:13px; line-height:1.6;
+}
+.done-call b{display:inline; font-family:var(--head); font-size:13px}
+/* the confirmation makes every link teal; the solid button is not a link */
+.bill-done .btn.btn-dark{color:var(--bg)}
+.bill-done .btn.btn-dark .wa{color:var(--wa)}

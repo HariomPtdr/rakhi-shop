@@ -19,6 +19,13 @@
 .sec-h em{font-style:italic; font-weight:400}
 .sec-p{max-width:56ch; color:var(--ink-soft); font-size:clamp(15px,1.5vw,16.5px); margin-top:14px}
 
+/* An author rule beats the browser's own [hidden]{display:none} whatever the
+   specificity, so any element with a display of its own — .btn, .fg, .rc —
+   stayed on screen after being told to hide. That is why "Save PDF copy" was
+   still sitting under the order confirmation next to a second copy of
+   itself. Said once here rather than remembered at every call site. */
+[hidden]{display:none !important}
+
 /* ── glass / panel ── */
 .glass{
   position:relative; isolation:isolate; background:rgba(255,253,248,.94);
@@ -94,3 +101,23 @@
 .announce.paused{background:#8A2033}
 .announce b{font-weight:700}
 @media (min-width:900px){.announce{font-size:13px}}
+
+/* ── work the browser can skip ──
+   A phone laid out all 532 nodes of this page before it could show the top
+   of it — 361ms of layout, most of it for sections nobody had scrolled to.
+   content-visibility lets the browser skip layout and paint for a section
+   that is off screen, and do it when it comes near. The intrinsic size is a
+   guess at the height so the scrollbar does not jump as each one is
+   measured for real. The collection is deliberately not in this list: it is
+   the first thing under the hero and the reason people are here. */
+.sec:not(#collection), .foot{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 900px;
+}
+
+/* The grain is a second composited layer with a blend mode on every glass
+   surface. It is worth about nothing on a phone screen and costs a real
+   amount to composite while scrolling, so phones get the paper without it. */
+@media (max-width:900px){
+  .glass::after{display:none}
+}

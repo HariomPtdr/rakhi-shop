@@ -536,3 +536,6 @@ td .pic{margin:0 auto}
   text-decoration-color:var(--line-2); text-decoration-thickness:1px;
 }
 .linkish:hover{text-decoration-color:var(--teal); color:var(--teal)}
+
+/* how heavy a photo is, said where the seller can act on it */
+.gal-size{display:block; font-size:10.5px; margin-top:3px}
