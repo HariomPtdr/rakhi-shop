@@ -49,11 +49,7 @@ const oneOrderQuery = id => "orders?" + ORDER_SELECT() + "&id=eq." + encodeURICo
 
 function orderQuery(limit, offset){
   let q = "orders?" + ORDER_SELECT() + "&order=created_at.desc&limit=" + limit + "&offset=" + offset;
-  /* "Awaiting payment" is not a status — an unpaid UPI order sits in placed
-     with everything else, which is exactly where it gets lost. It is the one
-     list the seller has to work through, so it gets its own tab. */
-  if(ordFilter === "unpaid") q += "&payment=eq.upi&paid_at=is.null&status=eq.placed";
-  else if(ordFilter) q += "&status=eq." + encodeURIComponent(ordFilter);
+  if(ordFilter) q += "&status=eq." + encodeURIComponent(ordFilter);
   if(ordQuery){
     const t = ordQuery.replace(/[(),*]/g, " ").trim();
     if(t) q += "&or=(bill_no.ilike.*" + encodeURIComponent(t) + "*,"
@@ -70,7 +66,7 @@ VIEWS.orders = async function(){
   const more = rows.length > ORD_PAGE;
   const page = rows.slice(0, ORD_PAGE);
 
-  const tabs = [["", "All"], ["unpaid", "Awaiting payment"]].concat(
+  const tabs = [["", "All"]].concat(
     ["placed","confirmed","shipped","delivered","cancelled"].map(s => [s, STATUS[s].label]));
 
   view().innerHTML = `
@@ -106,9 +102,7 @@ VIEWS.orders = async function(){
                  ? (o.paid_at ? `<span class="chip ok">UPI paid</span>`
                               : `<span class="chip no">UPI due</span>`)
                  : `<span class="chip">COD</span>`}</td>
-            <td>${o.payment === "upi" && !o.paid_at && o.status === "placed"
-                 ? `<span class="chip">Awaiting payment</span>`
-                 : statusChipHTML(o.status)}${o.tracking_id
+            <td>${statusChipHTML(o.status)}${o.tracking_id
                  ? `<br><span class="dim mono" style="font-size:10px">${esc(o.tracking_id)}</span>` : ""}</td>
             <td class="dim nowrap">${esc(dayTimeText(o.created_at))}</td>
           </tr>`).join("") || `<tr class="flat"><td colspan="8"><p class="empty">
@@ -204,8 +198,7 @@ function paintOrder(o, hist, laterPin, msgs){
 
   openPanel(o.bill_no, `
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
-      ${o.payment === "upi" && !o.paid_at && o.status === "placed"
-        ? `<span class="chip">Awaiting payment</span>` : statusChipHTML(o.status)}
+      ${statusChipHTML(o.status)}
       <span class="dim" style="font-size:12px">${esc(dayTimeText(o.created_at))}</span>
       <span class="spacer"></span>
       <span class="strong" style="font-family:var(--display); font-size:21px">${inr(o.total)}</span>
@@ -276,16 +269,19 @@ function paintOrder(o, hist, laterPin, msgs){
             <button class="chip" type="button" data-copy="${esc(o.rzp_payment_id)}">Copy id</button>
           </div>` : ""}
       </div>` : ""}
-    ${o.payment === "upi" && !o.paid_at ? `<div class="acts">
-      <span class="dim" style="align-self:center; font-size:11.5px">
-        Nothing to do — the order confirms itself the moment they pay, and
-        they can pay it from their own orders at any time.</span>
-      <button class="btn btn-ghost btn-sm" data-paid="1">Mark paid by hand</button>
-    </div>` : ""}
+    ${o.payment === "upi" && !o.paid_at ? `<p class="empty" style="text-align:left; padding:8px 0 0">
+      This one was never paid for. Nothing here needs doing — a payment that
+      does not complete now takes its order back out with it, so this is
+      either from before the gateway or a payment still in flight.</p>` : ""}
 
     <div class="k">Move it along</div>
     <div class="acts">
-      ${next ? `<button class="btn btn-sm" data-set="${next}">Mark ${STATUS[next].label.toLowerCase()}</button>` : ""}
+      ${next && !(o.payment === "upi" && next === "confirmed")
+        ? `<button class="btn btn-sm" data-set="${next}">Mark ${STATUS[next].label.toLowerCase()}</button>`
+        : ""}
+      ${o.payment === "upi" && next === "confirmed"
+        ? `<span class="dim" style="align-self:center; font-size:11.5px">
+             Confirming is the payment's job now — Razorpay does it.</span>` : ""}
       ${o.status !== "cancelled" && o.status !== "delivered"
         ? `<button class="btn btn-ghost btn-sm" data-set="cancelled">Cancel order</button>` : ""}
       ${o.status === "cancelled" ? `<button class="btn btn-ghost btn-sm" data-set="placed">Reopen</button>` : ""}
@@ -354,19 +350,6 @@ function paintOrder(o, hist, laterPin, msgs){
       }catch(err){ toast(err.message); b.disabled = false; }
     };
   });
-
-  const paidBtn = $("#panelB").querySelector("[data-paid]");
-  if(paidBtn) paidBtn.onclick = async () => {
-    paidBtn.disabled = true;
-    try{
-      const when = paidBtn.dataset.paid === "1" ? new Date().toISOString() : null;
-      await SB.patch("orders?id=eq." + encodeURIComponent(o.id), {paid_at: when});
-      o.paid_at = when;
-      toast(when ? "Marked as paid" : "Marked as not paid");
-      await showOrder(o.id);
-      render();
-    }catch(err){ toast(err.message); paidBtn.disabled = false; }
-  };
 
   $("#panelB").querySelectorAll("[data-copy]").forEach(b => {
     b.onclick = async () => {

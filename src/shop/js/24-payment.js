@@ -191,7 +191,13 @@ async function placeAndPay(){
   flushTrack();
 
   const paid = await payForOrder(order.id, {onPaid: () => showOrderDone(b, true)});
-  if(!paid) showAwaitingPayment(b);
+  if(!paid){
+    /* the order has been taken back out; put the bill back the way it was so
+       they can simply press Pay again */
+    restore();
+    billNo = makeBillNo();
+    paintBill();
+  }
 }
 
 /* ── the screen after an order is in ── */
@@ -219,37 +225,6 @@ function showOrderDone(b, paidNow){
       </div>
     </div>`;
   finishBillScreen(paidNow ? "Paid · " + billNo : "Saved to your account · " + billNo, "Done");
-}
-
-/* ── and the screen when the payment sheet was closed ── */
-function showAwaitingPayment(b){
-  $("#bill").innerHTML = `
-    <div class="bill-done">
-      <div class="done-tick wait" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
-      </div>
-      <b>Your order is waiting to be paid.</b>
-      <p>${esc(billNo)} · ${inr(billTotal())}</p>
-      <p class="done-call"><b>Nothing has been charged.</b> The order is saved.
-        Pay it now, or whenever you like from your orders — it is confirmed the
-        moment the payment goes through, and nothing is made before that.</p>
-      <div class="done-acts">
-        <button class="btn btn-dark" id="donePayNow" type="button">Pay ${inr(billTotal())}</button>
-        <button class="btn btn-ghost" id="doneOrders" type="button">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 6.5h16M4 12h16M4 17.5h10"/></svg>
-          See my orders</button>
-        <button class="btn btn-ghost" id="donePdf" type="button">Save PDF copy</button>
-      </div>
-    </div>`;
-  finishBillScreen("Waiting for payment · " + billNo, "Sent");
-
-  const again = $("#donePayNow");
-  if(again && lastOrderId) again.onclick = () =>
-    payForOrder(lastOrderId, {onPaid: () => showOrderDone(b, true)});
 }
 
 /* The housekeeping both end screens share. Everything that was for deciding

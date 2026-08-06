@@ -185,9 +185,6 @@ function orderTrack(o){
   if(o.status === "cancelled"){
     return `<div class="ac-track cancelled"><span class="ac-chip no">Cancelled</span></div>`;
   }
-  if(o.payment === "upi" && !o.paid_at && o.status === "placed"){
-    return `<div class="ac-track cancelled"><span class="ac-chip">Awaiting payment</span></div>`;
-  }
   const at = STATUS[o.status] ? STATUS[o.status].step : 0;
   return `<div class="ac-track">${STATUS_FLOW.map((s, i) => `
     <span class="ac-step${i <= at ? " done" : ""}${i === at ? " now" : ""}">
@@ -200,17 +197,9 @@ function orderTrack(o){
    "so where is my rakhi". This is the answer. */
 function orderWhere(o){
   const when = dayText(o.status_at || o.created_at);
-  /* A UPI order is not really an order until the money arrives — there is no
-     gateway here, the seller sees it in their own app and says so. Telling
-     someone "we confirm every order by hand" while we are actually waiting
-     for them is the wrong way round. */
-  if(o.payment === "upi" && !o.paid_at && o.status === "placed"){
-    return `<p class="ac-o-where">Waiting for your payment. The order is confirmed
-      the moment it reaches us — nothing is made before that.</p>`;
-  }
   const line = {
     placed:    "We confirm every order by hand — usually within a day.",
-    confirmed: o.payment === "upi" ? "Payment received. Confirmed and being made."
+    confirmed: o.payment === "upi" ? "Paid. Confirmed and being made."
                                    : "Confirmed and being made.",
     shipped:   o.courier ? "On its way with " + o.courier + "." : "On its way.",
     delivered: "Delivered on " + when + ".",
@@ -243,15 +232,6 @@ function orderCard(o){
     <div class="ac-o-l">${lines || "—"}</div>
     ${orderTrack(o)}
     ${orderWhere(o)}
-    ${o.payment === "upi" && !o.paid_at && o.status === "placed" ? `
-      <div class="ac-pay">
-        <span>${inr(o.total)} — UPI, card, wallet or netbanking</span>
-        ${RZP_ON
-          ? `<button class="btn btn-dark btn-sm" data-paynow="${esc(o.id)}">Pay now</button>`
-          : `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
-               href="${esc(wa(`Hello Ray Art Gallery, I would like to pay for my order ${o.bill_no} (${inr(o.total)}).`))}"
-              >Ask us how to pay</a>`}
-      </div>` : ""}
     ${rate ? `<div class="ac-rates">${rate}</div>` : ""}
     ${o.tracking_id && o.status !== "cancelled" ? `<div class="ac-o-trk">
        <span>${esc(o.courier || "Courier")}</span>
@@ -681,9 +661,6 @@ $("#acctBody").addEventListener("click", async e => {
     }
     return;
   }
-
-  const pn = e.target.closest("[data-paynow]");
-  if(pn){ payForOrder(pn.dataset.paynow); return; }
 
   const ea = e.target.closest("[data-editaddr]");
   if(ea){ editingAddr = ea.dataset.editaddr; cancelling = null; paintAcct(); return; }

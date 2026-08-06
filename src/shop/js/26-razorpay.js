@@ -113,18 +113,42 @@ async function payForOrder(orderId, opts){
       },
 
       modal: {
-        ondismiss: () => {
-          toast("Payment cancelled — the order is still waiting for it");
+        ondismiss: async () => {
+          await undoOrder(orderId, "Payment cancelled — nothing was charged");
           resolve(false);
         }
       }
     });
 
-    rzp.on("payment.failed", res => {
+    rzp.on("payment.failed", async res => {
       const d = (res && res.error) || {};
-      toast(d.description || "That payment did not go through. Try again.");
+      await undoOrder(orderId, d.description || "That payment did not go through");
     });
 
     rzp.open();
   });
+}
+
+/* ── an order that never happened ──
+   With a gateway there are two outcomes and no middle: it is paid, or
+   nothing happened. Somebody who closes the sheet has not ordered anything,
+   and leaving a row behind saying they did is a lie the seller has to chase
+   and the customer has to look at.
+
+   So the order is taken back out — the stock it held returns, a coupon it
+   spent is unspent — and the basket is put back exactly as it was, ready to
+   try again. */
+async function undoOrder(orderId, why){
+  try{
+    await SB.rpc("discard_unpaid_order", {p_order: orderId});
+  }catch(err){
+    /* it may simply have been paid a second later; either way, nothing
+       here is worth interrupting them with */
+  }
+  placedBill = "";                 /* so closing the bill does not empty the basket */
+  lastOrderId = null;
+  acctOrders = null;
+  if(typeof pushCart === "function") pushCart();     /* the basket, back on the server */
+  paintCart();
+  toast(why + " — your basket is as it was");
 }
