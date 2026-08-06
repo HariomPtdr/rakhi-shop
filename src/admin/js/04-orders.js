@@ -41,7 +41,11 @@ const oneOrderQuery = id => "orders?" + ORDER_SELECT() + "&id=eq." + encodeURICo
 
 function orderQuery(limit, offset){
   let q = "orders?" + ORDER_SELECT() + "&order=created_at.desc&limit=" + limit + "&offset=" + offset;
-  if(ordFilter) q += "&status=eq." + encodeURIComponent(ordFilter);
+  /* "Awaiting payment" is not a status — an unpaid UPI order sits in placed
+     with everything else, which is exactly where it gets lost. It is the one
+     list the seller has to work through, so it gets its own tab. */
+  if(ordFilter === "unpaid") q += "&payment=eq.upi&paid_at=is.null&status=eq.placed";
+  else if(ordFilter) q += "&status=eq." + encodeURIComponent(ordFilter);
   if(ordQuery){
     const t = ordQuery.replace(/[(),*]/g, " ").trim();
     if(t) q += "&or=(bill_no.ilike.*" + encodeURIComponent(t) + "*,"
@@ -58,7 +62,7 @@ VIEWS.orders = async function(){
   const more = rows.length > ORD_PAGE;
   const page = rows.slice(0, ORD_PAGE);
 
-  const tabs = [["", "All"]].concat(
+  const tabs = [["", "All"], ["unpaid", "Awaiting payment"]].concat(
     ["placed","confirmed","shipped","delivered","cancelled"].map(s => [s, STATUS[s].label]));
 
   view().innerHTML = `
@@ -94,7 +98,9 @@ VIEWS.orders = async function(){
                  ? (o.paid_at ? `<span class="chip ok">UPI paid</span>`
                               : `<span class="chip no">UPI due</span>`)
                  : `<span class="chip">COD</span>`}</td>
-            <td>${statusChipHTML(o.status)}${o.tracking_id
+            <td>${o.payment === "upi" && !o.paid_at && o.status === "placed"
+                 ? `<span class="chip">Awaiting payment</span>`
+                 : statusChipHTML(o.status)}${o.tracking_id
                  ? `<br><span class="dim mono" style="font-size:10px">${esc(o.tracking_id)}</span>` : ""}</td>
             <td class="dim nowrap">${esc(dayTimeText(o.created_at))}</td>
           </tr>`).join("") || `<tr class="flat"><td colspan="8"><p class="empty">
@@ -190,7 +196,8 @@ function paintOrder(o, hist, laterPin, msgs){
 
   openPanel(o.bill_no, `
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
-      ${statusChipHTML(o.status)}
+      ${o.payment === "upi" && !o.paid_at && o.status === "placed"
+        ? `<span class="chip">Awaiting payment</span>` : statusChipHTML(o.status)}
       <span class="dim" style="font-size:12px">${esc(dayTimeText(o.created_at))}</span>
       <span class="spacer"></span>
       <span class="strong" style="font-family:var(--display); font-size:21px">${inr(o.total)}</span>

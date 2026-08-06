@@ -9,6 +9,18 @@
 VIEWS.overview = async function(){
   const d = await SB.rpc("admin_overview", {p_days: range});
 
+  /* Money promised on WhatsApp and not yet arrived. With UPI the order is not
+     an order until it is paid, so "who owes me" became a question the morning
+     screen has to answer — and it is the one thing here that is work rather
+     than history. Asked separately because admin_overview() was written
+     before payments were a state. */
+  let owed = [];
+  try{
+    owed = await SB.rest("orders?select=total&payment=eq.upi&paid_at=is.null"
+                       + "&status=eq.placed&limit=200") || [];
+  }catch(e){ owed = []; }
+  const owedTotal = owed.reduce((s, o) => s + (o.total || 0), 0);
+
   const daily = (d.daily || []).map(r => ({
     label: dayText(r.d),
     short: new Date(r.d).getDate() + "",
@@ -38,6 +50,14 @@ VIEWS.overview = async function(){
       <span class="spacer"></span>
       ${rangePicker()}
     </div>
+
+    ${owed.length ? `<div class="notice">
+      <b>${owed.length} ${plural(owed.length, "order")} waiting to be paid — ${inr(owedTotal)}</b>
+      <span>Sent on WhatsApp, not yet received. Nothing is made until you mark
+        the money in, which confirms the order at the same time.</span>
+      <div class="acts"><button class="btn btn-sm" id="ovUnpaid" type="button"
+        >See them</button></div>
+    </div>` : ""}
 
     <div class="kpis">
       ${kpi(inr(d.revenue), "Revenue", null, false, delta(d.revenue, prev.revenue || 0))}
@@ -119,6 +139,9 @@ VIEWS.overview = async function(){
       ${d.repeat_buyers} ${plural(d.repeat_buyers, "has", "have")} ordered more than once ·
       ${d.open_baskets} ${plural(d.open_baskets, "basket")} left full, worth ${inr(d.open_basket_value)}
     </p>`;
+
+  const ovU = $("#ovUnpaid");
+  if(ovU) ovU.onclick = () => { ordFilter = "unpaid"; ordPage = 0; go("orders"); };
 
   view().querySelectorAll("[data-order]").forEach(tr => {
     tr.onclick = () => showOrder(tr.dataset.order);

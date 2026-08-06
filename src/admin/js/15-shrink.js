@@ -53,13 +53,18 @@ function loadBitmap(blob){
 
 /* returns a Blob — the original if there is nothing to gain */
 async function shrinkImage(blob, name){
-  if(blob.size <= SHRINK.floor && !/\.png$/i.test(name || "")) return blob;
-
   let img;
   try{ img = await loadBitmap(blob); }
   catch(e){ return blob; }
 
-  const scale = Math.min(1, SHRINK.max / Math.max(img.naturalWidth, img.naturalHeight));
+  /* Decided on both, not on weight alone. A 3000x4000 photograph of a plain
+     wall can compress to under 200KB, and leaving it at 3000 wide means every
+     phone that opens the shop decodes twelve million pixels to show five
+     hundred of them across — which is memory and time, not bytes. */
+  const long = Math.max(img.naturalWidth, img.naturalHeight);
+  if(long <= SHRINK.max && blob.size <= SHRINK.floor) return blob;
+
+  const scale = Math.min(1, SHRINK.max / long);
   const w = Math.round(img.naturalWidth * scale);
   const h = Math.round(img.naturalHeight * scale);
 
@@ -72,9 +77,23 @@ async function shrinkImage(blob, name){
   /* a cut-out has to stay a cut-out */
   if(/png/i.test(blob.type) && hasAlpha(canvas)) return blob;
 
-  const out = await new Promise(res => canvas.toBlob(res, "image/jpeg", SHRINK.quality));
-  if(!out || out.size >= blob.size) return blob;      /* no gain, no change */
-  return out;
+  /* Encoded more than once if it has to be. A picture of hard-edged colour —
+     a screenshot, a poster, a collage — can come out of JPEG larger than the
+     PNG it started as, and the first version of this handed such a file back
+     untouched at its full 3000px. Two lower qualities are tried before
+     giving up. */
+  let out = null;
+  for(const q of [SHRINK.quality, 0.7, 0.6]){
+    out = await new Promise(res => canvas.toBlob(res, "image/jpeg", q));
+    if(out && out.size < blob.size) return out;
+  }
+
+  /* Nothing beat the original on weight. If the original is also far bigger
+     than it needs to be on screen, the resized copy still wins: twelve
+     million pixels decoded on a phone to show five hundred across costs
+     memory and time whatever the file weighs. */
+  if(out && long > SHRINK.max * 2) return out;
+  return blob;
 }
 
 const kb = n => n >= 1024 * 1024
