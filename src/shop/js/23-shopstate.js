@@ -15,6 +15,9 @@
 
 /* the footer and the floating button are drawn once at boot from SHOP;
    redraw them when the database says something different */
+/* who to tell when the page itself is wrong */
+const DEV = {name: "Hariom Patidar", whatsapp: "919636408450"};
+
 function paintContact(){
   const wa = $("#fab"), fwa = $("#footWa");
   const ask = wa ? wa.getAttribute("data-ask") || ASK : ASK;
@@ -44,10 +47,9 @@ function paintContact(){
      Everything the person cannot be expected to describe — which page, which
      phone, which browser — is filled in for them. All they have to write is
      what went wrong. */
-  const bug = $("#bugLink");
-  if(bug){
+  const bug = $("#bugLink"), bugWa = $("#bugWa");
+  if(bug || bugWa){
     const to = SHOP.email || "";
-    if(!to){ bug.hidden = true; return; }
     const body = [
       "What happened:", "", "",
       "What I expected:", "", "",
@@ -56,10 +58,17 @@ function paintContact(){
       "Screen: " + innerWidth + "×" + innerHeight,
       "Browser: " + navigator.userAgent
     ].join("\n");
-    bug.href = "mailto:" + to
-      + "?subject=" + encodeURIComponent("Ray Art Gallery — a bug or an idea")
-      + "&body=" + encodeURIComponent(body);
-    bug.hidden = false;
+    if(bug){
+      bug.href = "mailto:" + to
+        + "?subject=" + encodeURIComponent("Ray Art Gallery — a bug or an idea")
+        + "&body=" + encodeURIComponent(body);
+      bug.hidden = !to;
+    }
+    /* the developer's own number, not the shop's — a fault in the page is
+       not something the person packing rakhis can do anything about */
+    if(bugWa){
+      bugWa.href = "https://wa.me/" + DEV.whatsapp + "?text=" + encodeURIComponent(body);
+    }
   }
 }
 
