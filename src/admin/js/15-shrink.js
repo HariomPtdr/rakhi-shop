@@ -81,19 +81,35 @@ async function shrinkImage(blob, name){
      a screenshot, a poster, a collage — can come out of JPEG larger than the
      PNG it started as, and the first version of this handed such a file back
      untouched at its full 3000px. Two lower qualities are tried before
-     giving up. */
-  let out = null;
-  for(const q of [SHRINK.quality, 0.7, 0.6]){
-    out = await new Promise(res => canvas.toBlob(res, "image/jpeg", q));
-    if(out && out.size < blob.size) return out;
+     giving up.
+
+     WebP is tried before JPEG because it is about a third smaller for the
+     same picture at the same quality, and every browser that can open this
+     shop can display it. */
+  let best = null;
+  for(const type of ["image/webp", "image/jpeg"]){
+    for(const q of [SHRINK.quality, 0.7, 0.6]){
+      const out = await encodeAs(canvas, type, q);
+      if(!out) break;                       // this browser cannot write that type
+      if(!best || out.size < best.size) best = out;
+      if(out.size < blob.size) return out;  // the best quality that still saves
+    }
   }
 
   /* Nothing beat the original on weight. If the original is also far bigger
      than it needs to be on screen, the resized copy still wins: twelve
      million pixels decoded on a phone to show five hundred across costs
      memory and time whatever the file weighs. */
-  if(out && long > SHRINK.max * 2) return out;
+  if(best && long > SHRINK.max * 2) return best;
   return blob;
+}
+
+/* A browser that cannot encode the type it was asked for does not refuse —
+   it quietly hands back a PNG, which for a photograph is bigger than what
+   went in. So the type that comes out is checked rather than trusted. */
+async function encodeAs(canvas, type, q){
+  const out = await new Promise(res => canvas.toBlob(res, type, q));
+  return out && out.type === type ? out : null;
 }
 
 const kb = n => n >= 1024 * 1024
@@ -121,11 +137,36 @@ async function shrinkStored(path){
     }
 
     toast("Uploading…");
-    await SB.upload(path, new File([small], path, {type: "image/jpeg"}), {contentType: "image/jpeg"});
+    /* written back under the name already in the database, so the type has
+       to travel as a header — the extension on the path may now be a lie */
+    await SB.upload(path, new File([small], path, {type: small.type}),
+                    {contentType: small.type});
     toast(kb(before) + " → " + kb(small.size) + " — customers load it "
         + Math.round(before / small.size) + "× faster");
     if(typeof paintPhotos === "function") paintPhotos();
+    return {before: before, after: small.size};
   }catch(err){
     toast(err.message || "Could not shrink that one.");
   }
+}
+
+/* ── every heavy photo in one go ──
+   One at a time rather than all at once, for the same reason uploads are:
+   a phone on 4G given six of these finishes none of them. */
+async function shrinkAllStored(paths){
+  let done = 0, before = 0, after = 0;
+  for(const path of paths){
+    let n = 0;
+    try{
+      const res = await fetch(SB.photoUrl(path), {method: "HEAD", cache: "no-store"});
+      n = Number(res.headers.get("content-length") || 0);
+    }catch(e){}
+    if(n <= SHRINK.floor) continue;          // already the size it should be
+    const r = await shrinkStored(path);
+    if(r && r.after){ done++; before += r.before; after += r.after; }
+  }
+  toast(done
+    ? done + " " + plural(done, "photo") + " redrawn — " + kb(before) + " → " + kb(after)
+    : "Every photo is already as small as it usefully gets");
+  return done;
 }

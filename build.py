@@ -170,17 +170,38 @@ if (SRC / "admin" / "index.html").exists():
     (out / "index.html").write_text(admin, encoding="utf-8")
     print(f"  dist/{admin_path}/index.html".ljust(25) + f"{len(admin) / 1024:7.0f} KB")
 
-    # Keep it out of every index, wherever it is published. netlify.toml
-    # cannot know the path, so the rule is written here beside the page.
-    #
-    # Deliberately NOT a robots.txt Disallow line: robots.txt is world
-    # readable, so disallowing a secret path is how you publish it. The
-    # header tells a crawler not to index the page without naming it to
-    # anyone who did not already have the address.
-    (DIST / "_headers").write_text(
-        "/%s/*\n  X-Robots-Tag: noindex, nofollow\n"
-        "  Cache-Control: public, max-age=0, must-revalidate\n"
-        % admin_path, encoding="utf-8")
+    admin_rule = (
+        # Keep it out of every index, wherever it is published. No host
+        # config can know the path, so the rule is written here beside
+        # the page.
+        #
+        # Deliberately NOT a robots.txt Disallow line: robots.txt is world
+        # readable, so disallowing a secret path is how you publish it. The
+        # header tells a crawler not to index the page without naming it to
+        # anyone who did not already have the address.
+        "\n/%s/*\n  X-Robots-Tag: noindex, nofollow\n"
+        "  Cache-Control: public, max-age=0, must-revalidate\n" % admin_path)
+else:
+    admin_rule = ""
+
+# ── the headers, in the one file every host reads ──
+# Netlify and Cloudflare Pages both understand _headers. Written here rather
+# than in a host's own config so that moving hosts does not silently drop the
+# security headers — the ones that are easy to lose and hard to notice.
+(DIST / "_headers").write_text(
+    "/*\n"
+    "  X-Content-Type-Options: nosniff\n"
+    "  Referrer-Policy: strict-origin-when-cross-origin\n"
+    "  X-Frame-Options: SAMEORIGIN\n"
+    "  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()\n"
+    # Fonts and photos are content-addressed by their own names and change
+    # only when replaced, so they can be cached hard. The pages must not be:
+    # a price change has to reach the next visitor.
+    "\n/assets/*\n"
+    "  Cache-Control: public, max-age=31536000, immutable\n"
+    "\n/index.html\n"
+    "  Cache-Control: public, max-age=0, must-revalidate\n"
+    + admin_rule, encoding="utf-8")
 
 share = embed_assets(shop)
 (DIST / "share.html").write_text(share, encoding="utf-8")
