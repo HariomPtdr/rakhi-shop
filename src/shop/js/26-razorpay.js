@@ -39,7 +39,11 @@ function loadRazorpay(){
   return rzpLoading;
 }
 
-const fnUrl = name => "/.netlify/functions/" + name;
+/* One address, whoever is hosting. On AWS this is an Amplify rewrite onto
+   the Lambda's Function URL; on Netlify it is a redirect onto that host's
+   own functions. Same origin either way, so there is no CORS to arrange and
+   no third-party address in the page. */
+const fnUrl = name => "/api/" + name;
 
 async function callFn(name, body, withToken){
   const headers = {"content-type": "application/json"};

@@ -59,3 +59,12 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+# The shop asks for /api/<name> wherever it is hosted, so that one line of
+# it does not have to know which host is answering. Here that is this
+# host's own functions; on AWS it is a rewrite onto the Lambda.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true

@@ -1,0 +1,64 @@
+# ════════════════════════════════════════════════════════════════════
+#  AWS Amplify Hosting
+#
+#  Amplify runs build.py, which reads SUPABASE_URL, SUPABASE_ANON_KEY
+#  and ADMIN_PATH from the app's environment variables and writes them
+#  into the pages it produces. Set them once in
+#      App settings → Environment variables
+#  and every build from then on picks them up. They are never in git.
+#
+#  Python 3 is on Amplify's build image already; there is nothing to
+#  install and no node_modules. If a build ever fails saying python3 is
+#  not found, add `dnf install -y python3` as the first preBuild command.
+#
+#  The three payment endpoints are NOT here. They are one Lambda behind
+#  a Function URL, reached at /api/* through the rewrite in
+#      App settings → Rewrites and redirects
+#  so the browser only ever talks to this domain. See aws/README.md.
+# ════════════════════════════════════════════════════════════════════
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - python3 --version
+    build:
+      commands:
+        - python3 build.py
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths: []
+
+# ── headers ──
+# Netlify and Cloudflare read dist/_headers, which build.py writes.
+# Amplify does not, so the same rules are stated here. The dashboard's
+# noindex is not among them on purpose: it is a meta tag inside the page
+# itself, because naming ADMIN_PATH in a committed file is how a secret
+# address stops being one.
+customHeaders:
+  - pattern: '**'
+    headers:
+      - key: X-Content-Type-Options
+        value: nosniff
+      - key: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - key: X-Frame-Options
+        value: SAMEORIGIN
+      - key: Permissions-Policy
+        value: geolocation=(), camera=(), microphone=(), interest-cohort=()
+
+  # Fonts and photos are content-addressed by their own names and change
+  # only when replaced, so they can be cached hard.
+  - pattern: '/assets/**'
+    headers:
+      - key: Cache-Control
+        value: public, max-age=31536000, immutable
+
+  # The pages must not be: a price change has to reach the next visitor.
+  - pattern: '/index.html'
+    headers:
+      - key: Cache-Control
+        value: public, max-age=0, must-revalidate
