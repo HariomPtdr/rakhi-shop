@@ -63,10 +63,8 @@ function applyCatalogue(rows){
     cat:   r.cat || "traditional",
     feat:  r.feat || 999,
     img:   r.image_path ? SB.photoUrl(r.image_path) : null,
-    /* the whole gallery, lowest sort first; the first is the cover */
-    imgs:  (r.product_images || [])
-             .slice().sort((a,b) => (a.sort - b.sort) || 0)
-             .map(x => SB.photoUrl(x.path)),
+    /* filled in by loadGallery() when this rakhi is opened */
+    imgs:  [],
     desc:  r.descr || "",
     stock: (r.stock === null || r.stock === undefined) ? null : r.stock,
     rating: r.rating_avg == null ? null : Number(r.rating_avg),
@@ -106,18 +104,49 @@ function repaintCatalogue(){
    So a failure falls back to the columns that have always existed, and the
    shop shows the real catalogue without the extras. */
 const CAT_CORE = "id,kind,name,price,mrp,cat,feat,descr,image_path,art,includes,best,stock";
-const CAT_FULL = CAT_CORE + ",rating_avg,rating_count,product_images(path,sort)";
+/* The gallery is deliberately not joined in here any more. Every product
+   carrying every one of its photo rows made the first request of the visit
+   grow with the shop — and the grid only ever draws the cover. The rest are
+   fetched for the one rakhi somebody actually opens. */
+const CAT_FULL = CAT_CORE + ",rating_avg,rating_count";
+
+/* 300 was a cap nobody would notice passing: product 301 simply would not
+   be in the shop, with no error to say so. Raised well past what this shop
+   plans to hold, and it says something if it is ever reached. */
+const CAT_MAX = 2000;
 
 async function loadCatalogue(){
   let rows;
   try{
     rows = await SB.rest("products?select=" + CAT_FULL
-                       + "&active=eq.true&order=feat.asc&limit=300");
+                       + "&active=eq.true&order=feat.asc&limit=" + CAT_MAX);
   }catch(err){
     rows = await SB.rest("products?select=" + CAT_CORE
-                       + "&active=eq.true&order=feat.asc&limit=300");
+                       + "&active=eq.true&order=feat.asc&limit=" + CAT_MAX);
+  }
+  if(Array.isArray(rows) && rows.length >= CAT_MAX){
+    console.warn("The catalogue hit the " + CAT_MAX + " row ceiling — "
+               + "anything past it is not in the shop. Time to page this query.");
   }
   if(applyCatalogue(rows)) repaintCatalogue();
+}
+
+/* ── the photos of one rakhi, fetched when it is opened ──
+   Cached on the product itself, so going back and forth between the grid
+   and a product does not ask again. */
+async function loadGallery(p){
+  if(!p || p.imgsLoaded || p.imgsLoading) return false;
+  p.imgsLoading = true;
+  try{
+    const rows = await SB.rest("product_images?select=path,sort&product_id=eq."
+                             + encodeURIComponent(p.id) + "&order=sort.asc");
+    p.imgs = (rows || []).map(r => SB.photoUrl(r.path));
+    p.imgsLoaded = true;
+  }catch(e){
+    /* the cover is already on screen; a failed gallery is not worth a message */
+  }
+  p.imgsLoading = false;
+  return p.imgsLoaded;
 }
 async function loadSettings(){
   /* same reasoning as the catalogue: the contact columns arrive with

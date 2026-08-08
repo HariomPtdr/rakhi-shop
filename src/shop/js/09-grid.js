@@ -118,10 +118,67 @@ function visible(){
             hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[state.sort];
   return PRODUCTS.filter(p=>state.cat==="all"||p.cat===state.cat).sort(by);
 }
+/* ── how much of the collection is on the page ──
+   Building a few hundred cards in one go is a long first paint and a lot of
+   DOM for a phone to hold, for a customer who will look at the first six.
+   They arrive a screenful at a time, fetched ahead of the scroll so the end
+   of the list is never actually reached. The count above the grid still
+   says how many there are altogether. */
+const PAGE = 24;
+let shown = PAGE;
+
 function paintGrid(){
   const list=visible();
+  shown = PAGE;                       /* a new filter or sort starts at the top */
   $("#rCount").textContent = `${two(list.length)} ${list.length===1?"design":"designs"}`;
-  $("#grid").innerHTML = list.map(p=>{
+  $("#grid").innerHTML = list.slice(0, shown).map(cardHtml).join("");
+  watchTail(list.length);
+}
+
+/* the next screenful, appended rather than repainted: rebuilding the cards
+   already on screen would drop their images and flash the whole grid */
+function showMore(){
+  const list = visible();
+  if(shown >= list.length) return;
+  const next = list.slice(shown, shown + PAGE);
+  shown += next.length;
+  $("#grid").insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
+  if(typeof paintHearts === "function") paintHearts();
+  watchTail(list.length);
+}
+
+/* A sentinel below the grid, watched 600px early so the next cards are
+   already there by the time the last row is reached. */
+const gridTail = document.createElement("div");
+gridTail.className = "grid-tail";
+gridTail.setAttribute("aria-hidden", "true");
+$("#grid").after(gridTail);
+
+const tailWatch = ("IntersectionObserver" in window)
+  ? new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)) showMore(); },
+                             {rootMargin: "600px 0px"})
+  : null;
+
+function watchTail(total){
+  const more = shown < total;
+  gridTail.hidden = !more;
+  if(!tailWatch){
+    /* no observer: everything at once beats a list that cannot be finished */
+    if(more) showMore();
+    return;
+  }
+  /* Unobserved and observed again rather than left alone. An observer only
+     speaks when an intersection *changes*: a full page of new cards pushes
+     the sentinel well clear of the margin, but the last page might be two
+     cards, leaving it exactly where it was and the observer with nothing to
+     report. Observing afresh delivers a new reading either way — appending
+     again if the sentinel is still in range, and going quiet once it is
+     not. */
+  tailWatch.unobserve(gridTail);
+  if(more) tailWatch.observe(gridTail);
+}
+
+function cardHtml(p){
     const out = p.stock === 0;
     return `
     <article class="card panel${out ? " card-out" : ""}" data-go="${p.id}">
@@ -140,7 +197,7 @@ function paintGrid(){
         <span class="card-u">${out ? "sold out" : "per piece"}</span>
       </div>
       <div class="card-acts">${cardActs(p)}</div>
-    </article>`;}).join("");
+    </article>`;
 }
 /* Add and View are handled once for every card, in 06b-cardacts.js */
 const closeLb=fromBack=>{

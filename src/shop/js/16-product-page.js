@@ -37,6 +37,11 @@ function pvShot(p){
 
 function paintProduct(){
   const p = pvProduct(); if(!p) return;
+  /* The cover is already known, so the page draws immediately with it and
+     the rest of the photos slide in behind. Asked for once per rakhi. */
+  if(typeof loadGallery === "function" && !p.imgsLoaded && !p.imgsLoading){
+    loadGallery(p).then(got => { if(got && pvProduct() === p) paintProduct(); });
+  }
   const shot = pvShot(p);
   const gallery = pvGallery(p);
   $("#pvCrumb").textContent = `Collection / № ${IDX.get(p.id)}`;
