@@ -72,13 +72,16 @@
    covering the thing it was meant to show. */
 .hero-veil{
   position:absolute; inset:0;
-  /* Almost nothing on a phone: the words sit on card stock that is already
-     empty, so this only has to steady it. */
-  background:linear-gradient(to bottom,
-    rgba(251,246,236,.55) 0%,
-    rgba(251,246,236,.34) 38%,
-    rgba(251,246,236,.06) 60%,
-    rgba(251,246,236,0) 74%);
+  /* Left to right at every width, never top to bottom. Running it downward
+     put cream over the boxes themselves — they sit in the middle of a phone
+     hero — and that is what took the gloss off them. Across, it thins out
+     before it reaches them, so the words get their steadying and the boxes
+     are left alone. */
+  background:linear-gradient(to right,
+    rgba(251,246,236,.72) 0%,
+    rgba(251,246,236,.46) 28%,
+    rgba(251,246,236,.14) 46%,
+    rgba(251,246,236,0) 60%);
 }
 @media (min-width:760px){
   .hero-veil{
@@ -107,15 +110,20 @@
 
 /* the countdown — the one thing here that actually expires */
 .hero-when{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:7px 13px; border-radius:var(--r-full);
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 11px; border-radius:var(--r-full);
   background:rgba(255,251,242,.86);
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.9);
   color:#8A681C;
-  font-family:var(--head); font-size:clamp(9px,2.3vw,10.5px); font-weight:600;
-  letter-spacing:.085em; text-transform:uppercase; white-space:nowrap;
+  font-family:var(--head); font-size:clamp(7.5px,1.9vw,10.5px); font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
 }
-.hero-when svg{flex:none; opacity:.85}
+@media (min-width:760px){
+  .hero-when{gap:8px; padding:7px 13px; letter-spacing:.085em}
+}
+/* the icon rides the text size rather than sitting at a fixed 15px, which
+   is what made the pill look oversized once the words shrank */
+.hero-when svg{flex:none; opacity:.85; width:1.35em; height:1.35em}
 
 /* "Celebrate", between two rules — the small warm line that makes the
    two words under it read as an occasion rather than a page title */
