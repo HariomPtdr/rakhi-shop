@@ -96,10 +96,29 @@ which ones it found at the end of the build; read that line.
 |---|---|---|
 | `/api/<*>` | `https://xxxxxxxx.lambda-url.ap-south-1.on.aws/<*>` | 200 (Rewrite) |
 
-A **rewrite**, not a redirect — the browser must keep talking to your own
-domain, so there is no CORS to arrange and no AWS address in the page.
+`<*>` is Amplify's wildcard: `/api/rzp-verify` arrives at the Lambda as
+`/rzp-verify`. One slash before it, not two.
+
+A **rewrite**, not a redirect — the browser keeps talking to your own
+domain and never learns the AWS address, which is what keeps this
+same-origin with no CORS to arrange.
+
+**Rules apply from the top down.** If Amplify has added a catch-all
+(`/<*>` → `/index.html`), drag this rule above it, or every `/api/`
+request gets the shop's HTML instead of the Lambda.
 
 Then **Run build**. It should finish in under a minute.
+
+### Is the rewrite working?
+
+Open `https://<your-app>.amplifyapp.com/api/rzp-verify` in a browser.
+
+| What comes back | What it means |
+|---|---|
+| `{"error":"POST only"}` | working — a browser sends GET, and that endpoint takes POST |
+| the shop's homepage | the rule is not matching; check its order and the `<*>` |
+| `{"error":"no such endpoint"}` | the rewrite works, the path does not — look for a double slash |
+| a network or CORS error | wrong target, or the Function URL is not enabled |
 
 ---
 
