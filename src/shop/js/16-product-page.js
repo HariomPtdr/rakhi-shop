@@ -246,7 +246,6 @@ function openProduct(id, fromHash){
   pvEl.classList.add("on");
   pvEl.setAttribute("aria-hidden","false");
   document.body.classList.add("pv-on");
-  paintStill();                        /* drop the drift petals off the lifted canvas */
   pvEl.scrollTop = 0;
   lock();
   if(!fromHash && location.hash !== "#p/"+id) location.hash = "p/"+id;
@@ -270,7 +269,6 @@ function hideProduct(){
   pvEl.classList.remove("on");
   pvEl.setAttribute("aria-hidden","true");
   document.body.classList.remove("pv-on");
-  paintStill();                        /* and put them back behind the shop */
   pvId = null;
   /* leaving must never reveal a dim layer that belonged to a sheet
      opened over this page */

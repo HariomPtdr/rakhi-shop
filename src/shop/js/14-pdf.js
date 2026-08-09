@@ -128,20 +128,17 @@ $("#shareLink").onclick=e=>{
 };
 
 /* ── the decoration, after the shop ──
-   Two 400×400 rangoli, five dividers of about sixty nodes each and the four
-   step icons: none of it is the reason anyone opened the page, and all of it
-   used to be drawn before the first paint. The two mandalas were measured as
-   the largest thing painted on the screen — the browser was waiting for
-   decoration to decide the page had loaded.
+   Five dividers of about sixty nodes each and the four step icons: none of
+   it is the reason anyone opened the page, and all of it used to be drawn
+   before the first paint.
 
-   Now the rakhis paint first and the ornament arrives on the next idle
-   moment. On a phone that is the difference between a page that appears and
+   The two turning rangoli that used to be the heaviest thing here are gone
+   altogether. What is left paints on the next idle moment, after the
+   rakhis. On a phone that is the difference between a page that appears and
    a page that hangs. The strips are one painted background rather than five
    copies of a sixty-node SVG, which takes ~300 elements out of the document
    and off every later layout pass. */
 function paintOrnament(){
-  $("#m1").style.backgroundImage = asBg(rangoli("#9C7620"));
-  $("#m2").style.backgroundImage = asBg(rangoli("#1B8497"));
   /* the strips are drawn as you reach them. Five of them at sixty nodes
      each is three hundred elements in every layout pass, for a rule between
      sections that nobody has scrolled to yet. */
