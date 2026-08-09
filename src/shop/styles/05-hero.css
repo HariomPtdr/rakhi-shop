@@ -260,6 +260,14 @@
   transition:width .5s var(--ease), background .5s var(--ease);
 }
 .hero-dots i.on{width:20px; background:var(--tan-deep)}
+/* Centred is right on a phone, where nothing else is down there. A full
+   screen has the scroll cue in the middle and the WhatsApp button in the
+   bottom right corner, so the marks take the remaining one — bottom left,
+   on the same margin as the words above them, which is the only edge of
+   this hero nothing else has claimed. */
+@media (min-width:760px){
+  .hero-dots{left:clamp(18px,4vw,44px); right:auto; transform:none}
+}
 @media (prefers-reduced-motion:reduce){.hero-dots i{transition:none}}
 
 

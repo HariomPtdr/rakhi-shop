@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════
    BACKDROP
 
-   Three washes of colour and nothing else.
+   Two washes of colour and nothing else.
 
    There were two rangoli turning slowly behind the page and a
    lamp under it that brightened as you scrolled into the
@@ -10,8 +10,9 @@
    that should be asking for the eye, and they were arguing with
    decoration for it on every frame.
 
-   What is left cannot move: three radial gradients, painted
-   once, carrying the warmth the page is built on.
+   What is left cannot move: two radial gradients in the top
+   corners, painted once, carrying the warmth the page is
+   built on.
    ══════════════════════════════════════════════════════════ */
 .bg{position:fixed; inset:0; z-index:-2; pointer-events:none}
 
@@ -21,18 +22,26 @@
    sticky header — three fixed things competing for the top of a small
    screen. The bead and the JS that drove it are gone with it. */
 
-/* festive washes: haldi, sindoor, resham thread.
-   Kept out of the middle of the screen so headlines stay clean. */
+/* Two washes now — haldi at the top right, resham at the top left.
+
+   There was a third, sindoor, thrown up from below the fold. It belonged to
+   the lamp that used to burn under the page and brighten as you scrolled;
+   with the lamp gone it was a pink band sitting at a fixed point in the
+   window, and because this layer is fixed it did not travel with anything.
+   It cut a stripe across whatever happened to be at that height — under a
+   full-height hero, exactly the sliver of page showing beneath it, which
+   read as a seam between two sections that do not have one.
+
+   Both survivors are kept up at the top corners and out of the middle,
+   where the headlines are. */
 .bg::before{
   content:""; position:absolute; inset:0;
   background:
     radial-gradient(62vw 40vw at 108% -6%, rgba(250,214,140,.66), transparent 66%),
-    radial-gradient(58vw 34vw at -12% 2%,  rgba(168,220,231,.40), transparent 64%),
-    radial-gradient(70vw 40vw at 50% 112%, rgba(236,164,150,.42), transparent 68%);
+    radial-gradient(58vw 34vw at -12% 2%,  rgba(168,220,231,.40), transparent 64%);
 }
 
-
-/* marigold petals drifting through the page */
+/* the canvas the cart's petals are thrown onto */
 .petals{position:fixed; inset:0; z-index:-1; pointer-events:none; width:100%; height:100%}
 /* the product page sits at 52, so the burst has to be lifted over it —
    still under the cart and the bill (55+) */
