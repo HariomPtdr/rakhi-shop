@@ -47,15 +47,21 @@ Then:
    the code that checks payment signatures.
 2. **Runtime settings → Handler** stays `index.handler`
 3. **Configuration → General → Timeout**: 15 seconds
-4. **Configuration → Environment variables** — add these five:
+4. **Configuration → Environment variables** — add these six:
 
-   | Key | Where it comes from |
-   |---|---|
-   | `RAZORPAY_KEY_ID` | Razorpay dashboard, the `rzp_live_…` one |
-   | `RAZORPAY_KEY_SECRET` | Razorpay dashboard — this one is a secret |
-   | `RAZORPAY_WEBHOOK_SECRET` | set when you create the webhook, step 4 |
-   | `SUPABASE_URL` | Supabase → Project settings → API |
-   | `SUPABASE_SERVICE_ROLE_KEY` | same page — **never** put this in the site |
+   | Key | Where it comes from | Needed by |
+   |---|---|---|
+   | `RAZORPAY_KEY_ID` | Razorpay dashboard, the `rzp_live_…` one | create-order, verify |
+   | `RAZORPAY_KEY_SECRET` | Razorpay dashboard — this one is a secret | create-order, verify |
+   | `RAZORPAY_WEBHOOK_SECRET` | set when you create the webhook, step 4 | webhook |
+   | `SUPABASE_URL` | Supabase → Project settings → API | all three |
+   | `SUPABASE_ANON_KEY` | same page — the anon/public key | create-order |
+   | `SUPABASE_SERVICE_ROLE_KEY` | same page — **never** put this in the site | all three |
+
+   Six, not five. `SUPABASE_ANON_KEY` is easy to leave out here because it
+   is also an Amplify variable, and the shop looks fine without it — right
+   up until a customer tries to pay and gets "The database is not
+   configured here."
 
 5. **Configuration → Function URL → Create**
    - Auth type: **NONE**. The endpoints do their own checking: two verify a
