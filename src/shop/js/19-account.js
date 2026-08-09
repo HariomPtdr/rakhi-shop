@@ -1001,8 +1001,7 @@ async function landFromLink(){
 
 /* ── wiring ── */
 if(SB_ON){
-  acctOpenBtn.hidden = false;
-  acctOpenBtn.onclick = () => openAcct();
+  /* the click is wired in 12-sheets.js — this button is the menu now too */
   $("#acctClose").onclick = () => closeAcct();
   $("#acctModal").addEventListener("click", e => { if(e.target.id === "acctModal") closeAcct(); });
 

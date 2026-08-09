@@ -73,3 +73,7 @@ document.addEventListener("click", e => {
   e.stopPropagation();          /* never let it also open the product page */
   toggleWish(b.dataset.wish);
 });
+
+/* Somebody arriving with three already saved should see three, not a blank
+   heart until they press one. */
+paintHearts();

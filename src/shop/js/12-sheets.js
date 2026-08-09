@@ -139,15 +139,29 @@ function closeTop(){
 function openNav(){
   paintNavAuth();                /* the profile may have arrived since last time */
   openSheet("#navModal");
-  $("#navOpen").setAttribute("aria-expanded", "true");
+  $("#acctOpen").setAttribute("aria-expanded", "true");
 }
 function closeNav(fromBack){
   if(!isOn("#navModal")) return;
   $("#navModal").classList.remove("on");
-  $("#navOpen").setAttribute("aria-expanded", "false");
+  $("#acctOpen").setAttribute("aria-expanded", "false");
   afterClose(fromBack);
 }
-$("#navOpen").onclick  = openNav;
+/* Below 1000px the five links are not in the bar, so this opens the sheet —
+   which carries the account block with it, so nothing is out of reach. Above
+   that the links are already in the bar, and the sheet would only be saying
+   them a second time, so it goes straight to the account instead. */
+$("#acctOpen").onclick = () => {
+  const linksInBar = matchMedia("(min-width:1000px)").matches;
+  if(linksInBar && SB_ON && typeof openAcct === "function") openAcct();
+  else openNav();
+};
+/* Straight to the saved rakhis. Signed out, openAcct asks them to sign in,
+   which is the same thing every heart on the page does. */
+$("#wishOpen").onclick = () => {
+  if(SB_ON && typeof openAcct === "function") openAcct("wishlist");
+  else openNav();
+};
 $("#navClose").onclick = () => closeNav();
 $("#navModal").addEventListener("click", e => { if(e.target.id === "navModal") closeNav(); });
 $("#navSheet").addEventListener("click", e => {
