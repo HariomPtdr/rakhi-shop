@@ -132,13 +132,6 @@
   hero.addEventListener("pointercancel", release);
   hero.addEventListener("pointerleave", release);
 
-  /* the arrow at the right edge — the same move the timer makes, asked for */
-  const arrow = document.getElementById("heroNext");
-  if(arrow) arrow.addEventListener("click", () => {
-    next();
-    stop(); start();          /* a full wait again, not the tail of the last one */
-  });
-
   /* A drag that ends on Shop now must not also press it. */
   hero.addEventListener("click", e => {
     if(sideways && Math.abs(dx) > 8){ e.preventDefault(); e.stopPropagation(); }
