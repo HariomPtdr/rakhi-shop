@@ -2,9 +2,19 @@
    the featured rail
    ══════════════════════════════════════════════════════════ */
 let RAIL = [];
-function paintRail(){
-  RAIL = [...PRODUCTS].sort((a,b)=>a.feat-b.feat).slice(0,4);
-  $("#rail").innerHTML = RAIL.map(p=>`
+
+/* ── the rail fills as it is swiped ──
+   It used to be four rakhis and then the end of the road. Now it starts
+   with six and takes another six each time the swipe nears the end, until
+   the whole catalogue has been through it. Loading them all at the start
+   would be a dozen pictures fetched so that four could be looked at. */
+const RAIL_STEP = 6;
+let railShown = 0;
+
+const railPool = () => [...PRODUCTS].sort((a,b) => a.feat - b.feat);
+
+function railCard(p){
+  return `
     <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
         ${thumb(p)}
@@ -18,7 +28,14 @@ function paintRail(){
       <div class="rc-b">
         <span class="rc-p">${inr(p.price)}</span>${cardActs(p)}
       </div>
-    </article>`).join("");
+    </article>`;
+}
+
+function paintRail(){
+  const pool = railPool();
+  railShown = Math.min(RAIL_STEP, pool.length);
+  RAIL = pool.slice(0, railShown);
+  $("#rail").innerHTML = RAIL.map(railCard).join("");
 }
 paintRail();
 
@@ -69,6 +86,20 @@ function markDot(i){
    until the animation has had time to land. */
 let railBusy = 0;
 
+/* Another handful, appended where the swipe is already heading. Called from
+   the scroll below rather than on a timer, so a rail nobody touches never
+   fetches a picture nobody asked to see. */
+function railMore(){
+  const pool = railPool();
+  if(railShown >= pool.length) return;
+  const next = pool.slice(railShown, railShown + RAIL_STEP);
+  railShown += next.length;
+  RAIL = pool.slice(0, railShown);
+  railEl.insertAdjacentHTML("beforeend", next.map(railCard).join(""));
+  buildDots();                 /* more cards, more places to stop */
+  markDot(railAt);
+}
+
 /* whichever stop is nearest is the one showing */
 let railTick = false;
 railEl.addEventListener("scroll", ()=>{
@@ -76,6 +107,8 @@ railEl.addEventListener("scroll", ()=>{
   railTick = true;
   requestAnimationFrame(()=>{
     const left = railEl.scrollLeft;
+    /* within a card and a half of the end: time for more */
+    if(railEl.scrollWidth - (left + railEl.clientWidth) < 320) railMore();
     let best = 0, dist = Infinity;
     stopsPx.forEach((x,i)=>{
       const d = Math.abs(x - left);

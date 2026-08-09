@@ -2,8 +2,11 @@
 .cartbar{
   position:fixed; left:8px; right:8px; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:46;
   display:flex; align-items:center; gap:12px; padding:10px 10px 10px 16px;
-  background:var(--ink); color:var(--bg); border-radius:var(--r-full);
-  box-shadow:0 10px 30px -8px rgba(20,18,16,.5);
+  /* the same deep red as Shop now and the cart button above it, so the one
+     bar that follows you down the page belongs to the shop it is for */
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8; border-radius:var(--r-full);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 14px 34px -12px rgba(106,17,20,.6);
   transform:translateY(140%); transition:transform .42s var(--ease);
 }
 .cartbar.on{transform:none}
@@ -15,7 +18,9 @@ body.pv-on .cartbar{transform:translateY(140%); pointer-events:none}
 .cartbar-v{font-family:var(--display); font-size:21px}
 .cartbar-b{
   margin-left:auto; flex:none; display:inline-flex; align-items:center; gap:7px;
-  background:var(--bg); color:var(--ink); border:0; cursor:pointer;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#6A1114;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+  border:0; cursor:pointer;
   font-family:var(--body); font-weight:700; font-size:11.5px; letter-spacing:1.3px; text-transform:uppercase;
   padding:12px 18px; border-radius:var(--r-full); min-height:44px;
 }

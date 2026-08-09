@@ -5,18 +5,18 @@
    ─────────────────────────────────────────────────────── */
 .rail-wrap{margin-top:0}
 .rail{
-  display:flex; gap:11px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  display:flex; gap:13px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
   scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
   overscroll-behavior-x:contain; padding:2px 2px 4px;
 }
 .rail::-webkit-scrollbar{display:none}
 .rc{
-  flex:none; width:min(66%,244px); scroll-snap-align:start;
+  flex:none; width:min(60%,214px); scroll-snap-align:start;
   background:var(--panel); border:1px solid var(--glass-border);
   border-radius:var(--r-lg); box-shadow:var(--sheen), var(--elev-1);
   padding:8px 8px 10px; display:flex; flex-direction:column;
 }
-@media (min-width:520px){.rc{width:min(46%,240px)}}
+@media (min-width:520px){.rc{width:min(37%,206px)}}
 
 /* Arrows only where there is a pointer — a mouse cannot swipe a scroll
    container, and on touch the swipe itself is the control. */
@@ -157,7 +157,7 @@
 .best .rc{padding:0; overflow:hidden; border-radius:var(--r-xl)}
 .best .rc-shot{
   border-radius:0; box-shadow:none;
-  aspect-ratio:4/3; background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+  aspect-ratio:3/2; background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
 }
 /* quieter than it was: still says which of the two you are looking at,
    without being the first thing on the card */
@@ -170,7 +170,7 @@
 
 .best .rc-n{
   font-family:var(--display); font-weight:600;
-  font-size:clamp(14px,3.4vw,17px); letter-spacing:-.012em; line-height:1.25;
+  font-size:clamp(13px,3vw,15px); letter-spacing:-.012em; line-height:1.25;
   color:#3B2415; margin:clamp(9px,1.8vw,12px) clamp(11px,2.4vw,14px) 0;
 }
 /* a hairline that fades at both ends, parted in the middle for the heart */
@@ -191,12 +191,28 @@
 }
 .best .rc-p{
   font-family:var(--display); font-weight:600;
-  font-size:clamp(17px,4.2vw,22px); color:#3B2415; margin-right:auto;
+  font-size:clamp(16px,3.8vw,19px); color:#3B2415; margin-right:auto;
 }
 /* one button now, so it can have the room the pair never had */
 .best .rc-b .btn{
-  flex:none; gap:7px; padding:8px 14px; min-height:0;
+  flex:none; gap:6px; padding:7px 12px; min-height:0;
   border-radius:var(--r-full);
-  font-size:10.5px; letter-spacing:.1em;
+  font-size:9.5px; letter-spacing:.09em;
 }
 .best .rc-b .btn svg{opacity:.85}
+
+/* ── the heart, in the page's own circle ──
+   It was a white disc with a grey ring, which is the one surface on this
+   card that belonged to no part of the design. Ivory and a gold hairline,
+   like every other circle here — and smaller, because on a 206px card a
+   40px button was a fifth of the picture. */
+/* the shared circle, one size down for a 206px card */
+.best .heart{width:31px; height:31px}
+.best .heart svg{width:15px; height:15px}
+
+/* No dots on this one. They were built for a fixed four and read as "here
+   is how far it goes"; against a row that grows as it is swiped they said
+   nine, then more, which is neither true for long nor worth counting. The
+   card peeking in at the edge is what says it moves — that is what it was
+   always for — and a pointer still gets the arrows. */
+.best #railDots{display:none !important}
