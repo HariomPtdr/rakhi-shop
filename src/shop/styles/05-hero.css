@@ -21,6 +21,8 @@
 .hero{
   position:relative; isolation:isolate; overflow:hidden;
   display:flex;
+  /* the browser keeps vertical panning; we take the horizontal drag */
+  touch-action:pan-y;
   /* well under half a phone screen — what is below the fold has to be
      worth scrolling to, and a hero that fills the window says there is
      nothing under it */
@@ -59,7 +61,7 @@
 .hero-track{
   display:flex; height:100%; width:400%;
   will-change:transform;
-  transition:transform .9s var(--ease);
+  transition:transform 1.5s var(--ease);   /* unhurried — it is scenery */
 }
 /* Put back to the start with the transition off, on the frame the fourth
    picture — which is the first again — finishes arriving. */

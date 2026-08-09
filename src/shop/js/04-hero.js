@@ -1,43 +1,60 @@
 /* ══════════════════════════════════════════════════════════
    THE HERO'S THREE PHOTOGRAPHS
 
-   A row four screens wide, moved one screen along every few
-   seconds. The fourth picture is the first one again, so when
-   the row reaches the end it is put back to the start with the
+   A row four screens wide, moved one screen along at a time.
+   The fourth picture is the first one again, so when the row
+   reaches the end it is put back to the start with the
    transition switched off — the picture on screen is identical
    either side of that, so there is nothing to see.
 
-   It is a backdrop, not something to operate: nothing in it can
-   be clicked, so there is nothing to reach with a keyboard and
-   nothing for a screen reader to announce. The markup says
-   aria-hidden and this file leaves it alone.
+   It moves on its own, and it can also be pushed. A picture
+   that only changes on a timer asks you to wait for it; one
+   that answers a finger is something you can look through. The
+   timer stops the moment a drag begins and starts again when it
+   ends, because nothing is more irritating than a slideshow
+   advancing out from under the hand moving it.
 
-   Three things it does bother to get right:
+   Three things it is careful about:
 
      the first picture is the only one fetched while the page is
      still loading, because the other two are off to the right
      of it and nobody is waiting on them;
 
      it stops when the tab is not being looked at, since a timer
-     firing every few seconds in a background tab is a phone
-     battery being spent on nobody;
+     firing in a background tab is a phone battery spent on
+     nobody;
 
-     it does not run at all for somebody who has asked their
-     device to keep still. Their first picture stays.
+     it does not move on its own at all for somebody who has
+     asked their device to keep still — though they can still
+     push it by hand, because that is their own doing.
    ══════════════════════════════════════════════════════════ */
 (() => {
   const track = document.getElementById("heroTrack");
   if(!track) return;
-  const slides = track.children.length;      /* three, plus the repeat */
-  if(slides < 3) return;
+  const hero = track.closest(".hero");
+  const count = track.children.length;           /* three, plus the repeat */
+  if(!hero || count < 3) return;
 
-  const REAL = slides - 1;                   /* how many are actually different */
-  const STEP = 100 / slides;                 /* one screen, as a share of the row */
-  const HOLD = 5200;
+  const REAL = count - 1;                        /* how many are actually different */
+  const STEP = 100 / count;                      /* one screen, as a share of the row */
+  const HOLD = 7000;                             /* long enough to read the words under it */
+  const GRAB = 55;                               /* px before a drag counts as a change */
   const still = matchMedia("(prefers-reduced-motion: reduce)");
 
   let at = 0, timer = null;
-  const put = () => { track.style.transform = `translate3d(-${at * STEP}%,0,0)`; };
+
+  const put = (dx) => {
+    track.style.transform = dx
+      ? `translate3d(calc(-${at * STEP}% + ${dx}px),0,0)`
+      : `translate3d(-${at * STEP}%,0,0)`;
+  };
+  /* apply a move with the transition off, in one frame */
+  const snap = fn => {
+    track.classList.add("is-jump");
+    fn();
+    void track.offsetWidth;
+    track.classList.remove("is-jump");
+  };
 
   /* the two to the right of the first, once nothing is competing for the
      connection */
@@ -46,33 +63,73 @@
   if(document.readyState === "complete") setTimeout(wake, 400);
   else addEventListener("load", () => setTimeout(wake, 400), {once:true});
 
-  function step(){
-    at++;
-    put();
+  function next(){ at++; put(); }
+  /* Going back from the first means stepping onto the repeat at the far end
+     first — same picture, so the jump cannot be seen — and moving off it. */
+  function prev(){
+    if(at === 0) snap(() => { at = REAL; put(); });
+    at--; put();
   }
 
-  /* Landed on the repeat: same picture, so the row can be moved back to the
-     start without the transition and nobody is any the wiser. Reading
-     offsetWidth in between is what makes the browser apply the jump before
-     the transition is turned back on, rather than animating it. */
+  /* Landed on the repeat: put the row back to the start unseen. */
   track.addEventListener("transitionend", e => {
-    if(e.propertyName !== "transform" || at < REAL) return;
-    track.classList.add("is-jump");
-    at = 0;
-    put();
-    void track.offsetWidth;
-    track.classList.remove("is-jump");
+    if(e.propertyName === "transform" && at >= REAL) snap(() => { at = 0; put(); });
   });
 
   function start(){
     if(timer || still.matches) return;
-    timer = setInterval(() => { if(!document.hidden) step(); }, HOLD);
+    timer = setInterval(() => { if(!document.hidden) next(); }, HOLD);
   }
-  function stop(){
-    if(!timer) return;
-    clearInterval(timer);
-    timer = null;
+  function stop(){ clearInterval(timer); timer = null; }
+
+  /* ── pushing it by hand ──
+     The stage sits behind the words, so the whole hero listens. Which means
+     telling a drag apart from a tap on Shop now, and from a thumb starting
+     a vertical scroll: the first eight pixels decide which of the three it
+     is, and until they do nothing moves. */
+  let down = false, sx = 0, sy = 0, dx = 0, decided = false, sideways = false;
+
+  hero.addEventListener("pointerdown", e => {
+    if(e.pointerType === "mouse" && e.button !== 0) return;
+    down = true; decided = false; sideways = false;
+    sx = e.clientX; sy = e.clientY; dx = 0;
+    stop();
+  });
+
+  hero.addEventListener("pointermove", e => {
+    if(!down) return;
+    const mx = e.clientX - sx, my = e.clientY - sy;
+    if(!decided){
+      if(Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      decided = true;
+      sideways = Math.abs(mx) > Math.abs(my);
+      if(!sideways){ down = false; start(); return; }   /* they are scrolling */
+      track.classList.add("is-jump");                   /* follow the finger exactly */
+    }
+    dx = mx;
+    put(dx);
+  }, {passive:true});
+
+  function release(){
+    if(!down) return;
+    down = false;
+    if(sideways){
+      track.classList.remove("is-jump");
+      if(dx <= -GRAB)      next();
+      else if(dx >= GRAB)  prev();
+      else                 put();                       /* not far enough — back */
+    }
+    dx = 0;
+    start();
   }
+  hero.addEventListener("pointerup", release);
+  hero.addEventListener("pointercancel", release);
+  hero.addEventListener("pointerleave", release);
+
+  /* A drag that ends on Shop now must not also press it. */
+  hero.addEventListener("click", e => {
+    if(sideways && Math.abs(dx) > 8){ e.preventDefault(); e.stopPropagation(); }
+  }, true);
 
   /* A tab left open all afternoon should not come back mid-slide, and phones
      throttle timers in the background anyway — so it is stopped outright and
