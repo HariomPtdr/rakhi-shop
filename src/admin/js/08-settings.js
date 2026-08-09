@@ -198,6 +198,26 @@ function paintSettings(){
           the database refuses anyone who is not the owner — but there is no
           reason to hand it out.</p>
 
+        <div class="k">Where the photos are kept</div>
+        <div class="rows">
+          <div class="row"><span>Serving from</span><span class="strong">${
+            ENV.CDN_URL ? "S3, through CloudFront" : "Supabase Storage"}</span></div>
+        </div>
+        ${ENV.CDN_URL ? `
+          <p class="empty" style="text-align:left; padding-top:8px">
+            Photos uploaded before the move are still in Supabase, and the shop
+            will not find them. Copy them across — nothing is deleted, and
+            Supabase keeps its copy, so this can be run twice or undone by
+            clearing CDN_URL.</p>
+          <div class="acts">
+            <button class="btn btn-ghost btn-sm" id="migImg" type="button"
+              >Copy the old photos to S3</button>
+            <span class="dim" id="migSay" style="align-self:center; font-size:12px"></span>
+          </div>`
+        : `<p class="empty" style="text-align:left; padding-top:8px">
+            Set CDN_URL to move them to S3. Until then this is where every
+            upload goes, and nothing needs doing.</p>`}
+
         <div class="k">Handing this over</div>
         <p class="empty" style="text-align:left; padding:0">
           Whoever runs the shop needs an ordinary account on it, and then one
@@ -277,6 +297,49 @@ function paintSettings(){
   $("#copyShop").onclick = async () => {
     try{ await navigator.clipboard.writeText(shopUrl); toast("Shop link copied"); }
     catch(e){ toast(shopUrl); }
+  };
+
+  /* ── copying the old photos across ──
+     The endpoint does a batch at a time and hands back where it got to, so
+     this keeps calling until it says done. Written as a loop here rather
+     than as one long request because a Lambda has fifteen seconds and a few
+     hundred photos do not fit in that. */
+  if($("#migImg")) $("#migImg").onclick = async () => {
+    const btn = $("#migImg"), say = $("#migSay");
+    btn.disabled = true;
+    let after = "", copied = 0, failed = [], total = 0;
+    try{
+      for(let round = 0; round < 200; round++){
+        const token = await SB.token();
+        if(!token) throw new Error("You are signed out. Sign in again.");
+        const res = await fetch("/api/migrate-images", {
+          method: "POST",
+          headers: {"content-type": "application/json", Authorization: "Bearer " + token},
+          body: JSON.stringify({after})
+        });
+        const out = await res.json().catch(() => null);
+        if(!res.ok) throw new Error((out && out.error) || ("Refused (" + res.status + ")"));
+
+        copied += out.copied;
+        failed  = failed.concat(out.failed || []);
+        total   = out.total;
+        after   = out.next;
+        say.textContent = copied + " of " + total + " copied";
+        if(out.done) break;
+      }
+      toast(failed.length
+        ? copied + " copied, " + failed.length + " could not be — see the list below"
+        : copied + " " + plural(copied, "photo") + " now on S3");
+      if(failed.length){
+        say.textContent = copied + " of " + total + " copied · " + failed.length + " failed: "
+                        + failed.slice(0, 3).map(f => f.name).join(", ");
+        console.warn("photos that could not be copied:", failed);
+      }
+    }catch(err){
+      toast(err.message || "The copy stopped.");
+      say.textContent = copied ? copied + " copied before it stopped" : "";
+    }
+    btn.disabled = false;
   };
 }
 

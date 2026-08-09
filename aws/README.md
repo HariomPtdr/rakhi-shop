@@ -307,11 +307,21 @@ touching any code.
    should be your `cloudfront.net` one, not `supabase.co`.
 3. Reload it — the response should carry `x-cache: Hit from cloudfront`.
 
-## What about the photos already in Supabase?
+## The photos already in Supabase
 
-Anything uploaded before this still lives in Supabase Storage, and with
-`CDN_URL` set the shop will look for it on CloudFront and not find it.
+Anything uploaded before the switch still lives in Supabase Storage, and
+with `CDN_URL` set the shop will look for it on CloudFront and not find it.
 
-There are two of them and one is a test image, so the simplest fix is to
-re-upload them from the dashboard. If there were hundreds it would be worth
-writing a migration; for two it is not.
+**Dashboard → Settings → Where the photos are kept → "Copy the old photos
+to S3"** does the whole lot. It reads every file name the database knows
+about — gallery rows and product covers, deduplicated — fetches each from
+Supabase and writes it to S3 under exactly the same name.
+
+Nothing is deleted and nothing in the database changes: Supabase keeps its
+copy, so clearing `CDN_URL` puts everything back the way it was. Safe to
+run twice — a second run simply overwrites with identical bytes.
+
+It works a batch at a time and reports where it got to, because a Lambda
+has fifteen seconds and a few hundred photos do not fit in that. The button
+keeps calling until it is finished and shows "40 of 260" as it goes. A
+photo that cannot be copied is named rather than skipped silently.
