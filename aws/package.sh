@@ -26,7 +26,8 @@ mkdir -p "$STAGE/handlers"
 cp aws/lambda/index.mjs "$STAGE/index.mjs"
 cp netlify/functions/rzp-create-order.mjs \
    netlify/functions/rzp-verify.mjs \
-   netlify/functions/rzp-webhook.mjs "$STAGE/handlers/"
+   netlify/functions/rzp-webhook.mjs \
+   netlify/functions/upload-image.mjs "$STAGE/handlers/"
 
 # stored with paths relative to the zip root, which is where Lambda looks
 ( cd "$STAGE" && zip -q -r "../../$OUT" . )

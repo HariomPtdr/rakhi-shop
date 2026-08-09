@@ -182,3 +182,123 @@ Lambda's 1M requests a month is free permanently and you will not come near
 it. Amplify charges for build minutes and data served; at 1.4 MB a page and
 this much traffic it is small, but it is not zero — the budget alert you set
 is what tells you if that ever stops being true.
+
+---
+
+# The product photos, on S3 and CloudFront
+
+Optional, and separate from everything above. The shop works with the
+photos in Supabase Storage; this moves them because the free tier allows
+5 GB of traffic a month, which at a few hundred rakhis is roughly 800
+visitors before the photos stop loading.
+
+    admin uploads          shop reads
+         │                      │
+         ▼                      ▼
+    /api/upload-image      CloudFront  ── cached at the edge
+         │                      │
+         │  (asks is_admin      ▼
+         │   before writing)   S3 bucket, private
+         ▼                      ▲
+       Lambda ──────────────────┘
+
+Nothing is written to S3 until the Lambda has asked Supabase the same
+`is_admin()` that the old storage policy asked. S3 has no idea who a
+Supabase user is, so that check *is* the door.
+
+## 1. The bucket
+
+**S3 → Create bucket**, region **ap-south-1**.
+
+| Setting | Value |
+|---|---|
+| Name | `rakhi-shop-images` (must be globally unique — add digits if taken) |
+| Block **all** public access | **leave ticked** |
+
+Public access stays blocked on purpose. Nothing reads the bucket directly;
+CloudFront is given permission to, and only CloudFront.
+
+## 2. CloudFront in front of it
+
+**CloudFront → Create distribution**
+
+| Setting | Value |
+|---|---|
+| Origin domain | the bucket, picked from the list |
+| Origin access | **Origin access control settings (recommended)** → Create new OAC → Create |
+| Viewer protocol policy | Redirect HTTP to HTTPS |
+| Cache policy | CachingOptimized |
+| Price class | *Use only North America, Europe, Asia…* — includes India |
+
+**Create**, then click the blue banner: **Copy policy**, then **Go to S3
+bucket permissions** → Bucket policy → **Edit** → paste → **Save**. That is
+what lets CloudFront — and nothing else — read the bucket.
+
+Copy the distribution's domain name: `d111111abcdef8.cloudfront.net`.
+
+It takes a few minutes to deploy.
+
+## 3. Let the Lambda write
+
+**Lambda → `rakhi-payments` → Configuration → Permissions** → click the
+execution role name. It opens IAM.
+
+**Add permissions → Create inline policy → JSON**, paste this with your own
+bucket name, name it `write-product-images`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "s3:PutObject",
+    "Resource": "arn:aws:s3:::rakhi-shop-images/*"
+  }]
+}
+```
+
+`PutObject` only. The Lambda never needs to read, list or delete, so it
+cannot — if this endpoint is ever tricked, the worst it can do is add a
+file.
+
+## 4. Two more Lambda variables
+
+**Lambda → Configuration → Environment variables**
+
+| Key | Value |
+|---|---|
+| `S3_BUCKET` | `rakhi-shop-images` |
+| `S3_REGION` | `ap-south-1` |
+
+Re-upload `aws/rzp-lambda.zip` — it now contains the upload endpoint.
+
+## 5. One more Amplify variable
+
+**Amplify → App settings → Environment variables**
+
+| Key | Value |
+|---|---|
+| `CDN_URL` | `https://d111111abcdef8.cloudfront.net` — no trailing slash |
+
+Then **Redeploy**.
+
+This one variable is the switch. Empty, everything reads from Supabase
+Storage exactly as before; set, reads come from CloudFront and uploads go
+to S3. So it can be turned on, looked at, and turned off again without
+touching any code.
+
+## 6. Check it
+
+1. Dashboard → a product → Photos → add one. It should upload as before.
+2. Right-click the photo on the shop → *Open image in new tab*. The address
+   should be your `cloudfront.net` one, not `supabase.co`.
+3. Reload it — the response should carry `x-cache: Hit from cloudfront`.
+
+## What about the photos already in Supabase?
+
+Anything uploaded before this still lives in Supabase Storage, and with
+`CDN_URL` set the shop will look for it on CloudFront and not find it.
+
+There are two of them and one is a test image, so the simplest fix is to
+re-upload them from the dashboard. If there were hundreds it would be worth
+writing a migration; for two it is not.

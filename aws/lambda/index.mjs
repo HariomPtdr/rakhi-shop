@@ -22,11 +22,13 @@
 import { handler as createOrder } from "./handlers/rzp-create-order.mjs";
 import { handler as verify }      from "./handlers/rzp-verify.mjs";
 import { handler as webhook }     from "./handlers/rzp-webhook.mjs";
+import { handler as uploadImage } from "./handlers/upload-image.mjs";
 
 const ROUTES = {
   "rzp-create-order": createOrder,
   "rzp-verify":       verify,
-  "rzp-webhook":      webhook
+  "rzp-webhook":      webhook,
+  "upload-image":     uploadImage
 };
 
 const no = (status, why) => ({

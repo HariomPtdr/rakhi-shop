@@ -28,8 +28,26 @@
    no user attached, so signedIn() stays false until whoAmI() has
    filled it in. Always: consumeUrl() → whoAmI() → then paint.
    ══════════════════════════════════════════════════════════ */
+/* A Blob as base64, without the "data:image/webp;base64," that FileReader
+   puts on the front. Done in one go rather than over a growing string:
+   String.fromCharCode.apply on a megabyte of bytes overflows the stack on
+   exactly the large photo it is most needed for. */
+function toBase64(blob){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload  = () => {
+      const s = String(r.result || "");
+      const i = s.indexOf(",");
+      resolve(i < 0 ? s : s.slice(i + 1));
+    };
+    r.onerror = () => reject(new Error("That file could not be read."));
+    r.readAsDataURL(blob);
+  });
+}
+
 const SB = (function(){
   let URL_ = "", KEY_ = "", BUCKET_ = "product-images", SES_KEY = "rag_session";
+  let CDN_ = "";                       /* CloudFront, when the photos live on S3 */
   let session = null, refreshing = null, providerCache = null;
   const listeners = [];
   const nowSec = () => Math.floor(Date.now() / 1000);
@@ -38,6 +56,7 @@ const SB = (function(){
     URL_    = String((o && o.url)    || "").replace(/\/+$/, "");
     KEY_    = String((o && o.key)    || "");
     BUCKET_ = String((o && o.bucket) || "product-images");
+    CDN_    = String((o && o.cdn)    || "").replace(/\/+$/, "");
     if(o && o.sessionKey) SES_KEY = o.sessionKey;
     api.on = !!(URL_ && KEY_);
     session = read();
@@ -302,9 +321,16 @@ const SB = (function(){
     },
     hasProvider: name => !!(providerCache && providerCache[name]),
 
-    photoUrl: p => URL_ + "/storage/v1/object/public/"
-      + encodeURIComponent(BUCKET_) + "/"
-      + String(p).split("/").map(encodeURIComponent).join("/"),
+    /* ── where a photo is read from ──
+       CloudFront if there is one, Supabase Storage if not. The database
+       stores a bare file name either way, never a URL, which is the whole
+       reason moving the photos to another bucket is these three lines and
+       not a migration of every row that mentions one. */
+    photoUrl: p => CDN_
+      ? CDN_ + "/" + String(p).split("/").map(encodeURIComponent).join("/")
+      : URL_ + "/storage/v1/object/public/"
+        + encodeURIComponent(BUCKET_) + "/"
+        + String(p).split("/").map(encodeURIComponent).join("/"),
 
     /* ── putting a file in the bucket ──
        This has to live here, beside fresh(), and not be written out by hand
@@ -324,6 +350,39 @@ const SB = (function(){
         throw new Error("You are signed out. Sign in again and retry the upload.");
       }
       const o = opts || {};
+
+      /* ── on S3, the photo goes through our own endpoint ──
+         S3 has no idea who a Supabase user is, so the function on the other
+         end asks the same is_admin() the storage policy used to ask before
+         it writes anything. Sent as base64 in JSON: a photo is redrawn to
+         about 120 KB before it gets here, so the third that base64 adds
+         costs nothing worth engineering around. */
+      if(CDN_){
+        const type = file.type || o.contentType || "application/octet-stream";
+        const data = await toBase64(file);
+        let res, out = null;
+        try{
+          res = await fetch("/api/upload-image", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              Authorization: "Bearer " + session.access_token
+            },
+            body: JSON.stringify({path: String(path), type: type, data: data})
+          });
+          const text = await res.text();
+          if(text){ try{ out = JSON.parse(text); }catch(e){ out = null; } }
+        }catch(err){
+          throw new Error("Could not reach the upload server. Check your connection.");
+        }
+        if(!res.ok){
+          const err = new Error((out && out.error) || ("Upload refused (" + res.status + ")"));
+          err.status = res.status;
+          throw err;
+        }
+        return out;
+      }
+
       const url = URL_ + "/storage/v1/object/" + encodeURIComponent(BUCKET_) + "/"
                 + String(path).split("/").map(encodeURIComponent).join("/");
       let res;
@@ -378,5 +437,6 @@ SB.init({
   url:        ENV.SUPABASE_URL,
   key:        ENV.SUPABASE_ANON_KEY,
   bucket:     ENV.SUPABASE_BUCKET,
+  cdn:        ENV.CDN_URL,
   sessionKey: "rag_session"
 });

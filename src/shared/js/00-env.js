@@ -24,6 +24,16 @@ const ENV = {
   SUPABASE_ANON_KEY: "",
   SUPABASE_BUCKET:   "product-images",
 
+  /* Where the product photos are served from — the CloudFront address in
+     front of the S3 bucket, e.g. https://d111111abcdef8.cloudfront.net
+     (no trailing slash).
+
+     Left empty, everything falls back to Supabase Storage exactly as
+     before. That is deliberate: the switch between the two is one
+     environment variable, so it can be turned on, looked at, and turned
+     off again without a code change. */
+  CDN_URL:           "",
+
   /* Where the seller dashboard is published. Set ADMIN_PATH in .env and in
      Netlify to something nobody would type by accident; the shop reads it
      from here to link the owner straight to it.
