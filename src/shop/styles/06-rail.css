@@ -80,3 +80,63 @@
   background:var(--line-2); transition:background .3s var(--ease), width .3s var(--ease);
 }
 .dots button[aria-selected="true"]{background:var(--tan-deep); width:20px; border-radius:4px}
+
+/* ══════════════════════════════════════════════════════════
+   OUR BESTSELLERS
+
+   The heading and the way past it, on one line. A section
+   title with a link to the rest of it beside it says "there
+   are more of these" without a sentence explaining so.
+   ══════════════════════════════════════════════════════════ */
+.best{padding:clamp(26px,5vw,44px) 0 0}
+.best-h{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:14px; margin-bottom:clamp(14px,2.6vw,22px);
+}
+.best-h h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(24px,6vw,40px); line-height:1.05; letter-spacing:-.022em;
+  color:#3B2415;
+}
+/* Outlined rather than filled: the filled one on this page is Shop now, and
+   there should only ever be one of those in view at a time. */
+.best-all{
+  flex:none; display:inline-flex; align-items:center; gap:9px;
+  padding:clamp(9px,1.6vw,12px) clamp(15px,2.4vw,22px);
+  border-radius:var(--r-full); text-decoration:none;
+  color:var(--tan-deep); background:transparent;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9.5px,2.2vw,11px); letter-spacing:.12em; text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.best-all svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .best-all:hover{
+    color:#6A1114;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,1), 0 10px 24px -14px rgba(120,88,22,.45);
+  }
+  .best-all:hover svg{transform:translateX(3px)}
+}
+
+/* the cards, cut from the same ivory as everything else raised on this page */
+.best .rc{
+  border:0;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 12px 28px -18px rgba(120,88,22,.36);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+@media (hover:hover){
+  .best .rc:hover{
+    transform:translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1px rgba(185,140,46,.8),
+      0 20px 38px -20px rgba(120,88,22,.5);
+  }
+}
