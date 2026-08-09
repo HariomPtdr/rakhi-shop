@@ -324,40 +324,51 @@
    wrapping them onto two rows of two would turn a glance into
    a list — and a list gets read like a list, which is to say
    not at all.
+
+   Held well in from the edges. Run the full width of the page
+   and four short phrases have to stretch to fill it, which
+   spaces them so far apart that the glance becomes four
+   separate readings. Narrower is not only smaller here; it is
+   the thing that keeps them one row.
    ══════════════════════════════════════════════════════════ */
-.feats{margin-top:clamp(18px,4vw,28px)}
+.feats{margin-top:clamp(14px,3vw,22px)}
 .feat-row{
   list-style:none;
+  max-width:860px; margin:0 auto;
   display:grid; grid-template-columns:repeat(4,1fr);
-  padding:clamp(18px,4vw,26px) clamp(4px,1.5vw,14px);
+  padding:clamp(13px,2.8vw,18px) clamp(4px,1.4vw,10px);
   border-radius:var(--r-xl);
-  background:#FBF7ED;
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.32), var(--elev-1);
+  /* the same ivory the bar and the countdown are cut from */
+  background:linear-gradient(158deg, #FFFEFA 0%, #FDF8EE 56%, #F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.5),
+    0 12px 30px -18px rgba(120,88,22,.38);
 }
 .feat{
   position:relative;
   display:flex; flex-direction:column; align-items:center; text-align:center;
-  gap:clamp(7px,1.6vw,10px); padding:0 clamp(3px,1.2vw,10px);
+  gap:clamp(5px,1.2vw,7px); padding:0 clamp(3px,1vw,8px);
 }
-/* hairlines between, not around — four boxes would read as four buttons */
+/* gold hairlines between, not grey — and only three of them */
 .feat + .feat::before{
-  content:""; position:absolute; left:0; top:14%; height:72%; width:1px;
-  background:rgba(20,18,16,.10);
+  content:""; position:absolute; left:0; top:16%; height:68%; width:1px;
+  background:linear-gradient(to bottom, transparent, rgba(185,140,46,.38), transparent);
 }
 .feat-i{
-  width:clamp(42px,12.5vw,62px); aspect-ratio:1;
+  width:clamp(34px,9.6vw,44px); aspect-ratio:1;
   display:grid; place-items:center;
-  border-radius:50%; border:1px dashed rgba(185,140,46,.6);
-  color:#3B2415;
+  border-radius:50%; border:1px dashed rgba(185,140,46,.55);
+  color:var(--tan-deep);
 }
-.feat-i svg{width:50%; height:50%}
+.feat-i svg{width:52%; height:52%}
 .feat b{
   font-family:var(--head); font-weight:700;
-  font-size:clamp(9px,2.5vw,11.5px); letter-spacing:.055em; line-height:1.25;
+  font-size:clamp(8.5px,2.2vw,10.5px); letter-spacing:.06em; line-height:1.2;
   text-transform:uppercase; color:#3B2415;
 }
 .feat>span:not(.feat-i){
-  font-size:clamp(9px,2.5vw,11.5px); line-height:1.25; color:var(--ink-soft);
+  font-size:clamp(8.5px,2.2vw,10.5px); line-height:1.2; color:var(--ink-soft);
 }
 
 .hero-under{padding:0 0 4px}
