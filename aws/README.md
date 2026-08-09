@@ -187,6 +187,19 @@ is what tells you if that ever stops being true.
 
 # The product photos, on S3 and CloudFront
 
+**Not switched on yet.** A new AWS account cannot create CloudFront
+distributions until it has been verified — "Your account must be verified
+before you can add new CloudFront resources" — so the distribution does not
+exist and CDN_URL is deliberately unset. The photos are still served by
+Supabase Storage, which is where they have always been.
+
+Nothing is waiting on code. The upload endpoint is deployed and tested; the
+day the account is verified, create the distribution, set CDN_URL, and the
+switch is thrown. Until then the shop reads from Supabase exactly as before.
+
+There is no hurry. At the time of writing the bucket held 2.67 MB of a 1 GB
+allowance, and every photo now goes up as WebP at about 120 KB.
+
 Optional, and separate from everything above. The shop works with the
 photos in Supabase Storage; this moves them because the free tier allows
 5 GB of traffic a month, which at a few hundred rakhis is roughly 800
