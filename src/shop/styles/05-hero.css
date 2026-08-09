@@ -57,6 +57,21 @@
   }
 }
 
+/* The photograph's own card stock and the page's cream are not the same
+   cream, so where the hero ended they met as a hairline — a pale rule
+   across the full width that looked like a border nobody had asked for.
+   Nothing was drawing it; it was simply two tones meeting. Faded out over
+   the last inch instead, so the picture arrives at the page rather than
+   stopping against it.
+
+   Above the pictures, below the words: the stage is at -1 and the words at
+   1, so this sits between them and never touches the type. */
+.hero::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; z-index:0;
+  height:clamp(44px,7vw,96px); pointer-events:none;
+  background:linear-gradient(to bottom, rgba(251,246,236,0), var(--bg));
+}
+
 /* ── the pictures ── */
 .hero-stage{position:absolute; inset:0; z-index:-1; overflow:hidden}
 

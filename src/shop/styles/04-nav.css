@@ -6,11 +6,44 @@
   padding:8px 9px 8px 14px; border-radius:var(--r-full);
 }
 @media (min-width:900px){.nav-in{gap:14px; padding:11px 12px 11px 20px}}
-/* Phones drop the backdrop blur to keep scrolling smooth, which leaves the
-   pill 6% see-through — enough for the display-size headline to ghost through
-   it as the page scrolls past. Opaque here costs nothing and keeps the bar
-   readable; the blur still does its work on wide screens. */
-@media (max-width:899px){.nav-in{background:#FFFDF8}}
+
+/* ══════════════════════════════════════════════════════════
+   The bar is made of the same thing the hero is.
+
+   It used to be the shop's generic glass panel: white, a white
+   border, a grey shadow — a surface that belongs to no
+   particular page. Floating over cream card stock and gold, it
+   read as a piece of interface laid on top of the design
+   rather than a part of it.
+
+   So it is ivory now, lit from the top left the way every
+   other raised thing here is, held by a gold hairline instead
+   of a white one, and dropped on a warm shadow rather than a
+   neutral one. Same material as the countdown pill under it
+   and the marks at the foot of the hero.
+   ══════════════════════════════════════════════════════════ */
+.nav-in{
+  border:0;
+  background:linear-gradient(158deg, #FFFEFA 0%, #FDF8EE 54%, #F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),        /* the sheen along the top */
+    inset 0 0 0 1px rgba(217,184,119,.55),      /* the gold rim */
+    0 14px 34px -18px rgba(120,88,22,.42),
+    0 2px 8px -4px rgba(120,88,22,.18);
+}
+/* Wide screens keep the blur — over a photograph that is what stops the bar
+   reading as a sticker. Phones drop it: it costs more to scroll than it is
+   worth, so they take the solid mix instead. */
+@media (min-width:900px){
+  .nav-in{
+    background:linear-gradient(158deg, rgba(255,254,250,.88) 0%, rgba(253,248,238,.82) 54%, rgba(248,241,225,.78) 100%);
+    -webkit-backdrop-filter:blur(16px) saturate(1.45);
+    backdrop-filter:blur(16px) saturate(1.45);
+  }
+}
+/* the diagonal white streak the glass panel carries is too cool for this
+   surface — the sheen above does the same job in the right colour */
+.nav-in::before{display:none}
 .brand{display:flex; align-items:center; gap:11px; margin-right:auto; z-index:2; min-height:42px}
 .brand-mk{width:34px; height:34px; flex:none}
 @media (min-width:900px){.brand-mk{width:40px; height:40px}}
@@ -27,7 +60,7 @@
   font-size:12px; font-weight:600; letter-spacing:.7px; text-transform:uppercase;
   color:var(--ink-soft); padding:9px 13px; border-radius:var(--r-full); transition:color .25s, background .25s;
 }
-.nav-l a:hover{color:var(--ink); background:rgba(255,255,255,.6)}
+.nav-l a:hover{color:var(--ink); background:rgba(185,140,46,.10)}
 .cart-btn{
   position:relative; display:inline-flex; align-items:center; gap:9px; z-index:2;
   font-family:var(--body); font-weight:700; font-size:11.5px; letter-spacing:1.3px; text-transform:uppercase;
@@ -53,13 +86,13 @@
 .nav-burger{
   display:grid; place-items:center; flex:none; z-index:2;
   width:42px; height:42px; border:0; cursor:pointer; border-radius:50%;
-  background:rgba(255,253,248,.85); color:var(--ink);
-  box-shadow:inset 0 0 0 1.5px var(--line-2);
+  background:rgba(255,254,250,.9); color:var(--ink);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
   transition:background .3s var(--ease), color .3s var(--ease),
              box-shadow .3s var(--ease), transform .3s var(--ease);
   -webkit-tap-highlight-color:transparent;
 }
-.nav-burger:hover{background:#fff}
+.nav-burger:hover{background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(185,140,46,.9)}
 @media (min-width:1000px){.nav-burger{display:none}}
 
 /* ── no cart button on a phone ──
