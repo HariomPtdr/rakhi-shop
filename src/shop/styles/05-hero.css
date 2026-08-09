@@ -35,8 +35,19 @@
   /* The boxes are scaled by the hero's height — the photograph sits at full
      height, so that is the only dial that changes how large they read. At
      700 they were small for the width and left a dead band across the
-     middle of the picture. */
-  .hero{min-height:clamp(600px,62vw,780px); align-items:center; padding-top:0}
+     middle of the picture.
+
+     But height wanted in the abstract is not height there is room for. 62vw
+     is 911px on a wide monitor, and a wide monitor is often a short one —
+     780px of hero under an 80px header does not fit in a 779px window, and
+     the button walks off the bottom of the screen. So it is also held to
+     what the window can show, less the header and a little more: that
+     margin leaves the top of the next section in view, which is what tells
+     somebody there is anything below this. */
+  .hero{
+    min-height:min(clamp(600px,62vw,780px), calc(100vh - 130px));
+    align-items:center; padding-top:0;
+  }
 }
 
 /* ── the pictures ── */
