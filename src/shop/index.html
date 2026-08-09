@@ -120,48 +120,129 @@
 
 <!-- ═══════════ hero ═══════════ -->
 <section class="hero">
+  <!-- The photographs, one behind the other, cross-fading. Purely decorative:
+       everything they say is said again in the words in front of them, so a
+       screen reader is told nothing here and a slide change announces
+       nothing. The addresses live in the stylesheet, which is what lets a
+       phone fetch the 24 KB copy and a desktop the 68 KB one without the
+       markup having to know which. -->
+  <div class="hero-stage" aria-hidden="true">
+    <div class="hero-slide s1 is-on"></div>
+    <div class="hero-slide s2 is-late"></div>
+    <div class="hero-slide s3 is-late"></div>
+    <div class="hero-veil"></div>
+  </div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <!-- the one thing on this page that actually expires -->
+      <span class="hero-when">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span id="mFest">Raksha Bandhan</span>
+      </span>
+
+      <span class="hero-eyebrow">Celebrate</span>
+      <h1 class="hero-h1">Raksha<br>Bandhan</h1>
+
+      <span class="hero-flourish" aria-hidden="true">
+        <svg viewBox="0 0 220 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" preserveAspectRatio="none">
+          <path d="M2 9C30 9 34 3 62 3s32 6 60 6 32-6 60-6 30 6 36 6"/>
+        </svg>
+      </span>
+
+      <p class="hero-p">It&rsquo;s just thread&mdash;<br>until you <em>tie it</em>.</p>
+
+      <a class="hero-btn" href="#collection">
+        Shop now
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ what the hero used to carry ═══════════
+     The rakhis, the two promises and the trust chips were inside the hero
+     while it was a column of text. The photographs have that half now, so
+     they move directly beneath it rather than being dropped: the featured
+     rakhis are still the first products anybody sees, and the promises
+     still arrive before the price does. -->
+<!-- ═══════════ four reasons, straight under the hero ═══════════
+     Said in four words each, because this is the strip somebody reads on
+     the way past rather than one they stop for. -->
+<section class="feats">
   <div class="wrap">
-    <div class="hero-meta">
-      <span class="hm-lab">Handmade &nbsp;·&nbsp; Made to order</span>
-      <span class="hm-count" id="mFest">Raksha Bandhan</span>
+    <ul class="feat-row">
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18h4.5l3.2 1.6a2.4 2.4 0 0 0 2.1 0L20 16.2a1.6 1.6 0 0 0-1.6-2.8l-3.6 1.5"/>
+            <path d="M7.5 15.4h3.8a1.5 1.5 0 0 0 0-3H9.6L8.2 11.3a3 3 0 0 0-1.9-.7H3"/>
+            <path d="M14.6 3.6a2.1 2.1 0 0 0-3 0l-.4.4-.4-.4a2.1 2.1 0 1 0-3 3l3.4 3.4 3.4-3.4a2.1 2.1 0 0 0 0-3Z"/></svg>
+        </span>
+        <b>Handmade</b><span>with love</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8.4"/>
+            <path d="M7.2 15.2c1.8-1.1 2.4-2.6 2.4-4.2 0-1.4.8-2.6 2.4-2.6s2.4 1.2 2.4 2.6c0 1.6.6 3.1 2.4 4.2"/></svg>
+        </span>
+        <b>Real silk</b><span>threads</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.2 4.8 6v5.4c0 4.3 3 8.1 7.2 9.4 4.2-1.3 7.2-5.1 7.2-9.4V6Z"/>
+            <path d="M9.2 12.1 11.3 14l3.5-3.9"/></svg>
+        </span>
+        <b>Premium</b><span>quality</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3.4" y="9.4" width="17.2" height="11.2" rx="1.6"/>
+            <path d="M2.4 6.2h19.2v3.2H2.4zM12 6.2v14.4"/>
+            <path d="M12 6.2S10.9 3 8.9 3a2 2 0 0 0 0 3.2Zm0 0S13.1 3 15.1 3a2 2 0 0 1 0 3.2Z"/></svg>
+        </span>
+        <b>Perfect for</b><span>your bond</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="hero-under">
+  <!-- The ribbon sat at the foot of the hero when the hero was a column of
+       text. It cannot stay there now: the hero centres its contents over a
+       photograph, so a band in that flow lands across the middle of it. -->
+  <div class="mq" aria-hidden="true"><div class="mq-t" id="mqA"></div><div class="mq-t" id="mqB"></div></div>
+
+  <div class="wrap">
+    <div class="rail-wrap">
+      <div class="rail" id="rail" role="group" aria-label="Featured rakhis"></div>
+      <button class="rail-nav prev" id="railPrev" aria-label="Previous rakhi">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="rail-nav next" id="railNext" aria-label="Next rakhi">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="dots" id="railDots" role="tablist" aria-label="Featured rakhis"></div>
     </div>
-    <div class="hero-grid">
-      <div class="hs-text">
-        <h1 class="hero-h1">It&rsquo;s just thread &mdash;<br>until you <em>tie it</em>.</h1>
-        <p class="hero-p">
-          Hand-tied rakhis in real silk thread, from <strong>₹39</strong>.
-        </p>
-      </div>
 
-      <!-- The rakhis come before the button: with no reviews to show, the
-           product itself is the argument. On a wide screen they sit beside
-           the statement instead of under it. -->
-      <div class="hs-rail rail-wrap">
-        <div class="rail" id="rail" role="group" aria-label="Featured rakhis"></div>
-        <button class="rail-nav prev" id="railPrev" aria-label="Previous rakhi">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </button>
-        <button class="rail-nav next" id="railNext" aria-label="Next rakhi">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-        </button>
-        <div class="dots" id="railDots" role="tablist" aria-label="Featured rakhis"></div>
-      </div>
-
-      <div class="hs-act">
-        <div class="hero-cta">
-          <a class="btn btn-dark" href="#collection">Shop all rakhis</a>
-        </div>
-        <!-- With no orders behind us yet there is no social proof to show, so
-             the hero removes risk instead. Both of these are simply true. -->
-        <ul class="hero-promise">
-          <li>You approve a photo before we ship it</li>
-          <li>Pay by UPI or on delivery &mdash; nothing upfront</li>
-        </ul>
-      </div>
-
-    </div>
+    <ul class="hero-promise">
+      <li>You approve a photo before we ship it</li>
+      <li>Pay by UPI or on delivery &mdash; nothing upfront</li>
+    </ul>
 
     <div class="hero-foot">
       <!-- filled by paintTrust() — the threshold comes from the shop's
@@ -169,7 +250,6 @@
       <div class="trust" role="list" id="heroTrust"></div>
     </div>
   </div>
-  <div class="mq" aria-hidden="true"><div class="mq-t" id="mqA"></div><div class="mq-t" id="mqB"></div></div>
 </section>
 
 <!-- ═══════════ collection ═══════════ -->
@@ -585,6 +665,7 @@
 <script src="js/01-shop.js"></script>
 <script src="js/02-supabase.js"></script>
 <script src="js/03-catalogue.js"></script>
+<script src="js/04-hero.js"></script>
 <script src="js/05-rangoli.js"></script>
 <script src="js/06-helpers.js"></script>
 <script src="js/06b-cardacts.js"></script>
