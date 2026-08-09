@@ -331,12 +331,12 @@
    separate readings. Narrower is not only smaller here; it is
    the thing that keeps them one row.
    ══════════════════════════════════════════════════════════ */
-.feats{margin-top:clamp(14px,3vw,22px)}
+.feats{margin-top:clamp(12px,2.6vw,18px)}
 .feat-row{
   list-style:none;
-  max-width:860px; margin:0 auto;
+  max-width:760px; margin:0 auto;
   display:grid; grid-template-columns:repeat(4,1fr);
-  padding:clamp(13px,2.8vw,18px) clamp(4px,1.4vw,10px);
+  padding:clamp(10px,2.2vw,14px) clamp(4px,1.2vw,8px);
   border-radius:var(--r-xl);
   /* the same ivory the bar and the countdown are cut from */
   background:linear-gradient(158deg, #FFFEFA 0%, #FDF8EE 56%, #F8F1E1 100%);
@@ -348,7 +348,7 @@
 .feat{
   position:relative;
   display:flex; flex-direction:column; align-items:center; text-align:center;
-  gap:clamp(5px,1.2vw,7px); padding:0 clamp(3px,1vw,8px);
+  gap:clamp(4px,1vw,6px); padding:0 clamp(2px,.9vw,7px);
 }
 /* gold hairlines between, not grey — and only three of them */
 .feat + .feat::before{
@@ -356,7 +356,7 @@
   background:linear-gradient(to bottom, transparent, rgba(185,140,46,.38), transparent);
 }
 .feat-i{
-  width:clamp(34px,9.6vw,44px); aspect-ratio:1;
+  width:clamp(29px,8.2vw,37px); aspect-ratio:1;
   display:grid; place-items:center;
   border-radius:50%; border:1px dashed rgba(185,140,46,.55);
   color:var(--tan-deep);
@@ -364,11 +364,11 @@
 .feat-i svg{width:52%; height:52%}
 .feat b{
   font-family:var(--head); font-weight:700;
-  font-size:clamp(8.5px,2.2vw,10.5px); letter-spacing:.06em; line-height:1.2;
+  font-size:clamp(8px,2vw,9.5px); letter-spacing:.055em; line-height:1.18;
   text-transform:uppercase; color:#3B2415;
 }
 .feat>span:not(.feat-i){
-  font-size:clamp(8.5px,2.2vw,10.5px); line-height:1.2; color:var(--ink-soft);
+  font-size:clamp(8px,2vw,9.5px); line-height:1.18; color:var(--ink-soft);
 }
 
 .hero-under{padding:0 0 4px}
