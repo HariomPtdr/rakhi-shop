@@ -93,6 +93,7 @@ document.addEventListener("click", e => {
   const want = b.dataset.pay;
   if(!payMethods().includes(want)) return;
   payWith = want;
+  if(want === "online" && typeof warmRazorpay === "function") warmRazorpay();
   paintBill();
 });
 
@@ -184,6 +185,9 @@ async function placeCodOrder(){
    can be paid later from the account. */
 async function placeAndPay(){
   if(!billReady()) return;
+  /* in case the bill was opened before this existed, or they came here by
+     some other door: the script starts now rather than after the order */
+  if(typeof warmRazorpay === "function") warmRazorpay();
 
   const btn = $("#billSend");
   btn.classList.add("busy");

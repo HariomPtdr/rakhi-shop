@@ -39,6 +39,32 @@ function loadRazorpay(){
   return rzpLoading;
 }
 
+/* ── fetched while they are still typing ──
+   Two hundred kilobytes cannot be downloaded in the half second between
+   pressing Pay and expecting a sheet, so it is not downloaded then. It
+   starts when the bill opens and when Pay now is chosen — by the time the
+   address is filled in it is already in cache, and pressing Pay only has
+   the order to wait for.
+
+   Still nothing on an ordinary page load: somebody who never opens the
+   bill never speaks to Razorpay, which is the whole point of loading it
+   late in the first place. */
+function warmRazorpay(){
+  if(!RZP_ON || window.Razorpay || rzpLoading) return;
+  /* the handshake first — DNS and TLS to a new host cost more than the
+     bytes do on a phone, and this way both are done before the script
+     tag is even added */
+  if(!$("link[data-rzp-warm]")){
+    const l = document.createElement("link");
+    l.rel = "preconnect";
+    l.href = "https://checkout.razorpay.com";
+    l.crossOrigin = "";
+    l.setAttribute("data-rzp-warm", "");
+    document.head.appendChild(l);
+  }
+  loadRazorpay();
+}
+
 /* One address, whoever is hosting. On AWS this is an Amplify rewrite onto
    the Lambda's Function URL; on Netlify it is a redirect onto that host's
    own functions. Same origin either way, so there is no CORS to arrange and
@@ -80,12 +106,11 @@ async function payForOrder(orderId, opts){
     if(btn){ btn.disabled = false; btn.innerHTML = wasHtml; }
   };
 
-  const ok = await loadRazorpay();
-  if(!ok){
-    release();
-    toast("Could not reach the payment page. Check your connection and try again.");
-    return false;
-  }
+  /* Their script and our order have nothing to say to each other, so they
+     are fetched at the same time and the wait is the longer of the two
+     rather than the sum. Usually the script is already here — the bill
+     started it — and this is only the order. */
+  const script = loadRazorpay();          /* never rejects; false on failure */
 
   let made;
   try{
@@ -93,6 +118,12 @@ async function payForOrder(orderId, opts){
   }catch(err){
     release();
     toast(err.message);
+    return false;
+  }
+
+  if(!await script){
+    release();
+    toast("Could not reach the payment page. Check your connection and try again.");
     return false;
   }
   release();

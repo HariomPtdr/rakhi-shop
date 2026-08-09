@@ -46,7 +46,16 @@ Then:
    upload it again — otherwise the Lambda keeps running the old copy of
    the code that checks payment signatures.
 2. **Runtime settings → Handler** stays `index.handler`
-3. **Configuration → General → Timeout**: 15 seconds
+3. **Configuration → General → Timeout**: 15 seconds, **Memory: 1024 MB**
+
+   Memory is really the CPU dial, and the default 128 MB gives about a
+   twelfth of a core. On that, simply starting Node and opening a TLS
+   connection to Supabase takes the best part of a second, and the
+   customer spends it looking at a button that says *Opening…*. At
+   1024 MB the same work is a fraction of that. It costs nothing in
+   practice: the function is billed per millisecond, so eight times the
+   memory for an eighth of the time is the same bill, and the free tier
+   covers it either way.
 4. **Configuration → Environment variables** — add these six:
 
    | Key | Where it comes from | Needed by |

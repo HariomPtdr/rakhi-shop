@@ -66,6 +66,8 @@ $("#toBill").onclick=()=>{
   $("#drawer").classList.remove("on");
   openSheet("#billModal");
   paintBill();
+  /* the payment sheet's script, fetched while they fill the address in */
+  if(typeof warmRazorpay === "function") warmRazorpay();
   track("begin_checkout", null, {items: nItems(), value: billTotal()});
   recheckCoupon();
   /* don't autofocus on a phone — it throws the keyboard over the bill */
