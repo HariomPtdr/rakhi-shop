@@ -127,9 +127,16 @@
        phone fetch the 24 KB copy and a desktop the 68 KB one without the
        markup having to know which. -->
   <div class="hero-stage" aria-hidden="true">
-    <div class="hero-slide s1 is-on"></div>
-    <div class="hero-slide s2 is-late"></div>
-    <div class="hero-slide s3 is-late"></div>
+    <!-- One row of pictures that slides, rather than three stacked ones that
+         fade. The fourth is the first again: the row can then keep moving
+         the same way forever and be put back to the start on the frame it
+         arrives, with nothing on screen to say it moved. -->
+    <div class="hero-track" id="heroTrack">
+      <div class="hero-slide s1"></div>
+      <div class="hero-slide s2 is-late"></div>
+      <div class="hero-slide s3 is-late"></div>
+      <div class="hero-slide s1"></div>
+    </div>
     <div class="hero-veil"></div>
   </div>
 
@@ -163,6 +170,18 @@
       </a>
     </div>
   </div>
+
+  <!-- A full-height hero on a wide screen ends exactly at the fold, and a
+       screen that ends cleanly reads as a page that ends. This says it does
+       not — and it is a link, not a decoration, so pressing it does the
+       thing it is hinting at. Phones are left out: nobody needs telling
+       that a phone scrolls. -->
+  <a class="hero-scroll" href="#collection" aria-label="See the rakhis">
+    <span>Scroll</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 5v13M6 12.5l6 6 6-6"/></svg>
+  </a>
 </section>
 
 <!-- ═══════════ what the hero used to carry ═══════════

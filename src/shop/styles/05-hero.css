@@ -51,9 +51,22 @@
 }
 
 /* ── the pictures ── */
-.hero-stage{position:absolute; inset:0; z-index:-1}
+.hero-stage{position:absolute; inset:0; z-index:-1; overflow:hidden}
+
+/* Four pictures in a row four screens wide, moved one screen at a time.
+   Sliding rather than fading, so the pictures behave like a row of cards
+   being dealt past rather than one dissolving into the next. */
+.hero-track{
+  display:flex; height:100%; width:400%;
+  will-change:transform;
+  transition:transform .9s var(--ease);
+}
+/* Put back to the start with the transition off, on the frame the fourth
+   picture — which is the first again — finishes arriving. */
+.hero-track.is-jump{transition:none}
+
 .hero-slide{
-  position:absolute; inset:0;
+  flex:0 0 25%; height:100%;
   background-repeat:no-repeat;
   background-size:cover;
   /* The phone copy is built at the shape of the phone hero, so cover has
@@ -62,11 +75,8 @@
      again by the screen. Wide, the original goes hard against the right
      and the empty half of it becomes the column the words sit in. */
   background-position:center;
-  opacity:0;
-  transition:opacity 1.1s var(--ease);
 }
 @media (min-width:760px){.hero-slide{background-position:right center}}
-.hero-slide.is-on{opacity:1}
 
 .hero-slide.s1{background-image:url("../../assets/images/hero-1-sm.webp")}
 .hero-slide.s2{background-image:url("../../assets/images/hero-2-sm.webp")}
@@ -207,8 +217,29 @@
 /* A picture that changes on its own is motion, and some people have asked
    their phone not to do that. They get the first one and it stays. */
 @media (prefers-reduced-motion:reduce){
-  .hero-slide{transition:none}
+  .hero-track{transition:none}
   .hero-btn, .hero-btn svg{transition:none}
+  .hero-scroll svg{animation:none}
+}
+
+/* ── the nudge at the fold ── */
+.hero-scroll{display:none}
+@media (min-width:760px){
+  .hero-scroll{
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    position:absolute; left:50%; bottom:clamp(14px,2.2vw,26px);
+    transform:translateX(-50%); z-index:2;
+    color:#8A681C; text-decoration:none;
+    font-family:var(--head); font-size:9.5px; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase;
+    opacity:.72; transition:opacity .4s var(--ease);
+  }
+  .hero-scroll:hover{opacity:1}
+  .hero-scroll svg{animation:heroNudge 2.4s var(--ease) infinite}
+}
+@keyframes heroNudge{
+  0%,58%,100%{transform:translateY(0);   opacity:.75}
+  78%        {transform:translateY(5px); opacity:1}
 }
 
 /* ══════════════════════════════════════════════════════════
