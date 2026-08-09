@@ -41,7 +41,7 @@ ASSETS = HERE / "assets"
 # convenience. The real environment wins so a deploy can never be
 # accidentally pinned to whatever is in a file on someone's laptop.
 WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET", "ADMIN_PATH",
-          "RAZORPAY_KEY_ID", "CDN_URL")
+          "RAZORPAY_KEY_ID", "CDN_URL", "SITE_URL")
 
 # the same three values under the names other tools like to use
 ALIASES = {
@@ -134,6 +134,21 @@ def assemble(page, depth):
     # Every reference walked up out of src/ to reach assets/. Now that the
     # page is one file in dist/, point them at where assets actually is.
     html = ASSET.sub("../" * depth + "assets/", html)
+
+    # ── the link preview, and what search engines are told ──
+    # A scraper never runs JavaScript, so og:url, og:image and canonical
+    # have to be absolute and written in at build time.
+    #
+    # Unset, they are removed rather than left as example.com. A preview
+    # with no image is a missed opportunity; a canonical pointing at a
+    # domain somebody else owns tells Google the real page is theirs.
+    site = (ENV.get("SITE_URL") or "").rstrip("/")
+    if site:
+        html = html.replace("https://example.com", site)
+    else:
+        html = re.sub(r'[ \t]*<meta property="og:(url|image|image:alt)"[^>]*>\n?', "", html)
+        html = re.sub(r'[ \t]*<link rel="canonical"[^>]*>\n?', "", html)
+        html = re.sub(r'[ \t]*<meta name="twitter:card"[^>]*>\n?', "", html)
     return html
 
 

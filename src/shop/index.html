@@ -14,15 +14,17 @@
      these have to be plain tags, and og:url / og:image MUST be full
      absolute addresses.
 
-     ⚠️  Replace https://example.com with your real address once the
-         page is hosted. Until then the preview will not show an image.
+     The address comes from SITE_URL at build time — set it in Amplify to
+     https://rayart.in. Left unset, these tags are dropped entirely rather
+     than shipped pointing at example.com: a canonical naming a site you do
+     not own tells Google the real page is somewhere else.
      ══════════════════════════════════════════════════════════════ -->
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="Ray Art Gallery">
 <meta property="og:title"       content="Ray Art Gallery — Handmade Rakhi">
 <meta property="og:description" content="Hand-tied rakhis in real silk. Pick yours, and the page writes your bill to send on WhatsApp.">
 <meta property="og:url"         content="https://example.com/">
-<meta property="og:image"       content="https://example.com/images/nazar-rakhi.jpg">
+<meta property="og:image"       content="https://example.com/assets/images/nazar-rakhi.jpg">
 <meta property="og:image:alt"   content="Handmade evil eye rakhi on turquoise silk thread">
 <meta property="og:locale"      content="en_IN">
 <meta name="twitter:card"       content="summary_large_image">
