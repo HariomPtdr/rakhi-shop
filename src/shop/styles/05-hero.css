@@ -260,10 +260,17 @@
 /* ── a full screen: the arrow ──
    A mouse cannot swipe, so the one device that cannot do the gesture is the
    one that gets a button. */
-.hero-dots{display:flex}
-@media (min-width:760px){.hero-dots{display:none}}
+/* The marks stay at every width. They are not a phone's consolation for
+   having no button — they answer "how many, and which one", which is a
+   question a mouse has just as much as a thumb. Hiding them on a wide
+   screen left it with an arrow and no idea how far the row went.
+
+   The button is the part that is conditional, and on two counts: there has
+   to be room for it, and there has to be a pointer that cannot swipe. A
+   touch tablet at 1000px wide gets the marks and no button, which is right
+   — its owner will swipe, the way they swipe everything else. */
 .hero-next{display:none}
-@media (min-width:760px){.hero-next{display:grid}}
+@media (min-width:760px) and (hover:hover){.hero-next{display:grid}}
 
 .hero-next{
   position:absolute; top:50%; z-index:2;
