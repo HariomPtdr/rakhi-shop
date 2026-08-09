@@ -32,7 +32,11 @@
   padding-top:clamp(16px,4.5vw,30px);
 }
 @media (min-width:760px){
-  .hero{min-height:clamp(560px,58vw,700px); align-items:center; padding-top:0}
+  /* The boxes are scaled by the hero's height — the photograph sits at full
+     height, so that is the only dial that changes how large they read. At
+     700 they were small for the width and left a dead band across the
+     middle of the picture. */
+  .hero{min-height:clamp(600px,62vw,780px); align-items:center; padding-top:0}
 }
 
 /* ── the pictures ── */
@@ -118,8 +122,10 @@
   font-family:var(--head); font-size:clamp(7.5px,1.9vw,10.5px); font-weight:600;
   letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
 }
+/* The phone setting cannot be allowed to travel up. Against a 92px
+   headline a 9px pill reads as a caption that lost its picture. */
 @media (min-width:760px){
-  .hero-when{gap:8px; padding:7px 13px; letter-spacing:.085em}
+  .hero-when{gap:9px; padding:9px 17px; font-size:11.5px; letter-spacing:.09em}
 }
 /* the icon rides the text size rather than sitting at a fixed 15px, which
    is what made the pill look oversized once the words shrank */
@@ -147,10 +153,15 @@
   text-wrap:balance;
 }
 
+/* Set to the width of the words above it. A rule two thirds the length of
+   the headline it underlines reads as a rule that stopped early. */
 .hero-flourish{
   display:block; width:clamp(120px,34vw,230px); height:12px;
   margin-top:clamp(7px,1.8vw,20px);
   color:rgba(185,140,46,.85);
+}
+@media (min-width:760px){
+  .hero-flourish{width:min(100%,360px); height:16px; margin-top:clamp(14px,1.6vw,24px)}
 }
 .hero-flourish svg{width:100%; height:100%}
 
