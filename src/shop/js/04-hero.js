@@ -69,15 +69,32 @@
   if(document.readyState === "complete") setTimeout(wake, 400);
   else addEventListener("load", () => setTimeout(wake, 400), {once:true});
 
-  function next(){ at++; put(); }
-  /* Going back from the first means stepping onto the repeat at the far end
-     first — same picture, so the jump cannot be seen — and moving off it. */
+  /* ── stepping, either way ──
+     Both ends are handled before the move rather than after it. Going on
+     from the repeat means jumping back to the first — same picture, so the
+     jump cannot be seen — and moving off it; going back from the first
+     means jumping to the repeat and moving off that.
+
+     Before, and not after, because "after" meant a transitionend, and a
+     transition can be cancelled: starting a drag switches the transition
+     off to follow the finger, and a transition switched off mid-flight
+     never ends. Interrupt the row on its way to the repeat and the reset
+     was simply never delivered — the row stayed on the fourth picture, and
+     the next step took it to a fifth that does not exist, which is a
+     screen of nothing. Nothing here now depends on an event a finger can
+     cancel. */
+  function next(){
+    if(at >= REAL) snap(() => { at = 0; put(); });
+    at++; put();
+  }
   function prev(){
-    if(at === 0) snap(() => { at = REAL; put(); });
+    if(at <= 0) snap(() => { at = REAL; put(); });
     at--; put();
   }
 
-  /* Landed on the repeat: put the row back to the start unseen. */
+  /* The row can still settle on the repeat by itself, with nothing
+     interrupting it. Putting it back keeps the count small; if this never
+     arrives, next() covers the same ground. */
   track.addEventListener("transitionend", e => {
     if(e.propertyName === "transform" && at >= REAL) snap(() => { at = 0; put(); });
   });
@@ -157,30 +174,23 @@
    over the catalogue, and text scrolling under text cannot be
    read.
 
-   The pixel it watches is the bottom of the hero, not a point
-   near the top of the page. Watched near the top, an inch of
-   scroll was enough to put the pill on while the picture was
-   still filling the screen behind it — which is the one place
-   the bar is supposed to have nothing.
+   It takes the pill as soon as the page moves at all — a
+   pixel watched just below the top of the document, so the
+   first bit of scroll crosses it. Held back until the whole
+   hero had gone by, the bar spent most of the first screen
+   looking like it had come loose from the page.
 
-   A watcher rather than a scroll handler: the browser reports
-   the crossing itself and nothing runs on the frames in
-   between.
-
-   isIntersecting alone cannot answer this, because it is false
-   both when the pixel is above the window and when it is still
-   below it — and on a full-height hero it starts below. So the
-   answer comes from which side of the bar it is on.
+   A watcher on one pixel rather than a scroll handler. The
+   browser reports the crossing itself; nothing runs on the
+   frames in between, which is the difference between this and
+   a listener that fires all the way down the page.
    ══════════════════════════════════════════════════════════ */
 (() => {
-  const hero = document.querySelector(".hero");
-  if(!hero) return;
-  const BAR = 84;                       /* the bar, and a little under it */
   const mark = document.createElement("div");
   mark.setAttribute("aria-hidden", "true");
-  mark.style.cssText = "position:absolute;bottom:0;left:0;width:1px;height:1px;pointer-events:none";
-  hero.appendChild(mark);
+  mark.style.cssText = "position:absolute;top:24px;left:0;width:1px;height:1px;pointer-events:none";
+  document.body.appendChild(mark);
   new IntersectionObserver(([e]) => {
-    document.body.classList.toggle("nav-solid", e.boundingClientRect.top <= BAR);
-  }, {rootMargin: `-${BAR}px 0px 0px 0px`}).observe(mark);
+    document.body.classList.toggle("nav-solid", !e.isIntersecting);
+  }).observe(mark);
 })();
