@@ -94,11 +94,15 @@
 .hero-inner{width:100%; position:relative; z-index:1}
 .hero-copy{
   display:flex; flex-direction:column; align-items:flex-start;
-  max-width:min(100%,30ch);
+  /* Stated in px, not ch. A ch is a character of *this* box's font, which
+     is the 15px body size — so 25ch was capping the column near 190px
+     while a 92px headline sat across it, and the words were simply
+     overflowing a box much narrower than they appeared. */
+  max-width:min(100%,430px);
   padding-top:0; margin-bottom:auto;
 }
 @media (min-width:760px){
-  .hero-copy{max-width:min(50%,25ch); margin-bottom:0; padding-top:0}
+  .hero-copy{max-width:min(54%,680px); margin-bottom:0; padding-top:0}
 }
 
 /* the countdown — the one thing here that actually expires */
