@@ -88,26 +88,52 @@
    title with a link to the rest of it beside it says "there
    are more of these" without a sentence explaining so.
    ══════════════════════════════════════════════════════════ */
-.best{padding:clamp(26px,5vw,44px) 0 0}
+.best{padding:clamp(20px,4vw,34px) 0 0}
+
+/* The section stands on its own sheet rather than straight on the page —
+   a shelf the rakhis are set out on, held by the same gold hairline as
+   everything else raised here. */
+.best-in{
+  position:relative;
+  padding:clamp(18px,3.4vw,30px) clamp(14px,2.6vw,26px) clamp(16px,3vw,26px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(158deg,#FDF9F0 0%,#FBF6EA 55%,#F7F0DF 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.4),
+             0 16px 40px -26px rgba(120,88,22,.4);
+}
+
+/* a small fan of beads over the title, the way an invitation is headed */
+.best-orn{display:block; width:clamp(38px,8vw,48px); color:var(--tan); margin:0 0 clamp(8px,1.4vw,12px)}
+.best-orn svg{width:100%; height:auto; display:block}
+
 .best-h{
-  display:flex; align-items:center; justify-content:space-between;
+  display:flex; align-items:flex-start; justify-content:space-between;
   gap:14px; margin-bottom:clamp(14px,2.6vw,22px);
 }
+.best-t{min-width:0}
 .best-h h2{
   font-family:var(--display); font-weight:600;
   font-size:clamp(24px,6vw,40px); line-height:1.05; letter-spacing:-.022em;
   color:#3B2415;
 }
+/* the line that says why these four and not the other six */
+.best-sub{
+  display:flex; align-items:center; gap:6px; margin-top:6px;
+  font-size:clamp(11.5px,2.6vw,13.5px); line-height:1.35; color:var(--ink-soft);
+}
+.best-sub-h{width:11px; height:10px; flex:none; color:var(--rose)}
 /* Outlined rather than filled: the filled one on this page is Shop now, and
    there should only ever be one of those in view at a time. */
 .best-all{
   flex:none; display:inline-flex; align-items:center; gap:9px;
-  padding:clamp(9px,1.6vw,12px) clamp(15px,2.4vw,22px);
+  margin-top:clamp(2px,.6vw,6px);
+  padding:clamp(8px,1.4vw,10px) clamp(13px,2.2vw,18px);
   border-radius:var(--r-full); text-decoration:none;
   color:var(--tan-deep); background:transparent;
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
   font-family:var(--head); font-weight:600;
-  font-size:clamp(9.5px,2.2vw,11px); letter-spacing:.12em; text-transform:uppercase;
+  font-size:clamp(9px,2vw,10px); letter-spacing:.11em; text-transform:uppercase;
   white-space:nowrap;
   transition:background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
 }
@@ -194,12 +220,31 @@
   font-size:clamp(16px,3.8vw,19px); color:#3B2415; margin-right:auto;
 }
 /* one button now, so it can have the room the pair never had */
+/* Gold, not black. Black was the last hard-edged thing on a card made of
+   cream and gold, and on a small card it read as a hole rather than a
+   button. This is the same metal as the rims and the hairlines, dark
+   enough at the bottom to carry cream lettering. */
 .best .rc-b .btn{
-  flex:none; gap:6px; padding:7px 12px; min-height:0;
-  border-radius:var(--r-full);
+  flex:none; gap:6px; padding:8px 14px; min-height:0;
+  border-radius:var(--r-full); border:0;
+  background:linear-gradient(160deg,#C9A24A 0%,#B08324 52%,#8E6716 100%);
+  color:#FFF8E9;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32),
+             0 8px 18px -10px rgba(120,88,22,.7);
   font-size:9.5px; letter-spacing:.09em;
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
-.best .rc-b .btn svg{opacity:.85}
+.best .rc-b .btn svg{opacity:.9}
+@media (hover:hover){
+  .best .rc-b .btn:hover{
+    transform:translateY(-1px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 14px 26px -12px rgba(120,88,22,.8);
+  }
+}
+.best .rc-b .btn:active{transform:translateY(0)}
+.best .rc-b .btn[disabled]{
+  background:rgba(20,18,16,.07); color:var(--ink-faint); box-shadow:none;
+}
 
 /* ── the heart, in the page's own circle ──
    It was a white disc with a grey ring, which is the one surface on this
