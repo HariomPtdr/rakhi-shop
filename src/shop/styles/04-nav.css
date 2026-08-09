@@ -1,11 +1,10 @@
-/* ── nav: the things in a bar, with no bar behind them. No search. ── */
-/* Fixed rather than sticky, so it takes no room in the flow and the hero
-   begins at the top of the window instead of under it. Sticky left a strip
-   of page above the picture, and that strip is plain cream while the
-   picture is card stock — near enough to look like a mistake, far enough
-   apart to see. Now there is no strip: the hero runs to the top and the bar
-   sits on it. */
-.nav{position:fixed; top:0; left:0; right:0; z-index:50; padding:8px 10px 0}
+/* ── nav: the things in a bar, with no bar behind them until it needs one ── */
+/* Sticky, so it keeps its own room at the top of the page and the hero
+   begins under it. Pulling it out of the flow to let the picture run up
+   behind was worse on both counts: the boxes came up level with the links,
+   and making room for them in the photograph meant stretching card stock
+   upward through a mandala, which streaked. */
+.nav{position:sticky; top:0; z-index:50; padding:8px 10px 0}
 @media (min-width:900px){.nav{padding:14px clamp(14px,3vw,28px) 0}}
 .nav-in{
   max-width:1240px; margin:0 auto; display:flex; align-items:center; gap:10px;
