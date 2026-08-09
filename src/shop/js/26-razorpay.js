@@ -49,27 +49,36 @@ function loadRazorpay(){
    Still nothing on an ordinary page load: somebody who never opens the
    bill never speaks to Razorpay, which is the whole point of loading it
    late in the first place. */
+function preconnect(href){
+  if(!href || $(`link[rel=preconnect][href="${href}"]`)) return;
+  const l = document.createElement("link");
+  l.rel = "preconnect";
+  l.href = href;
+  l.crossOrigin = "";
+  document.head.appendChild(l);
+}
+
 function warmRazorpay(){
-  if(!RZP_ON || window.Razorpay || rzpLoading) return;
-  /* the handshake first — DNS and TLS to a new host cost more than the
-     bytes do on a phone, and this way both are done before the script
-     tag is even added */
-  if(!$("link[data-rzp-warm]")){
-    const l = document.createElement("link");
-    l.rel = "preconnect";
-    l.href = "https://checkout.razorpay.com";
-    l.crossOrigin = "";
-    l.setAttribute("data-rzp-warm", "");
-    document.head.appendChild(l);
-  }
+  if(!RZP_ON) return;
+  /* The handshakes first — DNS and TLS to a host nobody has spoken to yet
+     cost more on a phone than the bytes that follow, and both can be done
+     while the address is still being typed.
+
+     The function's address only needs one when it is somewhere else; left
+     as /api it is this origin, already connected. */
+  preconnect("https://checkout.razorpay.com");
+  if(ENV.API_BASE) preconnect(ENV.API_BASE);
   loadRazorpay();
 }
 
-/* One address, whoever is hosting. On AWS this is an Amplify rewrite onto
-   the Lambda's Function URL; on Netlify it is a redirect onto that host's
-   own functions. Same origin either way, so there is no CORS to arrange and
-   no third-party address in the page. */
-const fnUrl = name => "/api/" + name;
+/* One address, whoever is hosting. By default /api/…, which on AWS is an
+   Amplify rewrite onto the Lambda's Function URL and on Netlify a redirect
+   onto that host's own functions — same origin either way, so there is no
+   CORS to arrange and no third-party address in the page.
+
+   API_BASE overrides it with the function's own address, for when the
+   rewrite would send the request the long way round. See 00-env.js. */
+const fnUrl = apiUrl;
 
 async function callFn(name, body, withToken){
   const headers = {"content-type": "application/json"};

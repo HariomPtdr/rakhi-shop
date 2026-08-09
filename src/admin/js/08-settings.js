@@ -312,7 +312,7 @@ function paintSettings(){
       for(let round = 0; round < 200; round++){
         const token = await SB.token();
         if(!token) throw new Error("You are signed out. Sign in again.");
-        const res = await fetch("/api/migrate-images", {
+        const res = await fetch(apiUrl("migrate-images"), {
           method: "POST",
           headers: {"content-type": "application/json", Authorization: "Bearer " + token},
           body: JSON.stringify({after})

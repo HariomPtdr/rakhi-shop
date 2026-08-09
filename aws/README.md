@@ -100,6 +100,7 @@ They are the same five already in your local `.env` and in Netlify:
 | `SUPABASE_BUCKET` | `product-images` |
 | `ADMIN_PATH` | where the dashboard is published |
 | `RAZORPAY_KEY_ID` | the `rzp_live_…` id — public by design, it has to be in the page to open the checkout |
+| `API_BASE` | only when the app and the Lambda are in different regions — see below |
 
 Leave out any one of these and the build still succeeds — it just produces
 a shop with no photos, or no checkout, or no dashboard. `build.py` prints
@@ -123,6 +124,53 @@ same-origin with no CORS to arrange.
 request gets the shop's HTML instead of the Lambda.
 
 Then **Run build**. It should finish in under a minute.
+
+### When the app and the Lambda are in different regions
+
+Read the region in the top-right of the Amplify console and compare it with
+the Lambda's. If they match, skip this — the rewrite is the better
+arrangement and there is nothing to do.
+
+If they do not match, the rewrite quietly becomes the slowest thing in the
+shop. It is not a redirect: the request goes to wherever the app is hosted
+and is forwarded from there. With the app in Stockholm and the Lambda in
+Mumbai, a customer in Mumbai pressing **Pay** sends their order to Sweden,
+which sends it back to Mumbai, and the answer returns the same way. Measured
+from Mumbai, on a route that does no work at all:
+
+| | first byte |
+|---|---|
+| `https://rayart.in/api/…` through the rewrite | ~950 ms |
+| the Function URL directly | ~100 ms |
+
+Nearly a second, spent on distance. The fix is to let the browser talk to
+the Lambda itself. Two settings, **in this order** — the other way round and
+payments stop until the second one is saved.
+
+1. **Lambda → `rakhi-payments` → Configuration → Function URL → Edit →
+   Configure cross-origin resource sharing (CORS)**
+
+   | Field | Value |
+   |---|---|
+   | Allow origin | `https://rayart.in` (add each domain that serves the shop) |
+   | Allow headers | `content-type`, `authorization` |
+   | Allow methods | `POST` |
+   | Max age | `86400` |
+
+   `authorization` is the one to get right: the shop sends the customer's
+   own sign-in token, and without it named here the browser refuses the
+   request before the Lambda ever sees it. Lambda answers the preflight
+   itself, so this costs no invocation.
+
+   The webhook is unaffected — Razorpay calls from a server, and CORS is a
+   rule browsers apply to themselves.
+
+2. **Amplify → App settings → Environment variables** — add `API_BASE`,
+   set to the Function URL with no trailing slash, then **Run build**.
+
+Leave the `/api/<*>` rewrite in place. It costs nothing unused, and
+clearing `API_BASE` puts every call back through it if this ever needs
+undoing.
 
 ### Is the rewrite working?
 

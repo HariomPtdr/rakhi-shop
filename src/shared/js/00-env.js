@@ -48,5 +48,30 @@ const ENV = {
      in Netlify's environment variables, where the two functions under
      netlify/functions read it. Left empty, the shop falls back to sending
      the bill on WhatsApp exactly as it did before. */
-  RAZORPAY_KEY_ID:   ""
+  RAZORPAY_KEY_ID:   "",
+
+  /* Where the payment functions answer, e.g.
+     https://xxxxxxxx.lambda-url.ap-south-1.on.aws (no trailing slash).
+
+     Left empty they are reached at /api/…, which the host rewrites onto the
+     same functions — one address, no CORS, nothing third-party in the page.
+     That is the nicer arrangement and it is still the default.
+
+     It is worth setting when the site is served from one region and the
+     functions run in another. Amplify's rewrite is not a redirect: the
+     request travels to wherever the app is hosted and is forwarded from
+     there, so a customer in Mumbai reaching a Mumbai function through a
+     Stockholm app crosses Europe twice for one order. Measured, that is
+     around 950ms against 100ms straight to the function.
+
+     Set this and the browser talks to the function directly. The address
+     is not a secret — Razorpay's webhook already posts to it — but the
+     function URL must then allow this origin under Configuration →
+     Function URL → CORS, or the browser will refuse the call. */
+  API_BASE:          ""
 };
+
+/* One place that knows where the functions are, because the shop, the
+   dashboard and the photo upload all have to agree. */
+const API_ROOT = (ENV.API_BASE || "/api").replace(/\/+$/, "");
+const apiUrl = name => API_ROOT + "/" + name;

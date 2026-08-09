@@ -362,7 +362,7 @@ const SB = (function(){
         const data = await toBase64(file);
         let res, out = null;
         try{
-          res = await fetch("/api/upload-image", {
+          res = await fetch(apiUrl("upload-image"), {
             method: "POST",
             headers: {
               "content-type": "application/json",

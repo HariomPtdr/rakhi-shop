@@ -41,7 +41,7 @@ ASSETS = HERE / "assets"
 # convenience. The real environment wins so a deploy can never be
 # accidentally pinned to whatever is in a file on someone's laptop.
 WANTED = ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_BUCKET", "ADMIN_PATH",
-          "RAZORPAY_KEY_ID", "CDN_URL", "SITE_URL")
+          "RAZORPAY_KEY_ID", "CDN_URL", "SITE_URL", "API_BASE")
 
 # the same three values under the names other tools like to use
 ALIASES = {
@@ -84,6 +84,15 @@ def read_env():
     path = re.sub(r"[^a-z0-9\-_/]", "", (env.get("ADMIN_PATH") or "admin").lower())
     path = "/".join(p for p in path.split("/") if p) or "admin"
     env["ADMIN_PATH"] = path
+
+    # Where the payment functions answer, when they are not reached at /api.
+    # A trailing slash here would build //rzp-create-order, which some hosts
+    # answer and some do not, so it is taken off once rather than guarded at
+    # every call site.
+    env["API_BASE"] = env.get("API_BASE", "").strip().rstrip("/")
+    if env["API_BASE"] and not env["API_BASE"].startswith("https://"):
+        sys.exit(f"\n  API_BASE must be an https:// address, not {env['API_BASE']!r}.\n"
+                 "  Payments and a sign-in token travel over it.\n")
 
     if env["SUPABASE_ANON_KEY"].startswith("sb_secret") or "service_role" in env["SUPABASE_ANON_KEY"]:
         sys.exit("\n  STOP. That looks like a service_role/secret key.\n"
