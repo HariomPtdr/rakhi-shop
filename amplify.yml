@@ -33,32 +33,7 @@ frontend:
     paths: []
 
 # ── headers ──
-# Netlify and Cloudflare read dist/_headers, which build.py writes.
-# Amplify does not, so the same rules are stated here. The dashboard's
-# noindex is not among them on purpose: it is a meta tag inside the page
-# itself, because naming ADMIN_PATH in a committed file is how a secret
-# address stops being one.
-customHeaders:
-  - pattern: '**'
-    headers:
-      - key: X-Content-Type-Options
-        value: nosniff
-      - key: Referrer-Policy
-        value: strict-origin-when-cross-origin
-      - key: X-Frame-Options
-        value: SAMEORIGIN
-      - key: Permissions-Policy
-        value: geolocation=(), camera=(), microphone=(), interest-cohort=()
-
-  # Fonts and photos are content-addressed by their own names and change
-  # only when replaced, so they can be cached hard.
-  - pattern: '/assets/**'
-    headers:
-      - key: Cache-Control
-        value: public, max-age=31536000, immutable
-
-  # The pages must not be: a price change has to reach the next visitor.
-  - pattern: '/index.html'
-    headers:
-      - key: Cache-Control
-        value: public, max-age=0, must-revalidate
+# They are NOT here. Amplify reads customHttp.yml in the repository root
+# for those, and the customHeaders block this file used to accept is
+# deprecated — written here it is silently ignored, which is how the shop
+# went live for a few minutes with no security headers at all.

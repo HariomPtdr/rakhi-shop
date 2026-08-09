@@ -1,0 +1,42 @@
+# ════════════════════════════════════════════════════════════════════
+#  Response headers, for AWS Amplify
+#
+#  Netlify and Cloudflare read dist/_headers, which build.py writes.
+#  Amplify reads this file, and only this file — it does not read
+#  _headers, and the customHeaders block it used to accept inside
+#  amplify.yml is deprecated. The same rules are therefore stated in
+#  both places; if you change one, change the other.
+#
+#  The dashboard's noindex is deliberately not here. It is a meta tag
+#  inside the page itself, because naming ADMIN_PATH in a committed
+#  file is how a secret address stops being secret.
+# ════════════════════════════════════════════════════════════════════
+customHeaders:
+  - pattern: '**'
+    headers:
+      - key: 'X-Content-Type-Options'
+        value: 'nosniff'
+      - key: 'Referrer-Policy'
+        value: 'strict-origin-when-cross-origin'
+      - key: 'X-Frame-Options'
+        value: 'SAMEORIGIN'
+      - key: 'Permissions-Policy'
+        value: 'geolocation=(), camera=(), microphone=(), interest-cohort=()'
+      # This shop takes card payments. A single request downgraded to
+      # plain HTTP is enough to have a session token read off the wire,
+      # so a browser that has been here once is told never to try.
+      - key: 'Strict-Transport-Security'
+        value: 'max-age=31536000; includeSubDomains'
+
+  # Fonts and photos are content-addressed by their own names and change
+  # only when replaced, so they can be cached hard.
+  - pattern: '/assets/**'
+    headers:
+      - key: 'Cache-Control'
+        value: 'public, max-age=31536000, immutable'
+
+  # The pages must not be: a price change has to reach the next visitor.
+  - pattern: '/index.html'
+    headers:
+      - key: 'Cache-Control'
+        value: 'public, max-age=0, must-revalidate'
