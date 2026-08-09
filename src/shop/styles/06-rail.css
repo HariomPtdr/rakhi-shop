@@ -140,3 +140,63 @@
       0 20px 38px -20px rgba(120,88,22,.5);
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   THE BESTSELLER CARD
+
+   The picture runs to the card's own edges rather than sitting
+   inset with a margin around it — a rakhi photographed on cream
+   card stock against a cream card with a cream border was three
+   creams and two hairlines to get through before the rakhi.
+
+   Under it: the name, a rule with a heart in it, then the price
+   and the one button. The rule is not decoration for its own
+   sake; it is what stops the name and the price reading as one
+   block of text in two sizes.
+   ══════════════════════════════════════════════════════════ */
+.best .rc{padding:0; overflow:hidden; border-radius:var(--r-xl)}
+.best .rc-shot{
+  border-radius:0; box-shadow:none;
+  aspect-ratio:1; background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+}
+/* quieter than it was: still says which of the two you are looking at,
+   without being the first thing on the card */
+.best .rc-tag{
+  top:10px; left:10px; font-size:7.5px; padding:3px 7px;
+  background:rgba(255,253,248,.9); color:var(--ink-faint);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
+}
+.best .rc-tag.real{background:rgba(255,253,248,.9); color:var(--tan-deep)}
+
+.best .rc-n{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(14px,3.4vw,17px); letter-spacing:-.012em; line-height:1.25;
+  color:#3B2415; margin:clamp(12px,2.4vw,16px) clamp(12px,2.6vw,16px) 0;
+}
+/* a hairline that fades at both ends, parted in the middle for the heart */
+.best .rc-rule{
+  display:flex; align-items:center; gap:8px;
+  margin:clamp(8px,1.6vw,11px) clamp(12px,2.6vw,16px) 0;
+  color:rgba(185,140,46,.85);
+}
+.best .rc-rule::before, .best .rc-rule::after{
+  content:""; height:1px; flex:1;
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.5), transparent);
+}
+.best .rc-rule svg{width:10px; height:9px; flex:none}
+
+.best .rc-b{
+  align-items:center; gap:10px;
+  margin:clamp(9px,1.8vw,13px) clamp(12px,2.6vw,16px) clamp(13px,2.6vw,16px);
+}
+.best .rc-p{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(19px,4.6vw,24px); color:#3B2415; margin-right:auto;
+}
+/* one button now, so it can have the room the pair never had */
+.best .rc-b .btn{
+  flex:none; gap:8px; padding:10px 16px; min-height:0;
+  border-radius:var(--r-full);
+  font-size:10.5px; letter-spacing:.1em;
+}
+.best .rc-b .btn svg{opacity:.85}

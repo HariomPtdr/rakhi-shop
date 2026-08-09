@@ -12,6 +12,9 @@ function paintRail(){
         ${heartBtn(p.id)}
       </div>
       <h3 class="rc-n">${esc(p.name)}</h3>
+      <span class="rc-rule" aria-hidden="true">
+        <svg viewBox="0 0 12 11" fill="currentColor"><path d="M6 10.2 1.2 5.4A2.9 2.9 0 0 1 6 2.1a2.9 2.9 0 0 1 4.8 3.3Z"/></svg>
+      </span>
       <div class="rc-b">
         <span class="rc-p">${inr(p.price)}</span>${cardActs(p)}
       </div>

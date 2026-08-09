@@ -12,9 +12,15 @@
 
    One rule, written once and used everywhere:
 
-     the solid button always puts it in the basket
-     the quiet button always opens its page
-     sold out replaces the first and never the second
+     the one button always puts it in the basket
+     the card itself always opens its page
+     sold out replaces the button and never the card
+
+   There was a View button beside it. It was the second way to
+   do a thing the whole card already did — the picture and the
+   name are what people aim at, and the click below has always
+   handled them. A button that duplicates the surface it sits on
+   is a button spending space to say nothing.
 
    Only the wording changes with the width of the card, and only
    between "Add" and "Add to cart".
@@ -29,8 +35,10 @@ function cardActs(p, opts){
   const out = p.stock === 0;
   return `
     <button class="btn btn-dark" data-add="${p.id}"${out ? " disabled" : ""}>${
-      out ? "Sold out" : (o.long ? "Add to cart" : "Add")}</button>
-    <button class="btn btn-ghost" data-go="${p.id}">View</button>`;
+      out ? "Sold out" : (o.long ? "Add to cart" : "Add")}${out ? "" : `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>`}</button>`;
 }
 
 document.addEventListener("click", e => {
