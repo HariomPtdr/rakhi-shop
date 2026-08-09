@@ -233,19 +233,28 @@
 /* ── the phone: three marks, nothing to press ──
    A thumb already knows what to do with a picture. What it cannot know is
    how many there are or where in them it is, so that is all these say. */
+/* On its own capsule, not floating loose on the picture.
+   Bare marks were 5px of 28%-opacity brown laid over cream card stock and a
+   photograph — present in the DOM, invisible to a person. Anything that has
+   to be legible over whichever picture happens to be behind it needs to
+   bring its own ground. */
 .hero-dots{
-  position:absolute; z-index:2; left:0; right:0;
-  bottom:clamp(10px,3vw,18px);
-  display:flex; justify-content:center; gap:6px;
+  position:absolute; z-index:2; left:50%;
+  bottom:clamp(12px,3.4vw,20px);
+  transform:translateX(-50%);
+  display:flex; align-items:center; gap:7px;
+  padding:7px 11px; border-radius:var(--r-full);
+  background:rgba(255,251,242,.82);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.8), 0 6px 16px -8px rgba(120,88,22,.4);
+  -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
   pointer-events:none;
 }
 .hero-dots i{
-  width:5px; height:5px; border-radius:var(--r-full);
-  background:rgba(120,88,22,.28);
-  box-shadow:0 0 0 1px rgba(255,251,242,.5);
+  width:6px; height:6px; border-radius:var(--r-full);
+  background:rgba(120,88,22,.32);
   transition:width .5s var(--ease), background .5s var(--ease);
 }
-.hero-dots i.on{width:17px; background:rgba(154,116,32,.85)}
+.hero-dots i.on{width:20px; background:var(--tan-deep)}
 @media (prefers-reduced-motion:reduce){.hero-dots i{transition:none}}
 
 /* ── a full screen: the arrow ──
