@@ -230,29 +230,84 @@
    it. It leans out and back on a loop: the movement is the part that says
    there is more this way, and it is the only thing on the page still
    allowed to move on its own. */
+/* ── the phone: three marks, nothing to press ──
+   A thumb already knows what to do with a picture. What it cannot know is
+   how many there are or where in them it is, so that is all these say. */
+.hero-dots{
+  position:absolute; z-index:2; left:0; right:0;
+  bottom:clamp(10px,3vw,18px);
+  display:flex; justify-content:center; gap:6px;
+  pointer-events:none;
+}
+.hero-dots i{
+  width:5px; height:5px; border-radius:var(--r-full);
+  background:rgba(120,88,22,.28);
+  box-shadow:0 0 0 1px rgba(255,251,242,.5);
+  transition:width .5s var(--ease), background .5s var(--ease);
+}
+.hero-dots i.on{width:17px; background:rgba(154,116,32,.85)}
+@media (prefers-reduced-motion:reduce){.hero-dots i{transition:none}}
+
+/* ── a full screen: the arrow ──
+   A mouse cannot swipe, so the one device that cannot do the gesture is the
+   one that gets a button. */
+.hero-dots{display:flex}
+@media (min-width:760px){.hero-dots{display:none}}
+.hero-next{display:none}
+@media (min-width:760px){.hero-next{display:grid}}
+
 .hero-next{
-  position:absolute; right:0; top:50%; z-index:2;
+  position:absolute; top:50%; z-index:2;
+  right:clamp(10px,2.2vw,26px);
   transform:translateY(-50%);
-  display:grid; place-items:center;
-  width:clamp(38px,10vw,50px); height:clamp(46px,12vw,62px);
+  place-items:center;
+  width:clamp(42px,11vw,54px); aspect-ratio:1;
   padding:0; border:0; cursor:pointer;
-  border-radius:var(--r-full) 0 0 var(--r-full);
-  background:rgba(255,251,242,.72);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.7), var(--elev-1);
-  color:#8A681C;
-  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
-  transition:background .4s var(--ease), color .4s var(--ease);
+  border-radius:50%;
+  /* ivory, lit from the top left, the way every other surface here is */
+  background:
+    linear-gradient(158deg, #FFFDF8 0%, #FCF5E7 46%, #F4E9D3 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),          /* the sheen along the top */
+    inset 0 0 0 1px rgba(217,184,119,.85),       /* the gold rim */
+    0 10px 26px -12px rgba(120,88,22,.45),
+    0 2px 6px -2px rgba(120,88,22,.22);
+  color:var(--tan-deep);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease), color .5s var(--ease);
 }
-.hero-next svg{animation:heroLean 2.6s var(--ease) infinite}
+/* A second hairline, held off the first. One ring is a button; two, with
+   air between them, is the detail that does the work — it is how a gold
+   rim is set on anything that costs money. */
+.hero-next::before{
+  content:""; position:absolute; inset:4px;
+  border-radius:50%; pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(185,140,46,.34);
+}
+.hero-next svg{
+  position:relative; margin-left:1px;    /* optically centred: a chevron is not */
+  animation:heroLean 2.8s var(--ease) infinite;
+}
 @media (hover:hover){
-  .hero-next:hover{background:rgba(255,251,242,.95); color:#6A1114}
+  .hero-next:hover{
+    transform:translateY(-50%) scale(1.06);
+    color:#7A1418;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1px rgba(185,140,46,1),
+      0 16px 34px -12px rgba(120,88,22,.5),
+      0 3px 8px -2px rgba(120,88,22,.26);
+  }
 }
+.hero-next:active{transform:translateY(-50%) scale(.97)}
 .hero-next:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
 @keyframes heroLean{
-  0%,62%,100%{transform:translateX(0)}
-  80%        {transform:translateX(4px)}
+  0%,64%,100%{transform:translateX(0)}
+  82%        {transform:translateX(3px)}
 }
-@media (prefers-reduced-motion:reduce){.hero-next svg{animation:none}}
+@media (prefers-reduced-motion:reduce){
+  .hero-next svg{animation:none}
+  .hero-next{transition:none}
+}
 
 /* ── the nudge at the fold ── */
 .hero-scroll{display:none}

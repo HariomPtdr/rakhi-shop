@@ -43,10 +43,16 @@
 
   let at = 0, timer = null;
 
+  /* The fourth picture is the first one, so the fourth mark is the first
+     mark — modulo, and the row of dots never has to know about the repeat. */
+  const dots = [...document.querySelectorAll("#heroDots i")];
+  const mark = () => dots.forEach((d, i) => d.classList.toggle("on", i === at % REAL));
+
   const put = (dx) => {
     track.style.transform = dx
       ? `translate3d(calc(-${at * STEP}% + ${dx}px),0,0)`
       : `translate3d(-${at * STEP}%,0,0)`;
+    if(!dx) mark();
   };
   /* apply a move with the transition off, in one frame */
   const snap = fn => {
@@ -144,5 +150,6 @@
   addEventListener("visibilitychange", () => document.hidden ? stop() : start());
   still.addEventListener("change", () => still.matches ? stop() : start());
 
+  mark();
   start();
 })();
