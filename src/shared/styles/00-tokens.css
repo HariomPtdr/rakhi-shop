@@ -55,7 +55,8 @@
 }
 
 *{margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+/* the bar is fixed, so anything jumped to must stop clear of it */
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%; scroll-padding-top:96px}
 body{
   background:var(--bg); color:var(--ink); font-family:var(--body);
   font-size:15px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;

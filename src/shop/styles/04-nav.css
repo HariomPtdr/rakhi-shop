@@ -1,5 +1,11 @@
-/* ── nav: floating glass pill. No search bar. ── */
-.nav{position:sticky; top:0; z-index:50; padding:8px 10px 0}
+/* ── nav: the things in a bar, with no bar behind them. No search. ── */
+/* Fixed rather than sticky, so it takes no room in the flow and the hero
+   begins at the top of the window instead of under it. Sticky left a strip
+   of page above the picture, and that strip is plain cream while the
+   picture is card stock — near enough to look like a mistake, far enough
+   apart to see. Now there is no strip: the hero runs to the top and the bar
+   sits on it. */
+.nav{position:fixed; top:0; left:0; right:0; z-index:50; padding:8px 10px 0}
 @media (min-width:900px){.nav{padding:14px clamp(14px,3vw,28px) 0}}
 .nav-in{
   max-width:1240px; margin:0 auto; display:flex; align-items:center; gap:10px;
@@ -22,8 +28,23 @@
    neutral one. Same material as the countdown pill under it
    and the marks at the foot of the hero.
    ══════════════════════════════════════════════════════════ */
+/* ── over the hero: nothing at all ──
+   Any fill here is a panel laid on the picture, and a pill with its own
+   corners on card stock that goes on past them reads as a cut-out. The
+   hero's own stock is the background; the bar is only the things in it.
+   That is also why the picture keeps its empty top-left half — there was
+   never anything for the words up there to compete with. */
 .nav-in{
-  border:0;
+  border:0; background:transparent; box-shadow:none;
+  transition:background .45s var(--ease), box-shadow .45s var(--ease),
+             backdrop-filter .45s var(--ease);
+}
+
+/* ── past it: a surface, because now it needs one ──
+   Below the hero the bar floats over the catalogue, and text scrolling
+   underneath text is unreadable. It takes the same ivory and gold rim
+   everything raised on this page is made of. */
+body.nav-solid .nav-in{
   background:linear-gradient(158deg, #FFFEFA 0%, #FDF8EE 54%, #F8F1E1 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.95),        /* the sheen along the top */
@@ -31,16 +52,14 @@
     0 14px 34px -18px rgba(120,88,22,.42),
     0 2px 8px -4px rgba(120,88,22,.18);
 }
-/* Wide screens keep the blur — over a photograph that is what stops the bar
-   reading as a sticker. Phones drop it: it costs more to scroll than it is
-   worth, so they take the solid mix instead. */
 @media (min-width:900px){
-  .nav-in{
+  body.nav-solid .nav-in{
     background:linear-gradient(158deg, rgba(255,254,250,.88) 0%, rgba(253,248,238,.82) 54%, rgba(248,241,225,.78) 100%);
     -webkit-backdrop-filter:blur(16px) saturate(1.45);
     backdrop-filter:blur(16px) saturate(1.45);
   }
 }
+@media (prefers-reduced-motion:reduce){.nav-in{transition:none}}
 /* the diagonal white streak the glass panel carries is too cool for this
    surface — the sheen above does the same job in the right colour */
 .nav-in::before{display:none}

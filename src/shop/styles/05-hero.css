@@ -26,12 +26,16 @@
   /* well under half a phone screen — what is below the fold has to be
      worth scrolling to, and a hero that fills the window says there is
      nothing under it */
-  min-height:min(44vh,420px);
+  min-height:min(50vh,470px);
   /* On a phone the words start at the top rather than sitting centred with
      the picture. Centred, the date pill came down level with the boxes and
-     crossed the corner of one; up here it has the empty stock to itself. */
+     crossed the corner of one; up here it has the empty stock to itself.
+
+     The bar is fixed and takes no room of its own, so the picture now runs
+     up behind it — which means this padding has to clear it, or the date
+     pill sits under the brand mark. */
   align-items:flex-start;
-  padding-top:clamp(16px,4.5vw,30px);
+  padding-top:clamp(84px,22vw,104px);
 }
 @media (min-width:760px){
   /* The boxes are scaled by the hero's height — the photograph sits at full
@@ -52,7 +56,9 @@
      like the end of the site; make it 50px and it stops being a hint and
      starts being a gap. */
   .hero{
-    min-height:max(600px, calc(100vh - 104px));
+    /* the whole window now, less the sliver that says the page carries on —
+       the header no longer takes a bite out of the top */
+    min-height:max(600px, calc(100vh - 24px));
     align-items:center; padding-top:0;
   }
 }

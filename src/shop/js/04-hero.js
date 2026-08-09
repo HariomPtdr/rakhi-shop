@@ -146,3 +146,28 @@
   mark();
   start();
 })();
+
+/* ══════════════════════════════════════════════════════════
+   THE BAR'S BACKGROUND, OR THE LACK OF ONE
+
+   Over the hero it has none — it is the hero's own card stock,
+   which is the only way a floating bar over a picture avoids
+   reading as a panel cut out and laid on top of it. Once the
+   hero has gone past, it needs one: below here the bar floats
+   over the catalogue, and text scrolling under text cannot be
+   read.
+
+   A watcher on one pixel rather than a scroll handler. The
+   browser reports the crossing itself; nothing runs on the
+   frames in between, which is the difference between this and
+   a listener that fires all the way down the page.
+   ══════════════════════════════════════════════════════════ */
+(() => {
+  const mark = document.createElement("div");
+  mark.setAttribute("aria-hidden", "true");
+  mark.style.cssText = "position:absolute;top:64px;left:0;width:1px;height:1px;pointer-events:none";
+  document.body.appendChild(mark);
+  new IntersectionObserver(([e]) => {
+    document.body.classList.toggle("nav-solid", !e.isIntersecting);
+  }).observe(mark);
+})();
