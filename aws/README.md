@@ -75,14 +75,20 @@ Then:
 It will read `amplify.yml` from the repo, so the build settings fill
 themselves in: build command `python3 build.py`, output `dist`.
 
-**App settings → Environment variables** — the same three that are in
-Netlify now:
+**App settings → Environment variables** — all five that `build.py` reads.
+They are the same five already in your local `.env` and in Netlify:
 
 | Key | Notes |
 |---|---|
-| `SUPABASE_URL` | |
-| `SUPABASE_ANON_KEY` | the anon key, not the service role key |
+| `SUPABASE_URL` | `https://<project>.supabase.co` |
+| `SUPABASE_ANON_KEY` | the anon key, **not** the service role key |
+| `SUPABASE_BUCKET` | `product-images` |
 | `ADMIN_PATH` | where the dashboard is published |
+| `RAZORPAY_KEY_ID` | the `rzp_live_…` id — public by design, it has to be in the page to open the checkout |
+
+Leave out any one of these and the build still succeeds — it just produces
+a shop with no photos, or no checkout, or no dashboard. `build.py` prints
+which ones it found at the end of the build; read that line.
 
 **App settings → Rewrites and redirects → Add rule**
 
