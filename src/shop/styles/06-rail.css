@@ -180,7 +180,10 @@
    sake; it is what stops the name and the price reading as one
    block of text in two sizes.
    ══════════════════════════════════════════════════════════ */
-.best .rc{padding:0; overflow:hidden; border-radius:var(--r-xl)}
+/* Corners tighter than the sheet they sit on. A card as round as its own
+   shelf reads as a sticker laid on it; a little squarer and it reads as a
+   card set down. */
+.best .rc{padding:0; overflow:hidden; border-radius:14px}
 .best .rc-shot{
   border-radius:0; box-shadow:none;
   aspect-ratio:3/2; background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
