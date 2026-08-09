@@ -46,8 +46,13 @@
      what the window can show, less the header and a little more: that
      margin leaves the top of the next section in view, which is what tells
      somebody there is anything below this. */
+  /* Fills the window, less the header above it and a little under it. That
+     little is the whole point: an inch of the next section showing is what
+     says the page carries on. Take it away and a full-height hero looks
+     like the end of the site; make it 50px and it stops being a hint and
+     starts being a gap. */
   .hero{
-    min-height:min(clamp(600px,62vw,780px), calc(100vh - 130px));
+    min-height:max(600px, calc(100vh - 104px));
     align-items:center; padding-top:0;
   }
 }
