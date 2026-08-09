@@ -157,17 +157,30 @@
    over the catalogue, and text scrolling under text cannot be
    read.
 
-   A watcher on one pixel rather than a scroll handler. The
-   browser reports the crossing itself; nothing runs on the
-   frames in between, which is the difference between this and
-   a listener that fires all the way down the page.
+   The pixel it watches is the bottom of the hero, not a point
+   near the top of the page. Watched near the top, an inch of
+   scroll was enough to put the pill on while the picture was
+   still filling the screen behind it — which is the one place
+   the bar is supposed to have nothing.
+
+   A watcher rather than a scroll handler: the browser reports
+   the crossing itself and nothing runs on the frames in
+   between.
+
+   isIntersecting alone cannot answer this, because it is false
+   both when the pixel is above the window and when it is still
+   below it — and on a full-height hero it starts below. So the
+   answer comes from which side of the bar it is on.
    ══════════════════════════════════════════════════════════ */
 (() => {
+  const hero = document.querySelector(".hero");
+  if(!hero) return;
+  const BAR = 84;                       /* the bar, and a little under it */
   const mark = document.createElement("div");
   mark.setAttribute("aria-hidden", "true");
-  mark.style.cssText = "position:absolute;top:64px;left:0;width:1px;height:1px;pointer-events:none";
-  document.body.appendChild(mark);
+  mark.style.cssText = "position:absolute;bottom:0;left:0;width:1px;height:1px;pointer-events:none";
+  hero.appendChild(mark);
   new IntersectionObserver(([e]) => {
-    document.body.classList.toggle("nav-solid", !e.isIntersecting);
-  }).observe(mark);
+    document.body.classList.toggle("nav-solid", e.boundingClientRect.top <= BAR);
+  }, {rootMargin: `-${BAR}px 0px 0px 0px`}).observe(mark);
 })();
