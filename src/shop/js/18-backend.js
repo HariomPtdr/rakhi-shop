@@ -375,8 +375,14 @@ if(SB_ON){
   SB.onChange(() => paintAcctBtn());
   sbPush = pushCart;
   (async () => {
-    try{ await loadSettings();  }catch(e){}
-    try{ await loadCatalogue(); }catch(e){}
+    /* Two unrelated reads — one asks what the shop costs to post from, the
+       other what is in it — and neither needs the other's answer. Asked one
+       after the other, the sample prices written into this file stayed on
+       screen for both round trips; asked together, for one. */
+    await Promise.all([
+      loadSettings().catch(() => {}),
+      loadCatalogue().catch(() => {})
+    ]);
     if(signedIn()){
       /* an older session that predates the profile picture — ask once */
       const s = SB.session();
@@ -405,8 +411,10 @@ if(SB_ON){
 
   async function refresh(){
     lastPull = Date.now();
-    try{ await loadSettings();  }catch(e){}
-    try{ await loadCatalogue(); }catch(e){}
+    await Promise.all([
+      loadSettings().catch(() => {}),
+      loadCatalogue().catch(() => {})
+    ]);
     pollUnread();
   }
   addEventListener("visibilitychange", () => {

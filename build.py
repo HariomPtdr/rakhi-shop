@@ -219,12 +219,14 @@ else:
     "  X-Frame-Options: SAMEORIGIN\n"
     "  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()\n"
     # Fonts and photos are content-addressed by their own names and change
-    # only when replaced, so they can be cached hard. The pages must not be:
-    # a price change has to reach the next visitor.
+    # only when replaced, so they can be cached hard. The page is held at
+    # the edge but not in the browser: prices and settings are read from
+    # Supabase after it loads, so a cached copy is never a stale price, but
+    # max-age=0 still means a returning customer gets the current build.
     "\n/assets/*\n"
     "  Cache-Control: public, max-age=31536000, immutable\n"
     "\n/index.html\n"
-    "  Cache-Control: public, max-age=0, must-revalidate\n"
+    "  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate\n"
     + admin_rule, encoding="utf-8")
 
 share = embed_assets(shop)

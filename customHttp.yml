@@ -35,8 +35,19 @@ customHeaders:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
 
-  # The pages must not be: a price change has to reach the next visitor.
+  # The page is a shell. Every price, every setting and the whole catalogue
+  # are read from Supabase once it loads, and place_order recomputes the
+  # total from the products table before charging anyone — so a page held at
+  # the edge cannot sell anything at yesterday's price. It was written here
+  # as though it could, and that cost every visitor a trip to whichever
+  # region the app is hosted in.
+  #
+  # max-age=0 keeps the browser asking, so a returning customer is never
+  # looking at an old build. s-maxage lets CloudFront answer from the POP
+  # nearest them instead of going back to the origin. A new deploy takes up
+  # to five minutes to reach everyone; nothing that changes during a day's
+  # trading travels this way.
   - pattern: '/index.html'
     headers:
       - key: 'Cache-Control'
-        value: 'public, max-age=0, must-revalidate'
+        value: 'public, max-age=0, s-maxage=300, must-revalidate'
