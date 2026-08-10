@@ -338,12 +338,15 @@
   display:grid; grid-template-columns:repeat(4,1fr);
   padding:clamp(10px,2.2vw,14px) clamp(4px,1.2vw,8px);
   border-radius:var(--r-xl);
-  /* the same ivory the bar and the countdown are cut from */
-  background:linear-gradient(158deg, #FFFEFA 0%, #FDF8EE 56%, #F8F1E1 100%);
+  /* The same sheet Our Bestsellers is set out on, to the value — two panels
+     stacked one above the other in nearly the same cream is worse than two
+     in obviously different ones, because the eye reads the near-miss as a
+     mistake rather than a distinction. */
+  background:linear-gradient(158deg,#FDF9F0 0%,#FBF6EA 55%,#F7F0DF 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 0 0 1px rgba(217,184,119,.5),
-    0 12px 30px -18px rgba(120,88,22,.38);
+    inset 0 0 0 1px rgba(217,184,119,.4),
+    0 16px 40px -26px rgba(120,88,22,.4);
 }
 .feat{
   position:relative;
