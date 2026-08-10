@@ -42,9 +42,30 @@ const save=()=>{
 save();                                                  // write the cleaned version back
 
 const sub   = ()=>cart.reduce((s,r)=>s+r.price*r.qty,0);
-const ship  = ()=>cart.length===0?0:(sub()>=SHOP.freeShipAbove?0:SHOP.shipFlat);
-const tot   = ()=>sub()+ship();
 const nItems= ()=>cart.reduce((s,r)=>s+r.qty,0);
+/* ── when delivery is free ──
+   Either enough rakhis or enough money. Written once and read by the
+   drawer, the bill and the basket in the account panel, which used to
+   work it out three times from the threshold alone — so the day a second
+   way to earn it was added, two of the three would have gone on saying
+   there was only one. place_order() runs the same two tests again on the
+   way in, and its answer is the one that is charged. */
+const freeShip = ()=>
+  (SHOP.freeShipMinQty > 0 && nItems() >= SHOP.freeShipMinQty) ||
+  sub() >= SHOP.freeShipAbove;
+const ship  = ()=>cart.length===0 ? 0 : (freeShip() ? 0 : SHOP.shipFlat);
+const tot   = ()=>sub()+ship();
+
+/* what to say about it, in the one voice — whichever of the two is nearer
+   is the one worth telling somebody about */
+function shipNudge(){
+  if(freeShip()) return `Delivery is <b>free</b> on this order.`;
+  const needQty = SHOP.freeShipMinQty > 0 ? SHOP.freeShipMinQty - nItems() : Infinity;
+  const needAmt = SHOP.freeShipAbove - sub();
+  if(needQty > 0 && needQty <= 2)
+    return `Add ${needQty} more ${plural(needQty, "rakhi")} and delivery is <b>free</b>.`;
+  return `Add ${inr(needAmt)} more and delivery is <b>free</b>.`;
+}
 
 function addItem(p){
   if(!p) return;
@@ -109,13 +130,10 @@ function paintCart(bump){
   $("#sSub").textContent=inr(sub());
   $("#sShip").textContent=ship()===0?"Free":inr(ship());
   $("#sTot").textContent=inr(tot());
-  const left=SHOP.freeShipAbove-sub();
   const paused = typeof ordersPaused === "function" && ordersPaused();
   $("#sHint").innerHTML = paused
     ? `<b>Not taking orders right now.</b> ${esc(shopPauseNote || "Back shortly.")}`
-    : left>0
-      ? `Add ${inr(left)} more and delivery is <b>free</b>.`
-      : `Delivery is <b>free</b> on this order.`;
+    : shipNudge();
   const go = $("#toBill");
   go.disabled = paused;
   go.textContent = paused ? "Orders are paused" : "Create the bill";

@@ -1,0 +1,200 @@
+/* ══════════════════════════════════════════════════════════
+   THE OFFER
+
+   One long panel: the gift at the left end, the offer through
+   the middle, the way in at the right. Nothing on it is a
+   picture of words — the photograph and the mandala are
+   decoration underneath, and every word is text over them. A
+   banner with its copy baked into a JPEG is unreadable at
+   320px, unselectable, silent to a screen reader, and has to be
+   redrawn in an image editor the day the threshold changes.
+
+   The whole panel is the link. A banner with one small button
+   on it makes people aim; there is nothing else on this strip
+   to press, so all of it presses.
+   ══════════════════════════════════════════════════════════ */
+.promo{padding:clamp(22px,4.4vw,38px) 0 0}
+
+.promo-in{
+  position:relative; display:grid; overflow:hidden;
+  text-decoration:none; color:var(--ink);
+  border-radius:var(--r-xl);
+  /* the banner's own cream, which is a shade warmer than the page — enough
+     to lift off it without becoming a second background colour */
+  /* Sampled off the photograph rather than picked: the gift box was shot on
+     a cream of its own, and a panel a shade darker than it drew a visible
+     seam straight down the join. */
+  background:linear-gradient(120deg,#FCECD7 0%,#FCEBD3 48%,#FAE6CB 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 0 0 1px rgba(217,184,119,.55),
+    0 18px 44px -26px rgba(120,88,22,.5);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+@media (hover:hover){
+  .promo-in:hover{
+    transform:translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      inset 0 0 0 1px rgba(185,140,46,.85),
+      0 26px 54px -28px rgba(120,88,22,.6);
+  }
+}
+
+/* ── the mandala ──
+   Behind everything, off the right edge, and faint. It is plaster relief
+   photographed in the same light as the gift box, so it belongs; at full
+   strength it would be a second subject competing with the offer. */
+.promo-in::after{
+  content:""; position:absolute; z-index:0; pointer-events:none;
+  top:50%; right:-6%; width:min(46%,340px); aspect-ratio:484/384;
+  transform:translateY(-50%);
+  background:url("../../../assets/images/promo-mandala.webp") right center / cover no-repeat;
+  opacity:.5;
+  /* fades into the panel on the left so there is no visible seam */
+  -webkit-mask-image:linear-gradient(to right, transparent, #000 42%);
+          mask-image:linear-gradient(to right, transparent, #000 42%);
+}
+
+/* ── the gift ──
+   Photographed on the same cream, so it needs no frame and no border: it
+   simply ends, and the panel carries on. */
+.promo-art{
+  position:relative; z-index:1; display:block; overflow:hidden;
+  background:#FCECD7;
+}
+.promo-art img{width:100%; height:100%; object-fit:cover; display:block}
+
+.promo-mid{position:relative; z-index:1; display:flex; flex-direction:column}
+
+/* SPECIAL OFFER, with a rule and a lotus over it */
+.promo-kick{
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(8px,1.6vw,13px); color:var(--tan);
+}
+.promo-kick i{
+  flex:1; min-width:clamp(26px,7vw,60px); max-width:clamp(30px,8vw,120px); height:1px;
+  background:linear-gradient(to right, transparent, rgba(185,140,46,1), transparent);
+}
+/* the diamond the reference sets on each rule, where it meets the words */
+.promo-kick i::after{
+  content:""; display:block; width:4px; height:4px; margin:-2px 0 0 auto;
+  transform:rotate(45deg); background:rgba(185,140,46,.9);
+}
+.promo-kick i:last-child::after{margin:-2px auto 0 0}
+.promo-kick svg{width:clamp(19px,3.6vw,26px); height:auto; flex:none}
+.promo-kick b{
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,12px); letter-spacing:.26em; text-transform:uppercase;
+  color:var(--tan-deep); white-space:nowrap;
+}
+
+.promo-h{
+  display:block; margin-top:clamp(6px,1.2vw,12px);
+  font-family:var(--display); font-weight:600;
+  /* small enough to stay on one line beside the gift: FREE DELIVERY over
+     two lines is the whole reason this banner was taller than the hero */
+  font-size:clamp(19px,5.4vw,58px); line-height:1.02; letter-spacing:-.028em;
+  text-transform:uppercase; color:#7A1418; text-wrap:balance;
+}
+.promo-line{
+  display:block; margin-top:clamp(5px,1vw,11px);
+  font-family:var(--display);
+  font-size:clamp(12px,2.9vw,25px); line-height:1.3; color:#3B2415;
+}
+.promo-line b{font-weight:600; color:#7A1418}
+
+/* the last line, between two rules, the way the kicker is */
+.promo-note{
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(6px,1.2vw,10px); margin-top:clamp(6px,1.2vw,14px);
+  font-family:var(--display);
+  font-size:clamp(9.5px,2.1vw,16px); line-height:1.3; color:var(--ink-soft);
+}
+.promo-note svg{flex:none; color:var(--tan-deep)}
+.promo-note::before, .promo-note::after{
+  content:""; flex:1; max-width:clamp(14px,5vw,72px); height:1px;
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.7), transparent);
+}
+
+/* ── the way in ──
+   The shop's red, and the gold double rule the reference draws around it —
+   which on this panel is the difference between a button and a red block. */
+.promo-cta{
+  position:relative; z-index:1;
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:clamp(9px,1.7vw,15px) clamp(16px,3vw,32px);
+  border-radius:9px;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:
+    inset 0 0 0 1px rgba(217,184,119,.85),
+    inset 0 0 0 3px rgba(122,20,24,1),
+    inset 0 0 0 4px rgba(217,184,119,.45),
+    0 12px 26px -12px rgba(106,17,20,.7);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(11px,2.3vw,19px); letter-spacing:.02em; white-space:nowrap;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.promo-cta svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .promo-in:hover .promo-cta{box-shadow:
+    inset 0 0 0 1px rgba(217,184,119,1),
+    inset 0 0 0 3px rgba(122,20,24,1),
+    inset 0 0 0 4px rgba(217,184,119,.6),
+    0 18px 34px -14px rgba(106,17,20,.85);}
+  .promo-in:hover .promo-cta svg{transform:translateX(3px)}
+}
+
+/* ══ the phone ══
+   Two columns, not a stack. Stacked it ran to 400px — a banner taller than
+   the hero it sits under, for one sentence. The gift becomes a narrow
+   panel down the left with the offer beside it, and the whole thing comes
+   in at under half of what it was.
+
+   The photograph is anchored to its right-hand side rather than its
+   middle, because that is where the box and the seal are; centred, a
+   140px column of it shows ribbon and nothing else. */
+.promo-in{
+  grid-template-columns:32% 1fr;
+  align-items:center;
+  gap:clamp(9px,2.2vw,14px);
+  padding:0 clamp(11px,3vw,16px) 0 0;
+  text-align:center;
+}
+.promo-art{align-self:stretch; min-height:clamp(104px,25vw,132px)}
+.promo-art img{object-position:72% 46%}
+.promo-mid{align-items:center; padding:clamp(10px,2.4vw,14px) 0}
+/* No button on a phone. The whole panel is the link, so it never did
+   anything the panel above it did not already do — it was 40px of height
+   spent repeating the thing it sits inside. It stays from tablet up, where
+   it costs nothing: there it sits beside the words, not under them. */
+.promo-cta{display:none}
+
+/* on a small phone the kicker's rules are the first thing to go — they are
+   ornament, and 34px of ornament each side of two words is neither */
+@media (max-width:430px){
+  .promo-kick i{display:none}
+  .promo-note::before, .promo-note::after{display:none}
+}
+
+/* ══ from tablet up ══
+   Three columns, the way the banner is drawn: the gift at one end, the
+   offer through the middle, the way in at the other. */
+@media (min-width:760px){
+  .promo-in{
+    grid-template-columns:minmax(180px,25%) 1fr auto;
+    align-items:center; gap:clamp(18px,3vw,34px);
+    padding:0 clamp(22px,3vw,40px) 0 0;
+    text-align:center;
+  }
+  .promo-art{align-self:stretch; min-height:clamp(190px,20vw,270px)}
+  .promo-art img{object-position:center}
+  /* the photograph gives out into the panel rather than stopping at a line */
+  .promo-art img{
+    -webkit-mask-image:linear-gradient(to right, #000 72%, transparent);
+            mask-image:linear-gradient(to right, #000 72%, transparent);
+  }
+  .promo-mid{padding:clamp(22px,3vw,34px) 0}
+  .promo-cta{display:inline-flex; align-self:center; margin-top:0}
+}

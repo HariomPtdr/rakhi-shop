@@ -11,6 +11,16 @@ const SHOP = {
   festivalDate:  "2026-08-28",        // Raksha Bandhan — confirm from the panchang
   orderByDate:   "2026-08-21",        // last date for normal delivery
   freeShipAbove: 499,
+  /* Delivery is also free once the basket holds this many rakhis, whatever
+     they cost — two ₹39 rakhis is a real order and charging ₹49 to carry
+     them is most of the price of a third. 0 turns the rule off and leaves
+     only the amount above.
+
+     The number the shop actually uses comes from the settings row; this is
+     the fallback until that arrives, and place_order() checks it again on
+     the way in — a banner the checkout will not honour is the one kind of
+     copy that costs money to be wrong. */
+  freeShipMinQty: 2,
   shipFlat:      49,
   /* How long it takes to get there. Written here once and read by the
      product page, so the promise on every rakhi says the same thing. The

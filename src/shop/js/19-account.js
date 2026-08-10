@@ -484,7 +484,6 @@ function acctBody(){
       return head + `<div class="ac-pane"><p class="ac-empty">Your basket is empty.
         Everything you add is kept here and on any other phone you sign in from.</p></div>`;
     }
-    const left = SHOP.freeShipAbove - sub();
     return head + `<div class="ac-pane">
       ${cart.map((r, i) => `
         <div class="ac-wish">
@@ -511,9 +510,7 @@ function acctBody(){
         <div><span>Subtotal</span><span>${inr(sub())}</span></div>
         <div><span>Delivery</span><span>${ship() === 0 ? "Free" : inr(ship())}</span></div>
         <div class="ac-sum-t"><span>Total</span><span>${inr(tot())}</span></div>
-        <p class="ac-empty" style="margin-top:8px">${left > 0
-          ? `Add ${inr(left)} more and delivery is free.`
-          : `Delivery is free on this order.`}</p>
+        <p class="ac-empty" style="margin-top:8px">${shipNudge()}</p>
       </div>
       <button class="btn btn-dark btn-full" id="acToBill">Create the bill</button>
     </div>`;

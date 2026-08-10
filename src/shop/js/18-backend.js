@@ -171,7 +171,14 @@ async function loadSettings(){
   const CORE = "free_ship_above,ship_flat,festival_date,order_by_date";
   const SHOP_COLS = CORE + ",whatsapp,upi,instagram,email,announcement,orders_paused,pause_note";
   const NEWEST = SHOP_COLS + ",coupon_note,cod_enabled";
+  /* free_ship_min_qty arrives with 23-free-ship-qty.sql, so it gets a step
+     of its own ahead of the rest — asked for alongside them, one missing
+     column would take the WhatsApp number down with it */
+  const NEWEST_QTY = NEWEST + ",free_ship_min_qty";
   let rows;
+  try{
+    rows = await SB.rest("shop_settings?select=" + NEWEST_QTY + "&id=eq.1&limit=1");
+  }catch(err0){
   try{
     rows = await SB.rest("shop_settings?select=" + NEWEST + "&id=eq.1&limit=1");
   }catch(err){
@@ -185,9 +192,13 @@ async function loadSettings(){
       }
     }
   }
+  }
   const s = Array.isArray(rows) && rows[0];
   if(!s) return;
   if(Number.isFinite(s.free_ship_above)) SHOP.freeShipAbove = s.free_ship_above;
+  /* absent until 23-free-ship-qty.sql is run — the fallback in 01-shop.js
+     stands until then, and place_order() is the one that decides anyway */
+  if(Number.isFinite(s.free_ship_min_qty)) SHOP.freeShipMinQty = s.free_ship_min_qty;
   if(Number.isFinite(s.ship_flat))       SHOP.shipFlat      = s.ship_flat;
   if(s.festival_date) SHOP.festivalDate = s.festival_date;
   if(s.order_by_date) SHOP.orderByDate  = s.order_by_date;

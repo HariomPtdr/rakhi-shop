@@ -64,6 +64,7 @@
 <link rel="stylesheet" href="styles/18-order.css">
 <link rel="stylesheet" href="styles/19-categories.css">
 <link rel="stylesheet" href="styles/20-budget.css">
+<link rel="stylesheet" href="styles/21-promo.css">
 </head>
 <body>
 <body>
@@ -203,51 +204,62 @@
      they move directly beneath it rather than being dropped: the featured
      rakhis are still the first products anybody sees, and the promises
      still arrive before the price does. -->
-<!-- ═══════════ four reasons, straight under the hero ═══════════
-     Said in four words each, because this is the strip somebody reads on
-     the way past rather than one they stop for. -->
-<section class="feats">
+
+
+<!-- ═══════════ the offer ═══════════
+     One banner, high enough to be seen and out of the way of the shop.
+
+     The line under it is not written here — paintPromo() fills it from the
+     shop's own free-delivery threshold, the same number the cart charges
+     from and place_order() checks again on the way in. A banner and a bill
+     that disagree is the one kind of copy that costs money to be wrong.
+
+     The gift box and the mandala are decoration and nothing else: every
+     word is set in text over them, so the offer is readable at 320px, can
+     be selected, and is still there for a screen reader. -->
+<section class="promo" id="promo">
   <div class="wrap">
-    <ul class="feat-row">
-      <li class="feat">
-        <span class="feat-i" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 18h4.5l3.2 1.6a2.4 2.4 0 0 0 2.1 0L20 16.2a1.6 1.6 0 0 0-1.6-2.8l-3.6 1.5"/>
-            <path d="M7.5 15.4h3.8a1.5 1.5 0 0 0 0-3H9.6L8.2 11.3a3 3 0 0 0-1.9-.7H3"/>
-            <path d="M14.6 3.6a2.1 2.1 0 0 0-3 0l-.4.4-.4-.4a2.1 2.1 0 1 0-3 3l3.4 3.4 3.4-3.4a2.1 2.1 0 0 0 0-3Z"/></svg>
+    <a class="promo-in" href="#collection">
+      <span class="promo-art">
+        <img src="../../assets/images/promo-gift.webp"
+             alt="" width="724" height="646" loading="lazy" decoding="async">
+      </span>
+
+      <span class="promo-mid">
+        <span class="promo-kick">
+          <i aria-hidden="true"></i>
+          <svg viewBox="0 0 24 14" fill="currentColor" aria-hidden="true">
+            <path d="M12 1.4c1.6 1.7 2.4 3.4 2.4 5.1 0 1.4-.8 2.6-2.4 3.6-1.6-1-2.4-2.2-2.4-3.6 0-1.7.8-3.4 2.4-5.1Z"/>
+            <path d="M12 11.2c-2.3 1.6-4.6 1.9-6.9.9 1.5-1.9 3.4-2.6 5.7-2.1Z" opacity=".8"/>
+            <path d="M12 11.2c2.3 1.6 4.6 1.9 6.9.9-1.5-1.9-3.4-2.6-5.7-2.1Z" opacity=".8"/>
+            <path d="M7.4 5.1c-1.2 1.3-1.7 2.7-1.6 4.2-1.6-1-2.3-2.3-2.1-3.9 1.3-.6 2.5-.7 3.7-.3Z" opacity=".55"/>
+            <path d="M16.6 5.1c1.2 1.3 1.7 2.7 1.6 4.2 1.6-1 2.3-2.3 2.1-3.9-1.3-.6-2.5-.7-3.7-.3Z" opacity=".55"/>
+          </svg>
+          <b>Special offer</b>
+          <i aria-hidden="true"></i>
         </span>
-        <b>Handmade</b><span>with love</span>
-      </li>
-      <li class="feat">
-        <span class="feat-i" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="8.4"/>
-            <path d="M7.2 15.2c1.8-1.1 2.4-2.6 2.4-4.2 0-1.4.8-2.6 2.4-2.6s2.4 1.2 2.4 2.6c0 1.6.6 3.1 2.4 4.2"/></svg>
+
+        <span class="promo-h">Free Delivery</span>
+        <!-- filled by paintPromo(), from the shop's own threshold -->
+        <span class="promo-line" id="promoLine">on any <b>2 rakhis</b> or more</span>
+
+        <span class="promo-note">
+          <svg width="17" height="13" viewBox="0 0 24 18" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1.6 3.4h12v9h-12z"/><path d="M13.6 6.6h4.2l3 3.2v2.6h-7.2z"/>
+            <circle cx="6.2" cy="14.4" r="1.9"/><circle cx="16.6" cy="14.4" r="1.9"/>
+          </svg>
+          Delivered with love, to your doorstep.
         </span>
-        <b>Real silk</b><span>threads</span>
-      </li>
-      <li class="feat">
-        <span class="feat-i" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3.2 4.8 6v5.4c0 4.3 3 8.1 7.2 9.4 4.2-1.3 7.2-5.1 7.2-9.4V6Z"/>
-            <path d="M9.2 12.1 11.3 14l3.5-3.9"/></svg>
-        </span>
-        <b>Premium</b><span>quality</span>
-      </li>
-      <li class="feat">
-        <span class="feat-i" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3.4" y="9.4" width="17.2" height="11.2" rx="1.6"/>
-            <path d="M2.4 6.2h19.2v3.2H2.4zM12 6.2v14.4"/>
-            <path d="M12 6.2S10.9 3 8.9 3a2 2 0 0 0 0 3.2Zm0 0S13.1 3 15.1 3a2 2 0 0 1 0 3.2Z"/></svg>
-        </span>
-        <b>Perfect for</b><span>your bond</span>
-      </li>
-    </ul>
+      </span>
+
+      <span class="promo-cta">
+        Shop now
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
   </div>
 </section>
 
@@ -418,6 +430,54 @@
            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 12h15M13 6l6 6-6 6"/></svg>
     </a>
+  </div>
+</section>
+
+<!-- ═══════════ four reasons ═══════════
+     Said in four words each, because this is the strip somebody reads on
+     the way past rather than one they stop for. -->
+<section class="feats">
+  <div class="wrap">
+    <ul class="feat-row">
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18h4.5l3.2 1.6a2.4 2.4 0 0 0 2.1 0L20 16.2a1.6 1.6 0 0 0-1.6-2.8l-3.6 1.5"/>
+            <path d="M7.5 15.4h3.8a1.5 1.5 0 0 0 0-3H9.6L8.2 11.3a3 3 0 0 0-1.9-.7H3"/>
+            <path d="M14.6 3.6a2.1 2.1 0 0 0-3 0l-.4.4-.4-.4a2.1 2.1 0 1 0-3 3l3.4 3.4 3.4-3.4a2.1 2.1 0 0 0 0-3Z"/></svg>
+        </span>
+        <b>Handmade</b><span>with love</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8.4"/>
+            <path d="M7.2 15.2c1.8-1.1 2.4-2.6 2.4-4.2 0-1.4.8-2.6 2.4-2.6s2.4 1.2 2.4 2.6c0 1.6.6 3.1 2.4 4.2"/></svg>
+        </span>
+        <b>Real silk</b><span>threads</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.2 4.8 6v5.4c0 4.3 3 8.1 7.2 9.4 4.2-1.3 7.2-5.1 7.2-9.4V6Z"/>
+            <path d="M9.2 12.1 11.3 14l3.5-3.9"/></svg>
+        </span>
+        <b>Premium</b><span>quality</span>
+      </li>
+      <li class="feat">
+        <span class="feat-i" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3.4" y="9.4" width="17.2" height="11.2" rx="1.6"/>
+            <path d="M2.4 6.2h19.2v3.2H2.4zM12 6.2v14.4"/>
+            <path d="M12 6.2S10.9 3 8.9 3a2 2 0 0 0 0 3.2Zm0 0S13.1 3 15.1 3a2 2 0 0 1 0 3.2Z"/></svg>
+        </span>
+        <b>Perfect for</b><span>your bond</span>
+      </li>
+    </ul>
   </div>
 </section>
 

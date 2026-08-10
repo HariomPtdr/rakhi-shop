@@ -38,9 +38,11 @@ function paintContact(){
   /* the free-delivery line in the footer, from the same number as the bill */
   const fs = $("#footShip");
   if(fs){
-    fs.textContent = SHOP.freeShipAbove > 0
-      ? `Prices in INR · free delivery over ${inr(SHOP.freeShipAbove)}`
-      : "Prices in INR · free delivery on everything";
+    fs.textContent = SHOP.freeShipMinQty > 0
+      ? `Prices in INR · free delivery on ${SHOP.freeShipMinQty} rakhis or more`
+      : SHOP.freeShipAbove > 0
+        ? `Prices in INR · free delivery over ${inr(SHOP.freeShipAbove)}`
+        : "Prices in INR · free delivery on everything";
   }
 
   /* ── reporting a fault ──

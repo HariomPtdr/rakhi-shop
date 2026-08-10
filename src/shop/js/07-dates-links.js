@@ -32,9 +32,14 @@ SHOP.orderBy  = showDay(SHOP.orderByDate);
 function trustPills(){
   const days = daysUntil(SHOP.festivalDate);
   const out = [
-    SHOP.freeShipAbove > 0
-      ? `<span class="tc" role="listitem">Free over <b>${inr(SHOP.freeShipAbove)}</b></span>`
-      : `<span class="tc" role="listitem">Free delivery <b>on everything</b></span>`,
+    /* the easier of the two ways to earn free delivery, since this pill has
+       room for one — a shop that advertises the harder rule beside a banner
+       advertising the easier one has told you two different things */
+    SHOP.freeShipMinQty > 0
+      ? `<span class="tc" role="listitem">Free on <b>${SHOP.freeShipMinQty}+ rakhis</b></span>`
+      : SHOP.freeShipAbove > 0
+        ? `<span class="tc" role="listitem">Free over <b>${inr(SHOP.freeShipAbove)}</b></span>`
+        : `<span class="tc" role="listitem">Free delivery <b>on everything</b></span>`,
     `<span class="tc" role="listitem">Ships <b>all India</b></span>`
   ];
   if(days > 1)        out.push(`<span class="tc" role="listitem"><b>${days} days</b> to Raksha Bandhan</span>`);
@@ -44,6 +49,31 @@ function trustPills(){
 }
 function paintTrust(){
   $$(".trust").forEach(el => { el.innerHTML = trustPills(); });
+  paintPromo();
+}
+
+/* ── the offer banner ──
+   The line under FREE DELIVERY is the shop's actual rule, read from the
+   same number the cart adds the charge from and the same one place_order()
+   checks again on the way in. A banner promising delivery the checkout then
+   charges for is the one kind of copy that costs money to be wrong, so it
+   is not typed into the page — and if a banner cannot be written from the
+   rule, the rule is what has to change first. */
+function paintPromo(){
+  const line = $("#promoLine");
+  if(!line) return;
+  const q = SHOP.freeShipMinQty;
+  if(q > 0){
+    /* the rule people can actually act on from the front page: it is a
+       number of rakhis, not a number they have to add up */
+    line.innerHTML = `on any <b>${q} ${plural(q, "rakhi")}</b> or more`;
+  }else if(SHOP.freeShipAbove > 0){
+    line.innerHTML = `on every order over <b>${inr(SHOP.freeShipAbove)}</b>`;
+  }else{
+    /* free on everything: there is no threshold left to announce, and a
+       banner saying "over ₹0" reads as a shop that cannot count */
+    line.innerHTML = `on <b>everything</b> in the shop`;
+  }
 }
 
 $("#yr").textContent = new Date().getFullYear();
