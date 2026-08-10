@@ -1,0 +1,172 @@
+/* ══════════════════════════════════════════════════════════
+   THE WHOLE COLLECTION, DRIFTING
+
+   Two rows carrying the entire catalogue, moving against each
+   other. The rows run off both edges of the screen rather than
+   stopping at the page margin — a row that ends where the text
+   ends is a row with a beginning and an end, and this one is
+   meant to read as a length of something being unrolled.
+
+   The animation slides each track exactly half its own width.
+   The track holds its contents twice, so the frame it snaps
+   back to is the frame it left and no seam is ever seen.
+   ══════════════════════════════════════════════════════════ */
+.drift{padding:clamp(26px,5vw,44px) 0 0; overflow:hidden}
+.drift[hidden]{display:none}
+
+.drift-h{text-align:center; margin-bottom:clamp(16px,3vw,26px)}
+.drift-orn{display:block; width:clamp(22px,4.4vw,30px); margin:0 auto clamp(8px,1.4vw,12px); color:var(--tan)}
+.drift-orn svg{width:100%; height:auto; display:block}
+.drift-h h2{
+  display:flex; align-items:center; justify-content:center; gap:clamp(10px,2.4vw,20px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(25px,6.4vw,42px); line-height:1.05; letter-spacing:-.022em;
+  color:#3B2415;
+}
+.drift-h h2::before, .drift-h h2::after{
+  content:""; height:1px; width:clamp(26px,7vw,74px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+}
+.drift-sub{
+  margin-top:clamp(7px,1.4vw,11px);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,2vw,10.5px); letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+
+/* ── the two rows ──
+   Faded at both ends rather than cut: a tile sliced in half by the edge of
+   the screen looks broken; one dissolving into the page looks like there is
+   more of it out there, which there is. */
+.drift-rows{
+  position:relative;
+  display:flex; flex-direction:column; gap:clamp(10px,2vw,16px);
+  padding:2px 0;
+  -webkit-mask-image:linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image:linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.drift-row{overflow:hidden}
+
+.drift-track{
+  display:flex; gap:clamp(10px,2vw,16px); width:max-content;
+  /* --half and --lap are measured and set by 10b-drift.js once the pictures
+     have been laid out; until then it simply does not move */
+  animation:drift-l var(--lap, 60s) linear infinite;
+  will-change:transform;
+}
+.drift-row.rev .drift-track{animation-name:drift-r}
+
+@keyframes drift-l{
+  from{transform:translate3d(0,0,0)}
+  to  {transform:translate3d(calc(var(--half, 0px) * -1),0,0)}
+}
+@keyframes drift-r{
+  from{transform:translate3d(calc(var(--half, 0px) * -1),0,0)}
+  to  {transform:translate3d(0,0,0)}
+}
+
+/* held by a thumb, hovered by a pointer, or in a tab nobody is looking at */
+.drift-rows.held .drift-track,
+.drift-rows.hidden-tab .drift-track{animation-play-state:paused}
+@media (hover:hover){
+  .drift-rows:hover .drift-track{animation-play-state:paused}
+}
+/* Somebody who has asked for less movement has asked for this. It becomes
+   two rows they can push along themselves, which is the same shop. */
+@media (prefers-reduced-motion:reduce){
+  .drift-track{animation:none}
+  .drift-row{overflow-x:auto; scrollbar-width:none}
+  .drift-row::-webkit-scrollbar{display:none}
+}
+
+/* ── one rakhi ──
+   Small: this is the whole catalogue going past, not twelve cards to be
+   compared. A name and a price is what you need to decide to stop it.
+   Everything else is on the rakhi's own page, and the tile opens it. */
+.dtile{
+  flex:none; width:clamp(128px,30vw,178px); cursor:pointer;
+  display:flex; flex-direction:column; overflow:hidden;
+  border-radius:13px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 10px 24px -18px rgba(120,88,22,.36);
+  transition:transform .45s var(--ease), box-shadow .45s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+@media (hover:hover){
+  .dtile:hover{
+    transform:translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1px rgba(185,140,46,.85),
+      0 18px 34px -20px rgba(120,88,22,.5);
+  }
+}
+.dtile:active{transform:translateY(0) scale(.985)}
+
+.dtile-shot{
+  position:relative; display:block; aspect-ratio:1; overflow:hidden;
+  background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+}
+.dtile-shot img{width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .8s var(--ease)}
+.dtile-shot img.art{object-fit:contain}
+@media (hover:hover){.dtile:hover .dtile-shot img{transform:scale(1.06)}}
+
+/* the saving, on the picture — there is no room for it under the name and
+   it is the one thing here worth interrupting a photograph for */
+.dtile-off{
+  position:absolute; top:8px; left:8px;
+  padding:3px 8px; border-radius:var(--r-full);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.4);
+  font-family:var(--head); font-weight:700;
+  font-size:8px; letter-spacing:.07em; text-transform:uppercase;
+}
+
+/* The price under the name rather than beside it. Beside it the name got
+   about 110px of a 178px tile and every rakhi was called "Gold Kundan…" —
+   which is three words short of telling you anything. */
+.dtile-b{
+  display:block;
+  padding:clamp(8px,1.6vw,11px) clamp(10px,2vw,13px) clamp(9px,1.8vw,12px);
+}
+.dtile-n{
+  display:block;
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(11.5px,2.6vw,13.5px); line-height:1.25; letter-spacing:-.012em;
+  color:#3B2415;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.dtile-p{
+  display:block; margin-top:clamp(3px,.7vw,5px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(13px,3vw,16px); line-height:1.1; color:#7A1418;
+}
+
+/* the way out, into the list that can be narrowed down */
+.drift-all{
+  display:inline-flex; align-items:center; gap:9px;
+  margin:clamp(14px,2.4vw,20px) auto 0;
+  padding:clamp(9px,1.5vw,11px) clamp(15px,2.4vw,20px);
+  border-radius:var(--r-full); text-decoration:none;
+  color:var(--tan-deep); background:transparent;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,10px); letter-spacing:.11em; text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.drift .wrap:last-child{display:flex}
+.drift-all svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .drift-all:hover{
+    color:#6A1114;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,1), 0 10px 24px -14px rgba(120,88,22,.45);
+  }
+  .drift-all:hover svg{transform:translateX(3px)}
+}

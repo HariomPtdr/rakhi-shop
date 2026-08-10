@@ -66,6 +66,7 @@
 <link rel="stylesheet" href="styles/20-budget.css">
 <link rel="stylesheet" href="styles/21-promo.css">
 <link rel="stylesheet" href="styles/22-custom-cta.css">
+<link rel="stylesheet" href="styles/23-drift.css">
 </head>
 <body>
 <body>
@@ -465,6 +466,48 @@
     </a>
   </div>
 </section>
+
+<!-- ═══════════ the whole collection, drifting ═══════════
+     Everything the shop has, in two rows that move on their own in
+     opposite directions. Not a grid: a grid of everything is a page of
+     homework, and this is meant to be watched rather than worked through.
+     The grid is still down there for anybody who wants to narrow it down.
+
+     Two rows rather than one because one row of everything drifting past
+     is a queue; two moving against each other reads as a length of cloth
+     being unrolled, which is what a shop full of rakhi thread should look
+     like. Filled by paintDrift() so it always holds the real catalogue. -->
+<section class="drift" id="showcase">
+  <div class="wrap">
+    <div class="drift-h">
+      <span class="drift-orn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+          <circle cx="12" cy="12" r="2.1"/>
+        </svg>
+      </span>
+      <h2>The Whole Collection</h2>
+      <p class="drift-sub">Every rakhi we make, end to end</p>
+    </div>
+  </div>
+
+  <!-- outside .wrap on purpose: these run off both edges of the screen,
+       which is what says there is more of it than fits -->
+  <div class="drift-rows" id="driftRows">
+    <div class="drift-row"><div class="drift-track" id="driftA"></div></div>
+    <div class="drift-row rev"><div class="drift-track" id="driftB"></div></div>
+  </div>
+
+  <div class="wrap">
+    <a class="drift-all" href="#collection">
+      See it as a list
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
 
 
 
@@ -910,6 +953,7 @@
 <script src="js/08-wishlist.js"></script>
 <script src="js/09-grid.js"></script>
 <script src="js/10-rail.js"></script>
+<script src="js/10b-drift.js"></script>
 <script src="js/11-cart.js"></script>
 <script src="js/12-sheets.js"></script>
 <script src="js/13-bill.js"></script>
