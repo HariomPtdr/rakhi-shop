@@ -71,7 +71,19 @@ body.nav-solid .nav-in{
 }
 @media (min-width:420px){.brand-n{font-size:14px; letter-spacing:.09em}}
 @media (min-width:900px){.brand-n{font-size:15.5px; letter-spacing:.1em}}
-.brand-s{font-family:var(--head); font-size:8px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); display:block; margin-top:3px; white-space:nowrap}
+/* A gold lozenge each side, the way the shop's own printing sets a subtitle.
+   Pseudo-elements rather than characters in the markup: they are ornament,
+   and a screen reader reading "black diamond suit handmade rakhi black
+   diamond suit" is ornament charging rent. */
+.brand-s{
+  font-family:var(--head); font-size:8px; font-weight:600; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--tan-deep);
+  display:flex; align-items:center; gap:6px; margin-top:3px; white-space:nowrap;
+}
+.brand-s::before, .brand-s::after{
+  content:""; width:3.5px; height:3.5px; flex:none;
+  transform:rotate(45deg); background:var(--tan);
+}
 .nav-l{display:none; gap:4px; z-index:2}
 @media (min-width:1000px){.nav-l{display:flex}}
 .nav-l a{

@@ -47,10 +47,20 @@ const PRODUCTS = [
     art:{thread:"#7A1F3D", bead:"#E5B84B", charm:"rudraksh"} }
 ];
 
+/* ── the shelves ──
+   Named the way the shop names them out loud, and each one says the word:
+   All rakhis, Premium rakhis, Kids rakhis. "Everything / Pearl / Bhabhi &
+   sets" was three ways of naming a shelf in one row of seven, and a row
+   where only some of them say what they are is a row you have to read
+   twice to know that they all mean rakhis.
+
+   Order matters here: the row reads left to right and Premium is what the
+   shop would rather sell, so it goes first after All. */
 const CATS = [
-  {k:"all", n:"Everything"}, {k:"evil-eye", n:"Evil eye"}, {k:"pearl", n:"Pearl"},
-  {k:"traditional", n:"Traditional"}, {k:"kids", n:"Kids"},
-  {k:"lumba", n:"Bhabhi & sets"}, {k:"premium", n:"Premium"}
+  {k:"all", n:"All rakhis"}, {k:"premium", n:"Premium rakhis"},
+  {k:"lumba", n:"Bhabhi rakhis"}, {k:"kids", n:"Kids rakhis"},
+  {k:"traditional", n:"Religious rakhis"}, {k:"evil-eye", n:"Evil eye rakhis"},
+  {k:"pearl", n:"Designer rakhis"}
 ];
 
 const SETS = [

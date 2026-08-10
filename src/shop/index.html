@@ -68,6 +68,7 @@
 <link rel="stylesheet" href="styles/22-custom-cta.css">
 <link rel="stylesheet" href="styles/23-drift.css">
 <link rel="stylesheet" href="styles/24-qty.css">
+<link rel="stylesheet" href="styles/25-allpage.css">
 </head>
 <body>
 <body>
@@ -494,25 +495,6 @@
       <p class="drift-sub">Every rakhi we make, end to end</p>
     </div>
 
-    <!-- The chips, the count and the sort, lifted off the grid this shelf
-         replaces. The shelf is the collection now, so it has to be
-         narrowable by the same things that always narrowed it: the category
-         cards and the budget bands both land here with a filter set. -->
-    <div class="tools">
-      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
-      <div class="tools-r">
-        <span class="count" id="rCount"></span>
-        <div class="sortwrap">
-          <button class="sortbtn" id="sortBtn" aria-haspopup="listbox" aria-expanded="false">
-            <span class="sr">Sort by:</span>
-            <span id="sortNow">Featured</span>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <ul class="sortmenu" id="sortMenu" role="listbox" aria-label="Sort by" hidden></ul>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- outside .wrap on purpose: these run off both edges of the screen,
@@ -530,8 +512,8 @@
   </div>
 
   <div class="wrap">
-    <a class="drift-all" href="#made">
-      Ask for something else
+    <a class="drift-all" href="#all" id="allOpen">
+      See the full collection
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 12h15M13 6l6 6-6 6"/></svg>
@@ -893,6 +875,110 @@
 </section>
 
 <!-- one product page, filled in per rakhi from the hash route -->
+<!-- ═══════════ the full collection ═══════════
+     The home page carries a shelf two cards deep — enough to see what kind
+     of shop this is without being asked to work through it. This is the
+     rest: everything, in a grid, with the filters and the sort that
+     narrowing it down needs.
+
+     A view over the page rather than a second page. The cart, the account,
+     the hearts and every script behind them already live here; a separate
+     HTML file would be a second copy of all of it to keep in step, for one
+     grid. The product page and the order page work the same way. -->
+<section class="ap" id="ap" aria-label="The full collection" aria-hidden="true">
+  <div class="ap-bar">
+    <button class="pv-back" id="apBack" aria-label="Back">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <span class="ap-crumb">The Collection</span>
+    <button class="pv-cart" id="apCart" hidden>Cart <span class="cart-n" id="apCartN">0</span></button>
+  </div>
+
+  <div class="ap-body">
+    <!-- The banner, built the way the offer strip is: the photographs are
+         decoration underneath and every word is text over them, so it reads
+         at 320px and can be selected. -->
+    <div class="ap-hero">
+      <span class="ap-art ap-art-l" aria-hidden="true"></span>
+      <span class="ap-art ap-art-r" aria-hidden="true"></span>
+      <span class="ap-hero-t">
+        <span class="ap-kick">
+          <i aria-hidden="true"></i>
+          <svg viewBox="0 0 24 14" fill="currentColor" aria-hidden="true">
+            <path d="M12 1.4c1.6 1.7 2.4 3.4 2.4 5.1 0 1.4-.8 2.6-2.4 3.6-1.6-1-2.4-2.2-2.4-3.6 0-1.7.8-3.4 2.4-5.1Z"/>
+            <path d="M12 11.2c-2.3 1.6-4.6 1.9-6.9.9 1.5-1.9 3.4-2.6 5.7-2.1Z" opacity=".8"/>
+            <path d="M12 11.2c2.3 1.6 4.6 1.9 6.9.9-1.5-1.9-3.4-2.6-5.7-2.1Z" opacity=".8"/>
+          </svg>
+          <b>Our collection</b>
+          <i aria-hidden="true"></i>
+        </span>
+        <h2>Handpicked Rakhis<br>for Every Bond</h2>
+        <p class="ap-sub">Explore our exclusive range<br class="ap-br"> and find the perfect one.</p>
+      </span>
+    </div>
+
+    <!-- Filter and Sort, side by side. The shelves live behind Filter rather
+         than in a row of their own: seven of them wrap to three lines on a
+         phone, and a filter nobody can see all of is a filter nobody trusts.
+         From tablet up there is room, so they are simply there. -->
+    <div class="ap-tools" id="apTools">
+      <button class="ap-tb" id="apFilter" type="button" aria-expanded="false" aria-controls="apChips">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M6 12h12M10 18h4"/></svg>
+        Filter
+      </button>
+      <span class="ap-tb-div" aria-hidden="true"></span>
+      <div class="ap-chips" id="apChips">
+        <div class="ap-chips-in">
+          <!-- On a phone this is a headed panel with a title over it and the
+               shelves laid out as a grid; from tablet up the heading is not
+               drawn and the same chips are simply the row in the bar. One set
+               of buttons either way — two would be two things to keep in
+               step, and the pressed one would eventually disagree. -->
+          <p class="ap-fh"><span>Filter by</span></p>
+          <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+        </div>
+      </div>
+      <div class="sortwrap">
+        <button class="sortbtn ap-tb" id="sortBtn" aria-haspopup="listbox" aria-expanded="false">
+          <span class="sr">Sort by:</span>
+          <span id="sortNow">Featured</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <ul class="sortmenu" id="sortMenu" role="listbox" aria-label="Sort by" hidden></ul>
+      </div>
+    </div>
+    <span class="count ap-count" id="rCount"></span>
+
+    <div class="ap-grid" id="apGrid"></div>
+
+    <a class="ccta ap-ccta" href="#made" id="apCustom">
+      <span class="ccta-i" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3.4 11.2h17.2v9.4H3.4z"/>
+          <path d="M2.2 7.6h19.6v3.6H2.2z"/>
+          <path d="M12 7.6v13"/>
+          <path d="M12 7.6S10.9 3.4 8.4 3.4a2.1 2.1 0 0 0 0 4.2Z"/>
+          <path d="M12 7.6s1.1-4.2 3.6-4.2a2.1 2.1 0 0 1 0 4.2Z"/>
+        </svg>
+      </span>
+      <span class="ccta-t">
+        <b>Can&rsquo;t find the perfect one?</b>
+        <span>We do Custom Rakhis too!</span>
+      </span>
+      <span class="ccta-b">Customize<i> now</i>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+  </div>
+</section>
+
 <section class="pv" id="pv" aria-label="Rakhi details" aria-hidden="true">
   <div class="pv-bar">
     <button class="pv-back" id="pvBack" aria-label="Back to the collection">
@@ -962,6 +1048,7 @@
 <script src="js/10b-drift.js"></script>
 <script src="js/11-cart.js"></script>
 <script src="js/12-sheets.js"></script>
+<script src="js/12b-allpage.js"></script>
 <script src="js/13-bill.js"></script>
 <script src="js/14-pdf.js"></script>
 <script src="js/15-motion.js"></script>

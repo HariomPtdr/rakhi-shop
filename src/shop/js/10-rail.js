@@ -36,7 +36,11 @@ function railCard(p, o){
      The saving goes too. On six hand-picked rakhis it is the reason to look
      twice; on the whole catalogue it is a red number beside every single
      price, and a discount that is on everything is not a discount. The
-     struck-out price stays, which says the same thing quietly. */
+     struck-out price stays, which says the same thing quietly.
+
+     tags: puts the labels back on a bare card. The shelf on the home page
+     has no room for them under a name; the full collection does, and there
+     they are what tells one ivory card from the next at a glance. */
   const bare = !!o.bare;
   return `
     <article class="rc" data-go="${p.id}">
@@ -50,7 +54,7 @@ function railCard(p, o){
         bare ? "" : `
         <span class="rc-brand">Ray Art Gallery</span>`}
         <h3 class="rc-n">${esc(p.name)}</h3>${
-        bare ? "" : `
+        (bare && !o.tags) ? "" : `
         ${tagChips(p, 2, true)}`}
         <span class="rc-rule"></span>${
         p.ratings ? `

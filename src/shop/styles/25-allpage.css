@@ -1,0 +1,358 @@
+/* ══════════════════════════════════════════════════════════
+   THE FULL COLLECTION
+
+   The same full-screen view the product page uses, carrying a
+   grid instead of one rakhi: a bar you can leave by, a heading,
+   the chips and the sort, and everything the shop sells.
+
+   Two across on a phone, which is what the mockup asks for and
+   what a 160px card wants. Wider screens take as many as fit
+   rather than a fixed count — a grid told "four" shows four
+   very wide cards on a very wide screen.
+   ══════════════════════════════════════════════════════════ */
+.ap{
+  position:fixed; inset:0; z-index:52;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity .32s var(--ease), transform .32s var(--ease), visibility .32s;
+}
+.ap.on{opacity:1; visibility:visible; transform:none}
+/* the shop underneath does not scroll while this is over it */
+body.ap-on{overflow:hidden}
+
+/* the bar, borrowed whole from a rakhi's own page so leaving works the
+   same way wherever you are */
+.ap-bar{
+  position:sticky; top:0; z-index:4;
+  display:flex; align-items:center; gap:12px;
+  padding:calc(10px + env(safe-area-inset-top)) clamp(18px,4vw,44px) 10px;
+  max-width:1240px; margin:0 auto;
+  background:linear-gradient(180deg, rgba(251,246,236,.97), rgba(251,246,236,.88));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 rgba(217,184,119,.4);
+}
+/* ── back ──
+   The page's own ivory and gold rather than the product page's white disc
+   and grey ring, and it fills with the shop's red rather than black: black
+   was the last hard-edged thing in a bar made of cream and gold. */
+.ap-bar .pv-back{
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+  color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.7),
+             0 8px 18px -12px rgba(120,88,22,.5);
+  transition:background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease), transform .25s var(--ease);
+}
+@media (hover:hover){
+  .ap-bar .pv-back:hover{
+    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+    color:#FFF6E8;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+               inset 0 0 0 1px rgba(217,184,119,.45),
+               0 12px 24px -12px rgba(106,17,20,.7);
+  }
+}
+
+.ap-crumb{
+  flex:1; min-width:0;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,10.5px); letter-spacing:.18em; text-transform:uppercase;
+  color:var(--tan-deep);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* The same gutters and the same maximum as .wrap, which is what every
+   other section on the site is set in. Its own numbers meant the
+   collection started further left than everything above it. */
+.ap-body{
+  max-width:1240px; margin:0 auto;
+  padding:clamp(16px,3.4vw,28px) clamp(18px,4vw,44px)
+          calc(clamp(26px,5vw,44px) + env(safe-area-inset-bottom));
+}
+
+/* ── the banner ──
+   The offer strip's own construction: photographs underneath, every word
+   set in text over them. A banner with its copy baked into a JPEG is
+   unreadable at 320px, unselectable and silent to a screen reader. */
+.ap-hero{
+  position:relative; overflow:hidden;
+  display:grid; place-items:center;
+  min-height:clamp(150px,30vw,230px);
+  margin-bottom:clamp(14px,2.6vw,22px);
+  padding:clamp(18px,3.4vw,34px) clamp(14px,3vw,26px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(120deg,#FCECD7 0%,#FCEBD3 48%,#FAE6CB 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 0 0 1px rgba(217,184,119,.55);
+  text-align:center;
+}
+/* The photographs, one at each end, as backgrounds rather than <img> — the
+   phone wants a tall crop and a wide screen a long one, and a stylesheet
+   can choose between them without the markup having to know which. Both
+   fade into the banner's cream so the words in the middle keep the
+   contrast they need. */
+.ap-art{position:absolute; top:0; bottom:0; pointer-events:none; background-repeat:no-repeat}
+.ap-art-l{
+  left:0; width:min(30%,190px);
+  background-image:url("../../../assets/images/ap-sm-l.webp");
+  background-size:cover; background-position:62% 46%;
+  -webkit-mask-image:linear-gradient(to right, #000 30%, transparent 96%);
+          mask-image:linear-gradient(to right, #000 30%, transparent 96%);
+}
+.ap-art-r{
+  right:0; width:min(26%,150px);
+  background-image:url("../../../assets/images/ap-sm-r.webp");
+  background-size:cover; background-position:32% 46%;
+  -webkit-mask-image:linear-gradient(to left, #000 30%, transparent 96%);
+          mask-image:linear-gradient(to left, #000 30%, transparent 96%);
+}
+@media (min-width:760px){
+  .ap-art-l{
+    width:min(30%,330px);
+    background-image:url("../../../assets/images/ap-wide-l.webp");
+    background-position:40% 50%;
+    -webkit-mask-image:linear-gradient(to right, #000 46%, transparent);
+            mask-image:linear-gradient(to right, #000 46%, transparent);
+  }
+  .ap-art-r{
+    width:min(32%,360px);
+    background-image:url("../../../assets/images/ap-wide-r.webp");
+    background-position:60% 50%;
+    -webkit-mask-image:linear-gradient(to left, #000 46%, transparent);
+            mask-image:linear-gradient(to left, #000 46%, transparent);
+  }
+}
+/* A wash of the banner's own cream under the words. The gift is behind
+   them at one end and the puja thali at the other, and a serif at 23px
+   over a photograph of a ribbon is a serif you have to work at. */
+.ap-hero-t{
+  position:relative; z-index:1; display:block; max-width:min(100%,560px);
+  padding:clamp(6px,1.4vw,10px) clamp(8px,2vw,14px);
+  border-radius:var(--r-lg);
+  background:radial-gradient(120% 100% at 50% 50%,
+             rgba(252,236,215,.94) 0%, rgba(252,236,215,.82) 58%, rgba(252,236,215,0) 100%);
+}
+
+.ap-kick{
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(7px,1.6vw,12px); color:var(--tan);
+}
+.ap-kick i{
+  flex:1; max-width:clamp(18px,7vw,90px); height:1px;
+  background:linear-gradient(to right, transparent, rgba(185,140,46,1), transparent);
+}
+.ap-kick svg{width:clamp(17px,3.4vw,24px); height:auto; flex:none}
+.ap-kick b{
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,1.9vw,11px); letter-spacing:.26em; text-transform:uppercase;
+  color:var(--tan-deep); white-space:nowrap;
+}
+.ap-hero h2{
+  margin-top:clamp(7px,1.4vw,12px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(23px,5.6vw,40px); line-height:1.12; letter-spacing:-.022em;
+  color:#7A1418;
+}
+.ap-sub{
+  margin-top:clamp(6px,1.2vw,11px);
+  font-family:var(--display);
+  font-size:clamp(12px,2.7vw,16px); line-height:1.4; color:var(--ink-soft);
+}
+@media (min-width:640px){.ap-br{display:none}}
+
+/* ── the filter bar ──
+   Filter at one end, Sort at the other, the shelves between them. One row
+   from tablet up, which is the point of it: on a wide screen there is room
+   to show every way in at once, and a filter you can see all of is a filter
+   people use. On a phone there is not, so Filter drops them below the bar
+   as a row that scrolls.
+   ─────────────────────────────────────────────────────── */
+.ap-tools{
+  display:flex; align-items:center; flex-wrap:wrap;
+  border-radius:14px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FBF6EA 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55), 0 10px 26px -20px rgba(120,88,22,.4);
+}
+.ap-tb{
+  flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:clamp(11px,2vw,14px) clamp(14px,2.4vw,20px);
+  border:0; background:none; cursor:pointer; color:#7A1418;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9.5px,2.1vw,11px); letter-spacing:.15em; text-transform:uppercase;
+  /* the same corner as the shelves inside the bar and the cards under it */
+  border-radius:11px; white-space:nowrap;
+}
+.ap-tb svg{flex:none}
+/* No rule between them. Filter sits at one end of the bar and Sort at the
+   other with the whole width between; a hairline in the middle of that gap
+   attaches to neither and reads as a mark on the screen. */
+.ap-tb-div{display:none}
+.ap-tools .sortwrap{position:relative; flex:none; margin-left:auto}
+@media (hover:hover){.ap-tb:hover{background:rgba(185,140,46,.09)}}
+.ap-tb[aria-expanded="true"]{background:rgba(185,140,46,.13)}
+
+/* ── the shelves ──
+   Collapsed until Filter is pressed, on a phone. The clipping is on a
+   wrapper of its own: the chip row is a horizontal scroller, and a
+   scroller cannot also be the thing collapsing to zero — it keeps its
+   scrollport open and the chips show through the closed panel. */
+.ap-chips{
+  flex:1; min-width:0;
+  display:grid; grid-template-rows:0fr;
+  transition:grid-template-rows .38s var(--ease);
+}
+.ap-chips-in{min-height:0; overflow:hidden}
+.ap-chips .chips{
+  display:flex; gap:clamp(6px,1.4vw,10px);
+  overflow-x:auto; scrollbar-width:none; padding:2px 2px 6px;
+}
+.ap-chips .chips::-webkit-scrollbar{display:none}
+
+/* ── one shelf ──
+   The page's own cream and gold rather than the collection grid's white
+   pill and grey rule, and the shop's deep red for the one that is chosen —
+   black was the last hard-edged thing in a bar made of cream and gold. */
+/* Rounded rectangles, not capsules. Seven capsules of very different
+   lengths read as seven different sizes of thing; the same corner on all of
+   them reads as one row of buttons. */
+.ap-chips .chip{
+  flex:none;
+  padding:clamp(9px,1.7vw,12px) clamp(11px,1.9vw,16px); min-height:0;
+  border-radius:10px;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,1.8vw,10px); letter-spacing:.1em;
+  background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+  color:#6B4A22;
+}
+@media (hover:hover){
+  .ap-chips .chip:hover{
+    color:#7A1418;
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,.95);
+  }
+}
+.ap-chips .chip[aria-pressed="true"]{
+  border-radius:10px;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.45),
+             0 8px 18px -10px rgba(106,17,20,.7);
+}
+
+/* From tablet up they share the bar between them rather than bunching at
+   the left of it with Sort marooned at the other end.
+
+   By growing, not by space-between. On a scroller that overflows,
+   space-between lays the items out and then pushes the first one past the
+   scroll origin, where it cannot be scrolled back to — All rakhis was
+   sliced down its left edge with no way to reach the rest of it. Growing
+   spends the spare width inside the buttons, so there is no overflow to
+   mishandle. */
+@media (min-width:760px){
+  .ap-chips .chips{justify-content:flex-start; gap:clamp(5px,.7vw,10px)}
+  .ap-chips .chip{flex:1 1 auto; justify-content:center; text-align:center}
+}
+
+/* ── the panel, on a phone ──
+   Headed, and the shelves in a grid rather than a row that scrolls: a row
+   hides half of what it holds behind a swipe, and the whole point of
+   pressing Filter is to be shown the choices. */
+.ap-fh{display:none}
+@media (max-width:759px){
+  .ap-chips{flex-basis:100%; order:3}
+  .ap-tools.open .ap-chips{grid-template-rows:1fr}
+  .ap-tools.open .ap-chips-in{
+    border-top:1px solid rgba(217,184,119,.55);
+  }
+  .ap-fh{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin:clamp(11px,2.4vw,15px) clamp(13px,3vw,17px) clamp(9px,2vw,12px);
+    font-family:var(--head); font-weight:600;
+    font-size:clamp(8.5px,1.9vw,10px); letter-spacing:.22em; text-transform:uppercase;
+    color:var(--tan-deep);
+  }
+  .ap-fh::before, .ap-fh::after{
+    content:""; flex:1; max-width:60px; height:1px;
+    background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+  }
+  /* Two across. Seven shelves in a scrolling row on a 390px screen shows
+     two and a half of them, which is the same problem the button was
+     opened to solve. */
+  .ap-tools.open .ap-chips .chips{
+    display:grid; grid-template-columns:1fr 1fr;
+    overflow:visible;
+    padding:0 clamp(12px,3vw,16px) clamp(12px,2.6vw,15px);
+  }
+  .ap-chips .chip{width:100%; justify-content:center}
+  /* Rounded at its own bottom corners rather than clipped by the bar.
+     overflow:hidden on the bar would take the sort menu with it — that menu
+     is absolutely positioned and hangs below the bar it belongs to. */
+  .ap-chips{
+    border-bottom-left-radius:14px;
+    border-bottom-right-radius:14px;
+    overflow:hidden;
+  }
+}
+@media (min-width:760px){
+  /* ── the wide bar ──
+     Filter, the shelves and Sort in one tray, the way the reference draws
+     it. Filter is not drawn here: on a wide screen every shelf is already
+     in the bar beside it, and a button offering to reveal what is already
+     revealed is a button that lies. The rule beside it goes with it. */
+  #apFilter{display:none}
+  .ap-tools{
+    gap:clamp(6px,1vw,12px);
+    padding:clamp(8px,1.2vw,11px) clamp(9px,1.4vw,13px);
+    margin-bottom:clamp(10px,2vw,16px);
+  }
+  .ap-chips{grid-template-rows:1fr}
+  .ap-tools .sortbtn{
+    background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
+    box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+    color:#6B4A22;
+  }
+  .ap-tools .sortbtn:hover{color:#7A1418}
+}
+
+/* Not drawn. The grid under it is the answer to what the filter just did,
+   and it is a better one than a number. Kept in the markup because
+   paintGrid() writes to it on every repaint and a shop that has to
+   remember not to would eventually forget. */
+.ap-count{
+  display:none; margin-top:clamp(10px,2vw,14px);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,1.9vw,10px); letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+/* ── the grid ──
+   auto-fill, not a fixed count: told "four", a very wide screen shows four
+   very wide cards. Told a minimum, it shows however many of that size fit
+   and the cards stay the size they were designed at. */
+.ap-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:clamp(10px,2.2vw,18px);
+  align-items:start;
+  margin-top:clamp(12px,2.4vw,20px);
+}
+@media (min-width:640px){
+  .ap-grid{grid-template-columns:repeat(auto-fill, minmax(196px, 1fr))}
+}
+/* The shop's one card, filling its column. The width has to be overridden
+   after the shared rules, or the card keeps the fixed width the shelf gave
+   it and leaves a gap down the right of every cell. */
+.ap-grid > .rc{width:auto; height:100%}
+
+.ap-empty{
+  grid-column:1/-1; padding:clamp(26px,6vw,44px) 0; text-align:center;
+  font-family:var(--display); font-size:clamp(14px,3.2vw,18px); color:var(--ink-faint);
+}
+
+/* the custom-rakhi strip again, at the foot of the list — this is the far
+   end of everything the shop has, which is exactly where "we make them to
+   order too" is worth saying */
+.ap-ccta{margin-top:clamp(20px,4vw,34px)}

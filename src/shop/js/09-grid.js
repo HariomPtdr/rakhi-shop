@@ -21,18 +21,33 @@ $("#chips").addEventListener("click", e=>{
    browser gave us for free: keyboard control, roving focus, and
    closing on Escape or a tap outside.
    ───────────────────────────────────────────────────────── */
+/* ── the ways of ordering it ──
+   Each one carries a mark and a line saying what it does. A list of four
+   phrases all starting with "Price" is four things to read carefully; a
+   mark beside each is one to recognise. */
 const SORTS = [
-  {k:"feat", n:"Featured"},
-  {k:"lo",   n:"Price low to high"},
-  {k:"hi",   n:"Price high to low"},
-  {k:"az",   n:"Name A–Z"}
+  {k:"feat", n:"Featured",     s:"What the shop shows first",
+   i:`<path d="M12 3.6l2.5 5.3 5.7.8-4.2 4 1 5.7-5-2.7-5 2.7 1-5.7-4.2-4 5.7-.8Z"/>`},
+  {k:"lo",   n:"Price: low to high", s:"The gentlest first",
+   i:`<path d="M4 19.5 19.5 4.5M19.5 4.5H13M19.5 4.5V11"/>`},
+  {k:"hi",   n:"Price: high to low", s:"The finest first",
+   i:`<path d="M4 4.5 19.5 19.5M19.5 19.5H13M19.5 19.5V13"/>`},
+  {k:"az",   n:"Name A–Z",     s:"Straight down the list",
+   i:`<path d="M4.5 19.5 9 5l4.5 14.5M6 15h6M17 5v14M17 19l-2.4-2.6M17 19l2.4-2.6"/>`}
 ];
 const sortBtn = $("#sortBtn"), sortMenu = $("#sortMenu");
 let sortHot = 0;
 
-sortMenu.innerHTML = SORTS.map((o,i)=>
-  `<li role="option" id="sort-${o.k}" data-k="${o.k}" aria-selected="${o.k===state.sort}" tabindex="-1">${o.n}</li>`
-).join("");
+sortMenu.innerHTML = SORTS.map(o => `
+  <li role="option" id="sort-${o.k}" data-k="${o.k}"
+      aria-selected="${o.k === state.sort}" tabindex="-1">
+    <span class="so-i" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+           stroke-linecap="round" stroke-linejoin="round">${o.i}</svg>
+    </span>
+    <span class="so-t"><b>${o.n}</b><i>${o.s}</i></span>
+    <span class="so-r" aria-hidden="true"></span>
+  </li>`).join("");
 
 const sortItems = () => [...sortMenu.children];
 function paintSort(){
@@ -140,6 +155,8 @@ function paintGrid(){
   box.innerHTML = list.slice(0, shown).map(cardHtml).join("");
   box.scrollLeft = 0;
   if(typeof driftMarks === "function") driftMarks();
+  /* the full view is the same list, so it is repainted by the same call */
+  if(typeof paintAll === "function") paintAll();
 }
 
 /* the next handful, appended rather than repainted: rebuilding the cards
