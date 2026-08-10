@@ -202,10 +202,17 @@
 }
 
 /* the block under the picture — the bag lives bottom right, so every line
-   of text here keeps clear of its corner */
+   of text here keeps clear of its corner.
+
+   A column that fills whatever height the row settles on, with the price
+   pushed to the floor of it. Names run to one line or two; if the price
+   simply followed the name, one card's price would sit where the next
+   card's rule does. Anchored to the bottom, every price in the row is on
+   the same line and the slack falls where nothing is written. */
+.best .rc{display:flex; flex-direction:column}
 .best .rc-b{
-  position:relative; display:block; margin:0;
-  padding:clamp(11px,2.2vw,14px) clamp(12px,2.4vw,16px) clamp(12px,2.4vw,15px);
+  position:relative; display:flex; flex-direction:column; flex:1; margin:0;
+  padding:clamp(12px,2.4vw,15px) clamp(13px,2.6vw,17px) clamp(13px,2.6vw,16px);
 }
 .best .rc-brand{
   display:block; font-family:var(--head); font-weight:600;
@@ -216,25 +223,29 @@
    one thing on a card that has to arrive whole. */
 .best .rc-n{
   font-family:var(--display); font-weight:600;
-  font-size:clamp(14px,3.2vw,16.5px); letter-spacing:-.014em; line-height:1.2;
-  color:#3B2415; margin:clamp(5px,1vw,7px) 0 0; padding-right:44px;
+  font-size:clamp(14px,3.2vw,16.5px); letter-spacing:-.014em; line-height:1.22;
+  color:#3B2415; margin:clamp(5px,1vw,7px) 0 0; padding-right:52px;
   white-space:normal; overflow:hidden; text-overflow:clip;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
-  min-height:2.4em;
 }
+/* tucked under the name it divides, not floating in the gap above the price */
 .best .rc-rule{
   display:block; height:1px; width:clamp(28px,7vw,44px);
-  margin:clamp(8px,1.6vw,11px) 0 clamp(7px,1.4vw,9px);
+  margin:clamp(9px,1.8vw,12px) 0 0;
   background:linear-gradient(to right, rgba(185,140,46,.85), rgba(185,140,46,0));
 }
 
+/* The floor of the card. Tall enough to stand the bag beside it and hold
+   the price on its centre line, so the two read as one row rather than a
+   number with a button parked near it. */
 .best .rc-prices{
-  display:flex; align-items:baseline; flex-wrap:wrap; gap:0 7px;
-  margin:0; padding-right:44px;
+  display:flex; align-items:baseline; flex-wrap:wrap; gap:0 8px;
+  margin-top:auto; padding-top:clamp(11px,2.2vw,15px); padding-right:56px;
+  min-height:clamp(40px,9vw,46px); align-content:flex-end;
 }
 .best .rc-p{
   font-family:var(--display); font-weight:600;
-  font-size:clamp(17px,4vw,20px); line-height:1.1; color:#3B2415; margin:0;
+  font-size:clamp(19px,4.6vw,23px); line-height:1.05; color:#3B2415; margin:0;
 }
 .best .rc-mrp{
   font-family:var(--head); font-size:clamp(10.5px,2.4vw,12px);
@@ -251,7 +262,7 @@
 /* Only drawn when somebody has actually left one. */
 .best .rc-r{
   display:flex; align-items:center; gap:5px; margin-top:clamp(5px,1vw,7px);
-  padding-right:44px;
+  padding-right:56px;
   font-family:var(--head); font-size:clamp(9px,2.1vw,10.5px); color:var(--ink-faint);
 }
 
@@ -264,16 +275,21 @@
    too many. */
 .best .rc-go{position:static}
 .best .rc-cart{
-  position:absolute; right:clamp(11px,2.2vw,15px); bottom:clamp(11px,2.2vw,15px);
+  position:absolute; right:clamp(13px,2.6vw,17px); bottom:clamp(13px,2.6vw,16px);
   display:grid; place-items:center;
-  width:clamp(34px,7.4vw,38px); height:clamp(34px,7.4vw,38px);
-  padding:0; min-height:0; min-width:0; border:0; border-radius:11px;
+  width:clamp(42px,9.6vw,48px); height:clamp(42px,9.6vw,48px);
+  padding:0; min-height:0; min-width:0; border:0; border-radius:14px;
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
   color:#FFF6E8;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px -10px rgba(106,17,20,.75);
+  /* the gold hairline every raised thing on this page wears, and a lit top
+     edge, so it reads as pressed metal rather than a red square */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 0 0 1px rgba(217,184,119,.34),
+    0 10px 22px -10px rgba(106,17,20,.65);
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
-.best .rc-cart svg{width:17px; height:17px}
+.best .rc-cart svg{width:20px; height:20px; stroke-width:1.6}
 @media (hover:hover){
   .best .rc-cart:hover{
     transform:translateY(-2px);
@@ -283,8 +299,8 @@
 .best .rc-cart:active{transform:translateY(0) scale(.95)}
 /* Sold out keeps the word — it is the one state that may not be a picture. */
 .best .rc-go .btn[disabled]{
-  position:absolute; right:clamp(11px,2.2vw,15px); bottom:clamp(11px,2.2vw,15px);
-  padding:8px 12px; min-height:0; border-radius:var(--r-full); border:0;
+  position:absolute; right:clamp(13px,2.6vw,17px); bottom:clamp(13px,2.6vw,16px);
+  padding:10px 13px; min-height:0; border-radius:var(--r-full); border:0;
   background:rgba(20,18,16,.07); color:var(--ink-faint); box-shadow:none;
   font-size:8.5px; letter-spacing:.08em;
 }

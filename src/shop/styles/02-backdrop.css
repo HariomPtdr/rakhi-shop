@@ -41,8 +41,15 @@
     radial-gradient(58vw 34vw at -12% 2%,  rgba(168,220,231,.40), transparent 64%);
 }
 
-/* the canvas the cart's petals are thrown onto */
-.petals{position:fixed; inset:0; z-index:-1; pointer-events:none; width:100%; height:100%}
+/* the canvas the cart's petals are thrown onto.
+
+   It sat at -1 — behind the page, which is where a drifting-petal
+   background belonged back when there was one. There is not one any more:
+   what is thrown now answers a press on a button, and it was landing
+   underneath the card the button is on, so nobody ever saw it. It goes
+   over the page and under the things that sit on top of the page — the
+   cart bar (46), the WhatsApp button (45), the nav. */
+.petals{position:fixed; inset:0; z-index:44; pointer-events:none; width:100%; height:100%}
 /* the product page sits at 52, so the burst has to be lifted over it —
    still under the cart and the bill (55+) */
 body.pv-on .petals{z-index:53}
