@@ -62,8 +62,15 @@
   overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
   scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
   overscroll-behavior-x:contain;
-  padding:3px clamp(14px,4vw,24px) 8px;
-  scroll-padding-left:clamp(14px,4vw,24px);
+  /* The first card starts where every heading on the page starts. The
+     shelf runs off both edges of the screen, so it cannot sit inside
+     .wrap — it has to reproduce .wrap's own left edge instead: the page
+     gutter, plus whatever .wrap is holding back once the window is wider
+     than 1240px. */
+  --gut:clamp(18px,4vw,44px);
+  --edge:calc(var(--gut) + max(0px, (100vw - 1240px) / 2));
+  padding:3px var(--edge) 8px;
+  scroll-padding-left:var(--edge);
   -webkit-mask-image:linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
           mask-image:linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
 }

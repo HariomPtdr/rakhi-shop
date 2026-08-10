@@ -886,13 +886,40 @@
      HTML file would be a second copy of all of it to keep in step, for one
      grid. The product page and the order page work the same way. -->
 <section class="ap" id="ap" aria-label="The full collection" aria-hidden="true">
+  <!-- The shop's own header, not a back bar. This view covers the page, so
+       whatever the header carries has to be carried here too or the cart
+       and the wishlist simply vanish for as long as somebody is browsing.
+       The chevron replaces the menu: there is one way out of a view. -->
   <div class="ap-bar">
     <button class="pv-back" id="apBack" aria-label="Back">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
     </button>
-    <span class="ap-crumb">The Collection</span>
-    <button class="pv-cart" id="apCart" hidden>Cart <span class="cart-n" id="apCartN">0</span></button>
+
+    <a class="brand ap-brand" href="#top" id="apHome">
+      <svg class="brand-mk" viewBox="0 0 100 100" aria-hidden="true"><g fill="#9C7620"><circle cx="50.00" cy="5.00" r="1.7"/><circle cx="58.78" cy="5.86" r="1.7"/><circle cx="67.22" cy="8.43" r="1.7"/><circle cx="75.00" cy="12.58" r="1.7"/><circle cx="81.82" cy="18.18" r="1.7"/><circle cx="87.42" cy="25.00" r="1.7"/><circle cx="91.57" cy="32.78" r="1.7"/><circle cx="94.14" cy="41.22" r="1.7"/><circle cx="95.00" cy="50.00" r="1.7"/><circle cx="94.14" cy="58.78" r="1.7"/><circle cx="91.57" cy="67.22" r="1.7"/><circle cx="87.42" cy="75.00" r="1.7"/><circle cx="81.82" cy="81.82" r="1.7"/><circle cx="75.00" cy="87.42" r="1.7"/><circle cx="67.22" cy="91.57" r="1.7"/><circle cx="58.78" cy="94.14" r="1.7"/><circle cx="50.00" cy="95.00" r="1.7"/><circle cx="41.22" cy="94.14" r="1.7"/><circle cx="32.78" cy="91.57" r="1.7"/><circle cx="25.00" cy="87.42" r="1.7"/><circle cx="18.18" cy="81.82" r="1.7"/><circle cx="12.58" cy="75.00" r="1.7"/><circle cx="8.43" cy="67.22" r="1.7"/><circle cx="5.86" cy="58.78" r="1.7"/><circle cx="5.00" cy="50.00" r="1.7"/><circle cx="5.86" cy="41.22" r="1.7"/><circle cx="8.43" cy="32.78" r="1.7"/><circle cx="12.58" cy="25.00" r="1.7"/><circle cx="18.18" cy="18.18" r="1.7"/><circle cx="25.00" cy="12.58" r="1.7"/><circle cx="32.78" cy="8.43" r="1.7"/><circle cx="41.22" cy="5.86" r="1.7"/><circle cx="50" cy="50" r="38.6"/></g><circle cx="50" cy="50" r="34.4" fill="none" stroke="#FBF6EC" stroke-width="1.5"/><polygon points="48.32,17.64 51.68,17.64 52.91,25.77 47.09,25.77" fill="#FBF6EC"/><polygon points="60.83,19.46 63.94,20.75 61.96,28.73 56.58,26.50" fill="#FBF6EC"/><polygon points="71.69,25.93 74.07,28.31 69.19,34.93 65.07,30.81" fill="#FBF6EC"/><polygon points="79.25,36.06 80.54,39.17 73.50,43.42 71.27,38.04" fill="#FBF6EC"/><polygon points="82.36,48.32 82.36,51.68 74.23,52.91 74.23,47.09" fill="#FBF6EC"/><polygon points="80.54,60.83 79.25,63.94 71.27,61.96 73.50,56.58" fill="#FBF6EC"/><polygon points="74.07,71.69 71.69,74.07 65.07,69.19 69.19,65.07" fill="#FBF6EC"/><polygon points="63.94,79.25 60.83,80.54 56.58,73.50 61.96,71.27" fill="#FBF6EC"/><polygon points="51.68,82.36 48.32,82.36 47.09,74.23 52.91,74.23" fill="#FBF6EC"/><polygon points="39.17,80.54 36.06,79.25 38.04,71.27 43.42,73.50" fill="#FBF6EC"/><polygon points="28.31,74.07 25.93,71.69 30.81,65.07 34.93,69.19" fill="#FBF6EC"/><polygon points="20.75,63.94 19.46,60.83 26.50,56.58 28.73,61.96" fill="#FBF6EC"/><polygon points="17.64,51.68 17.64,48.32 25.77,47.09 25.77,52.91" fill="#FBF6EC"/><polygon points="19.46,39.17 20.75,36.06 28.73,38.04 26.50,43.42" fill="#FBF6EC"/><polygon points="25.93,28.31 28.31,25.93 34.93,30.81 30.81,34.93" fill="#FBF6EC"/><polygon points="36.06,20.75 39.17,19.46 43.42,26.50 38.04,28.73" fill="#FBF6EC"/><polygon points="65.20,65.20 34.80,65.20 34.80,34.80 65.20,34.80" fill="none" stroke="#FBF6EC" stroke-width="2.1"/><polygon points="50.00,71.50 28.50,50.00 50.00,28.50 71.50,50.00" fill="none" stroke="#FBF6EC" stroke-width="2.1"/><ellipse cx="50.00" cy="38.40" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(0.0 50.00 38.40)"/><ellipse cx="58.20" cy="41.80" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(45.0 58.20 41.80)"/><ellipse cx="61.60" cy="50.00" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(90.0 61.60 50.00)"/><ellipse cx="58.20" cy="58.20" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(135.0 58.20 58.20)"/><ellipse cx="50.00" cy="61.60" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(180.0 50.00 61.60)"/><ellipse cx="41.80" cy="58.20" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(225.0 41.80 58.20)"/><ellipse cx="38.40" cy="50.00" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(270.0 38.40 50.00)"/><ellipse cx="41.80" cy="41.80" rx="2.0" ry="3.6" fill="#FBF6EC" transform="rotate(315.0 41.80 41.80)"/><polygon points="55.40,50.00 53.82,53.82 50.00,55.40 46.18,53.82 44.60,50.00 46.18,46.18 50.00,44.60 53.82,46.18" fill="#FBF6EC"/></svg>
+      <span>
+        <span class="brand-n">Ray Art Gallery</span>
+        <span class="brand-s">Handmade Rakhi</span>
+      </span>
+    </a>
+
+    <!-- Saved rakhis, where a search box would be on a shop that had one.
+         This one has seven shelves and a sort; a search box over twelve
+         rakhis is a box to type into instead of looking. -->
+    <button class="nav-me nav-like" id="apWish" aria-label="Saved rakhis">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 0 1 19.4 13Z"/>
+      </svg>
+      <i id="apWishN" hidden>0</i>
+    </button>
+    <button class="ap-cart" id="apCart" aria-label="Your cart">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
+      <i class="cart-n" id="apCartN">0</i>
+    </button>
   </div>
 
   <div class="ap-body">
@@ -932,12 +959,6 @@
       <span class="ap-tb-div" aria-hidden="true"></span>
       <div class="ap-chips" id="apChips">
         <div class="ap-chips-in">
-          <!-- On a phone this is a headed panel with a title over it and the
-               shelves laid out as a grid; from tablet up the heading is not
-               drawn and the same chips are simply the row in the bar. One set
-               of buttons either way — two would be two things to keep in
-               step, and the pressed one would eventually disagree. -->
-          <p class="ap-fh"><span>Filter by</span></p>
           <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
         </div>
       </div>
@@ -976,6 +997,38 @@
           <path d="M4 12h15M13 6l6 6-6 6"/></svg>
       </span>
     </a>
+  </div>
+  <!-- ── the filter sheet ──
+       On a phone the shelves rise from the bottom of the screen rather
+       than pushing the grid down the page: a panel that grows in place
+       moves the thing you were looking at, and the shelves are chosen with
+       a thumb, which lives at the bottom.
+
+       The chips inside are the same buttons the wide bar uses — moved,
+       not copied. Two sets would be two things to keep in step, and the
+       pressed one would eventually disagree with the grid. -->
+  <div class="fsheet" id="fsheet" role="dialog" aria-modal="true"
+       aria-labelledby="fsheetT" aria-hidden="true">
+    <div class="fsheet-in">
+      <button class="fsheet-grab" id="fsheetGrab" type="button" aria-label="Close"></button>
+      <div class="fsheet-h">
+        <h3 id="fsheetT">Filter</h3>
+        <button class="fsheet-x" id="fsheetX" type="button" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="fsheet-b">
+        <p class="fsheet-k">Shelf</p>
+        <div id="fsheetChips"></div>
+      </div>
+
+      <div class="fsheet-f">
+        <button class="fsheet-clear" id="fsheetClear" type="button">Clear all</button>
+        <button class="fsheet-go" id="fsheetGo" type="button">Show <b id="fsheetN">0</b> rakhis</button>
+      </div>
+    </div>
   </div>
 </section>
 

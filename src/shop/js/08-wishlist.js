@@ -46,8 +46,13 @@ function paintHearts(){
     b.setAttribute("aria-pressed", String(on));
     b.setAttribute("aria-label", on ? "Remove from your wishlist" : "Save to your wishlist");
   });
-  const n = $("#wishN");
-  if(n){ n.textContent = wish.length; n.hidden = !wish.length; }
+  /* both hearts — the one in the header and the one in the full collection,
+     which covers the header while it is open */
+  [$("#wishN"), $("#apWishN")].forEach(n => {
+    if(!n) return;
+    n.textContent = wish.length;
+    n.hidden = !wish.length;
+  });
 }
 
 function toggleWish(id){

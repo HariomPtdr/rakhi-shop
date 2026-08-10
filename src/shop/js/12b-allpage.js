@@ -30,6 +30,7 @@ function openAll(fromHash){
 }
 
 function hideAll(){
+  closeFilter();
   apEl.classList.remove("on");
   apEl.setAttribute("aria-hidden", "true");
   document.body.classList.remove("ap-on");
@@ -60,38 +61,76 @@ function paintAll(){
   if(typeof paintHearts === "function") paintHearts();
 }
 
-/* ── Filter ──
-   Opens the shelves on a phone. From tablet up they are simply there and
-   the button is not drawn, so this never runs. */
-const apTools = $("#apTools"), apFilter = $("#apFilter");
-const apShelves = open => {
-  apTools.classList.toggle("open", open);
-  if(apFilter) apFilter.setAttribute("aria-expanded", String(open));
-};
-if(apFilter) apFilter.onclick = () => {
-  /* Sort hangs off the same bar and opens downwards into the same space, so
-     one closes the other. Both at once is two panels over each other with
-     the chips showing through the gaps. */
+/* ══════════════════════════════════════════════════════════
+   THE FILTER SHEET
+
+   On a phone the shelves rise from the bottom rather than
+   pushing the grid down the page — a panel that grows in place
+   moves the thing you were looking at, and shelves are chosen
+   with a thumb, which lives at the bottom of the screen.
+
+   The chips inside it are the same buttons the wide bar uses,
+   moved rather than copied. Two sets of them would be two
+   things to keep in step, and the pressed one would eventually
+   disagree with the grid.
+   ══════════════════════════════════════════════════════════ */
+const fsheet = $("#fsheet"), apFilter = $("#apFilter");
+const fsheetOn = () => fsheet.classList.contains("on");
+
+function openFilter(){
+  if(fsheetOn()) return;
+  /* Sort hangs off the same bar; one panel at a time. */
   if(typeof closeSort === "function") closeSort();
-  apShelves(!apTools.classList.contains("open"));
+  $("#fsheetChips").appendChild($("#chips"));
+  fsheet.classList.add("on");
+  fsheet.setAttribute("aria-hidden", "false");
+  if(apFilter) apFilter.setAttribute("aria-expanded", "true");
+  paintFilterCount();
+}
+function closeFilter(){
+  if(!fsheetOn()) return;
+  fsheet.classList.remove("on");
+  fsheet.setAttribute("aria-hidden", "true");
+  if(apFilter) apFilter.setAttribute("aria-expanded", "false");
+  /* The chips go home once it has slid out of sight. Moved back while it
+     is still animating, they vanish from under the thumb that just
+     pressed one. */
+  setTimeout(() => {
+    if(!fsheetOn()) $("#apChips").querySelector(".ap-chips-in").appendChild($("#chips"));
+  }, reduced ? 0 : 380);
+}
+const paintFilterCount = () => { $("#fsheetN").textContent = visible().length; };
+
+if(apFilter) apFilter.onclick = () => fsheetOn() ? closeFilter() : openFilter();
+$("#fsheetX").onclick = closeFilter;
+$("#fsheetGrab").onclick = closeFilter;
+$("#fsheetGo").onclick = closeFilter;
+/* the dim behind it */
+fsheet.addEventListener("click", e => { if(e.target === fsheet) closeFilter(); });
+$("#fsheetClear").onclick = () => {
+  state.cat = "all"; state.band = null;
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  paintGrid();
+  paintFilterCount();
 };
-/* and the other way round */
-$("#sortBtn").addEventListener("click", () => apShelves(false));
-/* Picking a shelf answers the question the panel was asking, so it closes
-   itself — the grid underneath is what they wanted to look at. */
+/* Picking a shelf leaves the sheet up: the button under it counts what
+   that shelf holds, so the choice can be changed before committing to it. */
 $("#chips").addEventListener("click", e => {
-  if(!e.target.closest(".chip")) return;
-  if(matchMedia("(max-width:759px)").matches) apShelves(false);
+  if(e.target.closest(".chip")) paintFilterCount();
 });
 
 /* ── the way in and out ── */
 $("#apBack").onclick = () => closeAll();
-$("#apCart").onclick = () => { closeAll(); openCart(); };
+$("#apHome").onclick = e => { e.preventDefault(); closeAll(); };
+$("#apCart").onclick = () => openCart();
+$("#apWish").onclick = () => openAcct("wishlist");
 
 /* Escape, and the phone's back button, both mean the same thing here as
    they do on a rakhi's own page. */
 addEventListener("keydown", e => {
-  if(e.key === "Escape" && allOpen() && !isOn("#drawer")) closeAll();
+  if(e.key !== "Escape" || !allOpen() || isOn("#drawer")) return;
+  /* innermost first: the sheet over the view, then the view */
+  if(fsheetOn()) closeFilter(); else closeAll();
 });
 
 /* The hash decides which view is showing — same rule as the product page,

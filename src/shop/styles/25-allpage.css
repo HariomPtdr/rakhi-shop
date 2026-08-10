@@ -54,12 +54,35 @@ body.ap-on{overflow:hidden}
   }
 }
 
-.ap-crumb{
-  flex:1; min-width:0;
-  font-family:var(--head); font-weight:600;
-  font-size:clamp(9px,2vw,10.5px); letter-spacing:.18em; text-transform:uppercase;
-  color:var(--tan-deep);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+/* the brand, exactly as the header wears it */
+.ap-brand{margin-right:auto; min-width:0}
+.ap-brand .brand-mk{width:34px; height:34px}
+@media (min-width:900px){.ap-brand .brand-mk{width:38px; height:38px}}
+@media (max-width:400px){
+  .ap-brand .brand-s{display:none}
+  .ap-bar{gap:8px}
+}
+
+/* the cart, the same red button the header carries */
+.ap-cart{
+  position:relative; flex:none;
+  display:inline-grid; place-items:center; width:42px; height:42px;
+  border:0; border-radius:50%; cursor:pointer;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 58%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 10px 22px -12px rgba(106,17,20,.6);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.ap-cart:active{transform:scale(.94)}
+@media (hover:hover){
+  .ap-cart:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 16px 30px -14px rgba(106,17,20,.75)}
+}
+.ap-cart .cart-n{
+  position:absolute; top:-3px; right:-3px;
+  min-width:18px; height:18px; padding:0 5px;
+  font-size:10px; font-style:normal;
+  background:#FFF6E8; color:#6A1114;
+  box-shadow:0 0 0 2px var(--bg);
 }
 
 /* The same gutters and the same maximum as .wrap, which is what every
@@ -256,46 +279,13 @@ body.ap-on{overflow:hidden}
   .ap-chips .chip{flex:1 1 auto; justify-content:center; text-align:center}
 }
 
-/* ── the panel, on a phone ──
-   Headed, and the shelves in a grid rather than a row that scrolls: a row
-   hides half of what it holds behind a swipe, and the whole point of
-   pressing Filter is to be shown the choices. */
-.ap-fh{display:none}
+/* On a phone the shelves are not in the bar at all — they are in the sheet
+   that rises from the bottom. Collapsed to nothing here, and moved into
+   the sheet when Filter is pressed. */
 @media (max-width:759px){
-  .ap-chips{flex-basis:100%; order:3}
-  .ap-tools.open .ap-chips{grid-template-rows:1fr}
-  .ap-tools.open .ap-chips-in{
-    border-top:1px solid rgba(217,184,119,.55);
-  }
-  .ap-fh{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    margin:clamp(11px,2.4vw,15px) clamp(13px,3vw,17px) clamp(9px,2vw,12px);
-    font-family:var(--head); font-weight:600;
-    font-size:clamp(8.5px,1.9vw,10px); letter-spacing:.22em; text-transform:uppercase;
-    color:var(--tan-deep);
-  }
-  .ap-fh::before, .ap-fh::after{
-    content:""; flex:1; max-width:60px; height:1px;
-    background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
-  }
-  /* Two across. Seven shelves in a scrolling row on a 390px screen shows
-     two and a half of them, which is the same problem the button was
-     opened to solve. */
-  .ap-tools.open .ap-chips .chips{
-    display:grid; grid-template-columns:1fr 1fr;
-    overflow:visible;
-    padding:0 clamp(12px,3vw,16px) clamp(12px,2.6vw,15px);
-  }
-  .ap-chips .chip{width:100%; justify-content:center}
-  /* Rounded at its own bottom corners rather than clipped by the bar.
-     overflow:hidden on the bar would take the sort menu with it — that menu
-     is absolutely positioned and hangs below the bar it belongs to. */
-  .ap-chips{
-    border-bottom-left-radius:14px;
-    border-bottom-right-radius:14px;
-    overflow:hidden;
-  }
+  .ap-chips{flex-basis:100%; order:3; grid-template-rows:0fr}
 }
+
 @media (min-width:760px){
   /* ── the wide bar ──
      Filter, the shelves and Sort in one tray, the way the reference draws
@@ -356,3 +346,134 @@ body.ap-on{overflow:hidden}
    end of everything the shop has, which is exactly where "we make them to
    order too" is worth saying */
 .ap-ccta{margin-top:clamp(20px,4vw,34px)}
+
+/* ══════════════════════════════════════════════════════════
+   THE FILTER SHEET
+
+   The shelves rise from the bottom of the screen. A panel that
+   grows in place pushes the grid down the page — it moves the
+   thing you were looking at while you look at it — and shelves
+   are chosen with a thumb, which is at the bottom of a phone.
+
+   Built out of the same ivory and gold as everything else
+   raised here, with the shop's red on the one button that
+   commits. Never drawn from tablet up: there the whole row of
+   shelves is already in the bar.
+   ══════════════════════════════════════════════════════════ */
+.fsheet{
+  position:fixed; inset:0; z-index:56;
+  display:flex; align-items:flex-end;
+  background:rgba(38,22,10,.44);
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  opacity:0; visibility:hidden;
+  transition:opacity .3s var(--ease), visibility .3s;
+}
+.fsheet.on{opacity:1; visibility:visible}
+@media (min-width:760px){.fsheet{display:none}}
+
+.fsheet-in{
+  width:100%; max-height:min(78vh, 620px);
+  display:flex; flex-direction:column;
+  border-radius:26px 26px 0 0;
+  background:linear-gradient(178deg,#FFFEFA 0%,#FCF7EC 42%,#F9F2E3 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+             inset 0 0 0 1px rgba(217,184,119,.6),
+             0 -22px 50px -18px rgba(60,34,8,.45);
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.22,1,.36,1);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.fsheet.on .fsheet-in{transform:none}
+@media (prefers-reduced-motion:reduce){.fsheet-in{transition:none}}
+
+/* the bar you pull down on, and the target around it */
+.fsheet-grab{
+  flex:none; display:block; width:100%; padding:11px 0 4px;
+  border:0; background:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.fsheet-grab::before{
+  content:""; display:block; width:44px; height:4px; margin:0 auto;
+  border-radius:999px; background:rgba(185,140,46,.55);
+}
+
+.fsheet-h{
+  flex:none; display:flex; align-items:center; gap:12px;
+  padding:6px 20px 12px;
+}
+.fsheet-h h3{
+  flex:1; min-width:0;
+  font-family:var(--display); font-weight:600;
+  font-size:23px; letter-spacing:-.02em; color:#3B2415;
+}
+.fsheet-x{
+  flex:none; display:grid; place-items:center; width:34px; height:34px;
+  border:0; border-radius:50%; cursor:pointer;
+  background:rgba(255,253,248,.9); color:var(--ink-soft);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+}
+.fsheet-x:active{transform:scale(.94)}
+
+.fsheet-b{
+  flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:4px 20px 18px;
+  border-top:1px solid rgba(217,184,119,.5);
+}
+.fsheet-k{
+  margin:16px 0 10px;
+  font-family:var(--head); font-weight:600;
+  font-size:9px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+/* the chips, two across and full width — they are a list of choices here,
+   not a row of controls */
+.fsheet .chips{
+  display:grid; grid-template-columns:1fr 1fr; gap:9px;
+  overflow:visible; padding:0;
+}
+.fsheet .chip{
+  width:100%; justify-content:center; text-align:center; flex:none;
+  padding:13px 10px; min-height:0; border-radius:12px;
+  font-family:var(--head); font-weight:600;
+  font-size:9.5px; letter-spacing:.1em;
+  background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+  color:#6B4A22;
+}
+.fsheet .chip[aria-pressed="true"]{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.45),
+             0 8px 18px -10px rgba(106,17,20,.7);
+}
+
+/* ── the foot ──
+   Clear all and the one that commits, which counts what it is about to
+   show. Somebody choosing a shelf can see what it holds before leaving
+   the sheet on it. */
+.fsheet-f{
+  flex:none; display:flex; gap:11px; padding:13px 20px 17px;
+  border-top:1px solid rgba(217,184,119,.5);
+  background:linear-gradient(180deg, rgba(252,247,236,0), rgba(249,242,227,.9));
+}
+.fsheet-clear, .fsheet-go{
+  flex:1; min-height:50px; border:0; border-radius:14px; cursor:pointer;
+  font-family:var(--head); font-weight:600;
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.fsheet-clear{
+  background:transparent; color:var(--tan-deep);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
+}
+.fsheet-go{
+  flex:1.4;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.4),
+             0 12px 26px -12px rgba(106,17,20,.7);
+}
+.fsheet-go b{font-weight:700}
+.fsheet-clear:active, .fsheet-go:active{transform:scale(.98)}
