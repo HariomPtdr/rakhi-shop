@@ -97,15 +97,20 @@
   font-size:clamp(7.5px,1.8vw,9px); letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-faint); padding-right:38px;
 }
-/* Gold, and solid: it is the only thing on the card that can be pressed, and
-   the whole card presses it. */
+/* The shop's deep red, the same as Shop now, the cart bar and the bag on a
+   bestseller card. It is the only thing on the card that can be pressed and
+   the whole card presses it — and every other pressable corner on this page
+   is this red, so this one was the odd gold circle out. */
 .cat-go{
   position:absolute; right:clamp(11px,2.2vw,15px); bottom:clamp(11px,2.2vw,15px);
   display:grid; place-items:center;
   width:clamp(28px,6.4vw,34px); aspect-ratio:1; border-radius:50%;
-  background:linear-gradient(160deg,#C9A24A 0%,#B08324 52%,#8E6716 100%);
-  color:#FFF8E9;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.32), 0 6px 14px -8px rgba(120,88,22,.7);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    inset 0 0 0 1px rgba(217,184,119,.34),
+    0 6px 14px -8px rgba(106,17,20,.7);
   transition:transform .4s var(--ease);
 }
 @media (hover:hover){.cat:hover .cat-go{transform:translateX(3px)}}

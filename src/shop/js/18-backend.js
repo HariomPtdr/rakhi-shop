@@ -69,6 +69,11 @@ function applyCatalogue(rows){
     stock: (r.stock === null || r.stock === undefined) ? null : r.stock,
     rating: r.rating_avg == null ? null : Number(r.rating_avg),
     ratings: r.rating_count || 0,
+    /* Absent until 22-tags.sql has been run, and absent on any rakhi
+       nobody has labelled yet — an empty list either way, so nothing
+       downstream has to ask which of the two it is looking at. */
+    tags:  Array.isArray(r.tags) ? r.tags.filter(Boolean) : [],
+    mrp:   r.mrp == null ? null : Number(r.mrp),
     art:   (r.art && r.art.thread) ? r.art : {thread:"#C0272D", bead:"#FDFCF7", charm:"moti"}
   }));
 
@@ -108,7 +113,12 @@ const CAT_CORE = "id,kind,name,price,mrp,cat,feat,descr,image_path,art,includes,
    carrying every one of its photo rows made the first request of the visit
    grow with the shop — and the grid only ever draws the cover. The rest are
    fetched for the one rakhi somebody actually opens. */
-const CAT_FULL = CAT_CORE + ",rating_avg,rating_count";
+const CAT_RATED = CAT_CORE + ",rating_avg,rating_count";
+/* Tags arrive with 22-tags.sql, so they get a step of their own. Asked for
+   in the same breath as the ratings, one missing column would take the
+   stars down with it — a migration not yet run costing the shop something
+   that was already working. */
+const CAT_FULL = CAT_RATED + ",tags";
 
 /* 300 was a cap nobody would notice passing: product 301 simply would not
    be in the shop, with no error to say so. Raised well past what this shop
@@ -116,13 +126,15 @@ const CAT_FULL = CAT_CORE + ",rating_avg,rating_count";
 const CAT_MAX = 2000;
 
 async function loadCatalogue(){
+  const ask = cols => SB.rest("products?select=" + cols
+                            + "&active=eq.true&order=feat.asc&limit=" + CAT_MAX);
   let rows;
-  try{
-    rows = await SB.rest("products?select=" + CAT_FULL
-                       + "&active=eq.true&order=feat.asc&limit=" + CAT_MAX);
-  }catch(err){
-    rows = await SB.rest("products?select=" + CAT_CORE
-                       + "&active=eq.true&order=feat.asc&limit=" + CAT_MAX);
+  /* widest first, then narrower, rather than straight to the core columns:
+     one missing migration should cost only what that migration adds */
+  try{ rows = await ask(CAT_FULL); }
+  catch(err){
+    try{ rows = await ask(CAT_RATED); }
+    catch(err2){ rows = await ask(CAT_CORE); }
   }
   if(Array.isArray(rows) && rows.length >= CAT_MAX){
     console.warn("The catalogue hit the " + CAT_MAX + " row ceiling — "

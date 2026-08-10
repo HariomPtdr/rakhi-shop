@@ -18,6 +18,23 @@
    away.
    ══════════════════════════════════════════════════════════ */
 const CATS_EDIT   = ["evil-eye","pearl","traditional","kids","lumba","premium"];
+/* ── tags ──
+   The shelf is one word and a rakhi gets exactly one. Tags are everything
+   else true about it, and it may have as many as are true.
+
+   These are only the ones offered as buttons — anything can be typed. They
+   are here so that a batch going up in one sitting gets labelled with the
+   same words each time: "evil eye" typed eleven ways is eleven tags, and
+   the shop would show all eleven. */
+const TAGS_SUGGEST = [
+  "evil-eye","designer","kids","cartoon","bhabhi","lumba","bhaiya-bhabhi",
+  "religious","traditional","pearl","kundan","premium","set","gift-box",
+  "handmade","bestseller"
+];
+const tagsOf = p => Array.isArray(p && p.tags) ? p.tags.filter(Boolean) : [];
+const cleanTag = t => String(t).trim().toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-")
+                        .replace(/-+/g, "-").replace(/^-|-$/g, "");
 const CHARMS_EDIT = ["nazar","moti","rudraksh","om","swastik","ful","star","dil"];
 
 let editing = null;      // the product as the database last confirmed it
@@ -78,6 +95,9 @@ function previewCard(p){
       <span class="pvw-heart" aria-hidden="true">♡</span>
     </div>
     <h3>${esc(p.name || "Untitled")}</h3>
+    ${tagsOf(p).length ? `<div class="pvw-tags">${tagsOf(p).slice(0, 3).map(x =>
+      `<span>${esc(x.replace(/-/g, " "))}</span>`).join("")}${
+      tagsOf(p).length > 3 ? `<span class="more">+${tagsOf(p).length - 3}</span>` : ""}</div>` : ""}
     ${p.rating_count ? `<div class="pvw-r">${starsHtml(Number(p.rating_avg) || 0, 12)}
       <span>${p.rating_count}</span></div>` : ""}
     <p>${esc(p.descr || "No description yet — the card shows this line under the name.")}</p>
@@ -106,6 +126,8 @@ function draft(){
     price: num("ePrice") || 0,
     mrp:   num("eMrp"),
     stock: num("eStock"),
+    tags:  $("#eTags") ? [...new Set(($("#eTags").value || "").split(",")
+                            .map(cleanTag).filter(Boolean))] : tagsOf(editing),
     art:   $("#eThread") ? {thread: $("#eThread").value, bead: "#FDFCF7", charm: $("#eCharm").value}
                          : editing.art
   });
@@ -202,6 +224,17 @@ function paintProductPanel(){
           </select></div>
       </div>
       <div class="fg">
+        <div><label class="lab" for="eTags">Tags
+            <span class="dim">— shown on the card, and a way into the shop.
+              Comma between them.</span></label>
+          <input class="inp" id="eTags" value="${esc(tagsOf(p).join(", "))}"
+            placeholder="evil eye, designer, gift box" autocomplete="off">
+          <div class="tagsug" id="eTagSug">${TAGS_SUGGEST.map(s =>
+            `<button class="tagsug-b" type="button" data-t="${esc(s)}">${
+              esc(s.replace(/-/g, " "))}</button>`).join("")}</div>
+        </div>
+      </div>
+      <div class="fg">
         <div><label class="lab" for="eDesc">The line under the name
             <span class="dim">— about ten words is what fits</span></label>
           <textarea class="inp" id="eDesc" rows="2" maxlength="300"
@@ -280,6 +313,26 @@ function paintProductPanel(){
   });
 
   $("#pEdit").addEventListener("submit", e => { e.preventDefault(); saveProduct(); });
+
+  /* The suggestions add to the box rather than replacing it, and a second
+     press takes the tag back off — so a batch can be labelled by pressing
+     four buttons per rakhi without typing, and a mistake costs one press. */
+  const tagBox = $("#eTags");
+  const readTags = () => (tagBox.value || "").split(",").map(cleanTag).filter(Boolean);
+  const markSug = () => {
+    const on = new Set(readTags());
+    $$("#eTagSug .tagsug-b").forEach(b =>
+      b.classList.toggle("on", on.has(b.dataset.t)));
+  };
+  $("#eTagSug").addEventListener("click", e => {
+    const b = e.target.closest("[data-t]"); if(!b) return;
+    const now = readTags(), at = now.indexOf(b.dataset.t);
+    if(at === -1) now.push(b.dataset.t); else now.splice(at, 1);
+    tagBox.value = now.join(", ");
+    markSug(); paintPreview();
+  });
+  tagBox.addEventListener("input", () => { markSug(); paintPreview(); });
+  markSug();
   $("#eCancel").onclick = closePanel;
   $("#eLive").onclick = async () => { await toggleLive(editing.id); syncPanel(); };
   $("#eSold").onclick = async () => { await toggleSoldOut(editing.id); syncPanel(); };
@@ -315,6 +368,10 @@ async function saveProduct(){
     stock: num("eStock"),
     feat:  num("eFeat") == null ? 999 : num("eFeat"),
     best:  $("#eBest").value === "1",
+    /* cleaned and de-duplicated here rather than trusted: the shop groups
+       by the exact string, so "Evil Eye" and "evil-eye" would be two */
+    tags:  [...new Set(($("#eTags").value || "").split(",")
+             .map(cleanTag).filter(Boolean))],
     art:   {thread: $("#eThread").value, bead: "#FDFCF7", charm: $("#eCharm").value}
   };
 

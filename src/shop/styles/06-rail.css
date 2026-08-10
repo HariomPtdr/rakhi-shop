@@ -185,8 +185,13 @@
   }
 }
 
+/* A shade wider than tall, where Shop by Category's picture is square. That
+   card carries two lines and a rule under its picture; this one carries the
+   shop, the name, the tags and the price — so the picture gives back the
+   height the extra lines take, and the two cards end up the same size on
+   the page. */
 .best .rc-shot{
-  border-radius:0; box-shadow:none; aspect-ratio:1;
+  border-radius:0; box-shadow:none; aspect-ratio:5/4;
   background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
 }
 .best .rc-shot img{object-position:center}
@@ -212,10 +217,11 @@
 .best .rc{display:flex; flex-direction:column}
 .best .rc-b{
   position:relative; display:flex; flex-direction:column; flex:1; margin:0;
-  padding:clamp(12px,2.4vw,15px) clamp(13px,2.6vw,17px) clamp(13px,2.6vw,16px);
+  text-align:left;
+  padding:clamp(9px,1.8vw,12px) clamp(12px,2.4vw,15px) clamp(10px,2vw,13px);
 }
 .best .rc-brand{
-  display:block; font-family:var(--head); font-weight:600;
+  display:block; text-align:left; font-family:var(--head); font-weight:600;
   font-size:clamp(7.5px,1.8vw,9px); letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-faint); padding-right:44px;
 }
@@ -224,24 +230,29 @@
 .best .rc-n{
   font-family:var(--display); font-weight:600;
   font-size:clamp(14px,3.2vw,16.5px); letter-spacing:-.014em; line-height:1.22;
-  color:#3B2415; margin:clamp(5px,1vw,7px) 0 0; padding-right:52px;
+  color:#3B2415; margin:clamp(4px,.9vw,6px) 0 0; padding-right:48px;
   white-space:normal; overflow:hidden; text-overflow:clip;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
 }
-/* tucked under the name it divides, not floating in the gap above the price */
+/* Drawn only on a rakhi nobody has tagged. Where there are tags they are
+   already the line between the name and the price, and two dividers in
+   twelve millimetres is one too many. */
 .best .rc-rule{
   display:block; height:1px; width:clamp(28px,7vw,44px);
-  margin:clamp(9px,1.8vw,12px) 0 0;
+  margin:clamp(7px,1.4vw,10px) 0 0;
   background:linear-gradient(to right, rgba(185,140,46,.85), rgba(185,140,46,0));
 }
+.best .tags + .rc-rule{display:none}
+.best .tags{margin-top:clamp(5px,1vw,7px); padding-right:48px}
+.best .tag{padding:3px 8px}
 
 /* The floor of the card. Tall enough to stand the bag beside it and hold
    the price on its centre line, so the two read as one row rather than a
    number with a button parked near it. */
 .best .rc-prices{
   display:flex; align-items:baseline; flex-wrap:wrap; gap:0 8px;
-  margin-top:auto; padding-top:clamp(11px,2.2vw,15px); padding-right:56px;
-  min-height:clamp(40px,9vw,46px); align-content:flex-end;
+  margin-top:auto; padding-top:clamp(8px,1.6vw,11px); padding-right:52px;
+  min-height:clamp(22px,5vw,26px); align-content:flex-end;
 }
 .best .rc-p{
   font-family:var(--display); font-weight:600;
@@ -277,8 +288,8 @@
 .best .rc-cart{
   position:absolute; right:clamp(13px,2.6vw,17px); bottom:clamp(13px,2.6vw,16px);
   display:grid; place-items:center;
-  width:clamp(42px,9.6vw,48px); height:clamp(42px,9.6vw,48px);
-  padding:0; min-height:0; min-width:0; border:0; border-radius:14px;
+  width:clamp(38px,8.6vw,42px); height:clamp(38px,8.6vw,42px);
+  padding:0; min-height:0; min-width:0; border:0; border-radius:13px;
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
   color:#FFF6E8;
   /* the gold hairline every raised thing on this page wears, and a lit top
@@ -289,7 +300,7 @@
     0 10px 22px -10px rgba(106,17,20,.65);
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
-.best .rc-cart svg{width:20px; height:20px; stroke-width:1.6}
+.best .rc-cart svg{width:18px; height:18px; stroke-width:1.6}
 @media (hover:hover){
   .best .rc-cart:hover{
     transform:translateY(-2px);

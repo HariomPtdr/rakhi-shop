@@ -1,0 +1,26 @@
+
+/* ── tags ──
+   A box you can type into, and under it every tag this shop already uses
+   as a button. Pressing is faster than typing and — more to the point —
+   it is the only way twenty rakhis uploaded in one sitting end up with
+   the same spelling on all twenty. */
+.tagsug{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.tagsug-b{
+  padding:5px 10px; border:0; border-radius:999px; cursor:pointer;
+  background:var(--chip-bg, rgba(0,0,0,.05)); color:inherit;
+  font:inherit; font-size:11px; line-height:1.3; opacity:.7;
+  transition:opacity .2s, background .2s, color .2s;
+}
+.tagsug-b:hover{opacity:1}
+.tagsug-b.on{
+  background:#7A1418; color:#FFF6E8; opacity:1; font-weight:600;
+}
+
+/* on the preview card, the same chips the shop draws */
+.pvw-tags{display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 0}
+.pvw-tags span{
+  padding:3px 8px; border-radius:999px; font-size:9.5px; line-height:1.35;
+  background:rgba(255,253,248,.92); color:#9C7620;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+}
+.pvw-tags .more{color:inherit; opacity:.55; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}

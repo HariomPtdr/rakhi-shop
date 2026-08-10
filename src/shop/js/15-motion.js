@@ -10,7 +10,12 @@
    which is not background — it answers a press, it lasts a
    second, and then the canvas is empty again.
    ══════════════════════════════════════════════════════════ */
-const PETAL = ["#F2A93B","#E8871E","#F6C55B","#D9642A","#EFB04A","#C94F22"];
+/* Marigold orange, from before this shop was gold and cream. Six oranges
+   thrown across an ivory page were the one thing on it that belonged to
+   nothing else on it. These are the page's own: the gold of the rims and
+   the hairlines, the tan, the deep gold, the red of the button they are
+   thrown from, and cream to catch the light. */
+const PETAL = ["#C9A24A","#D9B877","#9C7620","#B5384A","#FFF3D6","#E8C86A"];
 const cv = $("#petals"), cx2 = cv.getContext("2d", {alpha:true});
 let W=0, H=0, DPR=1, burst=[], running=false;
 
@@ -27,8 +32,8 @@ function petal(p){
   cx2.beginPath();
   cx2.ellipse(0, 0, p.r*.52, p.r, 0, 0, 6.283);
   cx2.fill();
-  // the pale crease down the middle of a marigold petal
-  cx2.globalAlpha = p.o*.5; cx2.fillStyle = "#FFF3D6";
+  // the pale crease down the middle of the petal
+  cx2.globalAlpha = p.o*.45; cx2.fillStyle = "#FFFDF5";
   cx2.beginPath(); cx2.ellipse(0, 0, p.r*.16, p.r*.72, 0, 0, 6.283); cx2.fill();
   cx2.restore();
 }

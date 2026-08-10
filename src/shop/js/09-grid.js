@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════
    collection
    ══════════════════════════════════════════════════════════ */
-let state = { cat:"all", band:null, sort:"feat" };
+let state = { cat:"all", band:null, tag:null, sort:"feat" };
 /* catalogue numbers follow the order of the list; rebuilt if the list is
    later replaced by the one in the database */
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
@@ -12,7 +12,8 @@ $("#chips").innerHTML = CATS.map(c=>
 $("#chips").addEventListener("click", e=>{
   const b=e.target.closest(".chip"); if(!b) return;
   state.cat=b.dataset.c;
-  state.band=null;              /* one filter at a time; the chips are the way out */
+  /* one filter at a time; the chips are the way out of every other one */
+  state.band=null; state.tag=null;
   $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===state.cat)));
   paintGrid();
 });
@@ -121,6 +122,7 @@ function visible(){
   return PRODUCTS
     .filter(p => state.cat === "all" || p.cat === state.cat)
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
+    .filter(p => !state.tag || (p.tags || []).map(tagKey).indexOf(state.tag) !== -1)
     .sort(by);
 }
 /* ── how much of the collection is on the page ──
@@ -195,6 +197,7 @@ function cardHtml(p){
         ${heartBtn(p.id)}
       </div>
       <h3 class="card-n">${esc(p.name)}</h3>
+      ${tagChips(p)}
       ${p.ratings ? `<div class="card-r">${starsHtml(p.rating, 12)}<span>${p.ratings}</span></div>` : ""}
       <p class="card-d">${esc(p.desc)}</p>
       <div class="card-b">
@@ -297,4 +300,27 @@ $("#budRail").addEventListener("click", e => {
   $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
   paintGrid();
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+});
+
+
+/* ── a tag, pressed ──
+   Every tag anywhere on the page is the same filter, so it is caught once
+   on the document rather than wired up per card. It clears the shelf and
+   the price band on the way: two filters at once is how you arrive at an
+   empty grid and no idea which of them emptied it. */
+document.addEventListener("click", e => {
+  const t = e.target.closest(".tag[data-tag]");
+  if(!t) return;
+  e.preventDefault();
+  const key = t.dataset.tag;
+  /* pressing the tag you are already filtered to is how you get back out */
+  state.tag = state.tag === key ? null : key;
+  state.cat = "all";
+  state.band = null;
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  paintGrid();
+  if(typeof closeProduct === "function" && typeof productOpen === "function" && productOpen())
+    closeProduct();
+  document.getElementById("collection")
+    .scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
 });

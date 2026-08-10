@@ -36,6 +36,7 @@ function railCard(p){
       <div class="rc-b">
         <span class="rc-brand">Ray Art Gallery</span>
         <h3 class="rc-n">${esc(p.name)}</h3>
+        ${tagChips(p, 2, true)}
         <span class="rc-rule"></span>
         <div class="rc-prices">
           <span class="rc-p">${inr(p.price)}</span>${

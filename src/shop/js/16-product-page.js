@@ -87,6 +87,7 @@ function paintProduct(){
            plural(p.ratings, "review")}</span></button>` : ""}
       <div class="pv-price"><b>${inr(p.price)}</b><span>per piece</span></div>
       <p class="pv-desc">${esc(p.desc)}</p>
+      ${tagChips(p, Infinity)}
 
       <div class="pv-rule"></div>
 

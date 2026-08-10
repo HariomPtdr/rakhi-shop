@@ -15,3 +15,43 @@ function toast(m){
   const t=$("#toast"); t.textContent=m; t.classList.add("on");
   clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),2200);
 }
+
+/* ══════════════════════════════════════════════════════════
+   the tags on a rakhi
+
+   A rakhi sits on one shelf — that is `cat`, and it is what the
+   chips above the collection sort by. Tags are everything else
+   true about it: an evil eye rakhi that is also a designer one,
+   a kids rakhi that is also a cartoon one.
+
+   Written once here because the same chips are drawn on the
+   bestseller card, in the collection and on the rakhi's own page,
+   and three copies of this would have drifted apart by the third
+   time somebody changed the wording.
+
+   A tag is stored lowercase and hyphenated so that "Evil Eye",
+   "evil eye" and "evil-eye" are one tag rather than three; it is
+   shown back the way it reads.
+   ══════════════════════════════════════════════════════════ */
+const tagKey   = t => String(t).trim().toLowerCase().replace(/\s+/g, "-");
+const tagLabel = t => String(t).replace(/-/g, " ")
+                       .replace(/\b\w/g, c => c.toUpperCase());
+
+/* max: a card is not a place for eleven of them. The rakhi's own page
+   passes Infinity, because that is where the whole list belongs.
+
+   quiet: leave off the "+2" that says how many did not fit. On the
+   bestseller card it was a third chip taking a second row to report that
+   there was not room for a third chip. */
+function tagChips(p, max, quiet){
+  const list = (p && p.tags || []).map(tagKey).filter(Boolean);
+  if(!list.length) return "";
+  const seen = new Set(), keep = [];
+  list.forEach(t => { if(!seen.has(t)){ seen.add(t); keep.push(t); } });
+  const cap = max == null ? 3 : max;
+  const shown = keep.slice(0, cap);
+  const rest  = keep.length - shown.length;
+  return `<div class="tags">${shown.map(t =>
+    `<button class="tag" type="button" data-tag="${esc(t)}">${esc(tagLabel(t))}</button>`
+  ).join("")}${rest > 0 && !quiet ? `<span class="tag tag-more">+${rest}</span>` : ""}</div>`;
+}
