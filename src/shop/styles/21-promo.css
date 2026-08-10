@@ -63,7 +63,14 @@
   position:relative; z-index:1; display:block; overflow:hidden;
   background:#FCECD7;
 }
-.promo-art img{width:100%; height:100%; object-fit:cover; display:block}
+/* Taken out of the flow: with height:100% against a row whose height is
+   still being worked out, the photograph fell back to its own 724×646 and
+   set the height of the banner from underneath. Now the words set it and
+   the photograph fills whatever they leave. */
+.promo-art img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover; display:block;
+}
 
 .promo-mid{position:relative; z-index:1; display:flex; flex-direction:column}
 
@@ -94,13 +101,13 @@
   font-family:var(--display); font-weight:600;
   /* small enough to stay on one line beside the gift: FREE DELIVERY over
      two lines is the whole reason this banner was taller than the hero */
-  font-size:clamp(19px,5.4vw,58px); line-height:1.02; letter-spacing:-.028em;
+  font-size:clamp(19px,5.4vw,46px); line-height:1.02; letter-spacing:-.028em;
   text-transform:uppercase; color:#7A1418; text-wrap:balance;
 }
 .promo-line{
   display:block; margin-top:clamp(5px,1vw,11px);
   font-family:var(--display);
-  font-size:clamp(12px,2.9vw,25px); line-height:1.3; color:#3B2415;
+  font-size:clamp(12px,2.9vw,21px); line-height:1.3; color:#3B2415;
 }
 .promo-line b{font-weight:600; color:#7A1418}
 
@@ -109,7 +116,7 @@
   display:flex; align-items:center; justify-content:center;
   gap:clamp(6px,1.2vw,10px); margin-top:clamp(6px,1.2vw,14px);
   font-family:var(--display);
-  font-size:clamp(9.5px,2.1vw,16px); line-height:1.3; color:var(--ink-soft);
+  font-size:clamp(9.5px,2.1vw,14px); line-height:1.3; color:var(--ink-soft);
 }
 .promo-note svg{flex:none; color:var(--tan-deep)}
 .promo-note::before, .promo-note::after{
@@ -123,7 +130,7 @@
 .promo-cta{
   position:relative; z-index:1;
   display:inline-flex; align-items:center; justify-content:center; gap:9px;
-  padding:clamp(9px,1.7vw,15px) clamp(16px,3vw,32px);
+  padding:clamp(9px,1.7vw,13px) clamp(16px,3vw,28px);
   border-radius:9px;
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
   color:#FFF6E8;
@@ -133,7 +140,7 @@
     inset 0 0 0 4px rgba(217,184,119,.45),
     0 12px 26px -12px rgba(106,17,20,.7);
   font-family:var(--display); font-weight:600;
-  font-size:clamp(11px,2.3vw,19px); letter-spacing:.02em; white-space:nowrap;
+  font-size:clamp(11px,2.3vw,17px); letter-spacing:.02em; white-space:nowrap;
   transition:transform .4s var(--ease), box-shadow .4s var(--ease);
 }
 .promo-cta svg{transition:transform .4s var(--ease)}
@@ -188,13 +195,13 @@
     padding:0 clamp(22px,3vw,40px) 0 0;
     text-align:center;
   }
-  .promo-art{align-self:stretch; min-height:clamp(190px,20vw,270px)}
+  .promo-art{align-self:stretch; min-height:clamp(150px,14vw,186px)}
   .promo-art img{object-position:center}
   /* the photograph gives out into the panel rather than stopping at a line */
   .promo-art img{
     -webkit-mask-image:linear-gradient(to right, #000 72%, transparent);
             mask-image:linear-gradient(to right, #000 72%, transparent);
   }
-  .promo-mid{padding:clamp(22px,3vw,34px) 0}
+  .promo-mid{padding:clamp(15px,2vw,22px) 0}
   .promo-cta{display:inline-flex; align-self:center; margin-top:0}
 }
