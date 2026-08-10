@@ -1,68 +1,29 @@
 /* ══════════════════════════════════════════════════════════
-   THE WHOLE COLLECTION, DRIFTING
+   THE WHOLE COLLECTION
 
-   Two rows carrying the entire catalogue, moving on their own
-   in opposite directions.
+   Two rows carrying the entire catalogue, pushed along by hand.
 
-   The trick a marquee needs is that the row has to hold its
-   contents twice. The animation slides the track exactly half
-   its own width and then snaps back to nought — and because
-   the second half is a copy of the first, the frame it snaps
-   to is identical to the frame it left, so nothing is seen to
-   jump. Any other distance and the seam is visible on every
-   lap.
+   They used to move on their own. A row that moves on its own
+   is a row you cannot read: the thing you were about to look at
+   walks off the edge, and the rakhi you meant to press is not
+   where your thumb lands. Anything that has to be caught is not
+   a shop, it is a fairground game. They sit still now and go
+   where they are pushed.
 
-   The duration is worked out from the width rather than fixed,
-   so a shop of forty rakhis drifts at the same speed as a shop
-   of ten instead of forty times faster. It is measured after
-   the pictures have been laid out, because a track measured
-   before them is a track measured empty.
+   The card is the bestseller card without the shop's name over
+   every one of them and without the tags — on a rail of six the
+   name says whose these are, on a wall of the whole catalogue
+   it is the same three words forty times.
    ══════════════════════════════════════════════════════════ */
 
-/* px per second — slow enough to read a name off it in passing */
-const DRIFT_SPEED = 26;
-
-function driftTile(p){
-  const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
-  return `
-    <article class="dtile" data-go="${p.id}">
-      <div class="dtile-shot">
-        ${thumb(p)}${
-        off ? `<span class="dtile-off">${off}% off</span>` : ""}
-      </div>
-      <div class="dtile-b">
-        <h3 class="dtile-n">${esc(p.name)}</h3>
-        <span class="dtile-p">${inr(p.price)}</span>
-      </div>
-    </article>`;
-}
-
-/* Split so that neither row is the other's leftovers: taking the first half
-   for the top row would put every featured rakhi on one row and everything
-   the seller ranked last on the other. Alternating gives both rows the same
-   spread, top to bottom of the order. */
+/* Split by alternating rather than in half: taking the first half for the
+   top row would put every featured rakhi on one row and everything the
+   seller ranked last on the other. This gives both rows the same spread. */
 function driftSplit(){
   const pool = [...PRODUCTS].sort((a, b) => a.feat - b.feat);
   const a = [], b = [];
   pool.forEach((p, i) => (i % 2 ? b : a).push(p));
   return [a, b];
-}
-
-function driftFill(el, list){
-  if(!el) return;
-  if(!list.length){ el.innerHTML = ""; return; }
-  /* twice, so the loop has somewhere identical to snap back to */
-  const once = list.map(driftTile).join("");
-  el.innerHTML = once + once;
-}
-
-/* The length of one lap, from the width the browser actually gave it. */
-function driftTime(el){
-  if(!el) return;
-  const half = el.scrollWidth / 2;
-  if(half < 40) return;                       /* nothing laid out yet */
-  el.style.setProperty("--lap", (half / DRIFT_SPEED).toFixed(1) + "s");
-  el.style.setProperty("--half", half.toFixed(1) + "px");
 }
 
 function paintDrift(){
@@ -72,41 +33,63 @@ function paintDrift(){
   /* one row of one rakhi is not two rows of anything */
   sec.hidden = PRODUCTS.length < 4;
   if(sec.hidden) return;
-  driftFill($("#driftA"), a);
-  driftFill($("#driftB"), b);
-  /* after layout, not during it — measured now the track is still 0 wide */
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    driftTime($("#driftA"));
-    driftTime($("#driftB"));
-  }));
+  const A = $("#driftA"), B = $("#driftB");
+  if(A) A.innerHTML = a.map(p => railCard(p, {bare:true})).join("");
+  if(B) B.innerHTML = b.map(p => railCard(p, {bare:true})).join("");
 }
 paintDrift();
 
-/* ── letting somebody stop it ──
-   A row that is still moving under a thumb is a row you tap the wrong
-   rakhi on. Touching it holds it still, and it starts again a moment after
-   the thumb leaves — long enough that a tap lands on what it was aimed at.
-
-   Hover does the same thing on a pointer, in CSS. */
+/* ── the arrows, on a pointer only ──
+   A mouse cannot swipe a scroll container. On touch the swipe is the
+   control and an arrow is a thing to miss. One page is however much of the
+   row is on screen, less one card, so nothing is ever stepped clean over. */
 (function(){
   const rows = $("#driftRows");
   if(!rows) return;
-  let go;
-  const hold = () => { clearTimeout(go); rows.classList.add("held"); };
-  const free = () => { clearTimeout(go); go = setTimeout(() => rows.classList.remove("held"), 900); };
-  rows.addEventListener("pointerdown", hold, {passive:true});
-  rows.addEventListener("pointerup", free, {passive:true});
-  rows.addEventListener("pointercancel", free, {passive:true});
-  rows.addEventListener("pointerleave", free, {passive:true});
-  /* a tab nobody is looking at should not be animating anything */
-  document.addEventListener("visibilitychange", () => {
-    rows.classList.toggle("hidden-tab", document.hidden);
-  });
-})();
 
-/* the rows are as wide as the window, so a resize changes the lap */
-let driftFit;
-addEventListener("resize", () => {
-  clearTimeout(driftFit);
-  driftFit = setTimeout(() => { driftTime($("#driftA")); driftTime($("#driftB")); }, 200);
-}, {passive:true});
+  function page(row, dir){
+    const card = row.querySelector(".rc");
+    const step = card
+      ? Math.max(row.clientWidth - card.getBoundingClientRect().width, card.getBoundingClientRect().width)
+      : row.clientWidth * .8;
+    row.scrollBy({left: dir * step, behavior: reduced ? "auto" : "smooth"});
+  }
+
+  rows.addEventListener("click", e => {
+    const b = e.target.closest("[data-drift]");
+    if(!b) return;
+    const row = b.closest(".drift-row").querySelector(".drift-track");
+    page(row, b.dataset.drift === "next" ? 1 : -1);
+  });
+
+  /* An arrow pointing at a wall is worse than no arrow: each one goes when
+     there is nothing left that way. Checked on scroll rather than on a
+     timer, and only once a frame. */
+  let tick = false;
+  function marks(){
+    tick = false;
+    $$(".drift-row").forEach(rw => {
+      const tr = rw.querySelector(".drift-track");
+      if(!tr) return;
+      const max = tr.scrollWidth - tr.clientWidth;
+      const prev = rw.querySelector('[data-drift="prev"]');
+      const next = rw.querySelector('[data-drift="next"]');
+      /* 2px of slack: a scroll position is a float and rarely lands on 0 */
+      if(prev) prev.hidden = tr.scrollLeft <= 2;
+      if(next) next.hidden = tr.scrollLeft >= max - 2 || max < 4;
+    });
+  }
+  $$(".drift-track").forEach(tr =>
+    tr.addEventListener("scroll", () => {
+      if(tick) return;
+      tick = true;
+      requestAnimationFrame(marks);
+    }, {passive:true}));
+
+  /* after the pictures have been laid out, and again whenever the window
+     changes what fits */
+  requestAnimationFrame(() => requestAnimationFrame(marks));
+  let fit;
+  addEventListener("resize", () => { clearTimeout(fit); fit = setTimeout(marks, 200); }, {passive:true});
+  window.driftMarks = marks;
+})();

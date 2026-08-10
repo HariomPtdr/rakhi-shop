@@ -474,10 +474,10 @@
      homework, and this is meant to be watched rather than worked through.
      The grid is still down there for anybody who wants to narrow it down.
 
-     Two rows rather than one because one row of everything drifting past
-     is a queue; two moving against each other reads as a length of cloth
-     being unrolled, which is what a shop full of rakhi thread should look
-     like. Filled by paintDrift() so it always holds the real catalogue. -->
+     Two rows rather than one because one row of everything is a very long
+     row. They are pushed by hand: a row that moves on its own is a row you
+     cannot read, and the rakhi you meant to press is not where your thumb
+     lands. Filled by paintDrift() so it always holds the real catalogue. -->
 <section class="drift" id="showcase">
   <div class="wrap">
     <div class="drift-h">
@@ -487,7 +487,7 @@
           <circle cx="12" cy="12" r="2.1"/>
         </svg>
       </span>
-      <h2>The Whole Collection</h2>
+      <h2>The Collection</h2>
       <p class="drift-sub">Every rakhi we make, end to end</p>
     </div>
   </div>
@@ -495,8 +495,28 @@
   <!-- outside .wrap on purpose: these run off both edges of the screen,
        which is what says there is more of it than fits -->
   <div class="drift-rows" id="driftRows">
-    <div class="drift-row"><div class="drift-track" id="driftA"></div></div>
-    <div class="drift-row rev"><div class="drift-track" id="driftB"></div></div>
+    <div class="drift-row">
+      <div class="drift-track" id="driftA"></div>
+      <button class="drift-nav prev" type="button" data-drift="prev" aria-label="Back" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="drift-nav next" type="button" data-drift="next" aria-label="More" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="drift-row">
+      <div class="drift-track" id="driftB"></div>
+      <button class="drift-nav prev" type="button" data-drift="prev" aria-label="Back" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="drift-nav next" type="button" data-drift="next" aria-label="More" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="wrap">

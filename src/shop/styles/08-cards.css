@@ -65,20 +65,38 @@
 /* A white disc with a grey ring belonged to no part of this design. Ivory
    and a gold hairline, like every other circle on the page — the two in the
    header, the marks under the hero, the dashed rings in the four reasons. */
+/* ── the heart ──
+   The outline on its own, with no disc behind it. The disc was there to
+   hold it off the photograph; a shadow under the stroke does that without
+   putting a second shape in the corner of every picture on the site.
+
+   The button keeps its full size while only the glyph is drawn — 34px is
+   the smallest thing a thumb should be asked to hit, and shrinking the
+   target to the size of the mark is how a heart gets pressed by accident
+   or missed entirely. */
 .heart{
-  position:absolute; top:8px; right:8px; z-index:3;
-  width:34px; height:34px; display:grid; place-items:center;
+  position:absolute; top:5px; right:5px; z-index:3;
+  width:42px; height:42px; display:grid; place-items:center;
   border:0; padding:0; cursor:pointer; border-radius:50%;
-  background:rgba(255,254,250,.92); color:var(--tan-deep);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.7), 0 4px 10px -6px rgba(120,88,22,.4);
-  transition:color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+  background:none; color:rgba(58,28,12,.78);
+  transition:color .2s var(--ease), transform .2s var(--ease);
   -webkit-tap-highlight-color:transparent;
 }
-.heart svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linejoin:round;
+.heart svg{
+  width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:1.8;
+  stroke-linejoin:round;
+  /* A dark mark with a cream halo, which is the only pair that works on
+     both grounds it lands on: the rakhis photographed on pale card stock,
+     and the ones photographed on something dark. A cream mark alone
+     disappeared into the first; a dark one alone disappears into the
+     second. */
+  filter:drop-shadow(0 1px 1.5px rgba(255,253,248,.95))
+         drop-shadow(0 0 5px rgba(255,253,248,.85))
+         drop-shadow(0 0 9px rgba(255,253,248,.5));
   transition:fill .2s var(--ease)}
 .heart.on{color:var(--rose)}
 .heart.on svg{fill:currentColor}
-@media (hover:hover){.heart:hover{color:var(--rose); background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(185,140,46,.95), 0 6px 14px -7px rgba(120,88,22,.5)}}
+@media (hover:hover){.heart:hover{color:var(--rose)}}
 .heart:active{transform:scale(.88)}
 /* the one moment worth animating: it going from empty to full */
 .heart.on svg{animation:heartpop .32s var(--ease)}
@@ -86,8 +104,8 @@
   0%{transform:scale(1)} 40%{transform:scale(1.28)} 70%{transform:scale(.94)} 100%{transform:scale(1)}
 }
 @media (prefers-reduced-motion:reduce){.heart.on svg{animation:none}}
-.heart-big{top:10px; right:10px; width:46px; height:46px}
-.heart-big svg{width:23px; height:23px}
+.heart-big{top:6px; right:6px; width:52px; height:52px}
+.heart-big svg{width:31px; height:31px; stroke-width:1.7}
 
 /* ── sold out ──
    The rakhi stays on the shop rather than disappearing: someone who came
