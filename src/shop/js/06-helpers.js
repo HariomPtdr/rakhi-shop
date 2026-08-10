@@ -32,6 +32,12 @@ function toast(m){
    A tag is stored lowercase and hyphenated so that "Evil Eye",
    "evil eye" and "evil-eye" are one tag rather than three; it is
    shown back the way it reads.
+
+   They are labels and nothing else. They were buttons that filtered
+   the shop, which meant a tap on a card did one of two different
+   things depending on which two millimetres of it you hit — and the
+   card's own job is to open the rakhi. The chips above the
+   collection are where filtering lives.
    ══════════════════════════════════════════════════════════ */
 const tagKey   = t => String(t).trim().toLowerCase().replace(/\s+/g, "-");
 const tagLabel = t => String(t).replace(/-/g, " ")
@@ -52,6 +58,6 @@ function tagChips(p, max, quiet){
   const shown = keep.slice(0, cap);
   const rest  = keep.length - shown.length;
   return `<div class="tags">${shown.map(t =>
-    `<button class="tag" type="button" data-tag="${esc(t)}">${esc(tagLabel(t))}</button>`
+    `<span class="tag">${esc(tagLabel(t))}</span>`
   ).join("")}${rest > 0 && !quiet ? `<span class="tag tag-more">+${rest}</span>` : ""}</div>`;
 }

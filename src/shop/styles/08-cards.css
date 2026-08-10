@@ -109,34 +109,24 @@
    quieter than the shelf chips above the collection, because
    these are labels first and a filter second.
 
-   Pale ivory, a gold hairline, and the shop's red only once
-   pressed: on a card that already has a red bag in the corner,
-   three red things would be three of the same shout.
+   Pale ivory and a gold hairline. They are read, not pressed —
+   the card underneath them opens the rakhi, and a tag that was
+   also a button made a tap on a card do one of two things
+   depending on which two millimetres of it you hit.
    ══════════════════════════════════════════════════════════ */
 .tags{display:flex; flex-wrap:wrap; gap:5px; margin-top:clamp(6px,1.2vw,8px)}
 .tag{
   display:inline-flex; align-items:center;
-  padding:4px 9px; border:0; border-radius:var(--r-full); cursor:pointer;
+  padding:4px 9px; border:0; border-radius:var(--r-full);
   background:rgba(255,253,248,.92);
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
   color:var(--tan-deep);
   font-family:var(--head); font-weight:600;
   font-size:clamp(8px,1.9vw,9.5px); letter-spacing:.06em;
   line-height:1.35; white-space:nowrap;
-  -webkit-tap-highlight-color:transparent;
-  transition:background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease);
 }
-.tag:active{transform:scale(.96)}
-@media (hover:hover){
-  .tag:hover{
-    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
-    color:#FFF6E8; box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
-  }
-}
-/* the ones that did not fit — a count, not a button */
-.tag-more{cursor:default; color:var(--ink-faint); box-shadow:inset 0 0 0 1px var(--line)}
-@media (hover:hover){.tag-more:hover{background:rgba(255,253,248,.92); color:var(--ink-faint);
-  box-shadow:inset 0 0 0 1px var(--line)}}
+/* the ones that did not fit — a count, quieter than the names */
+.tag-more{color:var(--ink-faint); box-shadow:inset 0 0 0 1px var(--line)}
 
 /* on a rakhi's own page they have room to breathe, and there is no limit
    on how many are drawn */

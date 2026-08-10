@@ -64,7 +64,7 @@ document.addEventListener("click", e => {
      would also walk you into it. */
   const g = e.target.closest("[data-go]");
   if(!g) return;
-  if(e.target.closest(".heart, [data-add], .tag, input, select, textarea")) return;
+  if(e.target.closest(".heart, [data-add], input, select, textarea")) return;
   const other = e.target.closest("a, button");
   if(other && other !== g && !other.hasAttribute("data-go")) return;
   openProduct(g.dataset.go);

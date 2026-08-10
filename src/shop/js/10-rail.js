@@ -37,15 +37,17 @@ function railCard(p){
         <span class="rc-brand">Ray Art Gallery</span>
         <h3 class="rc-n">${esc(p.name)}</h3>
         ${tagChips(p, 2, true)}
-        <span class="rc-rule"></span>
-        <div class="rc-prices">
-          <span class="rc-p">${inr(p.price)}</span>${
-          p.mrp && p.mrp > p.price ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}${
-          off ? `<span class="rc-off">${off}% OFF</span>` : ""}
-        </div>${
+        <span class="rc-rule"></span>${
         p.ratings ? `
         <div class="rc-r">${starsHtml(p.rating, 11)}<span>(${p.ratings})</span></div>` : ""}
-        <div class="rc-go">${cardActs(p, {icon:true})}</div>
+        <div class="rc-foot">
+          <div class="rc-prices">
+            <span class="rc-p">${inr(p.price)}</span>${
+            p.mrp && p.mrp > p.price ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}${
+            off ? `<span class="rc-off">${off}% OFF</span>` : ""}
+          </div>
+          <div class="rc-go">${cardActs(p, {icon:true})}</div>
+        </div>
       </div>
     </article>`;
 }

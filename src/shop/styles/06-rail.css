@@ -217,20 +217,25 @@
 .best .rc{display:flex; flex-direction:column}
 .best .rc-b{
   position:relative; display:flex; flex-direction:column; flex:1; margin:0;
-  text-align:left;
-  padding:clamp(9px,1.8vw,12px) clamp(12px,2.4vw,15px) clamp(10px,2vw,13px);
+  /* The base .rc-b centres its children — it is a row there, and centring
+     is what puts a price and a button on the same line. Here it is a
+     column, and align-items:center in a column shrink-wraps every line and
+     stands it in the middle. That is what was centring the shop's name and
+     the rakhi's. */
+  align-items:stretch; text-align:left;
+  padding:clamp(9px,1.8vw,11px) clamp(12px,2.4vw,15px) clamp(9px,1.8vw,12px);
 }
 .best .rc-brand{
   display:block; text-align:left; font-family:var(--head); font-weight:600;
   font-size:clamp(7.5px,1.8vw,9px); letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ink-faint); padding-right:44px;
+  color:var(--ink-faint);
 }
 /* Two lines, then it stops — never one line cut off mid-word. A name is the
    one thing on a card that has to arrive whole. */
 .best .rc-n{
   font-family:var(--display); font-weight:600;
   font-size:clamp(14px,3.2vw,16.5px); letter-spacing:-.014em; line-height:1.22;
-  color:#3B2415; margin:clamp(4px,.9vw,6px) 0 0; padding-right:48px;
+  color:#3B2415; margin:clamp(3px,.7vw,4px) 0 0;
   white-space:normal; overflow:hidden; text-overflow:clip;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
 }
@@ -243,7 +248,15 @@
   background:linear-gradient(to right, rgba(185,140,46,.85), rgba(185,140,46,0));
 }
 .best .tags + .rc-rule{display:none}
-.best .tags{margin-top:clamp(5px,1vw,7px); padding-right:48px}
+/* One row, always. Two tags that happened to be long words wrapped to a
+   second row, and because every card in a rail is as tall as the tallest,
+   one long pair added a line to all twelve. Whatever does not fit is cut
+   off rather than allowed to cost the row its height. */
+.best .tags{
+  margin-top:clamp(5px,1vw,6px);
+  flex-wrap:nowrap; overflow:hidden;
+}
+.best .tag{flex:none}
 .best .tag{padding:3px 8px}
 
 /* The floor of the card. Tall enough to stand the bag beside it and hold
@@ -251,8 +264,7 @@
    number with a button parked near it. */
 .best .rc-prices{
   display:flex; align-items:baseline; flex-wrap:wrap; gap:0 8px;
-  margin-top:auto; padding-top:clamp(8px,1.6vw,11px); padding-right:52px;
-  min-height:clamp(22px,5vw,26px); align-content:flex-end;
+  flex:1; min-width:0;
 }
 .best .rc-p{
   font-family:var(--display); font-weight:600;
@@ -273,9 +285,21 @@
 /* Only drawn when somebody has actually left one. */
 .best .rc-r{
   display:flex; align-items:center; gap:5px; margin-top:clamp(5px,1vw,7px);
-  padding-right:56px;
   font-family:var(--head); font-size:clamp(9px,2.1vw,10.5px); color:var(--ink-faint);
 }
+
+/* ── the price and the bag, on one line ──
+   The bag used to be pinned to the bottom-right corner with the price
+   pushed down to meet it. Every card in a rail is as tall as the tallest,
+   so on any card with a shorter name that push opened a gap in the middle
+   of the card — and the middle of a card is where a gap is seen. They are
+   one row now, sitting directly under the tags, and the leftover height
+   falls below them where it reads as the card's own padding. */
+.best .rc-foot{
+  display:flex; align-items:center; gap:10px;
+  margin-top:clamp(8px,1.6vw,11px);
+}
+.best .rc-go{flex:none; margin-left:auto}
 
 /* ── the bag ──
    In the corner Shop by Category keeps its arrow, so the two rows read as
@@ -310,7 +334,6 @@
 .best .rc-cart:active{transform:translateY(0) scale(.95)}
 /* Sold out keeps the word — it is the one state that may not be a picture. */
 .best .rc-go .btn[disabled]{
-  position:absolute; right:clamp(13px,2.6vw,17px); bottom:clamp(13px,2.6vw,16px);
   padding:10px 13px; min-height:0; border-radius:var(--r-full); border:0;
   background:rgba(20,18,16,.07); color:var(--ink-faint); box-shadow:none;
   font-size:8.5px; letter-spacing:.08em;
