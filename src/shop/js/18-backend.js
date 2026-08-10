@@ -89,7 +89,6 @@ function applyCatalogue(rows){
 function repaintCatalogue(){
   numberCatalogue();
   paintRail(); buildDots();
-  if(typeof paintDrift === "function") paintDrift();
   paintSets();
   paintGrid();
   paintHearts();
