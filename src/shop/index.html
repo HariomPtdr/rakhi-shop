@@ -62,6 +62,7 @@
 <link rel="stylesheet" href="styles/16-lightbox.css">
 <link rel="stylesheet" href="styles/17-print.css">
 <link rel="stylesheet" href="styles/18-order.css">
+<link rel="stylesheet" href="styles/19-categories.css">
 </head>
 <body>
 <body>
@@ -293,6 +294,112 @@
     </button>
     <div class="dots" id="railDots" role="tablist" aria-label="Featured rakhis"></div>
     </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ shop by category ═══════════
+     Five ways in, for the five ways people arrive: buying for a small boy,
+     for a brother and his wife, wanting the nazar off a child, wanting an Om
+     or a Ganesh, or simply wanting the prettiest thing on the page.
+
+     Each one is a real filter on the collection below, so pressing it takes
+     you there with the chips already set — not to a page that has to be
+     narrowed down again by hand. -->
+<section class="cats" id="categories">
+  <div class="wrap">
+    <div class="cats-h">
+      <span class="cats-orn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+          <circle cx="12" cy="12" r="2.1"/>
+        </svg>
+      </span>
+      <h2>Shop by Category</h2>
+      <p class="cats-sub">Handcrafted rakhi for every bond</p>
+    </div>
+
+    <div class="cat-rail" id="catRail">
+      <a class="cat" href="#collection" data-cat="evil-eye">
+        <span class="cat-shot">
+          <img src="../../assets/images/cat-evil-eye.webp" alt="Evil Eye rakhi"
+               width="660" height="880" loading="lazy" decoding="async">
+        </span>
+        <span class="cat-b">
+          <span class="cat-n">Evil Eye<br>Rakhi</span>
+          <span class="cat-rule"></span>
+          <span class="cat-s">Kept safe from the eye</span>
+          <span class="cat-go" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+      <a class="cat" href="#collection" data-cat="lumba">
+        <span class="cat-shot">
+          <img src="../../assets/images/cat-bhaiya.webp" alt="Bhaiya Bhabhi rakhi"
+               width="660" height="880" loading="lazy" decoding="async">
+        </span>
+        <span class="cat-b">
+          <span class="cat-n">Bhaiya Bhabhi<br>Rakhi</span>
+          <span class="cat-rule"></span>
+          <span class="cat-s">Celebrate togetherness</span>
+          <span class="cat-go" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+      <a class="cat" href="#collection" data-cat="kids">
+        <span class="cat-shot">
+          <img src="../../assets/images/cat-kids.webp" alt="Kids rakhi"
+               width="660" height="880" loading="lazy" decoding="async">
+        </span>
+        <span class="cat-b">
+          <span class="cat-n">Kids<br>Rakhi</span>
+          <span class="cat-rule"></span>
+          <span class="cat-s">Made to make them smile</span>
+          <span class="cat-go" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+      <a class="cat" href="#collection" data-cat="traditional">
+        <span class="cat-shot">
+          <img src="../../assets/images/cat-religious.webp" alt="Religious rakhi"
+               width="660" height="880" loading="lazy" decoding="async">
+        </span>
+        <span class="cat-b">
+          <span class="cat-n">Religious<br>Rakhi</span>
+          <span class="cat-rule"></span>
+          <span class="cat-s">Blessed with love</span>
+          <span class="cat-go" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+      <a class="cat" href="#collection" data-cat="premium">
+        <span class="cat-shot">
+          <img src="../../assets/images/cat-designer.webp" alt="Designer rakhi"
+               width="660" height="880" loading="lazy" decoding="async">
+        </span>
+        <span class="cat-b">
+          <span class="cat-n">Designer<br>Rakhi</span>
+          <span class="cat-rule"></span>
+          <span class="cat-s">For your special ones</span>
+          <span class="cat-go" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
     </div>
   </div>
 </section>

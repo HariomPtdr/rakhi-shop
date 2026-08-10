@@ -209,3 +209,28 @@ const closeLb=fromBack=>{
    "the back button did this" and leaves the pushed history entry behind */
 $("#lbX").onclick = ()=>closeLb();
 $("#lb").addEventListener("click", ()=>closeLb());
+
+/* ══════════════════════════════════════════════════════════
+   SHOP BY CATEGORY → the chips below
+
+   A card that only jumped to the collection would land somebody
+   on the whole catalogue and leave them to narrow it down by
+   hand — having just told us exactly what they wanted. So it
+   sets the filter first and then goes, and the chip is pressed
+   when they arrive, which is also how they see how to get back
+   out to everything.
+   ══════════════════════════════════════════════════════════ */
+const catRail = $("#catRail");
+if(catRail) catRail.addEventListener("click", e => {
+  const a = e.target.closest("[data-cat]");
+  if(!a) return;
+  e.preventDefault();
+  state.cat = a.dataset.cat;
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === state.cat)));
+  paintGrid();
+  /* the chip row scrolls too — a pressed chip off the side of the screen is
+     a filter nobody can see they are inside of */
+  const chip = $(`#chips .chip[data-c="${state.cat}"]`);
+  if(chip) chip.scrollIntoView({block:"nearest", inline:"center"});
+  document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+});
