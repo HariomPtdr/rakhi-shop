@@ -6,22 +6,39 @@
    amounts of money, and a square would read as a fifth card in
    a page already full of cards.
 
+   The heading mirrors Shop by Category — centred, with a flower
+   ornament above and golden rules beside the title.
+
    The tints are the page's own colours at a tenth strength:
    resham, haldi, sindoor, thread, card stock. Enough to tell
-   five circles apart at a glance, not enough to be a colour
+   circles apart at a glance, not enough to be a colour
    scheme of their own.
    ══════════════════════════════════════════════════════════ */
 .budget{padding:clamp(26px,5vw,44px) 0 0}
 .budget[hidden]{display:none}
 
-.bud-h{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:14px; margin-bottom:clamp(14px,2.6vw,22px);
-}
+.bud-h{text-align:center; margin-bottom:clamp(14px,2.6vw,22px)}
+
+/* the flower over the title, the way an invitation is headed */
+.bud-orn{display:block; width:clamp(22px,4.4vw,30px); margin:0 auto clamp(8px,1.4vw,12px); color:var(--tan)}
+.bud-orn svg{width:100%; height:auto; display:block}
+
 .bud-h h2{
+  display:flex; align-items:center; justify-content:center; gap:clamp(10px,2.4vw,20px);
   font-family:var(--display); font-weight:600;
-  font-size:clamp(22px,5.4vw,34px); line-height:1.05; letter-spacing:-.022em;
+  font-size:clamp(25px,6.4vw,42px); line-height:1.05; letter-spacing:-.022em;
   color:#3B2415;
+}
+/* a rule with a point on it, each side, reaching out of the words */
+.bud-h h2::before, .bud-h h2::after{
+  content:""; height:1px; width:clamp(26px,7vw,74px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+}
+.bud-sub{
+  margin-top:clamp(7px,1.4vw,11px);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,2vw,10.5px); letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
 }
 
 .bud-rail{
@@ -29,8 +46,12 @@
   overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
   scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
   overscroll-behavior-x:contain; padding:2px 2px 6px;
+  justify-content:center; flex-wrap:wrap;
 }
 .bud-rail::-webkit-scrollbar{display:none}
+@media (max-width:639px){
+  .bud-rail{justify-content:flex-start; flex-wrap:nowrap}
+}
 
 .bud{
   flex:none; width:clamp(104px,26vw,150px); scroll-snap-align:start;
@@ -45,8 +66,13 @@
   border-radius:50%; overflow:hidden;
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), 0 12px 26px -16px rgba(120,88,22,.42);
   transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+  position:relative;
 }
-.bud-o img, .bud-o svg{
+.bud-o img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .6s var(--ease);
+}
+.bud-o svg{
   width:86%; height:86%; object-fit:contain; display:block;
   transition:transform .6s var(--ease);
 }
@@ -56,6 +82,8 @@
 .bud-o.t2{background:linear-gradient(155deg,#F7E3E3,#F0D2D3)}   /* sindoor   */
 .bud-o.t3{background:linear-gradient(155deg,#E9F0E4,#DCE8D5)}   /* leaf      */
 .bud-o.t4{background:linear-gradient(155deg,#EFE9F2,#E3DAEA)}   /* card stock*/
+.bud-o.t5{background:linear-gradient(155deg,#F2EDE4,#E8DFD0)}   /* warm gold */
+.bud-o.t6{background:linear-gradient(155deg,#E4E9F2,#D0D8EA)}   /* cool blue */
 
 @media (hover:hover){
   .bud:hover .bud-o{
@@ -73,5 +101,5 @@
 }
 .bud-s{
   display:block; margin-top:3px;
-  font-size:clamp(9.5px,2.2vw,11.5px); line-height:1.3; color:var(--ink-faint);
+  font-size:clamp(9.5px,2.2vw,11.5px); line-height:1.45; color:var(--ink-faint);
 }

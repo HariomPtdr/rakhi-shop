@@ -255,11 +255,11 @@ if(catRail) catRail.addEventListener("click", e => {
    empty shelf is worse than one that offers fewer.
    ══════════════════════════════════════════════════════════ */
 const BANDS = [
-  {k:"b1", lo:0,   hi:50,       n:"Under ₹50",   s:"Little gifts"},
-  {k:"b2", lo:50,  hi:100,      n:"₹50 – ₹100",  s:"Most popular"},
-  {k:"b3", lo:100, hi:200,      n:"₹100 – ₹200", s:"A bit special"},
-  {k:"b4", lo:200, hi:400,      n:"₹200 – ₹400", s:"Premium picks"},
-  {k:"b5", lo:400, hi:Infinity, n:"Above ₹400",  s:"The finest"}
+  {k:"b1", lo:0,   hi:50,       n:"Under ₹50",   s:"Budget Friendly<br>Simple Yet Meaningful", img:"budget-under-50.webp"},
+  {k:"b2", lo:50,  hi:100,      n:"₹50 – ₹100",  s:"Budget Friendly<br>Simple Yet Meaningful", img:"budget-50-100.webp"},
+  {k:"b3", lo:100, hi:200,      n:"₹100 – ₹200", s:"Budget Friendly<br>Simple Yet Meaningful", img:"budget-100-200.webp"},
+  {k:"b4", lo:200, hi:300,      n:"₹200 – ₹300", s:"Premium Quality<br>Elegance That Lasts", img:"budget-200-300.webp"},
+  {k:"b5", lo:300, hi:Infinity,  n:"Above ₹300",  s:"Luxury Redefined<br>Crafted to Perfection", img:"budget-above-300.webp"}
 ];
 
 function paintBudget(){
@@ -275,14 +275,15 @@ function paintBudget(){
   if(rows.length < 2) return;
 
   rail.innerHTML = rows.map(({b, inIt}, i) => {
-    /* the dearest in the band shows it best — it is the one that looks like
-       what the money buys */
-    const face = [...inIt].sort((x, y) => y.price - x.price)[0];
+    /* Use promotional image if available, otherwise fall back to product thumbnail */
+    const imgHtml = b.img 
+      ? `<img src="../../assets/images/${b.img}" alt="${b.n} rakhis" width="660" height="660" loading="lazy" decoding="async">`
+      : thumb([...inIt].sort((x, y) => y.price - x.price)[0]);
     return `
       <button class="bud" data-band="${b.k}" type="button">
-        <span class="bud-o t${i % 5}">${thumb(face)}</span>
+        <span class="bud-o t${i % 5}">${imgHtml}</span>
         <span class="bud-n">${b.n}</span>
-        <span class="bud-s">${esc(b.s)}</span>
+        <span class="bud-s">${b.s}</span>
       </button>`;
   }).join("");
 }

@@ -70,7 +70,7 @@
   }
 }
 
-.cat-shot{display:block; aspect-ratio:3/4; overflow:hidden; background:#F5EEDF}
+.cat-shot{display:block; aspect-ratio:4/4; overflow:hidden; background:#F5EEDF}
 .cat-shot img{width:100%; height:100%; object-fit:cover; display:block;
   transition:transform .8s var(--ease)}
 @media (hover:hover){.cat:hover .cat-shot img{transform:scale(1.05)}}

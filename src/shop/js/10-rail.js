@@ -14,20 +14,26 @@ let railShown = 0;
 const railPool = () => [...PRODUCTS].sort((a,b) => a.feat - b.feat);
 
 function railCard(p){
+  const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
   return `
     <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
         ${thumb(p)}
-        <span class="rc-tag ${p.img?"real":"art"}">${p.img?"Photo":"Drawing"}</span>
+        <span class="rc-tag best-tag">Bestseller</span>
         ${heartBtn(p.id)}
       </div>
-      <h3 class="rc-n">${esc(p.name)}</h3>
-      <span class="rc-rule" aria-hidden="true">
-        <svg viewBox="0 0 12 11" fill="currentColor"><path d="M6 10.2 1.2 5.4A2.9 2.9 0 0 1 6 2.1a2.9 2.9 0 0 1 4.8 3.3Z"/></svg>
-      </span>
-      <div class="rc-b">
-        <span class="rc-p">${inr(p.price)}</span>${cardActs(p)}
+      <div class="rc-info">
+        <span class="rc-brand">Ray Art Gallery</span>
+        <h3 class="rc-n">${esc(p.name)}</h3>
+        <div class="rc-prices">
+          <span class="rc-p">${inr(p.price)}</span>${
+          p.mrp && p.mrp > p.price
+            ? `<s class="rc-mrp">${inr(p.mrp)}</s>`
+            : ""}
+        </div>${
+        off ? `<span class="rc-off">${off}% OFF</span>` : ""}
       </div>
+      <div class="rc-b">${cardActs(p)}</div>
     </article>`;
 }
 
