@@ -89,9 +89,27 @@
 }
 
 /* ── the phone ──
-   The button under the words rather than beside them. Beside them it took
-   half the row and left the question wrapping to three lines to ask itself. */
+   The button goes under the words, but only as wide as the words in it —
+   full width it was a red bar across the page, which is what the sticky
+   cart bar is, and two of those on one screen is one too many.
+
+   A capsule rather than the desktop's gold-ruled rectangle: at this size
+   the double rule is three hairlines inside 34px and reads as a smudge.
+   The capsule is the shape the rest of the page presses — View all, the
+   chips, Shop now.
+
+   Indented to start where the words start, not where the gift does, so the
+   three lines read as one block with one left edge. */
 @media (max-width:559px){
-  .ccta{flex-wrap:wrap; row-gap:clamp(10px,2.6vw,14px)}
-  .ccta-b{margin-left:0; width:100%}
+  .ccta{flex-wrap:wrap; row-gap:clamp(9px,2.2vw,12px)}
+  .ccta-b{
+    width:auto; margin-left:calc(clamp(40px,9vw,52px) + clamp(12px,2.6vw,22px));
+    padding:10px 17px 10px 19px; border-radius:var(--r-full);
+    font-size:9.5px; letter-spacing:.14em;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.22),
+      inset 0 0 0 1px rgba(217,184,119,.5),
+      0 8px 18px -10px rgba(106,17,20,.7);
+  }
+  .ccta-b svg{width:13px; height:13px}
 }
