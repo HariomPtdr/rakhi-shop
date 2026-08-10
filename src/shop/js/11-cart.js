@@ -102,6 +102,9 @@ function paintCart(bump){
   document.body.classList.toggle("hascart", n>0);
   $("#pvCart").hidden = n===0;
 
+  /* every Add button on the page, in step with what is in the basket */
+  if(typeof paintActs === "function") paintActs();
+
   if(!cart.length){
     $("#drB").innerHTML=`<div class="empty"><p>Nothing here yet.</p>
       <button class="btn btn-ghost" id="emptyGo">Browse the collection</button></div>`;

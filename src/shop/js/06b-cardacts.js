@@ -35,19 +35,103 @@ const BAG_SVG = `
            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>`;
 
+/* ── once it is in the basket ──
+   The button stops being "add this" and becomes "how many" — the same
+   change the drawer shows, made where the decision is. Somebody who wants
+   two of something should not have to press Add twice and be shown the
+   cart twice to find out whether it worked.
+
+   How many are in the basket, or 0 if none.
+
+   In a try, and not out of superstition. `cart` and MAX_QTY are declared
+   with const in 11-cart.js, six files after this one — and the grid and the
+   rail both draw their cards at the top level of files that load before it.
+   Reading a const before its declaration has run is a ReferenceError, and
+   `typeof` does not save you from it the way it does an undeclared name: it
+   throws too. An unguarded read here would take the rest of 09-grid.js down
+   with it on every load, silently, on a page that still looked right.
+
+   Before the basket exists nothing can be in it, so 0 is also the true
+   answer — paintCart() redraws every one of these the moment it does. */
+const inCart = id => {
+  try{
+    const r = cart.find(x => x.id === id);
+    return r ? r.qty : 0;
+  }catch(e){ return 0; }
+};
+
+function qtyStepper(p, n){
+  const last = n <= 1;      /* one more press and it leaves the basket */
+  return `
+    <span class="qty" role="group" aria-label="How many ${esc(p.name)}">
+      <button type="button" data-dec="${p.id}" aria-label="${
+        last ? "Remove " + esc(p.name) + " from the basket" : "One less"}">${
+        last ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <path d="M6 7h12M10 7V5.4h4V7M9 11v6M15 11v6M7 7l.9 13h8.2L17 7"/></svg>`
+             : "&minus;"}</button>
+      <b aria-live="polite">${n}</b>
+      <button type="button" data-inc="${p.id}" aria-label="One more"${
+        n >= 99 ? " disabled" : ""}>+</button>
+    </span>`;
+}
+
+/* The wrapper is display:contents, so it is a node paintActs() can rewrite
+   without existing in the layout — every rule written against the button
+   inside it goes on working as though the wrapper were not there. */
 function cardActs(p, opts){
   const o = opts || {};
   const out = p.stock === 0;
-  /* icon:true — the bag on its own, for a card where the corner it sits in
-     is already the only thing that can be pressed apart from the card
-     itself. Sold out still has to say so in words: a crossed-out bag is a
-     guess, and it is the one state nobody may guess at. */
-  if(o.icon && !out) return `
-    <button class="btn btn-dark rc-cart" data-add="${p.id}"
-            aria-label="Add ${esc(p.name)} to cart">${BAG_SVG}</button>`;
-  return `
-    <button class="btn btn-dark" data-add="${p.id}"${out ? " disabled" : ""}>${
-      out ? "Sold out" : (o.long ? "Add to cart" : "Add")}${out ? "" : BAG_SVG}</button>`;
+  const n = out ? 0 : inCart(p.id);
+  const inner = out
+    ? `<button class="btn btn-dark" data-add="${p.id}" disabled>Sold out</button>`
+    : n > 0
+      ? qtyStepper(p, n)
+      : o.icon
+        ? `<button class="btn btn-dark rc-cart" data-add="${p.id}"
+                   aria-label="Add ${esc(p.name)} to cart">${BAG_SVG}</button>`
+        : `<button class="btn btn-dark" data-add="${p.id}">${
+             o.long ? "Add to cart" : "Add"}${BAG_SVG}</button>`;
+  return `<span class="acts${o.icon ? " acts-icon" : ""}" data-acts="${p.id}"${
+    o.long ? ` data-long="1"` : ""}>${inner}</span>`;
+}
+
+/* Every card drawn anywhere, brought back into step with the basket. Called
+   from paintCart(), so adding from the rail updates the same rakhi in the
+   grid and on its own page without any of them knowing about each other. */
+function paintActs(){
+  $$("[data-acts]").forEach(box => {
+    const p = catalogue(box.dataset.acts)
+           || PRODUCTS.find(x => x.id === box.dataset.acts);
+    if(!p) return;
+    const n = p.stock === 0 ? 0 : inCart(p.id);
+    const stepper = box.querySelector(".qty");
+
+    /* Already a stepper and still one: change the number in it rather than
+       replacing it. Rewriting the markup on every press throws away the
+       button that was just pressed, which loses keyboard focus and makes
+       a held-down finger land on a node that no longer exists. */
+    if(stepper && n > 0){
+      const b = stepper.querySelector("b");
+      if(b && b.textContent !== String(n)) b.textContent = n;
+      const inc = stepper.querySelector("[data-inc]");
+      if(inc) inc.disabled = n >= 99;
+      /* the last one out wears a bin, so that swap does need the markup */
+      const wasLast = !!stepper.querySelector("[data-dec] svg");
+      if(wasLast === (n > 1)) box.innerHTML = innerOf(p, box);
+      return;
+    }
+    const next = innerOf(p, box);
+    if(box.innerHTML !== next) box.innerHTML = next;
+  });
+}
+
+/* cardActs() emits its own wrapper; these are its innards on their own */
+function innerOf(p, box){
+  const tmp = document.createElement("div");
+  tmp.innerHTML = cardActs(p, {icon: box.classList.contains("acts-icon"),
+                               long: box.dataset.long === "1"});
+  return tmp.firstElementChild.innerHTML;
 }
 
 document.addEventListener("click", e => {
@@ -58,13 +142,40 @@ document.addEventListener("click", e => {
     addItem(PRODUCTS.find(p => p.id === a.dataset.add));
     return;
   }
+  /* ── the stepper on a card ──
+     One less on the last one takes it out of the basket, which is why that
+     press wears a bin rather than a minus: a minus that empties something
+     is a minus that has to be guessed at. */
+  const up = e.target.closest("[data-inc]");
+  if(up){
+    if(up.disabled) return;
+    const row = cart.find(x => x.id === up.dataset.inc);
+    if(row){
+      row.qty = Math.min(MAX_QTY, row.qty + 1);
+      save(); paintCart(true);
+      lastBtn = up; throwPetals(up);
+      track("add_cart", row.id, {qty: row.qty});
+    }
+    return;
+  }
+  const dn = e.target.closest("[data-dec]");
+  if(dn){
+    const at = cart.findIndex(x => x.id === dn.dataset.dec);
+    if(at !== -1){
+      const row = cart[at];
+      if(row.qty > 1) row.qty--;
+      else { cart.splice(at, 1); track("remove_cart", row.id, {qty: 1}); }
+      save(); paintCart();
+    }
+    return;
+  }
   /* the whole card opens the rakhi, not only the View button — the picture
      and the name are what people actually aim at. Everything on a card that
      does something else of its own has to be excluded, or hearting a rakhi
      would also walk you into it. */
   const g = e.target.closest("[data-go]");
   if(!g) return;
-  if(e.target.closest(".heart, [data-add], input, select, textarea")) return;
+  if(e.target.closest(".heart, [data-add], [data-inc], [data-dec], input, select, textarea")) return;
   const other = e.target.closest("a, button");
   if(other && other !== g && !other.hasAttribute("data-go")) return;
   openProduct(g.dataset.go);
