@@ -30,15 +30,24 @@
    ══════════════════════════════════════════════════════════ */
 let lastBtn = null;          // the button the petals are thrown from
 
+const BAG_SVG = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>`;
+
 function cardActs(p, opts){
   const o = opts || {};
   const out = p.stock === 0;
+  /* icon:true — the bag on its own, for a card where the corner it sits in
+     is already the only thing that can be pressed apart from the card
+     itself. Sold out still has to say so in words: a crossed-out bag is a
+     guess, and it is the one state nobody may guess at. */
+  if(o.icon && !out) return `
+    <button class="btn btn-dark rc-cart" data-add="${p.id}"
+            aria-label="Add ${esc(p.name)} to cart">${BAG_SVG}</button>`;
   return `
     <button class="btn btn-dark" data-add="${p.id}"${out ? " disabled" : ""}>${
-      out ? "Sold out" : (o.long ? "Add to cart" : "Add")}${out ? "" : `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>`}</button>`;
+      out ? "Sold out" : (o.long ? "Add to cart" : "Add")}${out ? "" : BAG_SVG}</button>`;
 }
 
 document.addEventListener("click", e => {

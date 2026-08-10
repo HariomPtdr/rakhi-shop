@@ -251,53 +251,6 @@
   </div>
 </section>
 
-<!-- ═══════════ the ones that sell ═══════════
-     The same four the rail always carried — the shop's own featured order,
-     which is the seller's answer to "what should I show first". They had no
-     heading and no way past them; now they have both. -->
-<section class="best" id="best">
-  <div class="wrap">
-    <div class="best-in">
-      <span class="best-orn" aria-hidden="true">
-        <svg viewBox="0 0 46 14" fill="currentColor">
-          <path d="M23 1.6c1.9 0 3.4 1.5 3.4 3.4S24.9 8.4 23 8.4 19.6 6.9 19.6 5 21.1 1.6 23 1.6Z" opacity=".9"/>
-          <path d="M16.8 3.4c1.5 0 2.7 1.2 2.7 2.7S18.3 8.8 16.8 8.8 14.1 7.6 14.1 6.1s1.2-2.7 2.7-2.7Z" opacity=".65"/>
-          <path d="M29.2 3.4c1.5 0 2.7 1.2 2.7 2.7s-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7 1.2-2.7 2.7-2.7Z" opacity=".65"/>
-          <path d="M10.9 5.2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2Z" opacity=".42"/>
-          <path d="M35.1 5.2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2Z" opacity=".42"/>
-          <path d="M5.6 6.6c.8 0 1.4.6 1.4 1.4S6.4 9.4 5.6 9.4 4.2 8.8 4.2 8s.6-1.4 1.4-1.4Z" opacity=".24"/>
-          <path d="M40.4 6.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4S39 8.8 39 8s.6-1.4 1.4-1.4Z" opacity=".24"/>
-        </svg>
-      </span>
-      <div class="best-h">
-        <div class="best-t">
-          <h2>Our Bestsellers</h2>
-          <p class="best-sub">Handpicked rakhis loved by our customers
-            <svg viewBox="0 0 12 11" fill="currentColor" aria-hidden="true" class="best-sub-h"><path d="M6 10.2 1.2 5.4A2.9 2.9 0 0 1 6 2.1a2.9 2.9 0 0 1 4.8 3.3Z"/></svg>
-          </p>
-        </div>
-        <a class="best-all" href="#collection">
-          View all
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </a>
-      </div>
-  <div class="rail-wrap">
-    <div class="rail" id="rail" role="group" aria-label="Featured rakhis"></div>
-    <button class="rail-nav prev" id="railPrev" aria-label="Previous rakhi">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-    </button>
-    <button class="rail-nav next" id="railNext" aria-label="Next rakhi">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-    </button>
-    <div class="dots" id="railDots" role="tablist" aria-label="Featured rakhis"></div>
-    </div>
-    </div>
-  </div>
-</section>
 
 <!-- ═══════════ shop by budget ═══════════
      People arrive with a number in their head far more often than a
@@ -425,6 +378,49 @@
     </div>
   </div>
 </section>
+
+<!-- ═══════════ the ones that sell ═══════════
+     The shop's own featured order, which is the seller's answer to "what
+     should I show first". It sits under Budget and Category on purpose:
+     those two are ways of narrowing the shop down, and this is the shop
+     answering for itself if you would rather not narrow anything.
+
+     Same heading as the two above it, same card as the two above it. -->
+<section class="best" id="best">
+  <div class="wrap">
+    <div class="best-h">
+      <span class="best-orn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+          <circle cx="12" cy="12" r="2.1"/>
+        </svg>
+      </span>
+      <h2>Our Bestsellers</h2>
+      <p class="best-sub">Handpicked rakhis loved by our customers</p>
+    </div>
+
+    <div class="rail-wrap">
+      <div class="rail" id="rail" role="group" aria-label="Featured rakhis"></div>
+      <button class="rail-nav prev" id="railPrev" aria-label="Previous rakhi">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button class="rail-nav next" id="railNext" aria-label="Next rakhi">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="dots" id="railDots" role="tablist" aria-label="Featured rakhis"></div>
+    </div>
+
+    <a class="best-all" href="#collection">
+      View all
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
 
 <section class="hero-under">
   <!-- The ribbon sat at the foot of the hero when the hero was a column of

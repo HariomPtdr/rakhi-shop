@@ -13,27 +13,39 @@ let railShown = 0;
 
 const railPool = () => [...PRODUCTS].sort((a,b) => a.feat - b.feat);
 
+/* ── the bestseller card ──
+   The same card as Shop by Category — the same width, the same ivory, the
+   same gold hairline, the picture running to the card's own edges — with a
+   rakhi's own facts in the block underneath and the bag where that card
+   keeps its arrow. Three rows of cards down one page should be three of
+   the same card, not three different ideas of what a card is.
+
+   The rating line is drawn only when there is one. A shop that prints
+   ★ 0.0 (0) under everything has told you the truth in the least useful
+   way there is. */
 function railCard(p){
   const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
+  const out = p.stock === 0;
   return `
     <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
         ${thumb(p)}
-        <span class="rc-tag best-tag">Bestseller</span>
+        <span class="rc-tag">${out ? "Sold out" : "Bestseller"}</span>
         ${heartBtn(p.id)}
       </div>
-      <div class="rc-info">
+      <div class="rc-b">
         <span class="rc-brand">Ray Art Gallery</span>
         <h3 class="rc-n">${esc(p.name)}</h3>
+        <span class="rc-rule"></span>
         <div class="rc-prices">
           <span class="rc-p">${inr(p.price)}</span>${
-          p.mrp && p.mrp > p.price
-            ? `<s class="rc-mrp">${inr(p.mrp)}</s>`
-            : ""}
+          p.mrp && p.mrp > p.price ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}${
+          off ? `<span class="rc-off">${off}% OFF</span>` : ""}
         </div>${
-        off ? `<span class="rc-off">${off}% OFF</span>` : ""}
+        p.ratings ? `
+        <div class="rc-r">${starsHtml(p.rating, 11)}<span>(${p.ratings})</span></div>` : ""}
+        <div class="rc-go">${cardActs(p, {icon:true})}</div>
       </div>
-      <div class="rc-b">${cardActs(p)}</div>
     </article>`;
 }
 
