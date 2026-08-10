@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════
    collection
    ══════════════════════════════════════════════════════════ */
-let state = { cat:"all", sort:"feat" };
+let state = { cat:"all", band:null, sort:"feat" };
 /* catalogue numbers follow the order of the list; rebuilt if the list is
    later replaced by the one in the database */
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
@@ -12,6 +12,7 @@ $("#chips").innerHTML = CATS.map(c=>
 $("#chips").addEventListener("click", e=>{
   const b=e.target.closest(".chip"); if(!b) return;
   state.cat=b.dataset.c;
+  state.band=null;              /* one filter at a time; the chips are the way out */
   $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===state.cat)));
   paintGrid();
 });
@@ -116,7 +117,11 @@ addEventListener("error", e=>{
 function visible(){
   const by={feat:(a,b)=>a.feat-b.feat, lo:(a,b)=>a.price-b.price,
             hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[state.sort];
-  return PRODUCTS.filter(p=>state.cat==="all"||p.cat===state.cat).sort(by);
+  const band = state.band && BANDS.find(b => b.k === state.band);
+  return PRODUCTS
+    .filter(p => state.cat === "all" || p.cat === state.cat)
+    .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
+    .sort(by);
 }
 /* ── how much of the collection is on the page ──
    Building a few hundred cards in one go is a long first paint and a lot of
@@ -232,5 +237,63 @@ if(catRail) catRail.addEventListener("click", e => {
      a filter nobody can see they are inside of */
   const chip = $(`#chips .chip[data-c="${state.cat}"]`);
   if(chip) chip.scrollIntoView({block:"nearest", inline:"center"});
+  document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+});
+
+
+/* ══════════════════════════════════════════════════════════
+   SHOP BY BUDGET
+
+   People arrive with a number in their head far more often
+   than a category: a hundred rupees for a cousin, three for a
+   brother. This asks that question directly.
+
+   The bands are fixed but the row is not — a band with nothing
+   in it is not drawn. Today three of the five appear, because
+   nothing here costs more than ₹199; the day something does,
+   its band arrives on its own. A price filter that offers an
+   empty shelf is worse than one that offers fewer.
+   ══════════════════════════════════════════════════════════ */
+const BANDS = [
+  {k:"b1", lo:0,   hi:50,       n:"Under ₹50",   s:"Little gifts"},
+  {k:"b2", lo:50,  hi:100,      n:"₹50 – ₹100",  s:"Most popular"},
+  {k:"b3", lo:100, hi:200,      n:"₹100 – ₹200", s:"A bit special"},
+  {k:"b4", lo:200, hi:400,      n:"₹200 – ₹400", s:"Premium picks"},
+  {k:"b5", lo:400, hi:Infinity, n:"Above ₹400",  s:"The finest"}
+];
+
+function paintBudget(){
+  const rail = $("#budRail");
+  if(!rail) return;
+  const rows = BANDS.map(b => {
+    const inIt = PRODUCTS.filter(p => p.price >= b.lo && p.price < b.hi);
+    return {b, inIt};
+  }).filter(r => r.inIt.length);
+
+  /* one band left standing is not a choice, it is a label */
+  $("#budget").hidden = rows.length < 2;
+  if(rows.length < 2) return;
+
+  rail.innerHTML = rows.map(({b, inIt}, i) => {
+    /* the dearest in the band shows it best — it is the one that looks like
+       what the money buys */
+    const face = [...inIt].sort((x, y) => y.price - x.price)[0];
+    return `
+      <button class="bud" data-band="${b.k}" type="button">
+        <span class="bud-o t${i % 5}">${thumb(face)}</span>
+        <span class="bud-n">${b.n}</span>
+        <span class="bud-s">${esc(b.s)}</span>
+      </button>`;
+  }).join("");
+}
+paintBudget();
+
+$("#budRail").addEventListener("click", e => {
+  const b = e.target.closest("[data-band]");
+  if(!b) return;
+  state.band = b.dataset.band;
+  state.cat  = "all";           /* a price and a category at once is how you get nothing */
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  paintGrid();
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
 });
