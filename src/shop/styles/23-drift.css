@@ -1,0 +1,132 @@
+/* ══════════════════════════════════════════════════════════
+   THE WHOLE COLLECTION, DRIFTING
+
+   Two rows carrying the entire catalogue, moving against each
+   other. The rows run off both edges of the screen rather than
+   stopping at the page margin — a row that ends where the text
+   ends is a row with a beginning and an end, and this one is
+   meant to read as a length of something being unrolled.
+
+   The animation slides each track exactly half its own width.
+   The track holds its contents twice, so the frame it snaps
+   back to is the frame it left and no seam is ever seen.
+   ══════════════════════════════════════════════════════════ */
+.drift{padding:clamp(26px,5vw,44px) 0 0; overflow:hidden}
+.drift[hidden]{display:none}
+
+.drift-h{text-align:center; margin-bottom:clamp(16px,3vw,26px)}
+.drift-orn{display:block; width:clamp(22px,4.4vw,30px); margin:0 auto clamp(8px,1.4vw,12px); color:var(--tan)}
+.drift-orn svg{width:100%; height:auto; display:block}
+.drift-h h2{
+  display:flex; align-items:center; justify-content:center; gap:clamp(10px,2.4vw,20px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(25px,6.4vw,42px); line-height:1.05; letter-spacing:-.022em;
+  color:#3B2415;
+}
+.drift-h h2::before, .drift-h h2::after{
+  content:""; height:1px; width:clamp(26px,7vw,74px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+}
+.drift-sub{
+  margin-top:clamp(7px,1.4vw,11px);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,2vw,10.5px); letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+
+/* ── the shelf ──
+   One scroller two cards deep, not two scrollers one card deep. Laid out
+   down-then-across, so it fills column by column and still reads left to
+   right — and one swipe moves the whole thing, which is what somebody
+   pushing it expects. Two rows that scrolled separately meant swiping
+   twice through the same catalogue.
+
+   Faded at both ends rather than cut: a card sliced in half by the edge of
+   the screen looks broken; one dissolving into the page looks like there is
+   more of it out there, which there is. */
+/* the chips and the sort, above the shelf they narrow */
+.drift .tools{margin:clamp(14px,2.6vw,22px) 0 clamp(10px,2vw,16px)}
+
+.drift-rows{position:relative}
+
+.drift-track{
+  display:grid;
+  grid-auto-flow:column;
+  grid-template-rows:repeat(2, 1fr);
+  /* The column has to be told its width. Left to auto, a grid inside a
+     scroll container sizes its columns to the container and squeezes
+     twelve cards into one screen instead of overflowing it. */
+  grid-auto-columns:clamp(146px,42vw,196px);
+  gap:clamp(12px,2.2vw,18px) clamp(10px,2vw,16px);
+  align-items:stretch;
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  padding:3px clamp(14px,4vw,24px) 8px;
+  scroll-padding-left:clamp(14px,4vw,24px);
+  -webkit-mask-image:linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+          mask-image:linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+.drift-track::-webkit-scrollbar{display:none}
+/* every card in a column starts at the same height, whatever its name did */
+.drift-track > .rc{scroll-snap-align:start}
+
+/* ── the card ──
+   The bestseller card, at three quarters of its size: this is the whole
+   catalogue on a wall, not six things to be compared, and at full size two
+   rows of it would be a screen and a half of page before anything else. */
+:is(.best,.drift) .rc{scroll-snap-align:start}
+/* the column carries the width now; the card simply fills it */
+.drift .rc{width:auto}
+@media (min-width:640px){
+  .drift-track{grid-auto-columns:clamp(168px,22vw,204px)}
+}
+
+/* ── the arrows ──
+   Only where there is a pointer: a mouse cannot swipe a scroll container,
+   and on touch the swipe is the control. Each one goes when there is
+   nothing left that way, so an arrow never points at a wall. */
+.drift-nav{display:none}
+.drift-nav[hidden]{display:none !important}
+@media (hover:hover) and (min-width:940px){
+  .drift-nav{
+    display:grid; place-items:center; position:absolute; top:38%;
+    width:38px; height:38px; border:0; border-radius:50%; cursor:pointer;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+    box-shadow:inset 0 0 0 1px rgba(217,184,119,.75), 0 10px 24px -12px rgba(120,88,22,.5);
+    transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+    z-index:3;
+  }
+  .drift-nav:hover{
+    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
+  }
+  .drift-nav:active{transform:scale(.94)}
+  .drift-nav{top:50%; transform:translateY(-50%)}
+  .drift-nav:active{transform:translateY(-50%) scale(.94)}
+  .drift-nav.prev{left:clamp(4px,1vw,10px)}
+  .drift-nav.next{right:clamp(4px,1vw,10px)}
+}
+
+/* the way out, into the list that can be narrowed down */
+.drift-all{
+  display:inline-flex; align-items:center; gap:9px;
+  margin:clamp(14px,2.4vw,20px) auto 0;
+  padding:clamp(9px,1.5vw,11px) clamp(15px,2.4vw,20px);
+  border-radius:var(--r-full); text-decoration:none;
+  color:var(--tan-deep); background:transparent;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,10px); letter-spacing:.11em; text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.drift .wrap:last-child{display:flex}
+.drift-all svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .drift-all:hover{
+    color:#6A1114;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,1), 0 10px 24px -14px rgba(120,88,22,.45);
+  }
+  .drift-all:hover svg{transform:translateX(3px)}
+}

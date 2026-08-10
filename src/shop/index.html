@@ -66,6 +66,7 @@
 <link rel="stylesheet" href="styles/20-budget.css">
 <link rel="stylesheet" href="styles/21-promo.css">
 <link rel="stylesheet" href="styles/22-custom-cta.css">
+<link rel="stylesheet" href="styles/23-drift.css">
 <link rel="stylesheet" href="styles/24-qty.css">
 </head>
 <body>
@@ -467,6 +468,76 @@
   </div>
 </section>
 
+<!-- ═══════════ the collection ═══════════
+     The whole shop, on one shelf two cards deep, pushed by hand.
+
+     Two deep rather than one because one row of everything is a very long
+     row; one shelf rather than two rows because two that scrolled
+     separately meant swiping twice through the same catalogue, and which
+     rakhi sat above which was decided by nothing.
+
+     It was a grid until now, and the grid has gone: two collections on one
+     page, two hundred pixels apart, in two different cards, was one too
+     many. This one keeps everything that made the grid worth having — the
+     chips, the count, the sort, and the id every category card and budget
+     band scrolls to. Filled by paintGrid(). -->
+<section class="drift" id="collection">
+  <div class="wrap">
+    <div class="drift-h">
+      <span class="drift-orn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+          <circle cx="12" cy="12" r="2.1"/>
+        </svg>
+      </span>
+      <h2>The Collection</h2>
+      <p class="drift-sub">Every rakhi we make, end to end</p>
+    </div>
+
+    <!-- The chips, the count and the sort, lifted off the grid this shelf
+         replaces. The shelf is the collection now, so it has to be
+         narrowable by the same things that always narrowed it: the category
+         cards and the budget bands both land here with a filter set. -->
+    <div class="tools">
+      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+      <div class="tools-r">
+        <span class="count" id="rCount"></span>
+        <div class="sortwrap">
+          <button class="sortbtn" id="sortBtn" aria-haspopup="listbox" aria-expanded="false">
+            <span class="sr">Sort by:</span>
+            <span id="sortNow">Featured</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul class="sortmenu" id="sortMenu" role="listbox" aria-label="Sort by" hidden></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- outside .wrap on purpose: these run off both edges of the screen,
+       which is what says there is more of it than fits -->
+  <div class="drift-rows" id="driftRows">
+    <div class="drift-track" id="grid"></div>
+    <button class="drift-nav prev" type="button" data-drift="prev" aria-label="Back" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <button class="drift-nav next" type="button" data-drift="next" aria-label="More" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="wrap">
+    <a class="drift-all" href="#made">
+      Ask for something else
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
 
 
 
@@ -492,32 +563,7 @@
   </div>
 </section>
 
-<!-- ═══════════ collection ═══════════ -->
-<section class="sec" id="collection">
-  <div class="wrap">
-    <div class="rv">
-      <p class="eyebrow">01 — Catalogue</p>
-      <h2 class="sec-h">The <em>collection</em></h2>
-      <p class="sec-p">Every design carries a number. Quote the number to us on WhatsApp, or add it to the cart and let the page write the bill for you.</p>
-    </div>
-    <div class="tools rv">
-      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
-      <div class="tools-r">
-        <span class="count" id="rCount"></span>
-        <div class="sortwrap">
-          <button class="sortbtn" id="sortBtn" aria-haspopup="listbox" aria-expanded="false">
-            <span class="sr">Sort by:</span>
-            <span id="sortNow">Featured</span>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <ul class="sortmenu" id="sortMenu" role="listbox" aria-label="Sort by" hidden></ul>
-        </div>
-      </div>
-    </div>
-    <div class="grid" id="grid"></div>
-  </div>
-</section>
+
 
 <div class="divider rangoli" aria-hidden="true"></div>
 <!-- ═══════════ sets ═══════════ -->
@@ -913,6 +959,7 @@
 <script src="js/08-wishlist.js"></script>
 <script src="js/09-grid.js"></script>
 <script src="js/10-rail.js"></script>
+<script src="js/10b-drift.js"></script>
 <script src="js/11-cart.js"></script>
 <script src="js/12-sheets.js"></script>
 <script src="js/13-bill.js"></script>

@@ -23,20 +23,35 @@ const railPool = () => [...PRODUCTS].sort((a,b) => a.feat - b.feat);
    The rating line is drawn only when there is one. A shop that prints
    ★ 0.0 (0) under everything has told you the truth in the least useful
    way there is. */
-function railCard(p){
+function railCard(p, o){
+  o = (o && typeof o === "object") ? o : {};   /* .map() passes an index here */
   const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
   const out = p.stock === 0;
+  /* bare: the same card without the shop's name over every one of them and
+     without the tags. On a rail of six the name says whose these are; on a
+     wall of the whole catalogue it is the same three words forty times, and
+     the tags underneath it are forty more. Both go, and the card comes down
+     by two lines without anything being lost that is not said elsewhere.
+
+     The saving goes too. On six hand-picked rakhis it is the reason to look
+     twice; on the whole catalogue it is a red number beside every single
+     price, and a discount that is on everything is not a discount. The
+     struck-out price stays, which says the same thing quietly. */
+  const bare = !!o.bare;
   return `
     <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
-        ${thumb(p)}
-        <span class="rc-tag">${out ? "Sold out" : "Bestseller"}</span>
+        ${thumb(p)}${
+        out ? `<span class="rc-tag">Sold out</span>`
+            : bare ? "" : `<span class="rc-tag">Bestseller</span>`}
         ${heartBtn(p.id)}
       </div>
-      <div class="rc-b">
-        <span class="rc-brand">Ray Art Gallery</span>
-        <h3 class="rc-n">${esc(p.name)}</h3>
-        ${tagChips(p, 2, true)}
+      <div class="rc-b">${
+        bare ? "" : `
+        <span class="rc-brand">Ray Art Gallery</span>`}
+        <h3 class="rc-n">${esc(p.name)}</h3>${
+        bare ? "" : `
+        ${tagChips(p, 2, true)}`}
         <span class="rc-rule"></span>${
         p.ratings ? `
         <div class="rc-r">${starsHtml(p.rating, 11)}<span>(${p.ratings})</span></div>` : ""}
@@ -44,7 +59,7 @@ function railCard(p){
           <div class="rc-prices">
             <span class="rc-p">${inr(p.price)}</span>${
             p.mrp && p.mrp > p.price ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}${
-            off ? `<span class="rc-off">${off}% OFF</span>` : ""}
+            off && !bare ? `<span class="rc-off">${off}% OFF</span>` : ""}
           </div>
           <div class="rc-go">${cardActs(p, {icon:true})}</div>
         </div>
@@ -56,7 +71,7 @@ function paintRail(){
   const pool = railPool();
   railShown = Math.min(RAIL_STEP, pool.length);
   RAIL = pool.slice(0, railShown);
-  $("#rail").innerHTML = RAIL.map(railCard).join("");
+  $("#rail").innerHTML = RAIL.map(p => railCard(p)).join("");
 }
 paintRail();
 
@@ -116,7 +131,7 @@ function railMore(){
   const next = pool.slice(railShown, railShown + RAIL_STEP);
   railShown += next.length;
   RAIL = pool.slice(0, railShown);
-  railEl.insertAdjacentHTML("beforeend", next.map(railCard).join(""));
+  railEl.insertAdjacentHTML("beforeend", next.map(p => railCard(p)).join(""));
   buildDots();                 /* more cards, more places to stop */
   markDot(railAt);
 }

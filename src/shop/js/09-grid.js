@@ -123,25 +123,27 @@ function visible(){
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
     .sort(by);
 }
-/* ── how much of the collection is on the page ──
+/* ── how much of the collection is on the shelf ──
    Building a few hundred cards in one go is a long first paint and a lot of
    DOM for a phone to hold, for a customer who will look at the first six.
-   They arrive a screenful at a time, fetched ahead of the scroll so the end
-   of the list is never actually reached. The count above the grid still
-   says how many there are altogether. */
-const PAGE = 24;
+   They arrive a handful at a time, appended as the shelf is pushed towards
+   its end, so the end of it is never actually reached. The count above it
+   still says how many there are altogether. */
+const PAGE = 12;
 let shown = PAGE;
 
 function paintGrid(){
-  const list=visible();
-  shown = PAGE;                       /* a new filter or sort starts at the top */
-  $("#rCount").textContent = `${two(list.length)} ${list.length===1?"design":"designs"}`;
-  $("#grid").innerHTML = list.slice(0, shown).map(cardHtml).join("");
-  watchTail(list.length);
+  const list = visible();
+  shown = Math.min(PAGE, list.length);   /* a new filter or sort starts at the left */
+  $("#rCount").textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
+  const box = $("#grid");
+  box.innerHTML = list.slice(0, shown).map(cardHtml).join("");
+  box.scrollLeft = 0;
+  if(typeof driftMarks === "function") driftMarks();
 }
 
-/* the next screenful, appended rather than repainted: rebuilding the cards
-   already on screen would drop their images and flash the whole grid */
+/* the next handful, appended rather than repainted: rebuilding the cards
+   already on the shelf would drop their images and flash the whole thing */
 function showMore(){
   const list = visible();
   if(shown >= list.length) return;
@@ -149,62 +151,26 @@ function showMore(){
   shown += next.length;
   $("#grid").insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
   if(typeof paintHearts === "function") paintHearts();
-  watchTail(list.length);
+  if(typeof driftMarks === "function") driftMarks();
 }
 
-/* A sentinel below the grid, watched 600px early so the next cards are
-   already there by the time the last row is reached. */
-const gridTail = document.createElement("div");
-gridTail.className = "grid-tail";
-gridTail.setAttribute("aria-hidden", "true");
-$("#grid").after(gridTail);
+/* Fetched ahead of the push rather than on a timer, so a shelf nobody
+   touches never builds a card nobody asked to see. A card and a half from
+   the end is far enough ahead that the next ones are there before the last
+   one is. */
+$("#grid").addEventListener("scroll", () => {
+  const el = $("#grid");
+  if(el.scrollWidth - (el.scrollLeft + el.clientWidth) < 340) showMore();
+}, {passive:true});
 
-const tailWatch = ("IntersectionObserver" in window)
-  ? new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)) showMore(); },
-                             {rootMargin: "600px 0px"})
-  : null;
-
-function watchTail(total){
-  const more = shown < total;
-  gridTail.hidden = !more;
-  if(!tailWatch){
-    /* no observer: everything at once beats a list that cannot be finished */
-    if(more) showMore();
-    return;
-  }
-  /* Unobserved and observed again rather than left alone. An observer only
-     speaks when an intersection *changes*: a full page of new cards pushes
-     the sentinel well clear of the margin, but the last page might be two
-     cards, leaving it exactly where it was and the observer with nothing to
-     report. Observing afresh delivers a new reading either way — appending
-     again if the sentinel is still in range, and going quiet once it is
-     not. */
-  tailWatch.unobserve(gridTail);
-  if(more) tailWatch.observe(gridTail);
-}
-
+/* One card for the whole shop. The shelf used to carry a different one —
+   a number in the corner, a Photo/Drawing tag, the description, "per
+   piece" — which meant the same rakhi looked like two different offers
+   depending on which row of the page you met it in. */
 function cardHtml(p){
-    const out = p.stock === 0;
-    return `
-    <article class="card panel${out ? " card-out" : ""}" data-go="${p.id}">
-      <div class="card-top">
-        <div class="shot">${thumb(p)}</div>
-        <span class="idx">№ ${IDX.get(p.id)}</span>
-        <span class="pill ${out ? "pill-out" : p.img?"pill-real":"pill-art"}">${
-          out ? "Sold out" : p.img?"Photo":"Drawing"}</span>
-        ${heartBtn(p.id)}
-      </div>
-      <h3 class="card-n">${esc(p.name)}</h3>
-      ${tagChips(p)}
-      ${p.ratings ? `<div class="card-r">${starsHtml(p.rating, 12)}<span>${p.ratings}</span></div>` : ""}
-      <p class="card-d">${esc(p.desc)}</p>
-      <div class="card-b">
-        <span class="card-p">${inr(p.price)}</span>
-        <span class="card-u">${out ? "sold out" : "per piece"}</span>
-      </div>
-      <div class="card-acts">${cardActs(p)}</div>
-    </article>`;
+  return railCard(p, {bare:true});
 }
+
 /* Add and View are handled once for every card, in 06b-cardacts.js */
 const closeLb=fromBack=>{
   if(!isOn("#lb")) return;
