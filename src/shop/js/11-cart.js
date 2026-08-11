@@ -100,7 +100,11 @@ function paintCart(bump){
   $("#cbV").textContent = inr(tot());
   $("#cartbar").classList.toggle("on", n>0);
   document.body.classList.toggle("hascart", n>0);
-  $("#pvCart").hidden = n===0;
+  /* The bag in a rakhi's own bar used to appear only once something was in
+     it — it was a capsule reading CART, and an empty one said nothing. It is
+     the glyph the collection and the wishlist wear now, with the count on
+     its corner, and a shop whose bag comes and goes is a shop whose header
+     moves under the thumb. It stays. */
 
   /* every Add button on the page, in step with what is in the basket */
   if(typeof paintActs === "function") paintActs();

@@ -306,12 +306,8 @@ addEventListener("keydown", e => {
   if(e.key === "Escape" && wishOpen() && !sheetOpen()) closeWish();
 });
 
-/* the mandala, borrowed from the collection's bar rather than written out
-   again — see the comment on the slot in index.html */
-(function(){
-  const slot = $("#wlHome .brand-mk-slot"), mark = $(".ap-brand .brand-mk");
-  if(slot && mark) slot.replaceWith(mark.cloneNode(true));
-})();
+/* the mandala, borrowed rather than written out again — see fillBrandMark */
+fillBrandMark("#wlHome .brand-mk-slot");
 
 /* Somebody may arrive on #wishlist directly — a link they sent themselves,
    or a reload with the view open. */

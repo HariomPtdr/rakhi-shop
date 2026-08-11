@@ -164,13 +164,14 @@
    what stops those two reading as one block of text set in
    two sizes.
 
-   The list of four is every place in the shop a rakhi is drawn:
+   The list of five is every place in the shop a rakhi is drawn:
    the bestseller rail, the collection shelf on the home page,
-   the full collection, and the wishlist. It is one card, and a
-   new surface joins the list rather than writing a card of its
-   own — the same rakhi in two shapes reads as two offers.
+   the full collection, the wishlist, and "you may also like" on
+   a rakhi's own page. It is one card, and a new surface joins
+   the list rather than writing a card of its own — the same
+   rakhi in two shapes reads as two offers.
    ══════════════════════════════════════════════════════════ */
-:is(.best,.drift,.ap,.wl) .rc{
+:is(.best,.drift,.ap,.wl,.pv) .rc{
   width:min(62%,222px);
   padding:0; overflow:hidden; border:0; border-radius:14px;
   background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
@@ -180,9 +181,9 @@
     0 12px 28px -18px rgba(120,88,22,.36);
   transition:transform .5s var(--ease), box-shadow .5s var(--ease);
 }
-@media (min-width:640px){:is(.best,.drift,.ap,.wl) .rc{width:min(40%,232px)}}
+@media (min-width:640px){:is(.best,.drift,.ap,.wl,.pv) .rc{width:min(40%,232px)}}
 @media (hover:hover){
-  :is(.best,.drift,.ap,.wl) .rc:hover{
+  :is(.best,.drift,.ap,.wl,.pv) .rc:hover{
     transform:translateY(-3px);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.95),
@@ -196,17 +197,17 @@
    shop, the name, the tags and the price — so the picture gives back the
    height the extra lines take, and the two cards end up the same size on
    the page. */
-:is(.best,.drift,.ap,.wl) .rc-shot{
+:is(.best,.drift,.ap,.wl,.pv) .rc-shot{
   border-radius:0; box-shadow:none; aspect-ratio:5/4;
   background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
 }
-:is(.best,.drift,.ap,.wl) .rc-shot img{object-position:center}
-@media (hover:hover){:is(.best,.drift,.ap,.wl) .rc:hover .rc-shot img{transform:scale(1.05)}}
-:is(.best,.drift,.ap,.wl) .rc-shot img{transition:transform .8s var(--ease)}
+:is(.best,.drift,.ap,.wl,.pv) .rc-shot img{object-position:center}
+@media (hover:hover){:is(.best,.drift,.ap,.wl,.pv) .rc:hover .rc-shot img{transform:scale(1.05)}}
+:is(.best,.drift,.ap,.wl,.pv) .rc-shot img{transition:transform .8s var(--ease)}
 
 /* Says which of the twelve you are looking at, in the page's own ivory and
    gold rather than a shouted colour of its own. */
-:is(.best,.drift,.ap,.wl) .rc-tag{
+:is(.best,.drift,.ap,.wl,.pv) .rc-tag{
   top:10px; left:10px; font-size:7.5px; letter-spacing:.11em; padding:4px 9px;
   background:rgba(255,253,248,.94); color:var(--tan-deep);
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
@@ -220,8 +221,8 @@
    simply followed the name, one card's price would sit where the next
    card's rule does. Anchored to the bottom, every price in the row is on
    the same line and the slack falls where nothing is written. */
-:is(.best,.drift,.ap,.wl) .rc{display:flex; flex-direction:column}
-:is(.best,.drift,.ap,.wl) .rc-b{
+:is(.best,.drift,.ap,.wl,.pv) .rc{display:flex; flex-direction:column}
+:is(.best,.drift,.ap,.wl,.pv) .rc-b{
   position:relative; display:flex; flex-direction:column; flex:1; margin:0;
   /* The base .rc-b centres its children — it is a row there, and centring
      is what puts a price and a button on the same line. Here it is a
@@ -231,7 +232,7 @@
   align-items:stretch; text-align:left;
   padding:clamp(9px,1.8vw,11px) clamp(10px,2.2vw,14px) clamp(9px,1.8vw,12px);
 }
-:is(.best,.drift,.ap,.wl) .rc-brand{
+:is(.best,.drift,.ap,.wl,.pv) .rc-brand{
   display:block; text-align:left; font-family:var(--head); font-weight:600;
   font-size:clamp(7.5px,1.8vw,9px); letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-faint);
@@ -243,7 +244,7 @@
 
    Smaller than it was: the block under a photograph is a label, not a
    headline, and at 16px it was setting the height of every card in the shop. */
-:is(.best,.drift,.ap,.wl) .rc-n{
+:is(.best,.drift,.ap,.wl,.pv) .rc-n{
   font-family:var(--display); font-weight:600;
   font-size:clamp(12.5px,3vw,14.5px); letter-spacing:-.012em; line-height:1.25;
   color:#3B2415; margin:clamp(3px,.7vw,4px) 0 0;
@@ -258,7 +259,7 @@
    gone. It was a divider inside a box that is already divided — by the edge
    of the photograph above it — and it cost the card a line it now spends on
    the saving instead. */
-:is(.best,.drift,.ap,.wl) .rc-rule{display:none}
+:is(.best,.drift,.ap,.wl,.pv) .rc-rule{display:none}
 /* ── the label row ──
    The percentage saved and, on the collection grid, what the rakhi is: one
    row, above the name, the way the reference shop sets it. One row, always —
@@ -269,14 +270,14 @@
    Nothing is held open for a card with neither: barely a rakhi in the shop
    carries a tag, and a reserved row would be an empty band above eleven names
    for the sake of the twelfth. */
-:is(.best,.drift,.ap,.wl) .tags{
+:is(.best,.drift,.ap,.wl,.pv) .tags{
   margin-top:clamp(4px,.9vw,6px);
   flex-wrap:nowrap; overflow:hidden;
 }
 /* Long labels are trimmed with an ellipsis rather than sliced by the card's
    edge: "Bhaiya Bhab" reads as a bug, "Bhaiya…" reads as a label that did not
    fit. The first chip gives way before the second, so both stay legible. */
-:is(.best,.drift,.ap,.wl) .tag{
+:is(.best,.drift,.ap,.wl,.pv) .tag{
   flex:0 1 auto; min-width:0; padding:2.5px 7px;
   display:block; max-width:100%;
   font-size:clamp(7.5px,1.8vw,9px);
@@ -286,7 +287,7 @@
    not need to be a loud one: the shop's own red on a wash of it, at the size
    of the label beside it rather than a shout over it. It never gives way to a
    category chip — the chip is trimmed first. */
-:is(.best,.drift,.ap,.wl) .tag-off{
+:is(.best,.drift,.ap,.wl,.pv) .tag-off{
   flex:none; font-weight:700; letter-spacing:.055em;
   color:var(--rose); background:rgba(181,56,74,.07);
   box-shadow:inset 0 0 0 1px rgba(181,56,74,.28);
@@ -300,11 +301,11 @@
    card whether the rakhi was discounted or not — a band of empty ivory under
    every number in the shop. Beside each other they cost nothing, and they
    leave the label row above free for the labels. */
-:is(.best,.drift,.ap,.wl) .rc-prices{
+:is(.best,.drift,.ap,.wl,.pv) .rc-prices{
   display:flex; align-items:baseline; gap:clamp(2px,.9vw,5px);
   flex:0 1 auto; min-width:0;
 }
-:is(.best,.drift,.ap,.wl) .rc-p{
+:is(.best,.drift,.ap,.wl,.pv) .rc-p{
   font-family:var(--display); font-weight:700; flex:none;
   font-size:clamp(14px,3.4vw,16.5px); line-height:1.1; margin:0;
   /* the shop's red, as the reference sets it: the price is the one thing on
@@ -316,7 +317,7 @@
    like it — a sans-serif ₹98 beside a serif ₹59 read as two different facts
    rather than one before-and-after. Quiet, in the faint ink, struck through:
    it is there to be compared against, not read. */
-:is(.best,.drift,.ap,.wl) .rc-mrp{
+:is(.best,.drift,.ap,.wl,.pv) .rc-mrp{
   flex:none;
   font-family:var(--display); font-weight:600; white-space:nowrap;
   font-size:clamp(9.5px,2.4vw,11.5px); line-height:1.1;
@@ -330,7 +331,7 @@
 .best .rc-p{font-size:clamp(17px,4.4vw,21px)}
 .best .rc-mrp{font-size:clamp(11px,2.9vw,13.5px)}
 /* Only drawn when somebody has actually left one. */
-:is(.best,.drift,.ap,.wl) .rc-r{
+:is(.best,.drift,.ap,.wl,.pv) .rc-r{
   display:flex; align-items:center; gap:5px; margin-top:clamp(5px,1vw,7px);
   font-family:var(--head); font-size:clamp(9px,2.1vw,10.5px); color:var(--ink-faint);
 }
@@ -342,7 +343,7 @@
    of the card — and the middle of a card is where a gap is seen. They are
    one row now, sitting directly under the tags, and the leftover height
    falls below them where it reads as the card's own padding. */
-:is(.best,.drift,.ap,.wl) .rc-foot{
+:is(.best,.drift,.ap,.wl,.pv) .rc-foot{
   display:flex; align-items:center; gap:clamp(4px,1.2vw,9px);
   /* The one thing the row may never do is clip the price or slide the button
      off the card. A four-figure price beside a stepper does not fit a card
@@ -361,7 +362,7 @@
    and the control dropped — the button moved when it was pressed. The slot
    is now the width of the wider of the two and both fill it, so the row is
    laid out identically whether the rakhi is in the basket or not. */
-:is(.best,.drift,.ap,.wl) .rc-go{
+:is(.best,.drift,.ap,.wl,.pv) .rc-go{
   flex:none; margin-left:auto; display:flex;
   /* the stepper's own width, spelled out in the tokens the stepper is built
      from: two buttons and the number between them */
@@ -369,8 +370,8 @@
 }
 /* the button and the stepper, not `> *` — the .acts wrapper between them
    and the slot is display:contents, so it has no box to give a width to */
-:is(.best,.drift,.ap,.wl) .rc-go .rc-cart,
-:is(.best,.drift,.ap,.wl) .rc-go .qty{width:100%}
+:is(.best,.drift,.ap,.wl,.pv) .rc-go .rc-cart,
+:is(.best,.drift,.ap,.wl,.pv) .rc-go .qty{width:100%}
 
 /* ── Add ──
    The capsule the stepper wears, in the same red, at the same height: the
@@ -381,8 +382,8 @@
 
    In the flow at the right end of the foot row, which is where the stepper
    lands. Absolute in the corner, the two states sat in two places. */
-:is(.best,.drift,.ap,.wl) .rc-go{position:static}
-:is(.best,.drift,.ap,.wl) .rc-cart{
+:is(.best,.drift,.ap,.wl,.pv) .rc-go{position:static}
+:is(.best,.drift,.ap,.wl,.pv) .rc-cart{
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
   height:clamp(34px,7.6vw,38px); min-height:0; min-width:0;
   padding:0 clamp(12px,2.8vw,15px); border:0; border-radius:var(--r-full);
@@ -399,12 +400,12 @@
   white-space:nowrap;
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
 }
-:is(.best,.drift,.ap,.wl) .rc-cart svg{
+:is(.best,.drift,.ap,.wl,.pv) .rc-cart svg{
   width:clamp(14px,3.2vw,16px); height:clamp(14px,3.2vw,16px);
   stroke-width:1.7; flex:none; opacity:.9;
 }
 @media (hover:hover){
-  :is(.best,.drift,.ap,.wl) .rc-cart:hover{
+  :is(.best,.drift,.ap,.wl,.pv) .rc-cart:hover{
     transform:translateY(-2px);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.28),
@@ -412,10 +413,10 @@
       0 14px 26px -12px rgba(106,17,20,.85);
   }
 }
-:is(.best,.drift,.ap,.wl) .rc-cart:active{transform:translateY(0) scale(.97)}
+:is(.best,.drift,.ap,.wl,.pv) .rc-cart:active{transform:translateY(0) scale(.97)}
 
 /* Sold out keeps the word — it is the one state that may not be a picture. */
-:is(.best,.drift,.ap,.wl) .rc-go .btn[disabled]{
+:is(.best,.drift,.ap,.wl,.pv) .rc-go .btn[disabled]{
   padding:10px 13px; min-height:0; border-radius:var(--r-full); border:0;
   background:rgba(20,18,16,.07); color:var(--ink-faint); box-shadow:none;
   font-size:8.5px; letter-spacing:.08em;
@@ -424,12 +425,12 @@
 /* ── the heart ──
    No disc, like everywhere else. The button stays a 34px target while only
    the mark is drawn. */
-:is(.best,.drift,.ap,.wl) .heart{width:40px; height:40px}
-:is(.best,.drift,.ap,.wl) .heart svg{width:23px; height:23px}
+:is(.best,.drift,.ap,.wl,.pv) .heart{width:40px; height:40px}
+:is(.best,.drift,.ap,.wl,.pv) .heart svg{width:23px; height:23px}
 
 /* No dots on this one. They were built for a fixed four and read as "here
    is how far it goes"; against a row that grows as it is swiped they said
    nine, then more, which is neither true for long nor worth counting. The
    card peeking in at the edge is what says it moves — that is what it was
    always for — and a pointer still gets the arrows. */
-:is(.best,.drift,.ap,.wl) #railDots{display:none !important}
+:is(.best,.drift,.ap,.wl,.pv) #railDots{display:none !important}

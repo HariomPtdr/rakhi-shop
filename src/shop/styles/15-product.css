@@ -1,8 +1,21 @@
 /* ══════════════════════════════════════════════════════════
-   PRODUCT PAGE
+   A RAKHI'S OWN PAGE
+
    A hash route (#p/nazar) rather than a separate file, so each
    rakhi gets a shareable link without the page making a single
    extra request. Back button and deep links both work.
+
+   Two columns, and they are not two halves of one thing: the
+   left is everything somebody reads — the photographs, how it
+   is made, what it is, when it arrives — and the right is the
+   one panel they act on. That panel stays on screen while the
+   left scrolls past it, because a decision reached three
+   screens down should not need scrolling back up to act on.
+
+   Everything is built from the shop's own materials: the ivory
+   panel with a gold hairline that the cards wear, the maroon
+   capsule that says Add, and the serif the prices are set in.
+   Nothing on this page is a surface invented for it.
    ══════════════════════════════════════════════════════════ */
 .pv{
   /* above the header (50) and the cart bar (46), below the sheets: the cart
@@ -12,220 +25,91 @@
   opacity:0; pointer-events:none; transition:opacity .3s var(--ease);
 }
 .pv.on{opacity:1; pointer-events:auto}
-.pv-bar{
-  position:sticky; top:0; z-index:4; display:flex; align-items:center; gap:10px;
-  padding:10px clamp(14px,4vw,30px);
-  background:color-mix(in srgb, var(--bg) 92%, transparent);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line);
-}
-.pv-back,.pv-share{
+
+/* The bar is .ap-bar, styled once in 25-allpage.css and worn by all three
+   full-screen views. The chevron's shape belongs here because this is the
+   page it was written for — the collection and the wishlist borrow it, and
+   25-allpage.css paints it in the page's ivory and gold. */
+.pv-back{
   display:inline-grid; place-items:center; width:42px; height:42px; flex:none;
   border:0; border-radius:50%; cursor:pointer; color:var(--ink);
   background:rgba(255,253,248,.8); box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:transform .25s var(--ease);
 }
-.pv-back:active,.pv-share:active{transform:scale(.94)}
-@media (hover:hover){.pv-back:hover,.pv-share:hover{background:var(--ink); color:var(--bg)}}
-.pv-crumb{
-  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--ink-faint); min-width:0;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-right:auto;
+.pv-back:active{transform:scale(.94)}
+/* ── the wordmark, on a narrow phone ──
+   This bar carries one more glyph than the other two — sharing one rakhi on
+   WhatsApp is how a good deal of this shop is sold, so that button stays —
+   and at 390px "Ray Art Gallery" ran straight under it. The mark keeps the
+   page branded and the chevron beside it still goes home. */
+@media (max-width:520px){.pv-bar .ap-brand > span{display:none}}
+
+.pv-in{max-width:1240px; margin:0 auto;
+       padding:clamp(14px,2.6vw,22px) clamp(18px,4vw,44px)
+               calc(clamp(30px,5vw,54px) + env(safe-area-inset-bottom))}
+
+/* ── where this rakhi lives ──
+   The shop, the shelf, the rakhi. The first two are the way back to them,
+   and on a phone the row scrolls rather than wrapping: a rakhi with a long
+   name would otherwise push the crumbs into two lines above the picture. */
+.pv-crumbs{
+  display:flex; align-items:center; gap:8px; min-width:0;
+  overflow-x:auto; scrollbar-width:none; white-space:nowrap;
+  padding-bottom:2px; margin-bottom:clamp(12px,2.2vw,18px);
+  font-family:var(--head); font-size:clamp(11px,2.4vw,12.5px); font-weight:600;
 }
-/* The cart has to be reachable from here too — the bottom bar belongs to
-   the shop behind this page and stays there. */
-/* the same button as the one in the header, down to the hover and the
-   count that jumps when something is added */
-.pv-cart{
-  display:inline-flex; align-items:center; gap:9px; flex:none; cursor:pointer;
-  border:0; border-radius:var(--r-full); padding:11px 16px; min-height:42px;
-  background:var(--ink); color:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink);
-  font-family:var(--body); font-weight:700; font-size:11.5px;
-  letter-spacing:1.3px; text-transform:uppercase;
-  transition:background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease);
-}
-.pv-cart[hidden]{display:none}
-@media (hover:hover){.pv-cart:hover{background:#fff; color:var(--ink)}}
-.pv-cart:active{transform:scale(.97)}
-.pv-in{max-width:1120px; margin:0 auto; padding:0 clamp(18px,4vw,44px) 130px}
-/* Two columns for the photo and the details, and only those two. "More
-   rakhis" sits outside the grid so the sticky photo cannot slide down
-   over it. */
+.pv-crumbs::-webkit-scrollbar{display:none}
+.pv-crumbs a{color:var(--ink-faint); text-decoration:none; transition:color .25s var(--ease)}
+@media (hover:hover){.pv-crumbs a:hover{color:#7A1418}}
+.pv-crumbs span{color:var(--tan); flex:none}
+.pv-crumbs b{color:#7A1418; font-weight:600; min-width:0}
+
 @media (min-width:940px){
-  .pv-in{padding-bottom:80px}
-  .pv-top{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-          gap:clamp(34px,4vw,64px); align-items:start}
+  .pv-top{
+    display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    gap:clamp(24px,3vw,44px); align-items:start;
+  }
 }
 
-/* the shot, with lamp light behind it */
-.pv-shot{position:relative; margin-top:18px}
-@media (min-width:940px){.pv-shot{position:sticky; top:88px; margin-top:28px}}
-.pv-glow{
-  position:absolute; inset:-8% -6% 6%; border-radius:50%; pointer-events:none;
-  background:radial-gradient(closest-side, rgba(255,196,102,.42), rgba(255,214,148,.16) 54%, transparent 78%);
-}
-.pv-frame{
-  position:relative; display:block; width:100%; border:0; padding:12px; cursor:zoom-in;
-  border-radius:var(--r-xl); background:var(--panel);
-  box-shadow:var(--sheen), var(--elev-2);
-}
-.pv-frame img,.pv-frame svg{
-  width:100%; aspect-ratio:1; object-fit:cover; display:block;
-  border-radius:var(--r-lg); background:linear-gradient(160deg,#fffdf8,#f6f2e9);
-}
-.pv-frame img.art{object-fit:contain}
-.pv-badge{
-  position:absolute; top:22px; left:22px; z-index:2;
-  font-family:var(--head); font-size:8.5px; font-weight:600; letter-spacing:.12em;
-  text-transform:uppercase; padding:4px 10px; border-radius:var(--r-full);
-}
-.pv-badge.real{background:var(--ink); color:var(--bg)}
-.pv-badge.art{background:rgba(251,246,236,.94); color:var(--ink-faint); box-shadow:inset 0 0 0 1px var(--line)}
-.pv-zoomhint{
-  margin-top:10px; text-align:center; font-family:var(--head); font-size:9px; font-weight:600;
-  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint);
-}
-.pv-zoomhint::after{content:"Tap to enlarge"}
-@media (hover:hover) and (pointer:fine){.pv-zoomhint::after{content:"Click to enlarge"}}
-
-/* the details column */
-.pv-body{padding-top:22px}
-@media (min-width:940px){.pv-body{padding-top:28px}}
-.pv-no{
-  font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--ink-faint);
-}
-.pv-name{
-  font-family:var(--display); font-weight:600; letter-spacing:-.018em; line-height:1.12;
-  font-size:clamp(28px,8.4vw,44px); margin-top:8px;
-}
-.pv-price{display:flex; align-items:baseline; gap:10px; margin-top:14px}
-.pv-price b{font-family:var(--display); font-weight:600; font-size:34px; line-height:1}
-.pv-price span{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
-.pv-desc{margin-top:14px; color:var(--ink-soft); font-size:15.5px; line-height:1.6; max-width:46ch}
-
-.pv-rule{height:1px; background:var(--line); margin:24px 0}
-
-.pv-k{
-  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px;
+/* ── on a phone, the name and the price come straight after the picture ──
+   Stacked in DOM order they arrived below the description, the delivery
+   note and the delivery panel — three screens of reading before the one
+   line somebody scrolls a product page to find. The two columns are
+   dissolved with display:contents and the pieces re-ordered, so the phone
+   reads picture, name, price, buttons, and only then everything about it.
+   Nothing is duplicated: it is the same panel in both layouts. */
+@media (max-width:939px){
+  .pv-top{display:flex; flex-direction:column}
+  .pv-left,.pv-right{display:contents}
+  .pv-shot{order:1}
+  .pv-thumbs{order:2}
+  .pv-buycard{order:3; margin-top:clamp(14px,2.4vw,20px)}
+  .pv-made{order:4}
+  .pv-panel{order:5}
+  .pv-eta{order:6}
+  .pv-trust{order:7}
+  .pv-also{order:8}
 }
 
-/* buy row */
-.pv-buy{display:flex; gap:10px; align-items:center; margin-top:6px}
-.pv-buy .btn{flex:1; min-height:52px}
-.pv-ask{margin-top:10px}
-.pv-ask .btn{width:100%; min-height:52px}   /* the same height as Add to cart */
-/* the stepper reads as part of the same row, not a smaller control dropped
-   next to it */
-.pv-buy .stp{min-height:52px; border-radius:var(--r-full)}
-.pv-buy .stp button{width:46px; height:50px}
-.pv-buy .stp span{min-width:36px; font-size:14px}
-.pv-promise{list-style:none; display:grid; gap:7px; margin-top:20px; font-size:13.5px; color:var(--ink-soft)}
-.pv-promise li{display:flex; gap:9px; align-items:flex-start}
-.pv-promise li::before{
-  content:""; flex:none; width:13px; height:7px; margin-top:5px;
-  border-left:2px solid var(--teal); border-bottom:2px solid var(--teal); transform:rotate(-45deg);
-}
-.pv-facts{display:flex; flex-wrap:wrap; gap:7px; margin-top:18px}
+/* ══════════════════════════════════════════════════════════
+   THE PICTURES
 
-/* more rakhis
-   One row, always. It used to become a wrapping grid on a wide screen,
-   which turned a footnote at the bottom of a product page into a second
-   catalogue two rows deep — and buried the reviews under it. A row that
-   runs off the edge says "there is more over here" and takes one line to
-   say it. */
-.pv-more{margin-top:34px}
-@media (min-width:940px){.pv-more{margin-top:52px}}
-.pv-more .rail{
-  display:flex; gap:clamp(10px,1.6vw,18px);
-  overflow-x:auto; scroll-snap-type:x proximity;
-  padding-bottom:6px; scrollbar-width:thin;
+   One scroll container with the photos side by side and
+   scroll-snap doing the paging: no timers, no transform maths,
+   and a swipe behaves like a swipe because it is one.
+   ══════════════════════════════════════════════════════════ */
+.pv-shot{
+  position:relative; overflow:hidden;
+  border-radius:var(--r-xl);
+  background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.55),
+    0 18px 44px -26px rgba(120,88,22,.5);
 }
-.pv-more .rc{scroll-snap-align:start}
-@media (min-width:940px){.pv-more .rc{width:min(232px,42vw)}}
-
-/* ── stars ── */
-.stars{display:inline-block; line-height:0; height:var(--s,13px)}
-.stars svg{height:100%; width:auto; display:block}
-.stars .star-bg{fill:rgba(20,18,16,.14)}
-.stars .star-fg{fill:#E0A32A}
-
-.card-r{display:flex; align-items:center; gap:6px; margin-top:5px}
-.card-r span{font-size:11px; color:var(--ink-faint)}
-
-.pv-rate{
-  display:inline-flex; align-items:center; gap:8px; margin-top:8px;
-  border:0; background:none; cursor:pointer; padding:2px 0; font:inherit;
-}
-.pv-rate span{font-size:12.5px; color:var(--ink-faint)}
-.pv-rate b{font-family:var(--head); color:var(--ink)}
-
-/* ── the reviews under a rakhi ── */
-.pv-reviews{max-width:760px; margin:34px auto 0; padding:0 clamp(14px,4vw,28px)}
-.rev-list{display:grid; gap:12px; margin-top:14px}
-.rev{
-  padding:13px 15px; border-radius:var(--r-md);
-  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line);
-}
-.rev-top{display:flex; align-items:center; gap:9px; flex-wrap:wrap}
-.rev-top b{font-family:var(--head); font-size:13px; font-weight:600}
-.rev-top span{margin-left:auto; font-size:11.5px; color:var(--ink-faint)}
-.rev-b{margin-top:7px; font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
-.rev-reply{
-  margin-top:11px; padding:10px 12px; border-radius:var(--r-sm);
-  background:rgba(27,132,151,.07); border-left:2px solid var(--teal);
-}
-.rev-reply b{font-family:var(--head); font-size:11px; font-weight:600;
-  letter-spacing:.05em; text-transform:uppercase; color:var(--teal)}
-.rev-reply p{margin-top:3px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
-.rev-note{padding:12px 0}
-
-/* ── writing one ── */
-.rev-form{
-  padding:15px 16px; border-radius:var(--r-md); margin-bottom:14px;
-  background:rgba(255,255,255,.6); box-shadow:inset 0 0 0 1px var(--line);
-}
-.rev-form > b{display:block; font-family:var(--head); font-size:14px; font-weight:600}
-.rate-pick{display:flex; gap:4px; margin:11px 0}
-.rate-pick button{
-  border:0; background:none; cursor:pointer; padding:3px; line-height:0;
-  color:rgba(20,18,16,.16); transition:color .15s var(--ease), transform .15s var(--ease);
-}
-.rate-pick button svg{width:26px; height:26px; fill:currentColor}
-.rate-pick button.on{color:#E0A32A}
-.rate-pick button:active{transform:scale(.9)}
-.rev-form textarea{
-  width:100%; font:inherit; font-size:14px; padding:10px 12px; border:0; resize:vertical;
-  border-radius:var(--r-sm); background:#fffdf8; box-shadow:inset 0 0 0 1px var(--line-2);
-}
-.rev-acts{display:flex; gap:8px; margin-top:11px}
-
-/* ── the photo strip under the main shot ── */
-.pv-thumbs{
-  display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:2px;
-  scrollbar-width:none; -webkit-overflow-scrolling:touch;
-}
-.pv-thumbs::-webkit-scrollbar{display:none}
-.pv-th{
-  flex:0 0 auto; width:58px; height:58px; padding:0; border:0; cursor:pointer;
-  border-radius:var(--r-sm); overflow:hidden; background:var(--panel);
-  box-shadow:inset 0 0 0 1px var(--line);
-  transition:box-shadow .2s var(--ease), transform .2s var(--ease);
-}
-.pv-th img{width:100%; height:100%; object-fit:cover; display:block}
-.pv-th.on{box-shadow:inset 0 0 0 2px var(--ink)}
-.pv-th:active{transform:scale(.95)}
-@media (min-width:900px){.pv-th{width:66px; height:66px}}
-
-/* ── the slider ──
-   One scroll container with the photos side by side and scroll-snap doing
-   the paging. No timers, no transform maths, and a swipe behaves like a
-   swipe because it is one. */
 .pv-slides{
   display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
-  border-radius:var(--r-lg); background:linear-gradient(160deg,#fffdf8,#f6f2e9);
-  box-shadow:inset 0 0 0 1px var(--line); aspect-ratio:1/1;
-  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  aspect-ratio:1/1; scrollbar-width:none; -webkit-overflow-scrolling:touch;
 }
 .pv-slides::-webkit-scrollbar{display:none}
 .pv-slide{
@@ -233,49 +117,325 @@
   background:none; cursor:zoom-in; display:block; height:100%;
 }
 .pv-slide img{width:100%; height:100%; object-fit:cover; display:block}
-
-.pv-dots{
-  position:absolute; left:0; right:0; bottom:12px; display:flex;
-  justify-content:center; gap:6px; pointer-events:none;
+/* the drawing, for a rakhi with no photograph yet */
+.pv-frame{
+  position:relative; display:block; width:100%; border:0; padding:0; cursor:zoom-in;
+  background:none;
 }
-.pv-dots i{
-  width:6px; height:6px; border-radius:50%; background:rgba(255,253,248,.55);
-  box-shadow:0 1px 3px rgba(20,18,16,.4); transition:width .25s var(--ease), background .25s var(--ease);
-}
-.pv-dots i.on{width:18px; border-radius:3px; background:#fffdf8}
+.pv-frame img,.pv-frame svg{width:100%; aspect-ratio:1; object-fit:cover; display:block}
+.pv-frame img.art{object-fit:contain; padding:8%}
 
+/* ── what the picture says about itself ──
+   One label at most, and only when there is something true to say: sold out,
+   or a bestseller. The old Photo/Drawing tag told somebody which of two
+   production states the shop was in, which is the shop's business. */
+.pv-badge{
+  position:absolute; top:14px; left:14px; z-index:2;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:var(--r-full);
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+  color:#7A1418;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.7), 0 8px 18px -12px rgba(120,88,22,.6);
+  font-family:var(--head); font-size:9.5px; font-weight:600;
+  letter-spacing:.11em; text-transform:uppercase;
+}
+.pv-badge svg{color:var(--tan-deep)}
+.pv-badge-out{color:var(--ink-faint)}
+
+/* how far through the gallery you are — a number rather than a row of dots,
+   which stays readable at twenty photographs and never has to be counted */
+.pv-count{
+  position:absolute; right:14px; bottom:14px; z-index:2;
+  padding:5px 11px; border-radius:var(--r-full);
+  background:rgba(255,253,248,.92);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+  font-family:var(--head); font-size:10.5px; font-weight:600;
+  letter-spacing:.06em; color:var(--ink-soft);
+}
+
+/* the big heart, top right, opposite the label */
+.pv .heart-big{top:8px; right:8px; width:46px; height:46px; z-index:3}
+.pv .heart-big svg{width:26px; height:26px}
+
+/* ── the arrows ──
+   Only where there is a pointer: a mouse cannot swipe a scroll container,
+   and on touch the swipe is the control. The shop's own ivory disc. */
 .pv-arrow{
   position:absolute; top:50%; transform:translateY(-50%); z-index:3;
-  width:38px; height:38px; display:none; place-items:center; border:0; cursor:pointer;
-  border-radius:50%; background:rgba(255,253,248,.9); color:var(--ink);
-  font-size:20px; line-height:1; box-shadow:0 2px 10px rgba(20,18,16,.18);
+  width:40px; height:40px; display:none; place-items:center; border:0; cursor:pointer;
+  border-radius:50%;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.75), 0 10px 24px -12px rgba(120,88,22,.5);
+  transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
 }
-.pv-arrow.prev{left:10px}
-.pv-arrow.next{right:10px}
+.pv-arrow.prev{left:12px}
+.pv-arrow.next{right:12px}
 @media (hover:hover) and (min-width:900px){.pv-arrow{display:grid}}
-.pv-arrow:hover{background:#fff}
+@media (hover:hover){
+  .pv-arrow:hover{
+    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
+  }
+}
+.pv-arrow:active{transform:translateY(-50%) scale(.94)}
 
-/* Buy now sits under the row, full width — it is the bigger commitment,
-   and giving it its own line stops a thumb hitting it by accident while
-   reaching for the stepper. */
-.pv-now{margin-top:10px}
+/* ── the strip under it ── */
+.pv-thumbs{
+  display:flex; gap:9px; margin-top:11px; overflow-x:auto; padding:2px 2px 4px;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.pv-thumbs::-webkit-scrollbar{display:none}
+.pv-th{
+  flex:0 0 auto; width:64px; height:64px; padding:0; border:0; cursor:pointer;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
+  transition:box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.pv-th img{width:100%; height:100%; object-fit:cover; display:block}
+.pv-th.on{box-shadow:inset 0 0 0 2px rgba(154,34,38,.9), 0 8px 18px -12px rgba(120,88,22,.5)}
+.pv-th:active{transform:scale(.95)}
+@media (min-width:900px){.pv-th{width:70px; height:70px}}
 
-/* the quieter second action, and WhatsApp reduced to what it is: a link */
-.pv-add2{margin-top:10px}
+/* ══════════════════════════════════════════════════════════
+   THE PANELS DOWN THE LEFT
+
+   How it is made, what it is, when it arrives, and what is
+   promised — each on the shop's own ivory card with the gold
+   hairline, so the column reads as a set of related notes
+   rather than a wall of text.
+   ══════════════════════════════════════════════════════════ */
+.pv-panel,.pv-made,.pv-eta,.pv-trust{
+  border-radius:16px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 12px 28px -20px rgba(120,88,22,.36);
+}
+.pv-made,.pv-panel,.pv-eta,.pv-trust{margin-top:clamp(14px,2.4vw,20px)}
+
+/* the one line about how these are made */
+.pv-made{display:flex; align-items:center; gap:14px; padding:clamp(13px,2.2vw,17px)}
+.pv-made-i{
+  display:grid; place-items:center; flex:none; width:44px; height:44px;
+  border-radius:50%; color:var(--rose); background:rgba(181,56,74,.07);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
+}
+.pv-made-i svg{width:22px; height:22px}
+.pv-made b{display:block; font-family:var(--display); font-weight:600;
+           font-size:clamp(15px,3.4vw,17px); color:#3B2415}
+.pv-made span{display:block; margin-top:3px; font-size:clamp(12.5px,2.9vw,13.5px);
+              line-height:1.55; color:var(--ink-soft)}
+
+.pv-panel{padding:clamp(15px,2.6vw,22px)}
+
+/* ── a heading inside a panel ──
+   Small caps in the shop's gold, with the flower under it that heads every
+   section on the home page — the same mark, at the size a panel wants. */
+.pv-k{
+  font-family:var(--head); font-size:clamp(9.5px,2vw,10.5px); font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--tan-deep);
+}
+.pv-k-orn{display:block; width:16px; margin:8px 0 0; color:var(--tan)}
+.pv-k-orn svg{width:100%; height:auto; display:block}
+
+.pv-desc{margin-top:12px; color:var(--ink-soft);
+         font-size:clamp(13.5px,3vw,15px); line-height:1.65; max-width:52ch}
+.pv-panel .tags{margin-top:12px; flex-wrap:wrap}
+
+/* how long it takes to get there */
+.pv-eta{display:flex; gap:12px; align-items:flex-start; padding:clamp(13px,2.2vw,17px)}
+.pv-eta svg{flex:none; margin-top:2px; color:var(--tan-deep)}
+.pv-eta b{display:block; font-family:var(--head); font-size:clamp(13px,3vw,14px); font-weight:600; color:#3B2415}
+.pv-eta span{display:block; margin-top:4px; font-size:clamp(12px,2.8vw,13px); line-height:1.6; color:var(--ink-soft)}
+
+/* ── the three promises at the foot ──
+   Three across from the start: they are short, and stacked they read as a
+   list of things to get through rather than a row of reassurances. */
+.pv-trust{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  padding:clamp(13px,2.2vw,18px) clamp(8px,1.6vw,14px);
+  text-align:center;
+}
+.pv-trust > div{
+  display:grid; justify-items:center; gap:3px; padding:0 clamp(6px,1.2vw,12px);
+  min-width:0;
+}
+.pv-trust > div + div{box-shadow:inset 1px 0 0 rgba(217,184,119,.45)}
+.pv-trust svg{width:22px; height:22px; color:var(--tan-deep); margin-bottom:4px}
+.pv-trust b{font-family:var(--head); font-size:clamp(10.5px,2.4vw,12px); font-weight:600; color:#3B2415}
+.pv-trust span{font-size:clamp(9.5px,2.2vw,11px); line-height:1.45; color:var(--ink-faint)}
+
+/* ══════════════════════════════════════════════════════════
+   THE PANEL THAT SELLS IT
+
+   Everything somebody acts on, in one card, in the order the
+   decision is made: what it is, what people said, what it
+   costs, how many, and then the two buttons.
+   ══════════════════════════════════════════════════════════ */
+.pv-right{margin-top:clamp(16px,2.6vw,20px)}
+@media (min-width:940px){
+  .pv-right{position:sticky; top:84px; margin-top:0}
+}
+.pv-buycard{
+  padding:clamp(17px,2.8vw,26px);
+  border-radius:18px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.5),
+    0 20px 48px -28px rgba(120,88,22,.45);
+}
+.pv-name{
+  font-family:var(--display); font-weight:600; letter-spacing:-.018em; line-height:1.12;
+  font-size:clamp(24px,5.6vw,34px); color:#3B2415;
+}
+/* ── the price ──
+   The shop's red, in the serif every price here is set in, with what it
+   cost before struck through beside it and the saving in its own chip. */
+.pv-price{display:flex; align-items:baseline; flex-wrap:wrap; gap:10px; margin-top:14px}
+.pv-price b{font-family:var(--display); font-weight:700; font-size:clamp(30px,7vw,38px);
+            line-height:1; color:var(--rose)}
+.pv-price s{font-family:var(--display); font-weight:600; font-size:clamp(15px,3.6vw,19px);
+            color:var(--ink-faint); text-decoration-thickness:1px}
+.pv-off{
+  padding:5px 11px; border-radius:var(--r-full);
+  background:rgba(181,56,74,.08); color:var(--rose);
+  box-shadow:inset 0 0 0 1px rgba(181,56,74,.28);
+  font-family:var(--head); font-size:10.5px; font-weight:700; letter-spacing:.06em;
+}
+.pv-tax{margin-top:7px; font-size:12px; color:var(--ink-faint)}
+
+/* three things about every rakhi in this shop, in one row */
+.pv-chips{
+  display:grid; grid-template-columns:repeat(3,1fr); margin:clamp(15px,2.6vw,20px) 0;
+  border-radius:12px; overflow:hidden;
+  background:rgba(217,184,119,.09);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.4);
+}
+.pv-chips span{
+  display:grid; justify-items:center; gap:5px; padding:11px 6px; text-align:center;
+  font-family:var(--head); font-size:clamp(9.5px,2.1vw,10.5px); font-weight:600;
+  line-height:1.35; color:var(--ink-soft);
+}
+.pv-chips span + span{box-shadow:inset 1px 0 0 rgba(217,184,119,.4)}
+.pv-chips svg{width:20px; height:20px; color:var(--tan-deep)}
+
+/* ── how many ──
+   The word above the stepper rather than beside it: a label and a control on
+   one line put the control off centre in a panel where everything else runs
+   the full width. */
+.pv-qty{margin-bottom:14px}
+.pv-qty-k{
+  display:block; margin-bottom:8px;
+  font-family:var(--head); font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--tan-deep);
+}
+.pv-qty .stp{
+  display:inline-flex; align-items:center; min-height:48px;
+  border-radius:12px; background:#FFFDF8;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.7);
+}
+.pv-qty .stp button{
+  width:48px; height:46px; border:0; background:none; cursor:pointer;
+  font-size:19px; line-height:1; color:#7A1418;
+  transition:background .2s var(--ease);
+}
+@media (hover:hover){.pv-qty .stp button:hover{background:rgba(122,20,24,.06)}}
+.pv-qty .stp span{
+  min-width:40px; text-align:center;
+  font-family:var(--display); font-weight:700; font-size:16px; color:#3B2415;
+}
+
+/* ── the two buttons ──
+   Add is the outlined one and Buy now is filled, which is the shop's rule
+   everywhere: the solid capsule is the one that spends money. */
+.pv-act{
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  width:100%; min-height:50px; border:0; border-radius:12px; cursor:pointer;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(11px,2.4vw,12px); letter-spacing:.12em; text-transform:uppercase;
+  transition:background .3s var(--ease), color .3s var(--ease),
+             box-shadow .3s var(--ease), transform .25s var(--ease);
+}
+.pv-act:active{transform:scale(.98)}
+.pv-act-add{
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
+}
+@media (hover:hover){
+  .pv-act-add:hover{
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 0 1.6px rgba(154,34,38,.9),
+               0 12px 26px -16px rgba(122,20,24,.6);
+  }
+}
+.pv-act-buy{
+  margin-top:10px;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 0 0 1px rgba(217,184,119,.42),
+             0 12px 24px -12px rgba(106,17,20,.7);
+}
+.pv-act-buy svg{color:#F3C969}
+@media (hover:hover){
+  .pv-act-buy:hover{
+    transform:translateY(-2px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 0 0 1px rgba(217,184,119,.6),
+               0 18px 32px -14px rgba(106,17,20,.85);
+  }
+}
+.pv-soldout{
+  margin-bottom:12px; padding:11px 13px; border-radius:12px;
+  background:rgba(181,56,74,.06); box-shadow:inset 0 0 0 1px rgba(181,56,74,.22);
+  font-size:13px; line-height:1.55; color:var(--ink-soft);
+}
+
+/* WhatsApp, reduced to what it is: a link */
 .pv-ask-link{
   display:inline-flex; align-items:center; gap:8px; margin-top:14px;
-  font-family:var(--head); font-size:13px; font-weight:600; color:var(--ink-soft);
+  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--ink-soft);
   text-decoration:none; padding:6px 2px;
 }
 .pv-ask-link .wa{color:var(--wa)}
-.pv-ask-link:hover{color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+.pv-ask-link:hover{color:#7A1418; text-decoration:underline; text-underline-offset:3px}
 
-/* how long it takes to get there */
-.pv-eta{
-  display:flex; gap:11px; align-items:flex-start; margin-top:18px;
-  padding:12px 14px; border-radius:var(--r-md);
-  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.18);
+/* ══════════════════════════════════════════════════════════
+   YOU MAY ALSO LIKE
+
+   Under the panel that sells this one, because that is where
+   somebody who has decided against it is looking. The shop's
+   own card, three across on a wide screen and two on a phone —
+   the same grid the collection and the wishlist use.
+   ══════════════════════════════════════════════════════════ */
+.pv-also{
+  margin-top:clamp(14px,2.4vw,20px); padding:clamp(15px,2.6vw,20px);
+  border-radius:18px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 12px 28px -20px rgba(120,88,22,.36);
 }
-.pv-eta svg{flex:none; margin-top:1px; color:var(--teal)}
-.pv-eta b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
-.pv-eta span{display:block; margin-top:3px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
+.pv-also-h{display:flex; align-items:center; gap:12px; margin-bottom:13px}
+.pv-also-h .pv-k{margin-right:auto}
+.pv-also-h a{
+  flex:none; font-family:var(--head); font-size:10.5px; font-weight:600;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--rose); text-decoration:none;
+}
+@media (hover:hover){.pv-also-h a:hover{color:#6A1114; text-decoration:underline; text-underline-offset:3px}}
+.pv-also-g{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(9px,1.8vw,13px);
+  align-items:start;
+}
+@media (min-width:520px){.pv-also-g{grid-template-columns:repeat(3,1fr)}}
+.pv-also-g > .rc{width:auto; height:100%}
+
+/* ── stars ──
+   Drawn as one svg with a clip, so a half star is a half star. Used on this
+   page, in the review list and on a card. */
+.stars{display:inline-block; line-height:0; height:var(--s,13px)}
+.stars svg{height:100%; width:auto; display:block}
+.stars .star-bg{fill:rgba(20,18,16,.14)}
+.stars .star-fg{fill:#E0A32A}
+
+.card-r{display:flex; align-items:center; gap:6px; margin-top:5px}
+.card-r span{font-size:11px; color:var(--ink-faint)}

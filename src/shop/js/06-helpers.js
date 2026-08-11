@@ -16,6 +16,17 @@ function toast(m){
   clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),2200);
 }
 
+/* ── the mandala, borrowed rather than repeated ──
+   The wordmark's mark is 4KB of circles and polygons. Three full-screen
+   views carry the wordmark — the collection, the wishlist and a rakhi's own
+   page — and writing it into the markup once per view is 12KB sent to every
+   phone to draw one shape. Each of those views leaves an empty slot instead
+   and fills it from the one in the header when the page loads. */
+function fillBrandMark(slotSel){
+  const slot = $(slotSel), mark = $(".nav-in .brand-mk") || $(".ap-brand .brand-mk");
+  if(slot && mark) slot.replaceWith(mark.cloneNode(true));
+}
+
 /* ══════════════════════════════════════════════════════════
    the tags on a rakhi
 

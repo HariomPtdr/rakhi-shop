@@ -46,9 +46,9 @@ function paintHearts(){
     b.setAttribute("aria-pressed", String(on));
     b.setAttribute("aria-label", on ? "Remove from your wishlist" : "Save to your wishlist");
   });
-  /* both hearts — the one in the header and the one in the full collection,
-     which covers the header while it is open */
-  [$("#wishN"), $("#apWishN")].forEach(n => {
+  /* every heart's count — the header's, and the ones in the bars of the two
+     views that cover the header while they are open */
+  [$("#wishN"), $("#apWishN"), $("#pvWishN")].forEach(n => {
     if(!n) return;
     n.textContent = wish.length;
     n.hidden = !wish.length;
