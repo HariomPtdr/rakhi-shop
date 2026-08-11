@@ -37,7 +37,10 @@ const AP_MARK = ($(".ap-kick svg") || {}).innerHTML || "";
    place to put one — it is a tick on a rakhi that is already somewhere. */
 const AP_SPECIAL = {
   best: {
-    n:"Bestsellers", card:{ t:"Bestsellers", sub:"Loved by thousands of families" },
+    n:"Bestsellers",
+    /* the premium card's photograph: the page is the shop's best, and that
+       is the picture the shop puts its best in */
+    card:{ t:"Bestsellers", sub:"Loved by thousands of families", img:"cat-premium.webp" },
     hero:{ kick:"Loved most",
            h:["Best","Sellers."],
            sub:["Handpicked favourites","loved by thousands of families."],
@@ -45,10 +48,36 @@ const AP_SPECIAL = {
                 +'<path d="M4.6 20.4h14.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' }
   }
 };
-/* every page this view can be on: the shelves, and Bestsellers */
-const viewOf = k => catOf(k) || AP_SPECIAL[k] || null;
+/* ── the budget pages ──
+   #b/b2 is the collection filtered to one price band. The bands are BANDS,
+   the same five the circles on the home page are cut from and the same ones
+   the filter sheet offers, so there is one idea in the shop of what "under
+   ₹100" means. Built here rather than in SHOP_CATS for the same reason
+   Bestsellers is: a price is not a shelf a rakhi is filed onto. */
+const bandOf = k => BANDS.find(b => b.k === k) || null;
+const bandHero = b => ({
+  n: b.n,
+  card:{ t:b.n, sub:"Every rakhi in this range", img:b.img },
+  hero:{ kick:"Shop by budget",
+         h:[b.n + ".", "Every One Of Them."],
+         sub:["The whole shelf at this price,", "sorted however you like."],
+         ink:"#7A1418",
+         mark:'<path d="M12 2.8v18.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+              +'<path d="M15.6 7.2a3.6 3.6 0 0 0-3.6-2.2c-2 0-3.6 1.2-3.6 3s1.6 2.6 3.6 3 3.6 1.2 3.6 3-1.6 3-3.6 3a3.6 3.6 0 0 1-3.6-2.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' }
+});
+
+/* every page this view can be on: the shelves, Bestsellers and the bands */
+function viewOf(k){
+  if(!k) return null;
+  if(catOf(k)) return catOf(k);
+  if(AP_SPECIAL[k]) return AP_SPECIAL[k];
+  const b = k.startsWith("b:") && bandOf(k.slice(2));
+  return b ? bandHero(b) : null;
+}
 const isView = k => !!viewOf(k);
-const viewHash = k => (k === "best" ? "#best" : "#c/" + k);
+const viewHash = k => k === "best" ? "#best"
+                    : k.startsWith("b:") ? "#b/" + k.slice(2)
+                    : "#c/" + k;
 
 const AP_HEAD = {
   kick: "Our collection",
@@ -109,10 +138,38 @@ function paintApHead(k){
      shop, they have been for a while. The shelf's name goes in its place
      and the shop's drops to the line underneath, which is where the
      wordmark's second line already was. */
+  paintApBuds(k);
+
   const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
   if(n) n.textContent  = c ? c.n : "Ray Art Gallery";
   if(s2) s2.textContent = c ? "Ray Art Gallery" : "Handmade Rakhi";
 }
+
+/* ── the other bands, on a budget page ──
+   The same circles the home page asks with, in the same order, with the one
+   being looked at marked. Somebody who came in at ₹50–₹100 is one tap from
+   ₹100–₹200 without going back to find the row again. */
+function paintApBuds(k){
+  const rail = $("#apBuds");
+  if(!rail) return;
+  const onBudget = typeof k === "string" && k.startsWith("b:");
+  rail.hidden = !onBudget;
+  if(!onBudget){ rail.innerHTML = ""; return; }
+  const now = k.slice(2);
+  const rows = BANDS.filter(b => PRODUCTS.some(p => p.price >= b.lo && p.price < b.hi));
+  rail.innerHTML = rows.map((b, i) => `
+    <button class="apbud${b.k === now ? " on" : ""}" data-band="${b.k}" type="button"
+            aria-pressed="${b.k === now}">
+      <span class="apbud-o t${i % 5}">${b.img
+        ? `<img src="../../assets/images/${b.img}" alt="" width="330" height="330" loading="lazy" decoding="async">`
+        : ""}</span>
+      <span class="apbud-n">${b.n}</span>
+    </button>`).join("");
+}
+$("#apBuds").addEventListener("click", e => {
+  const b = e.target.closest("[data-band]");
+  if(b) openCat("b:" + b.dataset.band);
+});
 
 /* The hash always says what is on screen, so a shelf can be sent to
    somebody, opened again from history, or reloaded onto the same shelf.
@@ -141,6 +198,10 @@ function openAll(fromHash, cat){
   $$("#chips .chip").forEach(c =>
     c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   paintApHead(k);
+  /* the sheet may be standing open while the page under it changes — moving
+     from ₹50–₹100 to ₹100–₹200 with a band button is exactly that — so it is
+     redrawn against the page it is now on */
+  if(fsheetOn()){ paintFilterSheet(); paintFilterCount(); }
   if(allOpen()){ paintAll(); apSyncHash(); return; }
   paintAll();
   apEl.classList.add("on");
@@ -260,7 +321,15 @@ function paintFilterSheet(){
      already been answered by the card that was pressed to get here, and the
      section was the tallest thing in the sheet: seven buttons offering to
      take somebody off the page they just asked for. */
-  const onShelf = isView(apState.cat);
+  /* A shelf page and Bestsellers have already answered the shelf question.
+     A budget page has not — "kids rakhis under ₹100" is a real thing to
+     want — so the shelves stay there. */
+  const onShelf = isCat(apState.cat) || apState.cat === "best";
+  /* on a budget page the band lives in the view key, not in apState.band */
+  const onBudget = typeof apState.cat === "string" && apState.cat.startsWith("b:");
+  const curBand  = onBudget ? apState.cat.slice(2) : apState.band;
+  const bandPool = onBudget ? visible(Object.assign({}, apState, {cat:"all", band:null}))
+                            : visibleIgnoring(apState, "band");
   const shelf = $("#fsheetShelf");
   if(shelf) shelf.hidden = onShelf;
 
@@ -268,12 +337,11 @@ function paintFilterSheet(){
   if(bands){
     /* the bands that hold something *on this page* — on the Kids shelf,
        Above ₹300 is not a filter, it is an empty room */
-    const pool = visibleIgnoring(apState, "band");
-    const live = BANDS.filter(b => pool.some(p => p.price >= b.lo && p.price < b.hi));
+    const live = BANDS.filter(b => bandPool.some(p => p.price >= b.lo && p.price < b.hi));
     bands.innerHTML = `
-      <button class="fs-b" data-band="" aria-pressed="${!apState.band}">Any price</button>` +
+      <button class="fs-b" data-band="" aria-pressed="${!curBand}">Any price</button>` +
       live.map(b => `
-      <button class="fs-b" data-band="${b.k}" aria-pressed="${apState.band === b.k}">${b.n}</button>`).join("");
+      <button class="fs-b" data-band="${b.k}" aria-pressed="${curBand === b.k}">${b.n}</button>`).join("");
   }
 
   /* ── style ──
@@ -321,6 +389,14 @@ function paintFilterSheet(){
 $("#fsheetBands").addEventListener("click", e => {
   const b = e.target.closest("[data-band]");
   if(!b) return;
+  /* On a budget page the price row *is* the page: choosing another band
+     moves to that page rather than filtering this one twice over. */
+  if(typeof apState.cat === "string" && apState.cat.startsWith("b:")){
+    const k = b.dataset.band;
+    openCat(k ? "b:" + k : "all");
+    paintFilterSheet(); paintFilterCount();
+    return;
+  }
   apState.band = b.dataset.band || null;
   /* a shelf and a price at once is how you arrive at nothing and cannot
      tell which of the two emptied it */
@@ -408,6 +484,7 @@ function syncAllRoute(){
   const m = /^#c\/([\w-]+)$/.exec(location.hash);
   if(m) openCat(m[1], true);
   else if(location.hash === "#best") openCat("best", true);
+  else if(/^#b\/[\w-]+$/.test(location.hash)) openCat("b:" + location.hash.slice(3), true);
   else if(location.hash === "#all") openAll(true);
   else if(allOpen()) hideAll();
 }

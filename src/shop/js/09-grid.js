@@ -164,10 +164,15 @@ function visible(st){
   st = st || state;
   const by={feat:(a,b)=>a.feat-b.feat, lo:(a,b)=>a.price-b.price,
             hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[st.sort];
-  const band = st.band && BANDS.find(b => b.k === st.band);
-  const best = st.cat === "best" ? new Set(bestPool().map(p => p.id)) : null;
+  /* A budget page carries its band in the view key — "b:b2" — because the
+     view key is what the address, the banner and the bar are built from.
+     Unpacked here so that everything downstream sees a plain band. */
+  let cat = st.cat, bk = st.band;
+  if(typeof cat === "string" && cat.startsWith("b:")){ bk = cat.slice(2); cat = "all"; }
+  const band = bk && BANDS.find(b => b.k === bk);
+  const best = cat === "best" ? new Set(bestPool().map(p => p.id)) : null;
   return PRODUCTS
-    .filter(p => best ? best.has(p.id) : (st.cat === "all" || p.cat === st.cat))
+    .filter(p => best ? best.has(p.id) : (cat === "all" || p.cat === cat))
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
     /* a style, out of the tags the rakhis themselves carry */
     .filter(p => !st.tag || (p.tags || []).map(tagKey).includes(st.tag))
@@ -350,12 +355,12 @@ function paintBudget(){
 }
 paintBudget();
 
+/* Same decision the category cards made: a band asked for is a page of that
+   band, not four of them halfway down the home page with the rest of the
+   home page still underneath. */
 $("#budRail").addEventListener("click", e => {
   const b = e.target.closest("[data-band]");
   if(!b) return;
-  state.band = b.dataset.band;
-  state.cat  = "all";           /* a price and a category at once is how you get nothing */
-  paintGrid();
-  document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+  openCat("b:" + b.dataset.band);
 });
 

@@ -280,6 +280,12 @@ body.ap-on{overflow:hidden}
 .ap-chips .chips{
   display:flex; gap:clamp(6px,1.4vw,10px);
   overflow-x:auto; scrollbar-width:none; padding:2px 2px 6px;
+  /* The row scrolls when the shelves outrun it, and a chip cut clean off at
+     the edge reads as a chip broken rather than a chip further along. It
+     fades out instead, which is the same thing the shelves on the home page
+     do at both their ends. */
+  -webkit-mask-image:linear-gradient(to right, #000 94%, transparent);
+          mask-image:linear-gradient(to right, #000 94%, transparent);
 }
 .ap-chips .chips::-webkit-scrollbar{display:none}
 
@@ -582,3 +588,64 @@ body.ap-on{overflow:hidden}
              0 8px 18px -10px rgba(106,17,20,.7);
 }
 .fs-b:active{transform:scale(.98)}
+
+/* ══════════════════════════════════════════════════════════
+   THE BANDS, ON A BUDGET PAGE
+
+   The Shop by Budget circles again, smaller, in a row that
+   scrolls, with the one being looked at ringed. The home page
+   asks the question with these; a budget page is the answer,
+   and the answer should be able to change its mind without
+   sending anybody back up to the question.
+   ══════════════════════════════════════════════════════════ */
+.ap-buds{
+  display:flex; gap:clamp(10px,2.4vw,18px);
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  padding:2px 2px 10px; margin-bottom:clamp(4px,1vw,8px);
+}
+.ap-buds[hidden]{display:none}
+.ap-buds::-webkit-scrollbar{display:none}
+@media (min-width:760px){ .ap-buds{justify-content:center; flex-wrap:wrap} }
+
+.apbud{
+  flex:none; width:clamp(84px,22vw,116px); scroll-snap-align:start;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  border:0; padding:0; background:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.apbud-o{
+  position:relative; display:grid; place-items:center;
+  width:100%; aspect-ratio:1; border-radius:50%; overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), 0 10px 22px -16px rgba(120,88,22,.42);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.apbud-o img{width:100%; height:100%; object-fit:cover; display:block}
+/* the same five tints the home page's circles are cut from */
+.apbud-o.t0{background:linear-gradient(155deg,#E4F1F2,#D2E7EA)}
+.apbud-o.t1{background:linear-gradient(155deg,#FBEEDA,#F5E2C2)}
+.apbud-o.t2{background:linear-gradient(155deg,#F7E3E3,#F0D2D3)}
+.apbud-o.t3{background:linear-gradient(155deg,#E9F0E4,#DCE8D5)}
+.apbud-o.t4{background:linear-gradient(155deg,#EFE9F2,#E3DAEA)}
+/* the one being looked at: ringed in the shop's red, with the tick the
+   reference draws in the corner of it */
+.apbud.on .apbud-o{
+  box-shadow:inset 0 0 0 2px #7A1418, 0 12px 26px -14px rgba(106,17,20,.55);
+}
+.apbud.on .apbud-o::after{
+  content:""; position:absolute; top:2px; right:2px; width:20px; height:20px;
+  border-radius:50%; background:#7A1418 no-repeat center/10px 10px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFF6E8' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12.5 9.5 18 20 6.5'/></svg>");
+  box-shadow:0 0 0 2px var(--bg);
+}
+@media (hover:hover){
+  .apbud:hover .apbud-o{transform:translateY(-2px)}
+}
+.apbud:active .apbud-o{transform:translateY(0)}
+.apbud-n{
+  display:block; margin-top:clamp(7px,1.4vw,10px);
+  font-family:var(--head); font-weight:700;
+  font-size:clamp(9.5px,2.2vw,11.5px); color:#3B2415;
+}
+.apbud.on .apbud-n{color:#7A1418}

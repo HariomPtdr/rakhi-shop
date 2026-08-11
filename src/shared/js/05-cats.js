@@ -33,8 +33,12 @@
         sub  one sentence, in two lines on a phone.
         mark the glyph over the kicker, drawn on a 24×24 grid.
         ink  the headline's colour. The shop is maroon and
-             gold; the evil eye is the one shelf whose own
-             colour is its subject, and navy is that colour.
+             gold, and every shelf takes a colour out of that
+             family rather than beside it: navy for the evil
+             eye, rose for the two of them, terracotta for the
+             children, maroon for the temple, violet for the
+             designs, bronze for the premium. Six pages, six
+             inks, one shop.
    ══════════════════════════════════════════════════════════ */
 const SHOP_CATS = [
   { k:"evil-eye", n:"Evil eye rakhis",
@@ -47,11 +51,12 @@ const SHOP_CATS = [
                 +'<circle cx="12" cy="12" r="3.6" fill="currentColor"/>'
                 +'<circle cx="12" cy="12" r="1.5" fill="#FBF6EC"/>' } },
 
-  { k:"lumba", n:"Bhabhi rakhis",
+  { k:"lumba", n:"Bhaiya Bhabhi rakhis",
     card:{ t:"Bhaiya Bhabhi", sub:"Celebrate togetherness", img:"cat-bhaiya.webp" },
     hero:{ kick:"Bhaiya Bhabhi collection",
            h:["Stronger Together.","Forever Bonded."],
            sub:["Celebrate the beautiful bond","of love, respect &amp; togetherness."],
+           ink:"#9B2743",
            mark:'<path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 0 1 19.4 13Z" fill="currentColor"/>' } },
 
   { k:"kids", n:"Kids rakhis",
@@ -59,6 +64,7 @@ const SHOP_CATS = [
     hero:{ kick:"Kids collection",
            h:["Bright Colours.","Biggest Smiles."],
            sub:["Little rakhis for little wrists,","made to be shown off all day."],
+           ink:"#B4551C",
            mark:'<path d="M12 2.8l2.7 5.8 6.3.8-4.6 4.4 1.1 6.3-5.5-3-5.5 3 1.1-6.3L3 9.4l6.3-.8Z" fill="currentColor"/>' } },
 
   { k:"traditional", n:"Religious rakhis",
@@ -66,6 +72,7 @@ const SHOP_CATS = [
     hero:{ kick:"Religious collection",
            h:["Divine Blessings.","Sacred Bonds."],
            sub:["Invoke blessings and protect","your bond with faith &amp; love."],
+           ink:"#7A1418",
            mark:'<path d="M12 2.4 19 8v13H5V8Z" fill="none" stroke="currentColor" stroke-width="1.5"/>'
                 +'<path d="M12 5.6 16.4 9v4.2h-8.8V9Z" fill="currentColor" opacity=".85"/>'
                 +'<path d="M10.4 21v-4.2a1.6 1.6 0 0 1 3.2 0V21Z" fill="none" stroke="currentColor" stroke-width="1.4"/>' } },
@@ -75,6 +82,7 @@ const SHOP_CATS = [
     hero:{ kick:"Designer collection",
            h:["Style. Sophistication.","Sisterly Love."],
            sub:["Contemporary designs for","the most special bond."],
+           ink:"#4A3A6B",
            mark:'<path d="M12 3.2c2.2 2.6 3.3 4.9 3.3 7 0 2-1.1 3.7-3.3 5.1-2.2-1.4-3.3-3.1-3.3-5.1 0-2.1 1.1-4.4 3.3-7Z" fill="currentColor"/>'
                 +'<path d="M12 17c-3.1 2.2-6.2 2.5-9.3 1 2-2.6 4.6-3.5 7.7-2.8Z" fill="currentColor" opacity=".75"/>'
                 +'<path d="M12 17c3.1 2.2 6.2 2.5 9.3 1-2-2.6-4.6-3.5-7.7-2.8Z" fill="currentColor" opacity=".75"/>' } },
@@ -87,6 +95,7 @@ const SHOP_CATS = [
     hero:{ kick:"Premium collection",
            h:["Quiet Gold.","Lasting Grace."],
            sub:["Kundan, zardosi and pearl,","for the ones who notice."],
+           ink:"#6E4B12",
            mark:'<path d="M12 2.6 15 9l6.6.7-4.9 4.5 1.4 6.5L12 17.4 5.9 20.7l1.4-6.5L2.4 9.7 9 9Z" fill="none" stroke="currentColor" stroke-width="1.5"/>'
                 +'<circle cx="12" cy="11.6" r="2.2" fill="currentColor"/>' } }
 ];
