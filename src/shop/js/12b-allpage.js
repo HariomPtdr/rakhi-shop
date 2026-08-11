@@ -154,6 +154,15 @@ function paintApHead(k){
   const heroBox = $(".ap-hero");
   if(heroBox) heroBox.hidden = onBudget;
 
+  /* The shelf row stays on every page, a shelf's own included: it is how
+     somebody moves from Kids to Premium without going back to the row of
+     cards, and on a wide screen there is room for it beside the sort. Only
+     the sheet drops it on a shelf page, where it was the tallest thing in a
+     panel opened on a phone to answer a different question. */
+  const chipRow = $("#apChips"), tools = $("#apTools");
+  if(chipRow) chipRow.hidden = false;
+  if(tools) tools.classList.remove("ap-tools-solo");
+
   const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
   /* the bar says which room of the shop this is, not which price: the price
      is on the circles, ringed, a thumb's width below it */
@@ -359,7 +368,7 @@ function paintFilterSheet(){
   /* A shelf page and Bestsellers have already answered the shelf question.
      A budget page has not — "kids rakhis under ₹100" is a real thing to
      want — so the shelves stay there. */
-  const onShelf = isCat(apState.page) || apState.page === "best";
+  const onShelf = isCat(apState.page);
   /* on a budget page the band belongs to the page, not to the sheet */
   const onBudget = apState.page.startsWith("b:");
   const curBand  = onBudget ? apState.page.slice(2) : apState.band;

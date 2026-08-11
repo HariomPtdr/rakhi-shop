@@ -53,37 +53,62 @@ body.pv-on .cartbar{transform:translateY(140%); pointer-events:none}
 }
 @media (min-width:720px){.cartbar{display:none}}
 
-/* ── floating whatsapp ── */
-/* WhatsApp, bottom right, on every screen. On a phone it is the round button
-   everyone already knows; from tablet up it has room for the word. */
+/* ══════════════════════════════════════════════════════════
+   FLOATING WHATSAPP
+
+   It was a green disc on a phone and a black capsule with the
+   word on a desktop — two different buttons for one thing, and
+   neither of them the shop's. Everything else that floats over
+   this page is the same material now: the header's ivory glass,
+   the gold hairline the cards and the cart bar wear.
+
+   It wears the shop's red, the same capsule as Shop now, View
+   cart and Customize — the one colour the shop presses things
+   in. The mark is drawn in the cream that red carries rather
+   than in WhatsApp's green: green on maroon is a muddy little
+   badge, and by the time somebody is at the bottom-right corner
+   of a rakhi shop the shape and the word have already said what
+   it is.
+   ══════════════════════════════════════════════════════════ */
 .fab{
   position:fixed; z-index:45;
   right:14px; bottom:calc(14px + env(safe-area-inset-bottom));
-  display:inline-grid; place-items:center; width:54px; height:54px;
-  border-radius:50%; background:var(--wa); color:#04231A;
-  box-shadow:0 10px 26px -8px rgba(7,94,54,.55), inset 0 0 0 1px rgba(0,0,0,.06);
-  transition:transform .35s var(--ease), bottom .42s var(--ease), opacity .3s var(--ease);
+  display:inline-grid; place-items:center; width:52px; height:52px;
+  border-radius:50%;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.42),
+             0 14px 30px -14px rgba(106,17,20,.66);
+  transition:transform .35s var(--ease), bottom .42s var(--ease),
+             opacity .3s var(--ease), box-shadow .35s var(--ease);
 }
 .fab i{display:none}                     /* the word appears only once it fits */
-.fab .wa{width:26px; height:26px}
+.fab .wa{width:25px; height:25px}
 .fab:active{transform:scale(.94)}
 /* The sticky cart bar owns the bottom of a phone once there is something in
    the basket, so the button steps up out of its way. */
 body.hascart .fab{bottom:calc(78px + env(safe-area-inset-bottom))}
 /* the product page has its own "Ask about this on WhatsApp" */
 body.pv-on .fab{opacity:0; pointer-events:none}
+
 @media (min-width:720px){
   .fab{
     right:clamp(14px,2.5vw,26px); bottom:clamp(14px,2.5vw,26px);
     width:auto; height:auto; border-radius:var(--r-full);
-    display:inline-flex; align-items:center; gap:9px; padding:14px 22px;
-    background:var(--ink); color:var(--bg); box-shadow:var(--elev-3);
-    font-family:var(--body); font-weight:700; font-size:11px; letter-spacing:1.4px; text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:10px; padding:13px 20px;
+    font-family:var(--head); font-weight:600;
+    font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
   }
-  .fab .wa{width:19px; height:19px; color:var(--wa)}
+  .fab .wa{width:18px; height:18px}
   .fab i{font-style:normal; display:inline}
   body.hascart .fab{bottom:clamp(14px,2.5vw,26px)}    /* no cart bar up here */
-  .fab:hover{transform:translateY(-3px); background:#fff; color:var(--ink); box-shadow:var(--elev-3), inset 0 0 0 1.5px var(--ink)}
+  .fab:hover{
+    transform:translateY(-2px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.24),
+               inset 0 0 0 1px rgba(217,184,119,.55),
+               0 20px 36px -16px rgba(106,17,20,.72);
+  }
 }
 
 /* the account button — same 42px circle as the WhatsApp one it replaces */

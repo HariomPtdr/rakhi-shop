@@ -271,6 +271,11 @@ body.ap-on{overflow:hidden}
    wrapper of its own: the chip row is a horizontal scroller, and a
    scroller cannot also be the thing collapsing to zero — it keeps its
    scrollport open and the chips show through the closed panel. */
+.ap-chips[hidden]{display:none}
+/* One control left in it — Featured — so the bar is the width of that
+   rather than a long empty tray with a button parked at the end. */
+.ap-tools.ap-tools-solo{width:max-content; max-width:100%}
+.ap-tools.ap-tools-solo .ap-tb-div{display:none}
 .ap-chips{
   flex:1; min-width:0;
   display:grid; grid-template-rows:0fr;
