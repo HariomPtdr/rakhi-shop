@@ -140,9 +140,20 @@ function paintApHead(k){
      wordmark's second line already was. */
   paintApBuds(k);
 
+  /* ── a budget page carries no banner ──
+     The row of circles under the bar is the heading: five pictures, five
+     prices, and the one being looked at ringed. A banner over it repeating
+     "₹50 – ₹100." in a serif was the same words twice in the same screen,
+     and it pushed the rakhis somebody came for below the fold. */
+  const onBudget = typeof k === "string" && k.startsWith("b:");
+  const heroBox = $(".ap-hero");
+  if(heroBox) heroBox.hidden = onBudget;
+
   const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
-  if(n) n.textContent  = c ? c.n : "Ray Art Gallery";
-  if(s2) s2.textContent = c ? "Ray Art Gallery" : "Handmade Rakhi";
+  /* the bar says which room of the shop this is, not which price: the price
+     is on the circles, ringed, a thumb's width below it */
+  if(n) n.textContent  = onBudget ? "Shop by Budget" : (c ? c.n : "Ray Art Gallery");
+  if(s2) s2.textContent = (c || onBudget) ? "Ray Art Gallery" : "Handmade Rakhi";
 }
 
 /* ── the other bands, on a budget page ──
@@ -156,8 +167,11 @@ function paintApBuds(k){
   rail.hidden = !onBudget;
   if(!onBudget){ rail.innerHTML = ""; return; }
   const now = k.slice(2);
-  const rows = BANDS.filter(b => PRODUCTS.some(p => p.price >= b.lo && p.price < b.hi));
-  rail.innerHTML = rows.map((b, i) => `
+  /* Every band, not only the ones holding something. This row is the shop's
+     price list — five answers to "what can I spend" — and a list that
+     silently drops the two nobody has stocked yet reads as a shop with no
+     rakhi over ₹200 rather than a shop that has not made one. */
+  rail.innerHTML = BANDS.map((b, i) => `
     <button class="apbud${b.k === now ? " on" : ""}" data-band="${b.k}" type="button"
             aria-pressed="${b.k === now}">
       <span class="apbud-o t${i % 5}">${b.img
@@ -259,9 +273,13 @@ function paintAll(){
   const list = visible(apState);
   const count = $("#rCount");
   if(count) count.textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
+  /* "Try another shelf" is the wrong sentence on a page that is a price:
+     the five circles above it are the thing to try. */
+  const onBudget = typeof apState.cat === "string" && apState.cat.startsWith("b:");
   box.innerHTML = list.length
     ? list.map(p => railCard(p, {bare:true})).join("")
-    : `<p class="ap-empty">Nothing matches that yet. Try another shelf.</p>`;
+    : `<p class="ap-empty">Nothing at this price yet. ${onBudget
+        ? "Try another band above." : "Try another shelf."}</p>`;
   if(typeof paintHearts === "function") paintHearts();
 }
 
@@ -332,6 +350,8 @@ function paintFilterSheet(){
                             : visibleIgnoring(apState, "band");
   const shelf = $("#fsheetShelf");
   if(shelf) shelf.hidden = onShelf;
+  const price = $("#fsheetPrice");
+  if(price) price.hidden = onBudget;
 
   const bands = $("#fsheetBands");
   if(bands){

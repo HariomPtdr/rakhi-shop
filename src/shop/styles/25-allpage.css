@@ -628,16 +628,11 @@ body.ap-on{overflow:hidden}
 .apbud-o.t2{background:linear-gradient(155deg,#F7E3E3,#F0D2D3)}
 .apbud-o.t3{background:linear-gradient(155deg,#E9F0E4,#DCE8D5)}
 .apbud-o.t4{background:linear-gradient(155deg,#EFE9F2,#E3DAEA)}
-/* the one being looked at: ringed in the shop's red, with the tick the
-   reference draws in the corner of it */
+/* The one being looked at: ringed in the shop's red, and nothing else. A
+   tick in the corner was a second mark saying what the ring already says,
+   and it sat over the photograph it was marking. */
 .apbud.on .apbud-o{
   box-shadow:inset 0 0 0 2px #7A1418, 0 12px 26px -14px rgba(106,17,20,.55);
-}
-.apbud.on .apbud-o::after{
-  content:""; position:absolute; top:2px; right:2px; width:20px; height:20px;
-  border-radius:50%; background:#7A1418 no-repeat center/10px 10px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFF6E8' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12.5 9.5 18 20 6.5'/></svg>");
-  box-shadow:0 0 0 2px var(--bg);
 }
 @media (hover:hover){
   .apbud:hover .apbud-o{transform:translateY(-2px)}

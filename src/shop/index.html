@@ -1097,9 +1097,16 @@
 
         <!-- The bands are the same ones the Shop by Budget circles use, and
              the same band the grid already filters on — a second idea of
-             what "under ₹100" means is a second thing to keep true. -->
-        <p class="fsheet-k">Price</p>
-        <div class="fs-grid" id="fsheetBands"></div>
+             what "under ₹100" means is a second thing to keep true.
+
+             Hidden on a budget page: the row of circles at the top of that
+             page is this control, drawn larger and with the pictures on it,
+             and asking the same question twice on one screen is how the two
+             answers end up disagreeing. -->
+        <div id="fsheetPrice">
+          <p class="fsheet-k">Price</p>
+          <div class="fs-grid" id="fsheetBands"></div>
+        </div>
 
         <!-- Style: the tags the rakhis on this page actually carry, counted
              from what is in front of somebody rather than from a fixed list.
