@@ -209,8 +209,10 @@ $("#lb").addEventListener("click", ()=>closeLb());
    when they arrive, which is also how they see how to get back
    out to everything.
    ══════════════════════════════════════════════════════════ */
-const catRail = $("#catRail");
-if(catRail) catRail.addEventListener("click", e => {
+/* Bound to the category rail and to the footer's Shop column, which lists
+   the same five filters: a link there that only scrolled to the collection
+   without narrowing it would be a link that lies about where it goes. */
+function catJump(e){
   const a = e.target.closest("[data-cat]");
   if(!a) return;
   e.preventDefault();
@@ -222,7 +224,11 @@ if(catRail) catRail.addEventListener("click", e => {
   const chip = $(`#chips .chip[data-c="${state.cat}"]`);
   if(chip) chip.scrollIntoView({block:"nearest", inline:"center"});
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
-});
+}
+const catRail = $("#catRail");
+if(catRail) catRail.addEventListener("click", catJump);
+const footNav = document.querySelector(".foot-in");
+if(footNav) footNav.addEventListener("click", catJump);
 
 
 /* ══════════════════════════════════════════════════════════
@@ -282,3 +288,4 @@ $("#budRail").addEventListener("click", e => {
   paintGrid();
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
 });
+

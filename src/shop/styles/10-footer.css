@@ -1,71 +1,234 @@
-/* ── footer ── */
-.foot{border-top:1px solid var(--line); margin-top:clamp(48px,8vw,104px);
-  padding:30px 0 calc(104px + env(safe-area-inset-bottom))}
-@media (min-width:720px){.foot{padding:clamp(38px,6vw,72px) 0 90px}}
-/* one modest line on a phone; the big two-line wordmark only where
-   there is room for it */
-.foot-word{margin-bottom:20px}
-.foot-word::before{
-  content:"Ray Art Gallery"; display:block;
-  font-family:var(--display); font-weight:600; font-size:clamp(26px,7.4vw,38px);
-  line-height:1.1; letter-spacing:-.015em; opacity:.17;
+/* ══════════════════════════════════════════════════════════
+   THE FOOTER
+
+   A panel, like the offer banner and the promises and the way
+   out of the questions: the same cream gradient, the same gold
+   hairline, the same mandala off a corner. It used to be a rule
+   across the page with a 104px watermark of the shop's name
+   behind three short lists — the one part of the page that was
+   not made of the same material as the rest.
+
+   Read left to right: whose shop this is, then where to go. On
+   a phone the three lists fold, because
+   fifteen links stacked is two screens of scrolling past the
+   thing somebody has already decided not to press.
+   ══════════════════════════════════════════════════════════ */
+/* the flourish that closes the shop, in the band between the last question
+   and the panel — the same rangoli flower every section on the page is
+   headed by, with a rule running out either side of it */
+.endmark{
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(10px,2vw,16px);
+  margin:clamp(16px,2.6vw,30px) auto clamp(4px,1vw,10px);
+  width:min(340px,62%); color:var(--tan-deep);
 }
-@media (min-width:720px){
-  .foot-word{margin-bottom:clamp(26px,4vw,46px)}
-  .foot-word::before{
-    content:"Ray Art\A Gallery"; white-space:pre;
-    font-size:clamp(48px,8vw,104px); line-height:.98; letter-spacing:-.02em; opacity:.13;
-  }
+.endmark svg{width:clamp(16px,2.4vw,21px); height:auto; flex:none; opacity:.9}
+.endmark-r{flex:1; height:1px; background:linear-gradient(to right, transparent, rgba(185,140,46,.75), transparent)}
+
+.foot{
+  margin-top:clamp(14px,2.2vw,26px);
+  padding:0 0 calc(96px + env(safe-area-inset-bottom));
 }
-/* Shop and Help sit side by side on a phone — as one stacked list they
-   ran on for two screens */
-.foot-cols{display:grid; gap:22px 18px; grid-template-columns:1fr 1fr}
-.foot-contact{grid-column:1 / -1}
-@media (min-width:720px){
-  .foot-cols{gap:26px; grid-template-columns:1.4fr 1fr 1fr}
-  .foot-contact{grid-column:auto}
+@media (min-width:720px){.foot{padding-bottom:clamp(40px,5vw,64px)}}
+
+.foot-panel{
+  position:relative; overflow:hidden;
+  padding:clamp(26px,4vw,46px) clamp(15px,3vw,40px) clamp(16px,2.4vw,24px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(120deg,#FDF6EA 0%,#FCF1E0 52%,#FAEBD5 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 0 0 1px rgba(217,184,119,.55),
+    0 18px 44px -26px rgba(120,88,22,.45);
 }
-.foot-p{font-size:14px; color:var(--ink-soft); max-width:44ch; margin-bottom:14px}
-.foot-social{display:flex; gap:10px}
-/* Icon only. With no visible text the label has to live in aria-label,
-   which is what a screen reader announces and what shows as a tooltip. */
+.foot-mandala{
+  position:absolute; z-index:0; pointer-events:none;
+  top:-10%; right:-6%; width:min(38%,320px); aspect-ratio:484/384;
+  background:url("../../../assets/images/promo-mandala.webp") right top / cover no-repeat;
+  opacity:.34;
+  -webkit-mask-image:radial-gradient(120% 120% at 100% 0%, #000 42%, transparent 78%);
+          mask-image:radial-gradient(120% 120% at 100% 0%, #000 42%, transparent 78%);
+}
+
+/* The lotus set into the panel's top edge is gone: the flourish above the
+   panel closes the page a few pixels higher up, and two ornaments that
+   close to each other read as one of them being a mistake. */
+.foot-lotus{
+  position:absolute; z-index:2; left:50%;
+  width:clamp(20px,3vw,26px); color:var(--tan-deep);
+}
+.foot-lotus svg{width:100%; height:auto; display:block}
+
+/* ── the shop ── */
+/* No row gap on a phone: the three folds carry a hairline each, and with
+   18px between them the rules floated in space instead of dividing one
+   list. Flush, they read as the divided list the reference draws. */
+.foot-in{position:relative; z-index:1; display:grid; gap:0}
+
+/* Centred, at every width — the shop's own block, over a divided list.
+
+   The mark beside the name, not above it: stacked, the block ran four rows
+   deep and left half the panel empty next to it. */
+.foot-brand{text-align:center; padding-bottom:clamp(14px,2.4vw,18px)}
+.foot-id{display:flex; align-items:center; justify-content:center; gap:clamp(11px,2vw,15px)}
+.foot-id-t{text-align:left}
+.foot-id-t{display:block; min-width:0}
+.foot-mk{display:block; flex:none; width:clamp(48px,7vw,62px)}
+.foot-mk svg{width:100%; height:auto; display:block}
+.foot-name{
+  display:block;
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(19px,2.6vw,25px); line-height:1.1; letter-spacing:-.014em;
+  color:#7A1418;
+}
+/* the name's own kicker, between two rules, as the header sets it */
+.foot-kick{
+  display:flex; align-items:center; gap:9px;
+  margin-top:3px;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,1.3vw,10px); letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+/* a rule each side, since the block is centred — one trailing rule on a
+   centred line pulls the words off the centre they are set to */
+.foot-kick::before, .foot-kick::after{
+  content:""; height:1px; flex:none; width:clamp(16px,2.4vw,28px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.9), transparent);
+}
+.foot-tag{
+  max-width:38ch; margin:clamp(9px,1.4vw,13px) auto 0;
+  font-family:var(--display);
+  font-size:clamp(13px,1.4vw,15px); line-height:1.5; color:var(--ink-soft);
+  text-wrap:balance;
+}
+
+/* Outlined gold circles, not the black discs they were. Icon only, so the
+   label has to live in aria-label — that is what a screen reader announces
+   and what shows as a tooltip. */
+.foot-social{display:flex; justify-content:center; gap:clamp(9px,1.4vw,13px); margin-top:clamp(12px,1.8vw,17px)}
 .foot-ico{
-  display:inline-grid; place-items:center; width:46px; height:46px; flex:none;
-  border-radius:50%; background:var(--ink); color:var(--bg);
-  transition:background .25s var(--ease), transform .2s var(--ease), box-shadow .25s var(--ease);
+  display:inline-grid; place-items:center; flex:none;
+  width:clamp(38px,4.4vw,44px); aspect-ratio:1; border-radius:50%;
+  color:var(--tan-deep);
+  box-shadow:inset 0 0 0 1px rgba(185,140,46,.55);
+  transition:color .3s var(--ease), box-shadow .3s var(--ease),
+             background .3s var(--ease), transform .2s var(--ease);
 }
-.foot-ico svg{color:var(--wa)}
-.foot-ig svg{color:#E8517F}
-.foot-mail svg{color:var(--tan)}
+.foot-ico svg{width:44%; height:44%}
 .foot-ico:active{transform:scale(.94)}
 @media (hover:hover){
-  .foot-ico:hover{background:#fff; box-shadow:inset 0 0 0 1.5px var(--ink)}
+  .foot-ico:hover{
+    color:#7A1418;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,1), 0 10px 22px -14px rgba(120,88,22,.5);
+  }
 }
-.foot h3{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; font-weight:400}
-.foot-contact h3{margin-bottom:10px}
-.foot ul{list-style:none; display:grid; gap:0; font-size:14px; color:var(--ink-soft)}
-.foot li{padding:0}
-.foot ul a{display:flex; align-items:center; min-height:38px}
-.foot ul a:active{color:var(--ink)}
-@media (hover:hover){.foot ul a:hover{color:var(--ink)}}
-@media (min-width:720px){
-  .foot ul{gap:9px}
-  .foot ul a{min-height:0; display:inline}
-}
-.foot-legal{
-  margin-top:24px; padding-top:16px; border-top:1px solid var(--line);
-  font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
-  color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:5px 16px; align-items:center;
-  line-height:1.5;
-}
-@media (min-width:720px){.foot-legal{margin-top:clamp(28px,4vw,46px); padding-top:20px; font-size:9.5px; gap:8px 22px}}
 
-/* who made it, and how to tell them something is wrong */
-.foot-dev{
-  margin-top:12px; font-size:11.5px; line-height:1.6; color:var(--ink-faint);
-  display:flex; flex-wrap:wrap; gap:4px 14px;
+/* ── where to go ── */
+.foot-h{
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9.5px,1.3vw,11px); letter-spacing:.19em; text-transform:uppercase;
+  color:#7A1418;
 }
-.foot-dev b{color:var(--ink-soft); font-family:var(--head); font-weight:600}
-.foot-dev a{color:var(--teal); text-decoration:underline; text-underline-offset:3px;
-  text-decoration-thickness:1px}
-.foot-dev a:hover{color:var(--ink)}
+.foot-col{border-top:1px solid rgba(185,140,46,.3)}
+.foot-col summary{
+  list-style:none; cursor:pointer;
+  display:flex; align-items:center; gap:11px;
+  padding:13px 2px;
+}
+/* the mark beside each heading, the way the reference sets one — a bag for
+   the shop, a headset for help, the shield the promises panel already uses */
+.foot-hi{display:grid; place-items:center; flex:none; width:20px; height:20px; color:var(--tan-deep)}
+.foot-hi svg{width:100%; height:100%}
+.foot-col summary .foot-h{margin-right:auto}
+.foot-col summary::-webkit-details-marker{display:none}
+.foot-chev{
+  width:17px; height:17px; flex:none; color:var(--tan-deep);
+  transition:transform .35s var(--ease);
+}
+.foot-col[open] .foot-chev{transform:rotate(180deg)}
+
+.foot-col ul{list-style:none; display:grid; gap:1px; padding:0 2px 11px}
+.foot-col a{
+  display:flex; align-items:center; min-height:34px;
+  font-size:clamp(13px,1.4vw,14.5px); color:var(--ink-soft);
+  transition:color .25s var(--ease);
+}
+.foot-col a:active{color:#7A1418}
+@media (hover:hover){.foot-col a:hover{color:#7A1418}}
+
+/* ── the small print ──
+   A rule with the lotus set into it, matching the one on the top edge. */
+.foot-rule{
+  position:relative; z-index:1;
+  height:1px; margin:clamp(18px,2.6vw,26px) 0 clamp(15px,2.2vw,20px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.55), transparent);
+}
+/* the one on the rule knocks a gap in it, so the line runs to the flower
+   and stops rather than through it. content-box, because the page sizes
+   everything border-box and the padding would eat the flower's own width */
+.foot-lotus-b{
+  box-sizing:content-box; top:50%; transform:translate(-50%,-50%);
+  background:#FCF1E0; padding:0 12px;
+}
+
+.foot-legal{
+  position:relative; z-index:1;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:6px 18px;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,1vw,9.5px); letter-spacing:.085em; text-transform:uppercase;
+  color:var(--ink-faint); line-height:1.5; text-align:center;
+}
+
+/* Who made it, and how to tell them something is wrong. The name is the
+   link — it went to the developer's WhatsApp under "or on WhatsApp" beside
+   a mailto saying the same thing, which is three pieces of furniture for
+   one sentence. Not a flex row any more: one text node and one link inside
+   a flex box put a 14px gap in the middle of "Made by Hariom Patidar". */
+.foot-dev{
+  position:relative; z-index:1; text-align:center;
+  margin-top:9px; font-size:11.5px; line-height:1.6; color:var(--ink-faint);
+}
+.foot-dev a{
+  font-family:var(--head); font-weight:600; color:var(--ink-soft);
+  text-decoration:underline; text-underline-offset:3px;
+  text-decoration-thickness:1px; text-decoration-color:rgba(185,140,46,.7);
+  transition:color .25s var(--ease), text-decoration-color .25s var(--ease);
+}
+.foot-dev a:active{color:#7A1418}
+@media (hover:hover){
+  .foot-dev a:hover{color:#7A1418; text-decoration-color:rgba(185,140,46,1)}
+}
+
+/* ══ from tablet up ══
+   The five blocks become the row the reference draws: the shop at one end,
+   three columns of links through the middle, the person at the other. The
+   folds go — there is room for every link at once, and a control that only
+   ever opens is a control that should not be there. */
+@media (min-width:860px){
+  .foot-in{
+    grid-template-columns:1.6fr 1fr 1fr 1fr;
+    gap:clamp(20px,3vw,44px);
+    align-items:start;
+  }
+  .foot-brand{padding-bottom:0}
+  /* the mark stays beside the name up here too. Stacked it ran four rows
+     deep against three short lists and left a hole under them; side by side
+     it is two rows and the row bottoms out level. */
+  .foot-mk{width:clamp(46px,4.6vw,60px)}
+  .foot-tag{max-width:34ch}
+
+  /* a hairline between the columns, as the reference rules them */
+  .foot-col{
+    border-top:0;
+    border-left:1px solid rgba(185,140,46,.28);
+    padding-left:clamp(14px,2vw,24px);
+  }
+  .foot-col summary{cursor:default; padding:0 0 clamp(10px,1.4vw,14px)}
+  .foot-chev{display:none}
+  /* the marks go with the folds: five icons across a row of headings is
+     decoration where the phone needed a target */
+  .foot-hi{display:none}
+  .foot-col ul{gap:clamp(5px,.8vw,8px); padding:0}
+  .foot-col a{min-height:0; display:inline-flex}
+}

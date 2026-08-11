@@ -284,6 +284,30 @@ body.ap-on{overflow:hidden}
    the sheet when Filter is pressed. */
 @media (max-width:759px){
   .ap-chips{flex-basis:100%; order:3; grid-template-rows:0fr}
+  /* ── one button ──
+     Filter alone, at the left, on the page rather than in a tray. The tray
+     was a full-width surface holding one button and a hairline; Featured
+     sat at the other end of it, half the width of the screen spent on a
+     control most people never touch. Sorting is in the sheet now, with
+     everything else that narrows the shop down. */
+  .ap-tools{
+    background:none; box-shadow:none; border-radius:0;
+    padding:0; margin-bottom:clamp(11px,2.4vw,15px);
+  }
+  .ap-tools .sortwrap{display:none}
+  #apFilter{
+    border-radius:12px;
+    padding:clamp(10px,2vw,13px) clamp(16px,3.2vw,20px);
+    background:linear-gradient(158deg,#FFFEFA 0%,#FBF6EA 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+               inset 0 0 0 1px rgba(217,184,119,.6),
+               0 8px 20px -14px rgba(120,88,22,.45);
+  }
+  #apFilter[aria-expanded="true"]{
+    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+    color:#FFF6E8;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2), inset 0 0 0 1px rgba(217,184,119,.45);
+  }
 }
 
 @media (min-width:760px){
@@ -477,3 +501,30 @@ body.ap-on{overflow:hidden}
 }
 .fsheet-go b{font-weight:700}
 .fsheet-clear:active, .fsheet-go:active{transform:scale(.98)}
+
+/* ── the rows inside the sheet ──
+   Price and Sort by, laid out like the shelves above them: the same
+   button, the same corner, the same red when chosen. Three different
+   controls in one sheet would be three things to learn. */
+.fs-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+.fs-b{
+  width:100%; min-height:48px; padding:12px 10px;
+  border:0; border-radius:12px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center;
+  text-align:center;
+  font-family:var(--head); font-weight:600;
+  font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+  color:#6B4A22;
+  transition:background .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.fs-b[aria-pressed="true"]{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.45),
+             0 8px 18px -10px rgba(106,17,20,.7);
+}
+.fs-b:active{transform:scale(.98)}

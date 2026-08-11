@@ -203,28 +203,7 @@ if(SHOP.heroSlide && !reduced){
   }, 5200);
 }
 
-/* sets */
-function paintSets(){
-  $("#setGrid").innerHTML = SETS.map(s=>`
-    <div class="set panel${s.best?" set-best":""}">
-      ${s.best?`<span class="set-tag">Best value</span>`:""}
-      <h3 class="set-n">${esc(s.name)}</h3>
-      <div class="set-p"><b>${inr(s.price)}</b>
-        ${s.was?`<s>${inr(s.was)}</s><em>save ${inr(s.was-s.price)}</em>`:""}</div>
-      <ul class="set-l">${s.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>
-      <button class="btn btn-dark" data-set="${s.id}">Add to cart</button>
-    </div>`).join("");
-}
-paintSets();
-$("#setGrid").addEventListener("click", e=>{
-  const b=e.target.closest("[data-set]"); if(!b) return;
-  lastBtn=b;
-  const s=SETS.find(x=>x.id===b.dataset.set);
-  addItem({id:s.id, name:s.name, price:s.price, note:"designs to be picked on WhatsApp"});
-});
-
-/* custom-order vocabulary */
-$("#vThreads").innerHTML = THREADS.map(t=>
-  `<span class="sw"><i style="background:${t.c}"></i>${t.n}</span>`).join("");
-$("#vCharms").innerHTML = CHARMS.map(c=>
-  `<span class="tagx"><img class="ico" src="${asSrc(charmIcon(c.k))}" alt="" width="24" height="24">${c.n}</span>`).join("");
+/* The sets grid and the custom-order vocabulary were painted here. Both
+   sections came off the page, so there is nothing left to paint into —
+   SETS, THREADS and CHARMS stay in the data, where the cart and the order
+   sheet still read them. */

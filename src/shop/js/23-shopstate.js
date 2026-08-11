@@ -19,10 +19,10 @@
 const DEV = {name: "Hariom Patidar", whatsapp: "919636408450"};
 
 function paintContact(){
-  const wa = $("#fab"), fwa = $("#footWa");
+  const wa = $("#fab");
   const ask = wa ? wa.getAttribute("data-ask") || ASK : ASK;
-  if(wa)  wa.href  = "https://wa.me/" + SHOP.whatsapp + "?text=" + encodeURIComponent(ask);
-  if(fwa) fwa.href = "https://wa.me/" + SHOP.whatsapp + "?text=" + encodeURIComponent(ask);
+  const link = "https://wa.me/" + SHOP.whatsapp + "?text=" + encodeURIComponent(ask);
+  ["#fab","#footWa","#faqWa"].forEach(s=>{ const a=$(s); if(a) a.href = link; });
 
   const ig = $("#footIg");
   if(ig){
@@ -49,9 +49,11 @@ function paintContact(){
      Everything the person cannot be expected to describe — which page, which
      phone, which browser — is filled in for them. All they have to write is
      what went wrong. */
-  const bug = $("#bugLink"), bugWa = $("#bugWa");
-  if(bug || bugWa){
-    const to = SHOP.email || "";
+  /* The maker's name is the link. The email version sat beside it saying
+     the same thing twice, and the shop's own address is not where a fault
+     in the page should land. */
+  const bugWa = $("#bugWa");
+  if(bugWa){
     const body = [
       "What happened:", "", "",
       "What I expected:", "", "",
@@ -60,17 +62,9 @@ function paintContact(){
       "Screen: " + innerWidth + "×" + innerHeight,
       "Browser: " + navigator.userAgent
     ].join("\n");
-    if(bug){
-      bug.href = "mailto:" + to
-        + "?subject=" + encodeURIComponent("Ray Art Gallery — a bug or an idea")
-        + "&body=" + encodeURIComponent(body);
-      bug.hidden = !to;
-    }
     /* the developer's own number, not the shop's — a fault in the page is
        not something the person packing rakhis can do anything about */
-    if(bugWa){
-      bugWa.href = "https://wa.me/" + DEV.whatsapp + "?text=" + encodeURIComponent(body);
-    }
+    bugWa.href = "https://wa.me/" + DEV.whatsapp + "?text=" + encodeURIComponent(body);
   }
 }
 

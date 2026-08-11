@@ -89,7 +89,6 @@ function applyCatalogue(rows){
 function repaintCatalogue(){
   numberCatalogue();
   paintRail(); buildDots();
-  paintSets();
   paintGrid();
   paintHearts();
   cart = cleanCart(cart);        /* drop anything the shop has stopped selling */

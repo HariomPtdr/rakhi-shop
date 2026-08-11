@@ -87,9 +87,14 @@ function cardActs(p, opts){
     ? `<button class="btn btn-dark" data-add="${p.id}" disabled>Sold out</button>`
     : n > 0
       ? qtyStepper(p, n)
+      /* The compact cards carried a bag on its own in a rounded square. It
+         was the one button on the page that did not say what it did, and it
+         was the wrong shape besides: the moment it is pressed it becomes the
+         capsule stepper, so the card changed shape under the thumb. It says
+         Add now, in the capsule the stepper already uses. */
       : o.icon
         ? `<button class="btn btn-dark rc-cart" data-add="${p.id}"
-                   aria-label="Add ${esc(p.name)} to cart">${BAG_SVG}</button>`
+                   aria-label="Add ${esc(p.name)} to cart">Add${BAG_SVG}</button>`
         : `<button class="btn btn-dark" data-add="${p.id}">${
              o.long ? "Add to cart" : "Add"}${BAG_SVG}</button>`;
   return `<span class="acts${o.icon ? " acts-icon" : ""}" data-acts="${p.id}"${

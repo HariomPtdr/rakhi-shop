@@ -85,6 +85,7 @@ function openFilter(){
   fsheet.classList.add("on");
   fsheet.setAttribute("aria-hidden", "false");
   if(apFilter) apFilter.setAttribute("aria-expanded", "true");
+  paintFilterSheet();
   paintFilterCount();
 }
 function closeFilter(){
@@ -101,6 +102,54 @@ function closeFilter(){
 }
 const paintFilterCount = () => { $("#fsheetN").textContent = visible().length; };
 
+/* ── the price bands and the sort, inside the sheet ──
+   Both drawn from the lists the rest of the shop already uses: BANDS is
+   what the Shop by Budget circles are cut from and what visible() filters
+   on, SORTS is what the desktop listbox offers. A second idea of what
+   "under ₹100" means, or a fifth way of ordering the shop, is a second
+   thing that has to be kept true.
+
+   Only bands that hold something are drawn. A price filter offering an
+   empty shelf is worse than one offering fewer. */
+function paintFilterSheet(){
+  const bands = $("#fsheetBands");
+  if(bands){
+    const live = BANDS.filter(b => PRODUCTS.some(p => p.price >= b.lo && p.price < b.hi));
+    bands.innerHTML = `
+      <button class="fs-b" data-band="" aria-pressed="${!state.band}">Any price</button>` +
+      live.map(b => `
+      <button class="fs-b" data-band="${b.k}" aria-pressed="${state.band === b.k}">${b.n}</button>`).join("");
+  }
+  const sort = $("#fsheetSort");
+  if(sort){
+    sort.innerHTML = SORTS.map(o => `
+      <button class="fs-b" data-sort="${o.k}" aria-pressed="${state.sort === o.k}">${o.n}</button>`).join("");
+  }
+}
+
+$("#fsheetBands").addEventListener("click", e => {
+  const b = e.target.closest("[data-band]");
+  if(!b) return;
+  state.band = b.dataset.band || null;
+  /* a shelf and a price at once is how you arrive at nothing and cannot
+     tell which of the two emptied it */
+  if(state.band){
+    state.cat = "all";
+    $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  }
+  paintGrid();
+  paintFilterSheet();
+  paintFilterCount();
+});
+$("#fsheetSort").addEventListener("click", e => {
+  const b = e.target.closest("[data-sort]");
+  if(!b) return;
+  state.sort = b.dataset.sort;
+  if(typeof paintSort === "function") paintSort();   /* keeps the desktop listbox in step */
+  paintGrid();
+  paintFilterSheet();
+});
+
 if(apFilter) apFilter.onclick = () => fsheetOn() ? closeFilter() : openFilter();
 $("#fsheetX").onclick = closeFilter;
 $("#fsheetGrab").onclick = closeFilter;
@@ -108,15 +157,20 @@ $("#fsheetGo").onclick = closeFilter;
 /* the dim behind it */
 fsheet.addEventListener("click", e => { if(e.target === fsheet) closeFilter(); });
 $("#fsheetClear").onclick = () => {
-  state.cat = "all"; state.band = null;
+  state.cat = "all"; state.band = null; state.sort = "feat";
   $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  if(typeof paintSort === "function") paintSort();
   paintGrid();
+  paintFilterSheet();
   paintFilterCount();
 };
 /* Picking a shelf leaves the sheet up: the button under it counts what
    that shelf holds, so the choice can be changed before committing to it. */
 $("#chips").addEventListener("click", e => {
-  if(e.target.closest(".chip")) paintFilterCount();
+  if(!e.target.closest(".chip")) return;
+  /* the chip handler clears the band, so the band row has to be redrawn */
+  paintFilterSheet();
+  paintFilterCount();
 });
 
 /* ── the way in and out ── */

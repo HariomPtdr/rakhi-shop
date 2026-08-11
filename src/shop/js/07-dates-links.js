@@ -99,8 +99,12 @@ if(SHOP.email && SHOP.email.trim()){
 }
 
 const ASK = "Hello Ray Art Gallery, I have a question about your rakhis.";
-["#fab","#faqWa","#footWa"].forEach(s=>$(s).href = wa(ASK));
-$("#madeWa").href = wa(
+["#fab","#faqWa","#footWa"].forEach(s=>{ const a=$(s); if(a) a.href = wa(ASK); });
+
+/* The custom-order message now hangs off the two "Can't find the perfect
+   one?" panels — the made-to-order section they used to jump to is gone,
+   so the panel is the whole way in. Both of them, hence querySelectorAll. */
+const CUSTOM_WA = wa(
 `Hello Ray Art Gallery, I want a CUSTOM rakhi.
 
 Thread colour:
@@ -113,18 +117,19 @@ Quantity:
 (or I will send a photo of the design I want)
 
 Please tell me the price and how many days it will take.`);
-$("#bulkWa").href = wa(
-`Hello Ray Art Gallery, I want a BULK order.
+document.querySelectorAll(".ccta").forEach(a => a.href = CUSTOM_WA);
 
-Quantity:
-For (office / school / shop / society):
-City and pincode:
-Needed by:
-
-Please share your bulk rate.`);
-
-/* marquee — the strip is duplicated so the loop has no seam */
-const MQ = PRODUCTS.map(p=>p.name).concat(["Handmade in India","A symbol of the eternal love between brother and sister","Made to order"]);
-const mqHTML = MQ.map((t,i)=>
-  i%3===1 ? `<b>${t}</b>` : `<span>${t}</span>`).join('<span>·</span>');
-$("#mqA").innerHTML = mqHTML; $("#mqB").innerHTML = mqHTML;
+/* ── the footer's three lists ──
+   Open in the markup, so a page whose JavaScript never arrives shows the
+   links rather than hiding them behind a control nothing is listening to.
+   Folded here on a phone, where fifteen links stacked is two screens of
+   scrolling past the part of the page somebody has already decided not to
+   press. Re-run on resize, so a phone turned sideways does not keep the
+   fold it no longer needs. */
+{
+  const wide = matchMedia("(min-width:860px)");
+  const cols = $$(".foot-col");
+  const foldFooter = () => cols.forEach(c => { c.open = wide.matches; });
+  foldFooter();
+  wide.addEventListener("change", foldFooter);
+}

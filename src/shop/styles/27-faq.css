@@ -1,0 +1,319 @@
+/* ══════════════════════════════════════════════════════════
+   THE QUESTIONS
+
+   Seven answers, and the shape of them is the argument: a centred
+   head, a column of cards each carrying its own icon, and one
+   panel at the foot for whoever did not find theirs.
+
+   The row of underlined <summary> lines this replaces was
+   readable and completely flat — seven rules of text with a
+   chevron, which is what a terms page looks like. These are the
+   seven things people write in to ask before they will spend
+   money, and they are worth the same panel treatment the offer
+   and the promises already get.
+
+   The photograph bleeds in from the left from wide screens only.
+   Below that it is off entirely rather than shrunk: a phone has
+   no width to give a picture nobody came to look at, and the
+   cards want all of it.
+   ══════════════════════════════════════════════════════════ */
+.faqx{position:relative; overflow:hidden}
+
+/* the mandala, off the top right, the way the offer banner and the
+   promises panel each carry one */
+.faqx-mandala{
+  position:absolute; z-index:0; pointer-events:none;
+  top:-4%; right:-7%; width:min(34%,360px); aspect-ratio:484/384;
+  background:url("../../../assets/images/promo-mandala.webp") right top / cover no-repeat;
+  opacity:.3;
+  -webkit-mask-image:radial-gradient(120% 120% at 100% 0%, #000 40%, transparent 76%);
+          mask-image:radial-gradient(120% 120% at 100% 0%, #000 40%, transparent 76%);
+}
+.faqx .wrap{position:relative; z-index:1}
+
+/* ── the head ──
+   The rangoli flower, the name between two hairlines, the line under it in
+   gold small caps. This is the head "Shop by Budget" and every other
+   section wears; the faq had a lotus, a kicker and a serif sub-line of its
+   own, which is a second design language on one page. */
+.faqx-h{text-align:center; margin-bottom:clamp(14px,2.6vw,22px)}
+.faqx-orn{
+  display:block; width:clamp(22px,4.4vw,30px);
+  margin:0 auto clamp(7px,1.3vw,11px); color:var(--tan);
+}
+.faqx-orn svg{width:100%; height:auto; display:block}
+
+.faqx-h h2{
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(10px,2.4vw,20px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(22px,5.6vw,42px); line-height:1.06; letter-spacing:-.022em;
+  color:#3B2415; text-wrap:balance;
+}
+.faqx-h h2::before, .faqx-h h2::after{
+  content:""; flex:none; height:1px; width:clamp(26px,7vw,74px);
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+}
+/* This title is three long words. On a narrow phone the rules either side
+   push it to two lines to buy 52px of ornament, so they go — the same call
+   the offer banner's kicker makes at the same width. */
+@media (max-width:560px){
+  .faqx-h h2::before, .faqx-h h2::after{display:none}
+}
+.faqx-sub{
+  margin-top:clamp(6px,1.3vw,10px);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(8.5px,2vw,10.5px); letter-spacing:.22em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+
+/* ── the body ──
+   One column on a phone. The photograph joins from 1040px, where there is
+   width for it to be a picture rather than a stripe. */
+.faqx-body{margin-top:clamp(24px,3.4vw,44px)}
+.faqx-shot{display:none}
+
+/* ── one question ──
+   A card, not a row: its own cream, its own gold hairline, and the icon in
+   the circle every promise on this site wears. */
+.faq{display:grid; gap:clamp(8px,1.1vw,11px)}
+.faq details{
+  border-radius:clamp(12px,1.3vw,16px); overflow:hidden;
+  background:linear-gradient(120deg,#FDF7EC 0%,#FCF2E2 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 10px 26px -22px rgba(120,88,22,.5);
+  transition:box-shadow .4s var(--ease);
+}
+.faq details[open]{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(185,140,46,.7),
+    0 16px 34px -24px rgba(120,88,22,.6);
+}
+@media (hover:hover){
+  .faq details:not([open]):hover{box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(185,140,46,.65),
+    0 14px 30px -24px rgba(120,88,22,.55);}
+}
+
+.faq summary{
+  list-style:none; cursor:pointer; position:relative;
+  display:flex; align-items:center; gap:clamp(10px,1.4vw,15px);
+  padding:clamp(11px,1.5vw,16px) clamp(38px,4.4vw,54px) clamp(11px,1.5vw,16px) clamp(11px,1.5vw,16px);
+}
+.faq summary::-webkit-details-marker{display:none}
+
+.faq-i{
+  display:grid; place-items:center; flex:none;
+  width:clamp(32px,4.4vw,42px); aspect-ratio:1; border-radius:50%;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FBF4E6 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.6),
+             0 8px 18px -14px rgba(120,88,22,.5);
+  color:var(--tan-deep);
+}
+.faq-i svg{width:50%; height:50%}
+
+.faq-q{
+  min-width:0;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(13.5px,1.55vw,16px); line-height:1.42; letter-spacing:-.004em;
+  color:#7A1418;
+}
+
+/* the plus that becomes a minus — two bars, one of which turns */
+.faq summary::before, .faq summary::after{
+  content:""; position:absolute; top:50%; right:clamp(15px,1.9vw,22px);
+  width:clamp(11px,1.3vw,14px); height:1.6px; border-radius:2px;
+  background:var(--tan-deep);
+  transition:transform .35s var(--ease), opacity .35s var(--ease);
+}
+.faq summary::before{transform:translateY(-50%)}
+.faq summary::after{transform:translateY(-50%) rotate(90deg)}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(0deg); opacity:0}
+
+/* the answer, indented to the question rather than to the card, so the
+   column of text starts where the words above it start */
+.faq-a{
+  padding:0 clamp(16px,2.4vw,26px) clamp(13px,1.6vw,17px)
+          calc(clamp(11px,1.5vw,16px) + clamp(32px,4.4vw,42px) + clamp(10px,1.4vw,15px));
+}
+.faq-a p{
+  font-size:clamp(13px,1.4vw,14.5px); line-height:1.62; color:var(--ink-soft);
+  max-width:64ch;
+}
+
+/* ── the way out ──
+   One panel, one button. On a phone it is a two-row grid — the headset and
+   the words on the first, the button across the second — which brings the
+   panel to the height of the offer banner at the top of the page. Stacked
+   and centred it ran to twice that for one sentence and one press. */
+.faqx-cta{
+  position:relative; overflow:hidden;
+  margin-top:clamp(16px,2.4vw,30px);
+  display:grid; grid-template-columns:auto 1fr;
+  align-items:center; gap:10px clamp(11px,2.2vw,14px);
+  padding:clamp(12px,2.4vw,26px) clamp(13px,3vw,30px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(120deg,#FDF6EA 0%,#FCF1E0 52%,#FAEBD5 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 0 0 1px rgba(217,184,119,.55),
+    0 18px 44px -26px rgba(120,88,22,.45);
+}
+.faqx-cta-i{
+  display:grid; place-items:center; flex:none;
+  width:clamp(34px,4.6vw,52px); aspect-ratio:1; border-radius:50%;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FBF4E6 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.6),
+             0 8px 20px -14px rgba(120,88,22,.5);
+  color:var(--tan-deep);
+}
+.faqx-cta-i svg{width:52%; height:52%}
+
+.faqx-cta-t{min-width:0}
+.faqx-cta-t b{
+  display:block;
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(15.5px,2vw,23px); line-height:1.2; letter-spacing:-.014em;
+  color:#7A1418;
+}
+.faqx-cta-t span{
+  display:block; margin-top:3px;
+  font-family:var(--display);
+  font-size:clamp(12px,1.35vw,15px); line-height:1.4; color:var(--ink-soft);
+}
+
+/* the shop's red with the gold double rule, the same button the offer
+   banner wears — one button language on the page, not two */
+.faqx-btn{
+  grid-column:1 / -1;
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:clamp(9px,1.4vw,14px) clamp(18px,2.8vw,30px);
+  border-radius:9px; text-decoration:none;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:
+    inset 0 0 0 1px rgba(217,184,119,.85),
+    inset 0 0 0 3px rgba(122,20,24,1),
+    inset 0 0 0 4px rgba(217,184,119,.45),
+    0 12px 26px -12px rgba(106,17,20,.7);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(13px,1.5vw,16px); letter-spacing:.02em; white-space:nowrap;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.faqx-btn svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .faqx-btn:hover{box-shadow:
+    inset 0 0 0 1px rgba(217,184,119,1),
+    inset 0 0 0 3px rgba(122,20,24,1),
+    inset 0 0 0 4px rgba(217,184,119,.6),
+    0 18px 34px -14px rgba(106,17,20,.85);}
+  .faqx-btn:hover svg{transform:translateX(3px)}
+}
+
+/* ══ the phone ══
+   Everything a step smaller than it reads at on a desktop. The section is
+   four questions and a way out; at desktop sizes that was three screens of
+   scrolling on a phone for what fits in one. */
+@media (max-width:759px){
+  .faqx{padding-top:clamp(20px,4vw,30px)}
+  .faqx-orn{width:20px; margin-bottom:6px}
+  .faqx-h{margin-bottom:12px}
+  .faqx-h h2{font-size:clamp(20px,5vw,26px)}
+  .faqx-sub{margin-top:5px; font-size:clamp(8px,1.9vw,9.5px); letter-spacing:.19em}
+
+  .faqx-body{margin-top:14px}
+  .faq{gap:7px}
+  .faq summary{padding:9px 34px 9px 10px; gap:9px}
+  .faq-i{width:28px}
+  .faq-q{font-size:12.8px; line-height:1.35}
+  .faq summary::before, .faq summary::after{right:13px; width:10px}
+  .faq-a{padding:0 14px 11px 47px}
+  .faq-a p{font-size:12.2px; line-height:1.55}
+
+  /* The way out is the same strip "Can't find the perfect one?" is: one
+     row — the dashed circle, the two lines, the capsule at the right end.
+     They ask the same thing of the same person on the same page, and the
+     stacked version cost twice the height to say it. */
+  .faqx-cta{
+    margin-top:14px;
+    grid-template-columns:auto 1fr auto;
+    align-items:center; gap:clamp(10px,2.4vw,14px);
+    padding:clamp(12px,2.2vw,16px) clamp(14px,2.6vw,20px);
+    background:linear-gradient(158deg,#FDF9F0 0%,#FBF6EA 55%,#F7F0DF 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      inset 0 0 0 1px rgba(217,184,119,.45),
+      0 14px 34px -24px rgba(120,88,22,.42);
+  }
+  .faqx-cta-i{
+    width:clamp(40px,9vw,52px);
+    background:none; border:1px dashed rgba(185,140,46,.6); box-shadow:none;
+  }
+  .faqx-cta-i svg{width:54%; height:54%}
+  .faqx-cta-t b{font-size:clamp(13px,3.4vw,15px); line-height:1.2}
+  .faqx-cta-t span{margin-top:3px; font-size:clamp(11.5px,3vw,13.5px); line-height:1.25}
+
+  /* a capsule, not the gold-ruled rectangle: at this size the double rule
+     is three hairlines inside 32px and reads as a smudge */
+  .faqx-btn{
+    grid-column:auto; justify-self:end;
+    padding:10px 15px; border-radius:var(--r-full);
+    font-family:var(--head); font-weight:600;
+    font-size:9px; letter-spacing:.11em; text-transform:uppercase;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.22),
+      inset 0 0 0 1px rgba(217,184,119,.5),
+      0 8px 18px -10px rgba(106,17,20,.7);
+  }
+  .faqx-btn svg{display:none}
+}
+/* a small phone: the icon goes before the words do, as it does on the
+   custom-rakhi strip */
+@media (max-width:359px){
+  .faqx-cta-i{display:none}
+}
+
+/* ══ from tablet up ══
+   The foot panel becomes the row it is drawn as: who to ask at one end,
+   the way in at the other. */
+@media (min-width:760px){
+  .faqx-cta{
+    grid-template-columns:auto 1fr auto;
+    align-items:center; justify-items:start; text-align:left;
+    gap:clamp(16px,2.2vw,26px);
+  }
+  .faqx-btn{grid-column:auto; justify-self:end}
+  .faqx-cta-t b{font-size:clamp(19px,2.1vw,23px)}
+}
+
+/* ══ from a wide screen ══
+   The photograph joins, bleeding off the left edge of the page the way the
+   reference draws it, with the questions in a column beside it. */
+@media (min-width:1040px){
+  .faqx-body{
+    display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);
+    gap:clamp(30px,4vw,56px); align-items:stretch;
+  }
+  /* The questions set the height and the photograph fills whatever they
+     leave — the same rule the offer banner's gift and the why panel's
+     photograph follow. On its own 4:5 it stood a third taller than four
+     cards and left a hole under them. The image is out of the flow so it
+     cannot push back. */
+  .faqx-shot{
+    display:block; position:relative; margin:0; min-height:340px;
+    border-radius:var(--r-xl); overflow:hidden;
+    box-shadow:
+      inset 0 0 0 1px rgba(217,184,119,.5),
+      0 26px 60px -34px rgba(120,88,22,.55);
+  }
+  .faqx-shot img{
+    position:absolute; inset:0;
+    width:100%; height:100%; object-fit:cover; object-position:52% 50%; display:block;
+  }
+}

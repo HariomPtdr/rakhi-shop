@@ -1,0 +1,217 @@
+/* ══════════════════════════════════════════════════════════
+   WHY CHOOSE RAY ART GALLERY
+
+   Five promises on one panel, with the thing itself being tied
+   at the left end — the only picture on this page that is not a
+   product.
+
+   Everything is text over the panel rather than baked into an
+   image: it reads at 320px, can be selected, is there for a
+   screen reader, and the day a promise changes it changes in a
+   stylesheet rather than in an image editor.
+
+   Five names and nothing else. Each carried a sentence
+   underneath — "Thoughtfully handmade by skilled artisans with
+   love" — and five of those made the panel three times the
+   height of the offer banner it sits near, to say five things
+   the two words above them had already said.
+
+   The mandala is behind the top right corner, faint, the way
+   the offer banner carries its own.
+   ══════════════════════════════════════════════════════════ */
+.why{padding:clamp(26px,5vw,48px) 0 0}
+
+.why-in{
+  position:relative; overflow:hidden;
+  display:grid; grid-template-columns:30% 1fr; align-items:center;
+  border-radius:var(--r-xl);
+  background:linear-gradient(120deg,#FDF6EA 0%,#FCF1E0 52%,#FAEBD5 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 0 0 1px rgba(217,184,119,.55),
+    0 18px 44px -26px rgba(120,88,22,.45);
+}
+/* the mandala, off the top right */
+.why-in::after{
+  content:""; position:absolute; z-index:0; pointer-events:none;
+  top:-8%; right:-6%; width:min(38%,300px); aspect-ratio:484/384;
+  background:url("../../../assets/images/promo-mandala.webp") right top / cover no-repeat;
+  opacity:.38;
+  -webkit-mask-image:radial-gradient(120% 120% at 100% 0%, #000 42%, transparent 78%);
+          mask-image:radial-gradient(120% 120% at 100% 0%, #000 42%, transparent 78%);
+}
+
+/* ── the photograph ──
+   A column down the left at every width, the way the offer banner carries
+   its gift. It was a band across the top of a phone, and at 16:10 that band
+   alone was 300px — more than the whole offer banner, for a picture nobody
+   came to look at.
+
+   Out of the flow, so the words set the panel's height and the photograph
+   fills whatever they leave. In the flow with height:100%, a 410x591 image
+   falls back to its own size and sets the height from underneath. */
+.why-shot{
+  position:relative; z-index:1; display:block; overflow:hidden;
+  align-self:stretch; background:#F6EEDF;
+}
+.why-shot img{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover; object-position:56% 42%; display:block;
+  /* gives out into the panel rather than stopping at a line */
+  -webkit-mask-image:linear-gradient(to right, #000 72%, transparent);
+          mask-image:linear-gradient(to right, #000 72%, transparent);
+}
+
+.why-b{
+  position:relative; z-index:1; min-width:0;
+  padding:clamp(13px,2.6vw,22px) clamp(12px,2.6vw,24px) clamp(14px,2.8vw,24px);
+}
+
+/* ── the heading ──
+   Two lines: the question in gold italic, the shop's name under it in the
+   deep red. One line at one size would be a sentence; two makes the name
+   the thing being read. */
+.why-h{text-align:center; margin-bottom:clamp(13px,2.4vw,20px)}
+.why-orn{display:block; width:clamp(20px,4vw,28px); margin:0 auto; color:var(--tan)}
+.why-orn svg{width:100%; height:auto; display:block}
+/* the rules either side of the flower, as the reference draws them */
+.why-orn{position:relative}
+.why-orn::before, .why-orn::after{
+  content:""; position:absolute; top:50%; width:clamp(40px,11vw,150px); height:1px;
+  background:linear-gradient(to right, transparent, rgba(185,140,46,.85), transparent);
+}
+.why-orn::before{right:calc(100% + 10px)}
+.why-orn::after{left:calc(100% + 10px)}
+.why-orn-b{margin-top:clamp(10px,2vw,16px)}
+
+.why-h h2{display:block; margin-top:clamp(9px,1.8vw,14px)}
+.why-h i{
+  display:block; font-style:normal;
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(15px,3.6vw,24px); line-height:1.15; letter-spacing:-.012em;
+  color:var(--tan-deep);
+}
+.why-h b{
+  display:block; margin-top:clamp(2px,.5vw,5px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(21px,5vw,35px); line-height:1.1; letter-spacing:-.022em;
+  color:#7A1418;
+}
+
+/* ── the five ──
+   Two across on a phone, five across from tablet up, with a gold hairline
+   between them rather than a grey one — the same rule the four reasons
+   used to wear. */
+/* One row at every width. Two across on a phone stacked to three rows and
+   made the panel three times the banner's height; one row that can be
+   pushed keeps it to one. */
+.why-l{
+  list-style:none; display:flex; gap:0;
+  overflow-x:auto; scrollbar-width:none;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  margin:0 calc(clamp(12px,2.6vw,24px) * -1);
+  padding:0 clamp(12px,2.6vw,24px);
+}
+.why-l::-webkit-scrollbar{display:none}
+.why-l li{
+  position:relative; text-align:center; flex:none;
+  width:clamp(88px,25vw,112px); scroll-snap-align:start;
+  padding:0 clamp(7px,2vw,12px);
+  display:flex; flex-direction:column; align-items:center;
+}
+/* never on the first, so no rule hangs off the left edge */
+.why-l li + li::before{
+  content:""; position:absolute; left:0; top:6%; height:88%; width:1px;
+  background:linear-gradient(to bottom, transparent, rgba(185,140,46,.4), transparent);
+}
+
+/* the circle every promise on this site wears */
+.why-i{
+  display:grid; place-items:center; flex:none;
+  width:clamp(42px,9.5vw,54px); aspect-ratio:1; border-radius:50%;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FBF4E6 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.6),
+             0 8px 20px -14px rgba(120,88,22,.5);
+  color:var(--tan-deep);
+}
+.why-i svg{width:52%; height:52%}
+
+.why-l b{
+  display:block; margin-top:clamp(8px,1.6vw,12px);
+  font-family:var(--head); font-weight:700;
+  font-size:clamp(9px,2.1vw,11.5px); letter-spacing:.055em; line-height:1.28;
+  text-transform:uppercase; color:#7A1418;
+}
+.why-rule{
+  display:block; width:clamp(18px,4vw,28px); height:1.5px;
+  margin:clamp(7px,1.4vw,10px) 0 0;
+  background:linear-gradient(to right, rgba(185,140,46,.9), rgba(185,140,46,.5));
+  border-radius:2px;
+}
+
+/* ══ the phone ══
+   The panel came in at around twice the height of the offer banner it sits
+   next to, for the same job: a name and five words. Everything here is the
+   same panel with the air taken out — the closing ornament goes (the one
+   above it has already said it), the circles and the type come down a step,
+   and the little gold rule under each promise goes with them.
+
+   Nothing is removed that carries meaning: all five promises, both lines of
+   the heading and every label stay. */
+@media (max-width:759px){
+  .why{padding-top:clamp(20px,4vw,30px)}
+
+  .why-b{padding:9px 12px 10px}
+
+  /* one ornament, not two, and shorter rules either side of it */
+  .why-h{margin-bottom:7px}
+  .why-orn{width:17px}
+  .why-orn::before, .why-orn::after{width:clamp(34px,9vw,90px)}
+  .why-orn-b{display:none}
+
+  .why-h h2{margin-top:4px}
+  .why-h i{font-size:clamp(11px,2.8vw,13px)}
+  .why-h b{margin-top:1px; font-size:clamp(16px,4vw,20px)}
+
+  /* All five in the row, nothing to push. A row that scrolls hides two
+     promises behind an edge with no arrow on it, and the two it hides are
+     the two about delivery and service. The photograph gives up a little
+     of its column to pay for the space. */
+  .why-in{grid-template-columns:25% 1fr}
+  .why-l{overflow:visible; margin:0; padding:0}
+  /* basis auto, not 0: equal fifths cut "Safe & fast" to a third line while
+     "Premium" sat in a column with room to spare. Sized to the words, the
+     long label takes the width the short ones are not using. */
+  .why-l li{flex:1 1 auto; width:auto; min-width:0; padding:0 3px}
+  .why-i{width:clamp(26px,7vw,32px)}
+  .why-l b{
+    margin-top:5px;
+    font-size:clamp(6.4px,1.75vw,8px); letter-spacing:.02em; line-height:1.25;
+  }
+  /* ornament under an already-underlined two-word label */
+  .why-rule{display:none}
+}
+
+/* ── from tablet up ── */
+@media (min-width:760px){
+  .why-in{grid-template-columns:minmax(180px,24%) 1fr}
+  .why-shot img{object-position:52% 44%}
+  /* room for all five: nothing to push */
+  .why-l{overflow:visible; margin:0; padding:0}
+  .why-l li{flex:1 1 0; width:auto}
+
+  /* A step down from where the ceilings sat: the panel ran half again the
+     height of the offer banner beside it, and the gap was all air —
+     nothing here is smaller than it needs to be to read across a room. */
+  .why-b{padding:clamp(13px,2vw,17px) clamp(12px,2.6vw,24px) clamp(14px,2.2vw,19px)}
+  .why-h{margin-bottom:clamp(13px,1.9vw,16px)}
+  .why-h h2{margin-top:clamp(9px,1.3vw,10px)}
+  .why-h i{font-size:clamp(15px,3vw,20px)}
+  .why-h b{font-size:clamp(21px,4.3vw,30px)}
+  .why-orn-b{margin-top:clamp(9px,1.4vw,11px)}
+  .why-i{width:clamp(42px,8vw,46px)}
+  .why-l b{margin-top:clamp(8px,1.4vw,10px); font-size:clamp(9px,2vw,10.5px)}
+  .why-rule{margin-top:clamp(6px,1.1vw,7px)}
+}
