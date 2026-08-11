@@ -65,8 +65,12 @@ body{
 button,a,summary,label,.chip,.sortmenu li{touch-action:manipulation}
 /* while a sheet is open the page behind must not scroll */
 body.locked{overflow:hidden; position:fixed; inset:0 0 auto 0; width:100%}
-/* anything with an id is a scroll target — clear the sticky header */
-section[id]{scroll-margin-top:86px}
+/* Clearing the sticky header is scroll-padding-top's job, above, and it does
+   it for every scroll target rather than for sections alone. This rule was a
+   second answer to the same question, and the browser adds them: a section
+   jumped to from the bar landed 182px down — 96 of scrollport padding plus 86
+   of its own margin — which reads as the heading having been overshot.
+   Now the sections do not carry one. */
 img{max-width:100%; display:block}
 a{color:inherit; text-decoration:none}
 ::selection{background:var(--ink); color:var(--bg)}

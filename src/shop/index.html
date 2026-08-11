@@ -89,8 +89,21 @@
         <span class="brand-s">Handmade Rakhi</span>
       </span>
     </a>
-    <nav class="nav-l">
+    <!-- ── every room in the shop, in the order the page lays them out ──
+         The bar used to carry two of the six, so the way to Shop by Budget
+         or to Why Us was to scroll until you met them. They are all here
+         now, reading down the page from left to right.
+
+         Four of them are marked nav-more: on a 1000px window there is room
+         for the wordmark, three glyphs and two words, and six words in that
+         space is a bar with no air in it. Those four arrive at 1120px, which
+         is where the row still has a gap at both ends of it. -->
+    <nav class="nav-l" aria-label="Sections">
+      <a href="#budget" class="nav-more">Budget</a>
+      <a href="#categories" class="nav-more">Categories</a>
+      <a href="#best" class="nav-more">Bestsellers</a>
       <a href="#collection">Collection</a>
+      <a href="#why" class="nav-more">Why us</a>
       <a href="#faq">Questions</a>
     </nav>
     <!-- Saved rakhis. It sits where the account button used to, and it is
@@ -1271,8 +1284,14 @@
 <div class="modal" id="navModal" role="dialog" aria-modal="true" aria-labelledby="nvT">
   <div class="sheet glass">
     <div class="sh-h"><h2 id="nvT">Menu</h2><button class="x" id="navClose" aria-label="Close">✕</button></div>
+    <!-- the same six the bar carries, in the same order: a phone should not
+         be offered a smaller shop than a desktop -->
     <nav class="nav-sheet" id="navSheet">
+      <a href="#budget"><b>Budget</b><span>What you can spend</span></a>
+      <a href="#categories"><b>Categories</b><span>Who it is for</span></a>
+      <a href="#best"><b>Bestsellers</b><span>What people buy most</span></a>
       <a href="#collection"><b>Collection</b><span>Every rakhi we make</span></a>
+      <a href="#why"><b>Why us</b><span>How these are made</span></a>
       <a href="#faq"><b>Questions</b><span>Delivery, payment, sizes</span></a>
     </nav>
     <!-- filled in by the account code: sign in / create account when signed

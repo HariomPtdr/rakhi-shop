@@ -84,12 +84,20 @@ body.nav-solid .nav-in{
   content:""; width:3.5px; height:3.5px; flex:none;
   transform:rotate(45deg); background:var(--tan);
 }
-.nav-l{display:none; gap:4px; z-index:2}
+.nav-l{display:none; gap:2px; z-index:2}
 @media (min-width:1000px){.nav-l{display:flex}}
+/* ── the four that need room ──
+   Six words, a wordmark and three glyphs do not fit a 1000px window without
+   the bar closing up. Collection and Questions are the two that were always
+   here; the rest arrive at the width that can hold them. */
+.nav-more{display:none}
+@media (min-width:1120px){.nav-more{display:block}}
 .nav-l a{
-  font-size:12px; font-weight:600; letter-spacing:.7px; text-transform:uppercase;
-  color:var(--ink-soft); padding:9px 13px; border-radius:var(--r-full); transition:color .25s, background .25s;
+  font-size:11.5px; font-weight:600; letter-spacing:.6px; text-transform:uppercase;
+  color:var(--ink-soft); padding:9px 11px; border-radius:var(--r-full);
+  white-space:nowrap; transition:color .25s, background .25s;
 }
+@media (min-width:1240px){.nav-l{gap:4px} .nav-l a{font-size:12px; padding:9px 13px}}
 .nav-l a:hover{color:var(--ink); background:rgba(185,140,46,.10)}
 /* ── the bag and the heart ──
    The header used to carry a red capsule reading CART with a cream count in

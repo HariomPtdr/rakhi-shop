@@ -164,6 +164,25 @@ $("#navSheet").addEventListener("click", e => {
   /* after the scroll lock is released, not before */
   requestAnimationFrame(() => { if(target) target.scrollIntoView({behavior:"smooth"}); });
 });
+/* ── the bar's own links ──
+   Scrolled to rather than followed, for two reasons. #best is a route: the
+   full collection answers to it and opens its Bestsellers page, so following
+   that link from the bar would take somebody off the home page instead of
+   down it. And a hash left behind by every section anybody glances at turns
+   the back button into a tour of the page they are already on.
+
+   The sheet on a phone has always worked this way; this is the same rule for
+   the bar above it. */
+const navBar = $(".nav-l");
+if(navBar) navBar.addEventListener("click", e => {
+  const a = e.target.closest("a[href^='#']");
+  if(!a) return;
+  const target = document.querySelector(a.getAttribute("href"));
+  if(!target) return;
+  e.preventDefault();
+  target.scrollIntoView({behavior: reduced ? "auto" : "smooth"});
+});
+
 $("#scrim").onclick = closeTop;
 document.addEventListener("keydown", e=>{
   if(e.key !== "Escape") return;
