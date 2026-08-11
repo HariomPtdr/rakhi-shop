@@ -25,23 +25,36 @@ const railPool = () => [...PRODUCTS].sort((a,b) => a.feat - b.feat);
    way there is. */
 function railCard(p, o){
   o = (o && typeof o === "object") ? o : {};   /* .map() passes an index here */
-  const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
   const out = p.stock === 0;
-  /* bare: the same card without the shop's name over every one of them and
-     without the tags. On a rail of six the name says whose these are; on a
-     wall of the whole catalogue it is the same three words forty times, and
-     the tags underneath it are forty more. Both go, and the card comes down
-     by two lines without anything being lost that is not said elsewhere.
+  /* bare: the same card without the shop's name over every one of them. On a
+     rail of six the name says whose these are; on a wall of the whole
+     catalogue it is the same three words forty times, and the card comes down
+     a line without anything being lost that is not said elsewhere.
 
-     The saving goes too. On six hand-picked rakhis it is the reason to look
-     twice; on the whole catalogue it is a red number beside every single
-     price, and a discount that is on everything is not a discount. The
-     struck-out price stays, which says the same thing quietly.
-
-     tags: puts the labels back on a bare card. The shelf on the home page
-     has no room for them under a name; the full collection does, and there
-     they are what tells one ivory card from the next at a glance. */
+     The label row is on every card in the shop — the bestseller rail, the
+     home shelf and the collection alike. It used to be drawn on the
+     collection only, which made the same rakhi two different cards depending
+     on which row of the page you met it in. */
   const bare = !!o.bare;
+  /* ── the saving ──
+     The percentage is a chip in the label row above the name; the old price
+     is struck out beside the new one, in the same serif, on the line that was
+     already there. Neither of them makes the card any taller than a card with
+     no discount at all — which is what the old layout did, stacking the two
+     prices and holding the second line open on every card in the shop. */
+  const off = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
+  /* A rakhi nobody has tagged still belongs to a shelf, and the shelf has a
+     name — so the label falls back to it. Every card carries one either way,
+     which is what stops a grid of twelve looking like two different shops.
+
+     The shelf's own name, minus the word "rakhis": on a page of rakhis, in a
+     card holding a rakhi, under a photograph of a rakhi, saying it again is
+     six characters of a narrow row spent on nothing. */
+  const catName = ((CATS.find(c => c.k === p.cat) || {}).n || "")
+                    .replace(/\s*rakhis?$/i, "");
+  const labels = (off ? `<span class="tag tag-off">${off}% OFF</span>` : "")
+               + (tagChips(p, off ? 1 : 2, true, true)
+                  || (catName ? `<span class="tag">${esc(catName)}</span>` : ""));
   return `
     <article class="rc" data-go="${p.id}">
       <div class="rc-shot">
@@ -52,18 +65,16 @@ function railCard(p, o){
       </div>
       <div class="rc-b">${
         bare ? "" : `
-        <span class="rc-brand">Ray Art Gallery</span>`}
+        <span class="rc-brand">Ray Art Gallery</span>`}${
+        labels ? `
+        <div class="tags">${labels}</div>` : ""}
         <h3 class="rc-n">${esc(p.name)}</h3>${
-        (bare && !o.tags) ? "" : `
-        ${tagChips(p, 2, true)}`}
-        <span class="rc-rule"></span>${
         p.ratings ? `
         <div class="rc-r">${starsHtml(p.rating, 11)}<span>(${p.ratings})</span></div>` : ""}
         <div class="rc-foot">
           <div class="rc-prices">
             <span class="rc-p">${inr(p.price)}</span>${
-            p.mrp && p.mrp > p.price ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}${
-            off && !bare ? `<span class="rc-off">${off}% OFF</span>` : ""}
+            off ? `<s class="rc-mrp">${inr(p.mrp)}</s>` : ""}
           </div>
           <div class="rc-go">${cardActs(p, {icon:true})}</div>
         </div>

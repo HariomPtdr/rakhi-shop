@@ -54,9 +54,13 @@ const AP_TITLE = document.title;
 function paintAll(){
   const box = $("#apGrid");
   if(!box) return;
-  const list = visible();
+  /* apState, not state: the chips and the sort up there belong to this view,
+     and the shelf on the home page is left as its own controls set it. */
+  const list = visible(apState);
+  const count = $("#rCount");
+  if(count) count.textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
   box.innerHTML = list.length
-    ? list.map(p => railCard(p, {bare:true, tags:true})).join("")
+    ? list.map(p => railCard(p, {bare:true})).join("")
     : `<p class="ap-empty">Nothing matches that yet. Try another shelf.</p>`;
   if(typeof paintHearts === "function") paintHearts();
 }
@@ -100,7 +104,7 @@ function closeFilter(){
     if(!fsheetOn()) $("#apChips").querySelector(".ap-chips-in").appendChild($("#chips"));
   }, reduced ? 0 : 380);
 }
-const paintFilterCount = () => { $("#fsheetN").textContent = visible().length; };
+const paintFilterCount = () => { $("#fsheetN").textContent = visible(apState).length; };
 
 /* ── the price bands and the sort, inside the sheet ──
    Both drawn from the lists the rest of the shop already uses: BANDS is
@@ -116,37 +120,37 @@ function paintFilterSheet(){
   if(bands){
     const live = BANDS.filter(b => PRODUCTS.some(p => p.price >= b.lo && p.price < b.hi));
     bands.innerHTML = `
-      <button class="fs-b" data-band="" aria-pressed="${!state.band}">Any price</button>` +
+      <button class="fs-b" data-band="" aria-pressed="${!apState.band}">Any price</button>` +
       live.map(b => `
-      <button class="fs-b" data-band="${b.k}" aria-pressed="${state.band === b.k}">${b.n}</button>`).join("");
+      <button class="fs-b" data-band="${b.k}" aria-pressed="${apState.band === b.k}">${b.n}</button>`).join("");
   }
   const sort = $("#fsheetSort");
   if(sort){
     sort.innerHTML = SORTS.map(o => `
-      <button class="fs-b" data-sort="${o.k}" aria-pressed="${state.sort === o.k}">${o.n}</button>`).join("");
+      <button class="fs-b" data-sort="${o.k}" aria-pressed="${apState.sort === o.k}">${o.n}</button>`).join("");
   }
 }
 
 $("#fsheetBands").addEventListener("click", e => {
   const b = e.target.closest("[data-band]");
   if(!b) return;
-  state.band = b.dataset.band || null;
+  apState.band = b.dataset.band || null;
   /* a shelf and a price at once is how you arrive at nothing and cannot
      tell which of the two emptied it */
-  if(state.band){
-    state.cat = "all";
+  if(apState.band){
+    apState.cat = "all";
     $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
   }
-  paintGrid();
+  paintAll();
   paintFilterSheet();
   paintFilterCount();
 });
 $("#fsheetSort").addEventListener("click", e => {
   const b = e.target.closest("[data-sort]");
   if(!b) return;
-  state.sort = b.dataset.sort;
+  apState.sort = b.dataset.sort;
   if(typeof paintSort === "function") paintSort();   /* keeps the desktop listbox in step */
-  paintGrid();
+  paintAll();
   paintFilterSheet();
 });
 
@@ -157,10 +161,10 @@ $("#fsheetGo").onclick = closeFilter;
 /* the dim behind it */
 fsheet.addEventListener("click", e => { if(e.target === fsheet) closeFilter(); });
 $("#fsheetClear").onclick = () => {
-  state.cat = "all"; state.band = null; state.sort = "feat";
+  apState.cat = "all"; apState.band = null; apState.sort = "feat";
   $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
   if(typeof paintSort === "function") paintSort();
-  paintGrid();
+  paintAll();
   paintFilterSheet();
   paintFilterCount();
 };

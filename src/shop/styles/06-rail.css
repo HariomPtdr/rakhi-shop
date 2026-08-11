@@ -223,7 +223,7 @@
      stands it in the middle. That is what was centring the shop's name and
      the rakhi's. */
   align-items:stretch; text-align:left;
-  padding:clamp(9px,1.8vw,11px) clamp(12px,2.4vw,15px) clamp(9px,1.8vw,12px);
+  padding:clamp(9px,1.8vw,11px) clamp(10px,2.2vw,14px) clamp(9px,1.8vw,12px);
 }
 :is(.best,.drift,.ap) .rc-brand{
   display:block; text-align:left; font-family:var(--head); font-weight:600;
@@ -232,68 +232,89 @@
 }
 /* Two lines, then it stops — never one line cut off mid-word. A name is the
    one thing on a card that has to arrive whole. */
+/* Two lines, then it stops — never one line cut off mid-word. A name is the
+   one thing on a card that has to arrive whole.
+
+   Smaller than it was: the block under a photograph is a label, not a
+   headline, and at 16px it was setting the height of every card in the shop. */
 :is(.best,.drift,.ap) .rc-n{
   font-family:var(--display); font-weight:600;
-  font-size:clamp(14px,3.2vw,16.5px); letter-spacing:-.014em; line-height:1.22;
+  font-size:clamp(12.5px,3vw,14.5px); letter-spacing:-.012em; line-height:1.25;
   color:#3B2415; margin:clamp(3px,.7vw,4px) 0 0;
   white-space:normal; overflow:hidden; text-overflow:clip;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
-  /* Two lines whether the name needs them or not. Clamped but not reserved,
-     a one-line name started its price row 20px higher than the card beside
-     it, and the buttons along a row did not line up. */
-  min-height:calc(2 * 1.22em);
+  /* A one-line name is one line. The second line used to be held open on
+     every card so that the price rows lined up, which cost every short name
+     a blank line. The foot is anchored to the floor of the card now, so the
+     rows line up on their own and the reserve is only empty ivory. */
 }
-/* Drawn only on a rakhi nobody has tagged. Where there are tags they are
-   already the line between the name and the price, and two dividers in
-   twelve millimetres is one too many. */
-:is(.best,.drift,.ap) .rc-rule{
-  display:block; height:1px; width:clamp(28px,7vw,44px);
-  margin:clamp(7px,1.4vw,10px) 0 0;
-  background:linear-gradient(to right, rgba(185,140,46,.85), rgba(185,140,46,0));
-}
-:is(.best,.drift,.ap) .tags + .rc-rule{display:none}
-/* One row, always. Two tags that happened to be long words wrapped to a
-   second row, and because every card in a rail is as tall as the tallest,
-   one long pair added a line to all twelve. Whatever does not fit is cut
-   off rather than allowed to cost the row its height. */
+/* The gold hairline the card used to carry between the name and the price is
+   gone. It was a divider inside a box that is already divided — by the edge
+   of the photograph above it — and it cost the card a line it now spends on
+   the saving instead. */
+:is(.best,.drift,.ap) .rc-rule{display:none}
+/* ── the label row ──
+   The percentage saved and, on the collection grid, what the rakhi is: one
+   row, above the name, the way the reference shop sets it. One row, always —
+   two labels that happened to be long words wrapped to a second row, and
+   because every card in a row is as tall as the tallest, one long pair added
+   a line to all of them.
+
+   Nothing is held open for a card with neither: barely a rakhi in the shop
+   carries a tag, and a reserved row would be an empty band above eleven names
+   for the sake of the twelfth. */
 :is(.best,.drift,.ap) .tags{
-  margin-top:clamp(5px,1vw,6px);
+  margin-top:clamp(4px,.9vw,6px);
   flex-wrap:nowrap; overflow:hidden;
 }
-:is(.best,.drift,.ap) .tag{flex:none}
-:is(.best,.drift,.ap) .tag{padding:3px 8px}
+/* Long labels are trimmed with an ellipsis rather than sliced by the card's
+   edge: "Bhaiya Bhab" reads as a bug, "Bhaiya…" reads as a label that did not
+   fit. The first chip gives way before the second, so both stay legible. */
+:is(.best,.drift,.ap) .tag{
+  flex:0 1 auto; min-width:0; padding:2.5px 7px;
+  display:block; max-width:100%;
+  font-size:clamp(7.5px,1.8vw,9px);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* The saving. The one number on the card allowed to be a colour, so it does
+   not need to be a loud one: the shop's own red on a wash of it, at the size
+   of the label beside it rather than a shout over it. It never gives way to a
+   category chip — the chip is trimmed first. */
+:is(.best,.drift,.ap) .tag-off{
+  flex:none; font-weight:700; letter-spacing:.055em;
+  color:var(--rose); background:rgba(181,56,74,.07);
+  box-shadow:inset 0 0 0 1px rgba(181,56,74,.28);
+}
 
 /* The floor of the card. Tall enough to stand the bag beside it and hold
    the price on its centre line, so the two read as one row rather than a
    number with a button parked near it. */
+/* The two prices, side by side on one line: what it costs, and what it cost
+   before. They used to be stacked, with the second line held open on every
+   card whether the rakhi was discounted or not — a band of empty ivory under
+   every number in the shop. Beside each other they cost nothing, and they
+   leave the label row above free for the labels. */
 :is(.best,.drift,.ap) .rc-prices{
-  display:flex; flex-direction:column; align-items:flex-start; gap:2px;
-  flex:1; min-width:0;
-  /* Two lines, always: the struck price under the price rather than beside
-     it. Side by side it fitted on a card with no old price and wrapped on
-     one that had it, so the foot grew on that card alone and its button sat
-     lower than every other button in the row. Reserved, the row lines up
-     whether a rakhi is discounted or not. */
-  min-height:calc(clamp(19px,4.6vw,23px) * 1.05 + clamp(10.5px,2.4vw,12px) * 1.3 + 2px);
+  display:flex; align-items:baseline; gap:clamp(2px,.9vw,5px);
+  flex:0 1 auto; min-width:0;
 }
 :is(.best,.drift,.ap) .rc-p{
-  font-family:var(--display); font-weight:600;
-  font-size:clamp(19px,4.6vw,23px); line-height:1.05; color:#3B2415; margin:0;
-}
-:is(.best,.drift,.ap) .rc-mrp{
-  font-family:var(--head); font-size:clamp(10.5px,2.4vw,12px);
-  color:var(--ink-faint); text-decoration-thickness:1px;
-  /* stated, not inherited: the reserved height above is calculated from it,
-     and the inherited 1.6 made the line 3.6px taller than the reserve */
-  line-height:1.3;
-}
-/* The saving, in the shop's own red rather than a supermarket green. It is
-   the one number here allowed to be a colour, so it does not need to be a
-   loud one. */
-:is(.best,.drift,.ap) .rc-off{
-  flex:none; font-family:var(--head); font-weight:700;
-  font-size:clamp(8.5px,2vw,10px); letter-spacing:.05em;
+  font-family:var(--display); font-weight:700; flex:none;
+  font-size:clamp(14px,3.4vw,16.5px); line-height:1.1; margin:0;
+  /* the shop's red, as the reference sets it: the price is the one thing on
+     the card somebody is looking for, and colour finds it faster than size */
   color:var(--rose);
+}
+/* The old price, directly after the new one and set in the same serif at a
+   smaller size: the two numbers are the same kind of thing and should look
+   like it — a sans-serif ₹98 beside a serif ₹59 read as two different facts
+   rather than one before-and-after. Quiet, in the faint ink, struck through:
+   it is there to be compared against, not read. */
+:is(.best,.drift,.ap) .rc-mrp{
+  flex:none;
+  font-family:var(--display); font-weight:600; white-space:nowrap;
+  font-size:clamp(9.5px,2.4vw,11.5px); line-height:1.1;
+  color:var(--ink-faint); text-decoration-thickness:1px;
 }
 /* Only drawn when somebody has actually left one. */
 :is(.best,.drift,.ap) .rc-r{
@@ -309,8 +330,17 @@
    one row now, sitting directly under the tags, and the leftover height
    falls below them where it reads as the card's own padding. */
 :is(.best,.drift,.ap) .rc-foot{
-  display:flex; align-items:center; gap:10px;
-  margin-top:clamp(8px,1.6vw,11px);
+  display:flex; align-items:center; gap:clamp(4px,1.2vw,9px);
+  /* The one thing the row may never do is clip the price or slide the button
+     off the card. A four-figure price beside a stepper does not fit a card
+     this narrow, so on the day the shop sells one, the button takes the line
+     under it instead — a taller card on one rakhi rather than a cut number on
+     every card that is priced like it. */
+  flex-wrap:wrap; row-gap:clamp(6px,1.2vw,8px);
+  /* anchored to the floor, with the gap above it as padding rather than a
+     margin so that `auto` can be the whole of the card's leftover height and
+     the gap still survives on a card that has none to give */
+  margin-top:auto; padding-top:clamp(7px,1.5vw,10px);
 }
 /* One width for both states.
    The stepper is wider than the word Add, so on a card with a struck-out
@@ -322,7 +352,7 @@
   flex:none; margin-left:auto; display:flex;
   /* the stepper's own width, spelled out in the tokens the stepper is built
      from: two buttons and the number between them */
-  min-width:calc(2 * clamp(30px,6.8vw,34px) + 18px);
+  min-width:calc(2 * clamp(28px,6.8vw,34px) + 16px);
 }
 /* the button and the stepper, not `> *` — the .acts wrapper between them
    and the slot is display:contents, so it has no box to give a width to */

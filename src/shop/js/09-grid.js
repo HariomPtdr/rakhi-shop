@@ -1,20 +1,34 @@
 /* ══════════════════════════════════════════════════════════
    collection
    ══════════════════════════════════════════════════════════ */
-let state = { cat:"all", band:null, sort:"feat" };
+/* ── two shelves, two filters ──
+   The shelf on the home page and the full collection behind "View all" are
+   two different views of the same catalogue, and they were sharing one
+   filter. Narrowing the collection to Kids rakhis quietly narrowed the home
+   shelf behind it, so closing the view left the home page holding a filter
+   nobody had set there and no chip on screen saying so.
+
+   `state` is the home shelf: it is set by the Shop by Category cards and the
+   Shop by Budget bands, which are the only controls next to it.
+   `apState` is the full collection: the chips, the sort and the filter sheet,
+   all of which live inside that view. Neither writes to the other. */
+let state   = { cat:"all", band:null, sort:"feat" };
+let apState = { cat:"all", band:null, sort:"feat" };
 /* catalogue numbers follow the order of the list; rebuilt if the list is
    later replaced by the one in the database */
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
 const numberCatalogue = ()=>{ IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)])); };
 
+/* The chips live inside the full collection, so they narrow that view and
+   nothing else. */
 $("#chips").innerHTML = CATS.map(c=>
-  `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===state.cat}">${c.n}</button>`).join("");
+  `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
 $("#chips").addEventListener("click", e=>{
   const b=e.target.closest(".chip"); if(!b) return;
-  state.cat=b.dataset.c;
-  state.band=null;              /* one filter at a time; the chips are the way out */
-  $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===state.cat)));
-  paintGrid();
+  apState.cat=b.dataset.c;
+  apState.band=null;            /* one filter at a time; the chips are the way out */
+  $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===apState.cat)));
+  paintAll();
 });
 /* ── the sort listbox ──────────────────────────────────────
    Replaces a native <select>, so it has to reimplement what the
@@ -40,7 +54,7 @@ let sortHot = 0;
 
 sortMenu.innerHTML = SORTS.map(o => `
   <li role="option" id="sort-${o.k}" data-k="${o.k}"
-      aria-selected="${o.k === state.sort}" tabindex="-1">
+      aria-selected="${o.k === apState.sort}" tabindex="-1">
     <span class="so-i" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
            stroke-linecap="round" stroke-linejoin="round">${o.i}</svg>
@@ -51,8 +65,8 @@ sortMenu.innerHTML = SORTS.map(o => `
 
 const sortItems = () => [...sortMenu.children];
 function paintSort(){
-  $("#sortNow").textContent = (SORTS.find(o=>o.k===state.sort)||SORTS[0]).n;
-  sortItems().forEach(li=>li.setAttribute("aria-selected", String(li.dataset.k===state.sort)));
+  $("#sortNow").textContent = (SORTS.find(o=>o.k===apState.sort)||SORTS[0]).n;
+  sortItems().forEach(li=>li.setAttribute("aria-selected", String(li.dataset.k===apState.sort)));
 }
 function hotSort(i){
   sortHot = (i + SORTS.length) % SORTS.length;
@@ -62,7 +76,7 @@ function hotSort(i){
 function openSort(){
   sortMenu.hidden = false;
   sortBtn.setAttribute("aria-expanded","true");
-  hotSort(Math.max(0, SORTS.findIndex(o=>o.k===state.sort)));
+  hotSort(Math.max(0, SORTS.findIndex(o=>o.k===apState.sort)));
 }
 function closeSort(refocus){
   if(sortMenu.hidden) return;
@@ -72,8 +86,8 @@ function closeSort(refocus){
   if(refocus) sortBtn.focus();
 }
 function pickSort(k){
-  state.sort = k;
-  paintSort(); paintGrid();
+  apState.sort = k;
+  paintSort(); paintAll();
   closeSort(true);
 }
 
@@ -129,12 +143,15 @@ addEventListener("error", e=>{
     tag.classList.add(tag.classList.contains("pill") ? "pill-art" : "art");
   }
 }, true);
-function visible(){
+/* Whose filter to read: the home shelf's by default, the collection's when
+   that view asks. */
+function visible(st){
+  st = st || state;
   const by={feat:(a,b)=>a.feat-b.feat, lo:(a,b)=>a.price-b.price,
-            hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[state.sort];
-  const band = state.band && BANDS.find(b => b.k === state.band);
+            hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[st.sort];
+  const band = st.band && BANDS.find(b => b.k === st.band);
   return PRODUCTS
-    .filter(p => state.cat === "all" || p.cat === state.cat)
+    .filter(p => st.cat === "all" || p.cat === st.cat)
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
     .sort(by);
 }
@@ -150,12 +167,13 @@ let shown = PAGE;
 function paintGrid(){
   const list = visible();
   shown = Math.min(PAGE, list.length);   /* a new filter or sort starts at the left */
-  $("#rCount").textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
   const box = $("#grid");
   box.innerHTML = list.slice(0, shown).map(cardHtml).join("");
   box.scrollLeft = 0;
   if(typeof driftMarks === "function") driftMarks();
-  /* the full view is the same list, so it is repainted by the same call */
+  /* The full view has its own filter now, but it is drawn from the same
+     catalogue: whatever repainted this shelf — a fresh list out of the
+     database, a sold-out mark — has to reach that grid too. */
   if(typeof paintAll === "function") paintAll();
 }
 
@@ -216,13 +234,9 @@ function catJump(e){
   const a = e.target.closest("[data-cat]");
   if(!a) return;
   e.preventDefault();
-  state.cat = a.dataset.cat;
-  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === state.cat)));
+  state.cat  = a.dataset.cat;
+  state.band = null;            /* a price and a shelf at once is how you get nothing */
   paintGrid();
-  /* the chip row scrolls too — a pressed chip off the side of the screen is
-     a filter nobody can see they are inside of */
-  const chip = $(`#chips .chip[data-c="${state.cat}"]`);
-  if(chip) chip.scrollIntoView({block:"nearest", inline:"center"});
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
 }
 const catRail = $("#catRail");
@@ -284,7 +298,6 @@ $("#budRail").addEventListener("click", e => {
   if(!b) return;
   state.band = b.dataset.band;
   state.cat  = "all";           /* a price and a category at once is how you get nothing */
-  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
   paintGrid();
   document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
 });

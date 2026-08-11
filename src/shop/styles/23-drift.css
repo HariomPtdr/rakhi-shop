@@ -52,11 +52,20 @@
 .drift-track{
   display:grid;
   grid-auto-flow:column;
-  grid-template-rows:repeat(2, 1fr);
+  /* auto, not 1fr: 1fr gave both rows the height of the taller one, and a
+     card handed height it has no content for opens a gap between the name and
+     the price — the middle of a card, which is where a gap is seen. Each row
+     is now as tall as what is in it, and the cards inside a row still stretch
+     to each other, so the buttons along a row stand on one line. */
+  grid-template-rows:repeat(2, auto);
   /* The column has to be told its width. Left to auto, a grid inside a
      scroll container sizes its columns to the container and squeezes
      twelve cards into one screen instead of overflowing it. */
-  grid-auto-columns:clamp(146px,42vw,196px);
+  /* 44vw, not 42: at 360px the card was 151px wide, and a foot holding
+     "₹199 ₹332" beside the bag needs 157 of them — six pixels short, so the
+     button dropped to a second line on every rakhi priced over ₹99 while the
+     same card on the collection page, which is 157 wide, was fine. */
+  grid-auto-columns:clamp(157px,44vw,196px);
   gap:clamp(12px,2.2vw,18px) clamp(10px,2vw,16px);
   align-items:stretch;
   overflow-x:auto; overflow-y:hidden; scrollbar-width:none;

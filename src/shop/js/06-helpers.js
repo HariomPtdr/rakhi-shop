@@ -49,7 +49,9 @@ const tagLabel = t => String(t).replace(/-/g, " ")
    quiet: leave off the "+2" that says how many did not fit. On the
    bestseller card it was a third chip taking a second row to report that
    there was not room for a third chip. */
-function tagChips(p, max, quiet){
+/* inner: the chips on their own, without the row around them — for a caller
+   that is building a row of its own and has something else to put in it. */
+function tagChips(p, max, quiet, inner){
   const list = (p && p.tags || []).map(tagKey).filter(Boolean);
   if(!list.length) return "";
   const seen = new Set(), keep = [];
@@ -57,7 +59,8 @@ function tagChips(p, max, quiet){
   const cap = max == null ? 3 : max;
   const shown = keep.slice(0, cap);
   const rest  = keep.length - shown.length;
-  return `<div class="tags">${shown.map(t =>
+  const chips = shown.map(t =>
     `<span class="tag">${esc(tagLabel(t))}</span>`
-  ).join("")}${rest > 0 && !quiet ? `<span class="tag tag-more">+${rest}</span>` : ""}</div>`;
+  ).join("") + (rest > 0 && !quiet ? `<span class="tag tag-more">+${rest}</span>` : "");
+  return inner ? chips : `<div class="tags">${chips}</div>`;
 }
