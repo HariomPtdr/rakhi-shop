@@ -8,12 +8,23 @@
    shelf behind it, so closing the view left the home page holding a filter
    nobody had set there and no chip on screen saying so.
 
-   `state` is the home shelf: it is set by the Shop by Category cards and the
-   Shop by Budget bands, which are the only controls next to it.
+   `state` is the home shelf. Nothing narrows it any more — the category
+   cards and the budget circles open pages of their own now — so it is the
+   whole catalogue in the shop's featured order, which is what a shelf on a
+   home page should be.
    `apState` is the full collection: the chips, the sort and the filter sheet,
    all of which live inside that view. Neither writes to the other. */
-let state   = { cat:"all", band:null, sort:"feat", tag:null, stock:false };
-let apState = { cat:"all", band:null, sort:"feat", tag:null, stock:false };
+/* ── the page, and the filters on it ──
+   `page` is which page of the shop this is: "all", a shelf key, "best", or
+   "b:<band>". It is what the address, the banner and the bar are built from.
+   `cat`, `band`, `tag` and `stock` are the filters somebody has set while
+   standing on it.
+
+   They used to be one field, and the two meanings fought: narrowing the
+   whole collection to Kids rakhis with a chip moved the shop to the Kids
+   page, banner and all, when all that was asked for was a smaller grid. */
+let state   = { page:"all", cat:"all", band:null, sort:"feat", tag:null, stock:false };
+let apState = { page:"all", cat:"all", band:null, sort:"feat", tag:null, stock:false };
 /* catalogue numbers follow the order of the list; rebuilt if the list is
    later replaced by the one in the database */
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
@@ -25,13 +36,24 @@ $("#chips").innerHTML = CATS.map(c=>
   `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
 $("#chips").addEventListener("click", e=>{
   const b=e.target.closest(".chip"); if(!b) return;
-  apState.cat=b.dataset.c;
-  apState.band=null;            /* one filter at a time; the chips are the way out */
+  const onShelfPage = isCat(apState.page);
+  apState.cat = b.dataset.c;
+  /* The price stays unless it has emptied the grid. Filters compose —
+     "kids rakhis under ₹50" is one question, not two — but a shelf with
+     nothing at that price would be a blank page whose cause is off screen
+     in a sheet nobody has open, so in that one case the price gives way. */
+  if(apState.band && !visible(apState).length) apState.band = null;
+  /* ── where the chip leaves you ──
+     On a shelf's own page it *is* the shelf: pressing Premium there is
+     asking for the Premium page, banner and address and all. Anywhere else
+     — the whole collection, Bestsellers, a budget page — it is a filter on
+     the page somebody is standing on, and pressing it should narrow that
+     page rather than carry them off to another one. */
+  if(onShelfPage) apState.page = isCat(apState.cat) ? apState.cat : "all";
   $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===apState.cat)));
   paintAll();
-  /* the address follows the chip: a shelf chosen here is the same page as a
-     shelf arrived at from a category card, and it can be sent to somebody */
   if(typeof apSyncHash === "function") apSyncHash();
+  if(typeof fsheetOn === "function" && fsheetOn()){ paintFilterSheet(); paintFilterCount(); }
 });
 /* ── the sort listbox ──────────────────────────────────────
    Replaces a native <select>, so it has to reimplement what the
@@ -164,15 +186,15 @@ function visible(st){
   st = st || state;
   const by={feat:(a,b)=>a.feat-b.feat, lo:(a,b)=>a.price-b.price,
             hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[st.sort];
-  /* A budget page carries its band in the view key — "b:b2" — because the
-     view key is what the address, the banner and the bar are built from.
-     Unpacked here so that everything downstream sees a plain band. */
-  let cat = st.cat, bk = st.band;
-  if(typeof cat === "string" && cat.startsWith("b:")){ bk = cat.slice(2); cat = "all"; }
+  /* A budget page's band comes from the page itself — the row of circles at
+     the top of it is that control — and everywhere else from the sheet. */
+  const page = st.page || "all";
+  const bk   = page.startsWith("b:") ? page.slice(2) : st.band;
   const band = bk && BANDS.find(b => b.k === bk);
-  const best = cat === "best" ? new Set(bestPool().map(p => p.id)) : null;
+  const best = page === "best" ? new Set(bestPool().map(p => p.id)) : null;
   return PRODUCTS
-    .filter(p => best ? best.has(p.id) : (cat === "all" || p.cat === cat))
+    .filter(p => !best || best.has(p.id))
+    .filter(p => st.cat === "all" || p.cat === st.cat)
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
     /* a style, out of the tags the rakhis themselves carry */
     .filter(p => !st.tag || (p.tags || []).map(tagKey).includes(st.tag))
@@ -185,7 +207,8 @@ function visible(st){
    not offered, but a style must not be hidden because it is the one already
    chosen. */
 function visibleIgnoring(st, key){
-  const relaxed = Object.assign({}, st); relaxed[key] = key === "stock" ? false : null;
+  const relaxed = Object.assign({}, st);
+  relaxed[key] = key === "stock" ? false : (key === "cat" ? "all" : null);
   return visible(relaxed);
 }
 /* ── how much of the collection is on the shelf ──

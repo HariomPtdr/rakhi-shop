@@ -66,6 +66,11 @@ const bandHero = b => ({
               +'<path d="M15.6 7.2a3.6 3.6 0 0 0-3.6-2.2c-2 0-3.6 1.2-3.6 3s1.6 2.6 3.6 3 3.6 1.2 3.6 3-1.6 3-3.6 3a3.6 3.6 0 0 1-3.6-2.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' }
 });
 
+/* Every word the shelves already say, in tag form: the keys themselves, the
+   short names on the cards, and the full names on the chips. */
+const SHELF_WORDS = new Set(SHOP_CATS.flatMap(c =>
+  [c.k, tagKey(c.card.t), tagKey(c.n), tagKey(c.n.replace(/\s*rakhis?$/i, ""))]));
+
 /* every page this view can be on: the shelves, Bestsellers and the bands */
 function viewOf(k){
   if(!k) return null;
@@ -182,33 +187,45 @@ function paintApBuds(k){
 }
 $("#apBuds").addEventListener("click", e => {
   const b = e.target.closest("[data-band]");
-  if(b) openCat("b:" + b.dataset.band);
+  if(!b) return;
+  /* Moving along the row is changing the price, not starting again: a shelf
+     or a style chosen on ₹50–₹100 still holds at ₹100–₹200, which is how
+     somebody works out what their budget buys. */
+  const keep = {cat:apState.cat, tag:apState.tag, stock:apState.stock, sort:apState.sort};
+  openCat("b:" + b.dataset.band);
+  Object.assign(apState, keep);
+  $$("#chips .chip").forEach(c =>
+    c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
+  paintAll();
+  if(fsheetOn()){ paintFilterSheet(); paintFilterCount(); }
 });
 
 /* The hash always says what is on screen, so a shelf can be sent to
    somebody, opened again from history, or reloaded onto the same shelf.
    Replaced rather than pushed: pressing four chips in a row should not put
    four entries between the shop and the way back to it. */
-function apHash(){ return isView(apState.cat) ? viewHash(apState.cat) : "#all"; }
+function apHash(){ return isView(apState.page) ? viewHash(apState.page) : "#all"; }
 function apSyncHash(){
   if(!allOpen()) return;
   const want = apHash();
   if(location.hash !== want) history.replaceState(null, "", want);
-  document.title = ((viewOf(apState.cat) || {}).n || "The collection")
+  document.title = ((viewOf(apState.page) || {}).n || "The collection")
                  + " — Ray Art Gallery";
-  paintApHead(apState.cat);
+  paintApHead(apState.page);
 }
 
 /* cat: the shelf to open on. Anything that is not a shelf — including
    nothing at all — is the whole collection. */
 function openAll(fromHash, cat){
   const k = isView(cat) ? cat : null;
-  /* Always, not only when the view is closed. Going from #best or a shelf
-     to #all left the old page's filter in place and showed one rakhi under
-     a banner reading Our collection: the address said everything and the
-     grid disagreed with it. Opening a page sets what that page is. */
-  apState.cat  = k || "all";
-  apState.band = null;        /* a price and a shelf at once is how you get nothing */
+  /* Opening a page sets what that page is and clears what was set on the
+     last one: arriving at Kids Rakhis holding a style chosen on Premium is
+     a grid narrowed by something nobody can see they chose. */
+  apState.page  = k || "all";
+  apState.cat   = isCat(k) ? k : "all";
+  apState.band  = null;
+  apState.tag   = null;
+  apState.stock = false;
   $$("#chips .chip").forEach(c =>
     c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   paintApHead(k);
@@ -275,7 +292,7 @@ function paintAll(){
   if(count) count.textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
   /* "Try another shelf" is the wrong sentence on a page that is a price:
      the five circles above it are the thing to try. */
-  const onBudget = typeof apState.cat === "string" && apState.cat.startsWith("b:");
+  const onBudget = apState.page.startsWith("b:");
   box.innerHTML = list.length
     ? list.map(p => railCard(p, {bare:true})).join("")
     : `<p class="ap-empty">Nothing at this price yet. ${onBudget
@@ -342,12 +359,11 @@ function paintFilterSheet(){
   /* A shelf page and Bestsellers have already answered the shelf question.
      A budget page has not — "kids rakhis under ₹100" is a real thing to
      want — so the shelves stay there. */
-  const onShelf = isCat(apState.cat) || apState.cat === "best";
-  /* on a budget page the band lives in the view key, not in apState.band */
-  const onBudget = typeof apState.cat === "string" && apState.cat.startsWith("b:");
-  const curBand  = onBudget ? apState.cat.slice(2) : apState.band;
-  const bandPool = onBudget ? visible(Object.assign({}, apState, {cat:"all", band:null}))
-                            : visibleIgnoring(apState, "band");
+  const onShelf = isCat(apState.page) || apState.page === "best";
+  /* on a budget page the band belongs to the page, not to the sheet */
+  const onBudget = apState.page.startsWith("b:");
+  const curBand  = onBudget ? apState.page.slice(2) : apState.band;
+  const bandPool = visibleIgnoring(apState, "band");
   const shelf = $("#fsheetShelf");
   if(shelf) shelf.hidden = onShelf;
   const price = $("#fsheetPrice");
@@ -375,6 +391,12 @@ function paintFilterSheet(){
     const n = new Map();
     pool.forEach(p => (p.tags || []).map(tagKey).filter(Boolean)
       .forEach(t => n.set(t, (n.get(t) || 0) + 1)));
+    /* A tag that is the name of a shelf is not a style. Sellers tag an evil
+       eye rakhi "evil eye" and a lumba "bhaiya bhabhi", which is true and
+       useful on the card — but offered here it was the shelf row again,
+       under a different heading, doing the same thing. Style is what is
+       left once the shelves have had their words back. */
+    SHELF_WORDS.forEach(w => n.delete(w));
     /* a tag every rakhi on the page carries cannot narrow it down */
     const live = [...n.entries()].filter(([, c]) => c < pool.length)
                    .sort((a, b) => b[1] - a[1]).slice(0, 6).map(([t]) => t);
@@ -409,21 +431,13 @@ function paintFilterSheet(){
 $("#fsheetBands").addEventListener("click", e => {
   const b = e.target.closest("[data-band]");
   if(!b) return;
-  /* On a budget page the price row *is* the page: choosing another band
-     moves to that page rather than filtering this one twice over. */
-  if(typeof apState.cat === "string" && apState.cat.startsWith("b:")){
-    const k = b.dataset.band;
-    openCat(k ? "b:" + k : "all");
-    paintFilterSheet(); paintFilterCount();
-    return;
-  }
+  /* A price narrows the page it is chosen on and leaves the page alone.
+     It used to throw the shelf away — pick Under ₹50 on Kids Rakhis and
+     the shop moved you to the whole collection under ₹50, which is not
+     what anybody pressing a price on a shelf is asking for. Nothing is
+     stranded by keeping both: the bands offered here are only the ones
+     this page actually holds. */
   apState.band = b.dataset.band || null;
-  /* a shelf and a price at once is how you arrive at nothing and cannot
-     tell which of the two emptied it */
-  if(apState.band){
-    apState.cat = "all";
-    $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
-  }
   paintAll();
   apSyncHash();
   paintFilterSheet();
@@ -464,7 +478,10 @@ $("#fsheetClear").onclick = () => {
   /* On a shelf's own page, Clear all clears the filters — not the shelf.
      Somebody on Kids Rakhis pressing it wants the price and the style back
      to anything, not to be moved to the whole shop. */
-  if(!isView(apState.cat)) apState.cat = "all";
+  /* Clear all clears the filters, not the page: somebody on Kids Rakhis
+     pressing it wants the price and the style back to anything, not to be
+     moved to the whole shop. */
+  apState.cat  = isCat(apState.page) ? apState.page : "all";
   apState.band = null; apState.sort = "feat"; apState.tag = null; apState.stock = false;
   $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   if(typeof paintSort === "function") paintSort();
