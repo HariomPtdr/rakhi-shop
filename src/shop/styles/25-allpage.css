@@ -63,27 +63,43 @@ body.ap-on{overflow:hidden}
   .ap-bar{gap:8px}
 }
 
-/* the cart, the same red button the header carries */
-.ap-cart{
+/* ── the bag and the heart, drawn rather than mounted ──
+   Two filled discs in the corner of a view whose whole subject is
+   photographs of rakhis were the loudest things on the screen, and the red
+   one was louder than the shop's own name beside it. They are the glyphs
+   now, in the shop's red, with the count riding the corner of the bag: the
+   same two buttons, at the same size to the thumb, without the furniture. */
+.ap-bar .ap-cart,
+.ap-bar .nav-like{
   position:relative; flex:none;
-  display:inline-grid; place-items:center; width:42px; height:42px;
-  border:0; border-radius:50%; cursor:pointer;
-  background:linear-gradient(160deg,#9B2226 0%,#7A1418 58%,#6A1114 100%);
-  color:#FFF6E8;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 10px 22px -12px rgba(106,17,20,.6);
-  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+  display:inline-grid; place-items:center; width:40px; height:40px;
+  border:0; border-radius:12px; cursor:pointer;
+  background:none; box-shadow:none;
+  color:#7A1418;
+  transition:color .3s var(--ease), background .3s var(--ease), transform .25s var(--ease);
 }
-.ap-cart:active{transform:scale(.94)}
+.ap-bar .ap-cart:active,
+.ap-bar .nav-like:active{transform:scale(.92); background:rgba(122,20,24,.06)}
 @media (hover:hover){
-  .ap-cart:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.24), 0 16px 30px -14px rgba(106,17,20,.75)}
+  .ap-bar .ap-cart:hover,
+  .ap-bar .nav-like:hover{background:rgba(122,20,24,.06); color:#6A1114; box-shadow:none}
+  .ap-bar .nav-like:hover svg{fill:currentColor}
 }
-.ap-cart .cart-n{
-  position:absolute; top:-3px; right:-3px;
-  min-width:18px; height:18px; padding:0 5px;
-  font-size:10px; font-style:normal;
-  background:#FFF6E8; color:#6A1114;
+/* the badges: the shop's red on the ivory of the bar, not the other way
+   round — there is no disc under them to sit against any more */
+.ap-bar .ap-cart .cart-n,
+.ap-bar .nav-like i{
+  position:absolute; top:0; right:-1px;
+  min-width:16px; height:16px; padding:0 4px;
+  border-radius:var(--r-full);
+  font-family:var(--head); font-size:9.5px; font-style:normal; font-weight:700;
+  line-height:16px; text-align:center;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 60%,#6A1114 100%);
+  color:#FFF6E8;
   box-shadow:0 0 0 2px var(--bg);
 }
+.ap-bar .ap-cart svg,
+.ap-bar .nav-like svg{width:22px; height:22px}
 
 /* The same gutters and the same maximum as .wrap, which is what every
    other section on the site is set in. Its own numbers meant the
@@ -396,7 +412,7 @@ body.ap-on{overflow:hidden}
 @media (min-width:760px){.fsheet{display:none}}
 
 .fsheet-in{
-  width:100%; max-height:min(78vh, 620px);
+  width:100%; max-height:min(88vh, 700px);
   display:flex; flex-direction:column;
   border-radius:26px 26px 0 0;
   background:linear-gradient(178deg,#FFFEFA 0%,#FCF7EC 42%,#F9F2E3 100%);
@@ -423,43 +439,47 @@ body.ap-on{overflow:hidden}
 
 .fsheet-h{
   flex:none; display:flex; align-items:center; gap:12px;
-  padding:6px 20px 12px;
+  padding:4px 18px 9px;
 }
 .fsheet-h h3{
   flex:1; min-width:0;
   font-family:var(--display); font-weight:600;
-  font-size:23px; letter-spacing:-.02em; color:#3B2415;
+  font-size:19px; letter-spacing:-.02em; color:#3B2415;
 }
+/* the glyph, not a disc around it — the same decision the bar above made */
 .fsheet-x{
-  flex:none; display:grid; place-items:center; width:34px; height:34px;
-  border:0; border-radius:50%; cursor:pointer;
-  background:rgba(255,253,248,.9); color:var(--ink-soft);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+  flex:none; display:grid; place-items:center; width:32px; height:32px;
+  border:0; border-radius:10px; cursor:pointer;
+  background:none; color:var(--ink-soft); box-shadow:none;
+  transition:background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
 }
-.fsheet-x:active{transform:scale(.94)}
+.fsheet-x:active{transform:scale(.92); background:rgba(122,20,24,.06)}
+@media (hover:hover){.fsheet-x:hover{background:rgba(122,20,24,.06); color:#7A1418}}
 
 .fsheet-b{
   flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-  padding:4px 20px 18px;
+  padding:2px 18px 14px;
   border-top:1px solid rgba(217,184,119,.5);
 }
 .fsheet-k{
-  margin:16px 0 10px;
+  margin:13px 0 7px;
   font-family:var(--head); font-weight:600;
-  font-size:9px; letter-spacing:.22em; text-transform:uppercase;
+  font-size:8.5px; letter-spacing:.2em; text-transform:uppercase;
   color:var(--tan-deep);
 }
+.fsheet-k:first-child{margin-top:10px}
 /* the chips, two across and full width — they are a list of choices here,
    not a row of controls */
 .fsheet .chips{
-  display:grid; grid-template-columns:1fr 1fr; gap:9px;
+  display:grid; grid-template-columns:1fr 1fr; gap:7px;
   overflow:visible; padding:0;
 }
 .fsheet .chip{
   width:100%; justify-content:center; text-align:center; flex:none;
-  padding:13px 10px; min-height:0; border-radius:12px;
+  padding:0 9px; min-height:38px; display:inline-flex; align-items:center;
+  border-radius:11px;
   font-family:var(--head); font-weight:600;
-  font-size:9.5px; letter-spacing:.1em;
+  font-size:9px; letter-spacing:.085em; line-height:1.2;
   background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
   color:#6B4A22;
@@ -477,14 +497,14 @@ body.ap-on{overflow:hidden}
    show. Somebody choosing a shelf can see what it holds before leaving
    the sheet on it. */
 .fsheet-f{
-  flex:none; display:flex; gap:11px; padding:13px 20px 17px;
+  flex:none; display:flex; gap:9px; padding:10px 18px 14px;
   border-top:1px solid rgba(217,184,119,.5);
   background:linear-gradient(180deg, rgba(252,247,236,0), rgba(249,242,227,.9));
 }
 .fsheet-clear, .fsheet-go{
-  flex:1; min-height:50px; border:0; border-radius:14px; cursor:pointer;
+  flex:1; min-height:42px; border:0; border-radius:12px; cursor:pointer;
   font-family:var(--head); font-weight:600;
-  font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase;
   transition:transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .fsheet-clear{
@@ -506,14 +526,14 @@ body.ap-on{overflow:hidden}
    Price and Sort by, laid out like the shelves above them: the same
    button, the same corner, the same red when chosen. Three different
    controls in one sheet would be three things to learn. */
-.fs-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+.fs-grid{display:grid; grid-template-columns:1fr 1fr; gap:7px}
 .fs-b{
-  width:100%; min-height:48px; padding:12px 10px;
-  border:0; border-radius:12px; cursor:pointer;
+  width:100%; min-height:38px; padding:0 9px;
+  border:0; border-radius:11px; cursor:pointer;
   display:inline-flex; align-items:center; justify-content:center;
-  text-align:center;
+  text-align:center; line-height:1.2;
   font-family:var(--head); font-weight:600;
-  font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  font-size:9px; letter-spacing:.085em; text-transform:uppercase;
   background:linear-gradient(158deg,#FBF3E4 0%,#F7EBD7 100%);
   box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
   color:#6B4A22;
