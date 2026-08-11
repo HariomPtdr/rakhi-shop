@@ -124,3 +124,17 @@
 }
 
 .count{font-family:var(--head); font-size:10px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint)}
+
+/* ── a shelf that has nothing on it yet ──
+   Every shelf gets a chip, so the row is the whole shop rather than the
+   part of it that is stocked. The word after the name is what keeps that
+   from being a lie, and the chip is left pressable: its grid says the same
+   thing in a sentence. */
+.chip.is-soon{opacity:.62}
+.chip.is-soon[aria-pressed="true"]{opacity:1}
+.chip-soon{
+  margin-left:.4em; padding:1px 5px; border-radius:999px;
+  background:rgba(185,140,46,.16); color:#7A1418;
+  font-size:.72em; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  vertical-align:.08em;
+}

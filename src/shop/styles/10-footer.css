@@ -241,3 +241,10 @@
   .foot-col ul{gap:clamp(5px,.8vw,8px); padding:0}
   .foot-col a{min-height:0; display:inline-flex}
 }
+
+/* the same "soon" the chips wear, in the Shop column */
+.foot-soon{
+  margin-left:.35em; padding:0 4px; border-radius:999px;
+  background:rgba(185,140,46,.18); color:var(--tan-deep, #9A7B3A);
+  font-size:.74em; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+}

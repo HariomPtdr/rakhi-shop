@@ -103,3 +103,14 @@
   display:block; margin-top:3px;
   font-size:clamp(9.5px,2.2vw,11.5px); line-height:1.45; color:var(--ink-faint);
 }
+
+/* ── a price nothing is sold at yet ──
+   Same rule as the shelf cards: on the row, visibly not ready. See
+   19-categories.css for .soon-tag, which both of them wear. */
+.bud.is-soon .bud-o img{filter:saturate(.3) brightness(1.08); opacity:.6}
+.bud.is-soon .bud-n{color:#6B563F}
+.bud.is-soon .bud-s{opacity:.75}
+@media (hover:hover){
+  .bud.is-soon:hover{transform:none}
+  .bud.is-soon:hover .bud-o img{transform:none}
+}

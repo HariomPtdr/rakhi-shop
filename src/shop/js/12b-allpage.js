@@ -309,14 +309,30 @@ function paintAll(){
      and the shelf on the home page is left as its own controls set it. */
   const list = visible(apState);
   const count = $("#rCount");
-  if(count) count.textContent = `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`;
+  /* "00 designs" is a counter that has broken, not a shelf that is not
+     stocked yet — and these pages are reachable now that a Coming soon card
+     opens one. */
+  if(count) count.textContent = list.length
+    ? `${two(list.length)} ${list.length === 1 ? "design" : "designs"}`
+    : "Coming soon";
   /* "Try another shelf" is the wrong sentence on a page that is a price:
-     the five circles above it are the thing to try. */
+     the five circles above it are the thing to try.
+
+     And on a shelf or a band with nothing on it *at all* — which the shop
+     now offers on purpose, marked Coming soon rather than hidden — neither
+     sentence is right. "Nothing at this price yet" reads as a filter that
+     came up short, when the answer is that the shop is still making them. */
   const onBudget = apState.page.startsWith("b:");
+  const bare = !apState.tag && !apState.stock
+               && (apState.cat === "all" || apState.cat === apState.page);
   box.innerHTML = list.length
     ? list.map(p => railCard(p, {bare:true})).join("")
-    : `<p class="ap-empty">Nothing at this price yet. ${onBudget
-        ? "Try another band above." : "Try another shelf."}</p>`;
+    : bare
+      ? `<p class="ap-empty">We are adding these shortly — do come back.
+         ${onBudget ? "Every other price is above."
+                    : "The rest of the shop is above."}</p>`
+      : `<p class="ap-empty">Nothing at this price yet. ${onBudget
+          ? "Try another band above." : "Try another shelf."}</p>`;
   if(typeof paintHearts === "function") paintHearts();
 }
 

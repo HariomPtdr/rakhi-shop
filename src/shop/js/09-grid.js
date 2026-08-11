@@ -54,18 +54,18 @@ const manyShelves  = () => stockedCats().length > 1;
 /* The chips live inside the full collection, so they narrow that view and
    nothing else.
 
-   Same rule as the cards below: only the shelves with something on them.
-   CATS keeps the order — All first, Premium next — and the filter keeps
-   whichever of those are real. If the shelf the grid is currently narrowed
-   to has emptied, its chip is gone, so the narrowing goes with it rather
-   than leaving the grid stuck on a filter with no way to release it. */
+   Every shelf, like the cards below, and one that has nothing on it yet is
+   marked rather than left out — pressing it shows the grid's own "adding
+   these shortly", which is the answer, not a blank. */
 function paintChips(){
   const el = $("#chips");
   if(!el) return;
-  const live = CATS.filter(c => c.k === "all" || shelfStocked(c.k));
-  if(!live.some(c => c.k === apState.cat)) apState.cat = "all";
-  el.innerHTML = live.map(c=>
-    `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
+  el.innerHTML = CATS.map(c=>{
+    const soon = c.k !== "all" && !shelfStocked(c.k);
+    return `<button class="chip${soon ? " is-soon" : ""}" data-c="${c.k}"
+      aria-pressed="${c.k===apState.cat}">${c.n}${
+      soon ? ` <span class="chip-soon">soon</span>` : ""}</button>`;
+  }).join("");
 }
 paintChips();
 $("#chips").addEventListener("click", e=>{
@@ -325,47 +325,50 @@ $("#lb").addEventListener("click", ()=>closeLb());
 function paintCats(){
   const rail = $("#catRail");
   if(!rail) return;
-  /* The section stays on the page whatever is in it, down to nothing: the
-     shop's own decision, and it keeps the home page the same shape from one
-     week to the next instead of growing and losing a band of itself as
-     stock changes.
+  /* Every shelf, whether or not anything is on it yet.
 
-     What it holds is still only the shelves with something on them. A card
-     for an empty shelf is a promise of a page with no rakhis on it, and
-     that is a different thing from a row that is short. */
-  const cats = stockedCats();
+     The row is what the shop is going to be, not only what is in it this
+     week: a shelf with no stock says Coming soon rather than going missing,
+     so a visitor sees the whole range and the home page keeps its shape
+     while it fills up. The card still opens its page — that page says the
+     same thing, so it is an answer rather than a dead end. */
   const sec = $("#categories");
   if(sec) sec.hidden = false;
-  rail.innerHTML = cats.map(c => `
-    <a class="cat" href="#c/${c.k}" data-cat="${c.k}">
+  rail.innerHTML = SHOP_CATS.map(c => {
+    const soon = !shelfStocked(c.k);
+    return `
+    <a class="cat${soon ? " is-soon" : ""}" href="#c/${c.k}" data-cat="${c.k}">
       <span class="cat-shot">
         <img src="../../assets/images/${c.card.img}" alt="${esc(c.card.t)} rakhi"
              width="660" height="880" loading="lazy" decoding="async">
+        ${soon ? `<span class="soon-tag">Coming soon</span>` : ""}
       </span>
       <span class="cat-b">
         <span class="cat-n">${esc(c.card.t)}<br>Rakhi</span>
         <span class="cat-rule"></span>
-        <span class="cat-s">${esc(c.card.sub)}</span>
+        <span class="cat-s">${soon ? "Adding these shortly" : esc(c.card.sub)}</span>
         <span class="cat-go" aria-hidden="true">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 12h15M13 6l6 6-6 6"/></svg>
         </span>
       </span>
-    </a>`).join("");
+    </a>`;
+  }).join("");
 }
 paintCats();
 
 /* The footer lists the same shelves, and used to list them by hand — which
    is how Designer came to be missing from it for as long as it was missing
-   from the row of cards. It is painted from the one list now, narrowed the
-   same way, so the column cannot promise a shelf the row does not. */
+   from the row of cards. It is painted from the one list now, so the column
+   and the row cannot disagree about what the shop sells. */
 function paintFootShelves(){
   const ul = $("#footShelves");
   if(!ul) return;
   ul.innerHTML = `<li><a href="#all">All rakhis</a></li>`
-    + stockedCats().map(c =>
-        `<li><a href="#c/${c.k}" data-cat="${c.k}">${esc(c.n)}</a></li>`).join("");
+    + SHOP_CATS.map(c =>
+        `<li><a href="#c/${c.k}" data-cat="${c.k}">${esc(c.n)}${
+          shelfStocked(c.k) ? "" : ` <span class="foot-soon">soon</span>`}</a></li>`).join("");
 }
 paintFootShelves();
 
@@ -412,29 +415,28 @@ const BANDS = [
 function paintBudget(){
   const rail = $("#budRail");
   if(!rail) return;
-  const rows = BANDS.map(b => {
-    const inIt = PRODUCTS.filter(p => p.price >= b.lo && p.price < b.hi);
-    return {b, inIt};
-  }).filter(r => r.inIt.length);
+  const rows = BANDS.map(b => ({
+    b, inIt: PRODUCTS.filter(p => p.price >= b.lo && p.price < b.hi)
+  }));
 
-  /* This used to come off the page when only one band could be filled —
-     "one band left standing is not a choice, it is a label". The shop would
-     rather the row stayed put and held one circle than had the home page
-     change shape with the price list, so it stays. Bands with nothing in
-     them are still not drawn: a circle promising a price nothing is sold at
-     is a dead end, which is not the same as a short row. */
+  /* All five bands, the same way the shelves are all drawn: this row used
+     to show only what it could fill — and to leave the page entirely when
+     that was one band — so the prices on offer changed shape as stock did.
+     A band nothing is sold at yet says Coming soon instead of vanishing. */
   $("#budget").hidden = false;
 
   rail.innerHTML = rows.map(({b, inIt}, i) => {
+    const soon = !inIt.length;
     /* Use promotional image if available, otherwise fall back to product thumbnail */
-    const imgHtml = b.img 
+    const imgHtml = b.img
       ? `<img src="../../assets/images/${b.img}" alt="${b.n} rakhis" width="660" height="660" loading="lazy" decoding="async">`
       : thumb([...inIt].sort((x, y) => y.price - x.price)[0]);
     return `
-      <button class="bud" data-band="${b.k}" type="button">
-        <span class="bud-o t${i % 5}">${imgHtml}</span>
+      <button class="bud${soon ? " is-soon" : ""}" data-band="${b.k}" type="button">
+        <span class="bud-o t${i % 5}">${imgHtml}${
+          soon ? `<span class="soon-tag">Coming soon</span>` : ""}</span>
         <span class="bud-n">${b.n}</span>
-        <span class="bud-s">${b.s}</span>
+        <span class="bud-s">${soon ? "Adding these shortly" : b.s}</span>
       </button>`;
   }).join("");
 }
