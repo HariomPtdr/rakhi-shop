@@ -1,0 +1,318 @@
+/* ══════════════════════════════════════════════════════════
+   THE WISHLIST
+
+   The collection's page, carrying what somebody hearted: the
+   same full-screen view, the same bar, the same gutters, the
+   same card. Only three things here are its own — the count
+   under the heading, the bar of things that act on several at
+   once, and the tick the card wears nowhere else.
+
+   Everything is drawn out of the shop's own ivory and gold. A
+   wishlist in another set of colours is a page that looks
+   borrowed from a different shop, which is exactly what a page
+   full of somebody's favourite things should not look like.
+   ══════════════════════════════════════════════════════════ */
+.wl{
+  position:fixed; inset:0; z-index:52;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity .32s var(--ease), transform .32s var(--ease), visibility .32s;
+}
+.wl.on{opacity:1; visibility:visible; transform:none}
+/* the shop underneath does not scroll while this is over it */
+body.wl-on{overflow:hidden}
+
+/* ── the heading ──
+   The shop's own — .best-h, the flower and the ruled serif title every
+   section on the home page is headed with, carried here by the markup
+   rather than copied into a fourth set of rules. All this adds is the
+   count under it. */
+.wl-h{margin-bottom:clamp(14px,2.6vw,22px)}
+/* how many, in the capsule the shop uses for a count everywhere else */
+.wl-count{
+  display:inline-block; margin-top:clamp(10px,2vw,14px);
+  padding:5px clamp(11px,2.2vw,14px); border-radius:var(--r-full);
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.8);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,10.5px); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tan-deep);
+}
+
+/* ══════════════════════════════════════════════════════════
+   THE BAR THAT ACTS ON SEVERAL AT ONCE
+
+   One ivory panel with the tick-all at one end and the three
+   actions at the other, so the row reads as "these, then do
+   this to them" rather than as four unrelated buttons.
+
+   On a phone the actions drop below the tick and scroll
+   sideways rather than wrapping to three lines: a bar taller
+   than the first card pushes the rakhis themselves off the
+   screen, on the one page where they are the whole point.
+   ══════════════════════════════════════════════════════════ */
+.wl-tools{
+  display:flex; align-items:center; gap:clamp(10px,2vw,16px);
+  padding:clamp(9px,1.8vw,13px) clamp(11px,2.2vw,16px);
+  border-radius:14px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.45),
+    0 12px 28px -20px rgba(120,88,22,.36);
+}
+.wl-tools[hidden]{display:none}
+
+/* ── the tick ──
+   A real checkbox underneath, drawn over: it keeps the keyboard, the label
+   and the indeterminate state the browser gives for free, and only the
+   square is ours. */
+.wl-all{
+  display:inline-flex; align-items:center; gap:9px; flex:none;
+  cursor:pointer; user-select:none;
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(10px,2.2vw,11.5px); letter-spacing:.05em;
+  color:var(--ink-soft);
+}
+.wl-all input{position:absolute; opacity:0; width:0; height:0}
+.wl-box{
+  display:inline-grid; place-items:center; flex:none;
+  width:19px; height:19px; border-radius:6px;
+  background:#FFFDF8;
+  box-shadow:inset 0 0 0 1.5px rgba(217,184,119,.85);
+  transition:background .22s var(--ease), box-shadow .22s var(--ease);
+}
+/* the tick and the dash are drawn in CSS — two more inline SVGs on a page
+   that already carries one per card is a lot of markup for two marks */
+.wl-box::after{
+  content:""; width:9px; height:5px; margin-top:-2px;
+  border-left:2px solid #FFF6E8; border-bottom:2px solid #FFF6E8;
+  transform:rotate(-45deg) scale(.4); opacity:0;
+  transition:transform .22s var(--ease), opacity .22s var(--ease);
+}
+.wl-all input:checked + .wl-box,
+.wl-all input:indeterminate + .wl-box{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(217,184,119,.5);
+}
+.wl-all input:checked + .wl-box::after{transform:rotate(-45deg) scale(1); opacity:1}
+.wl-all input:indeterminate + .wl-box::after{
+  width:9px; height:0; margin-top:0; border-left:0;
+  transform:none; opacity:1;
+}
+.wl-all input:focus-visible + .wl-box{outline:2px solid var(--accent); outline-offset:3px}
+
+/* ── the three actions ──
+   The shop's two buttons, at the size a toolbar wants them: the raised ivory
+   capsule with the gold hairline that the arrows on the shelves and the back
+   button in the bar are made of, and — for the one action that is a purchase
+   — the maroon capsule with the lit top edge that Add wears on every card.
+   Flat outlines were the one thing on the page that looked drawn rather than
+   pressed, in a shop where everything else is raised. */
+.wl-acts{display:flex; align-items:center; gap:clamp(6px,1.4vw,10px); margin-left:auto; min-width:0}
+.wl-act{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:none;
+  padding:0 clamp(12px,2.2vw,16px); height:clamp(34px,7.4vw,38px);
+  /* ── one width, whatever it says ──
+     The words change with the selection — "Share wishlist" becomes "Share 8"
+     — and a button that resizes under the finger that just pressed the box
+     beside it is a bar that jumps every time somebody ticks a rakhi. The
+     three are set to the width of their longest wording, which is the
+     wording they start at, so nothing ever moves.
+
+     The corner is the collection toolbar's 11px, not a capsule: Filter and
+     Sort are the two buttons this bar stands in for, and a row of pills over
+     a grid of 14px cards was the one shape on the page from somewhere else. */
+  min-width:168px;
+  border:0; border-radius:11px; cursor:pointer;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+  color:var(--tan-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.75),
+    0 8px 18px -12px rgba(120,88,22,.5);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9.5px,2vw,10.5px); letter-spacing:.1em; text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease), transform .25s var(--ease);
+}
+.wl-act svg{flex:none; opacity:.9}
+.wl-act:active{transform:scale(.97)}
+@media (hover:hover){
+  .wl-act:hover{
+    transform:translateY(-2px); color:#6A1114;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1px rgba(185,140,46,1),
+      0 14px 26px -14px rgba(120,88,22,.6);
+  }
+}
+
+/* Add to bag is the card's own Add button, wearing the same red, the same
+   gold hairline and the same lit edge — because it does the same thing, to
+   several at once. */
+.wl-act-go{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 0 0 1px rgba(217,184,119,.42),
+    0 8px 18px -10px rgba(106,17,20,.7);
+}
+@media (hover:hover){
+  .wl-act-go:hover{
+    color:#FFF6E8;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.28),
+      inset 0 0 0 1px rgba(217,184,119,.55),
+      0 14px 26px -12px rgba(106,17,20,.85);
+  }
+}
+
+/* Clear is the one action that cannot be taken back with the button beside
+   it, so it is the one thing here allowed to carry the shop's rose — quiet
+   until it is reached for, and filled once it is. */
+.wl-act-x{color:var(--rose); box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(181,56,74,.38),
+    0 8px 18px -12px rgba(122,20,24,.45)}
+@media (hover:hover){
+  .wl-act-x:hover{
+    color:#FFF6E8; background:linear-gradient(160deg,#B5384A 0%,#9B2226 60%,#7A1418 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.22),
+      inset 0 0 0 1px rgba(217,184,119,.4),
+      0 14px 26px -14px rgba(122,20,24,.75);
+  }
+}
+
+/* ── on a phone ──
+   The tick on its own line, then the two quiet actions side by side with the
+   one that spends money full width underneath, nearest the thumb.
+
+   Not one scrolling row: three capsules reading "Share wishlist", "Add all
+   to bag" and "Clear wishlist" are half again as wide as a phone, so the
+   third sat off the edge — a button somebody has to discover by pushing the
+   bar sideways is a button they will not find. Not three stacked rows
+   either: that is a toolbar taller than the first rakhi under it, on the
+   one page where the rakhis are the whole point. */
+@media (max-width:719px){
+  .wl-tools{flex-direction:column; align-items:stretch; gap:10px}
+  .wl-acts{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-left:0;
+  }
+  /* the grid gives them their width here, so the fixed one steps aside */
+  .wl-act{width:100%; min-width:0; padding:0 10px}
+  #wlShare{order:1}
+  #wlClear{order:2}
+  .wl-act-go{order:3; grid-column:1/-1}
+}
+
+/* ══════════════════════════════════════════════════════════
+   THE GRID
+
+   The collection's grid, to the pixel: two across on a phone,
+   and as many as fit above that. The same rakhi is the same
+   size wherever it is met.
+   ══════════════════════════════════════════════════════════ */
+.wl-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:clamp(10px,2.2vw,18px);
+  align-items:start;
+  margin-top:clamp(12px,2.4vw,20px);
+}
+@media (min-width:640px){
+  .wl-grid{grid-template-columns:repeat(auto-fill, minmax(196px, 1fr))}
+}
+.wl-grid > .rc{width:auto; height:100%}
+
+/* ── the tick on a card ──
+   Top left, opposite the heart, over the photograph the way the Bestseller
+   label is — so a card gains a mark rather than a row. */
+.rc-pick{
+  position:absolute; top:8px; left:8px; z-index:3;
+  display:grid; place-items:center; width:34px; height:34px; cursor:pointer;
+}
+.rc-pick input{position:absolute; opacity:0; width:0; height:0}
+.rc-pick > span{
+  display:grid; place-items:center; width:21px; height:21px; border-radius:7px;
+  background:rgba(255,253,248,.94);
+  box-shadow:inset 0 0 0 1.5px rgba(217,184,119,.85), 0 4px 10px -6px rgba(80,60,20,.5);
+  transition:background .22s var(--ease), box-shadow .22s var(--ease);
+}
+.rc-pick > span::after{
+  content:""; width:9px; height:5px; margin-top:-2px;
+  border-left:2px solid #FFF6E8; border-bottom:2px solid #FFF6E8;
+  transform:rotate(-45deg) scale(.4); opacity:0;
+  transition:transform .22s var(--ease), opacity .22s var(--ease);
+}
+.rc-pick input:checked + span{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(217,184,119,.5), 0 4px 10px -6px rgba(80,60,20,.5);
+}
+.rc-pick input:checked + span::after{transform:rotate(-45deg) scale(1); opacity:1}
+.rc-pick input:focus-visible + span{outline:2px solid var(--accent); outline-offset:3px}
+/* A label and a tick both want the top-left corner. The tick keeps it — it
+   is the one being pressed — and the label steps along to sit beside it,
+   which is also the order they are read in: this one, the Bestseller. */
+.wl-grid .rc-tag{left:44px}
+
+/* the chosen card, ringed in the shop's gold rather than tinted: a wash of
+   colour over a photograph changes the rakhi somebody is choosing */
+.rc-sel{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 0 0 1.6px rgba(185,140,46,1),
+    0 18px 34px -20px rgba(120,88,22,.5) !important;
+}
+
+/* ── nothing saved yet ──
+   The one screen on this page that is not a rakhi, so it says where the
+   heart is rather than reporting a count of zero. */
+.wl-none{
+  grid-column:1/-1; display:grid; justify-items:center; text-align:center;
+  gap:10px; padding:clamp(30px,7vw,56px) clamp(16px,4vw,32px);
+  border-radius:16px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
+}
+.wl-none-i{
+  display:grid; place-items:center; width:clamp(46px,10vw,60px); height:clamp(46px,10vw,60px);
+  border-radius:50%; color:var(--tan); background:rgba(217,184,119,.14);
+}
+.wl-none-i svg{width:54%; height:54%}
+.wl-none b{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(17px,4vw,22px); color:#3B2415;
+}
+.wl-none p{
+  max-width:38ch; font-size:clamp(12.5px,2.9vw,14px); color:var(--ink-faint); line-height:1.65;
+}
+
+/* the way on, in the outlined capsule every other "and then?" on the site
+   wears — See the full collection, View all, and now this */
+.wl-go{
+  display:inline-flex; align-items:center; gap:9px;
+  margin:clamp(18px,3.4vw,28px) auto 0;
+  padding:clamp(9px,1.5vw,11px) clamp(15px,2.4vw,20px);
+  border-radius:var(--r-full); text-decoration:none;
+  color:var(--tan-deep); background:transparent;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.85);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(9px,2vw,10px); letter-spacing:.11em; text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.wl-body{display:flex; flex-direction:column}
+.wl-go{align-self:center}
+.wl-go svg{transition:transform .4s var(--ease)}
+@media (hover:hover){
+  .wl-go:hover{
+    color:#6A1114;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 0 0 1px rgba(185,140,46,1), 0 10px 24px -14px rgba(120,88,22,.45);
+  }
+  .wl-go:hover svg{transform:translateX(3px)}
+}

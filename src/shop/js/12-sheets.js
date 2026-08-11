@@ -145,14 +145,14 @@ function closeNav(fromBack){
   $("#navModal").classList.remove("on");
   afterClose(fromBack);
 }
-/* Straight to the saved rakhis.
+/* Straight to the saved rakhis, which are a page of their own now rather
+   than a pane inside the account sheet.
 
-   The test has to be inside the handler, not around it. SB_ON is a const in
-   18-backend.js and this file is read six files earlier, so reading it out
-   here is reading a binding that does not exist yet — which throws, and
-   takes every line below it with it. openAcct returns on its own when there
-   is no database, so there is nothing to guard anyway. */
-$("#wishOpen").onclick = () => openAcct("wishlist");
+   openWish is declared in 28-wishlist-page.js, read long after this file.
+   That is fine and it is why the call is inside the handler rather than out
+   here: nothing runs until the heart is pressed, by which time every script
+   on the page has been read. */
+$("#wishOpen").onclick = () => openWish();
 $("#navClose").onclick = () => closeNav();
 $("#navModal").addEventListener("click", e => { if(e.target.id === "navModal") closeNav(); });
 $("#navSheet").addEventListener("click", e => {

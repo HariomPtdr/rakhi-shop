@@ -71,6 +71,7 @@
 <link rel="stylesheet" href="styles/25-allpage.css">
 <link rel="stylesheet" href="styles/26-why.css">
 <link rel="stylesheet" href="styles/27-faq.css">
+<link rel="stylesheet" href="styles/28-wishlist.css">
 </head>
 <body>
 <body>
@@ -1143,6 +1144,111 @@
   </div>
 </section>
 
+<!-- ═══════════ the wishlist ═══════════
+     Everything somebody hearted, on a page of its own rather than in a
+     panel inside the account. A wishlist is a shopping list: it is looked
+     at with a decision to make, several things are acted on at once, and
+     the pictures are what the decision is made from. A scrolling list of
+     40px thumbnails inside a modal is none of that.
+
+     The same view the collection and a rakhi's own page are: it covers the
+     shop rather than replacing it, so the cart, the hearts and every script
+     behind them are already here. The card is the shop's own card, with two
+     things added that only mean something here — a tick to choose it, and a
+     bin to drop it. Same rakhi, same card, wherever you meet it. -->
+<section class="wl" id="wl" aria-label="Your wishlist" aria-hidden="true">
+  <!-- the collection's bar, carrying no heart: the heart's page is this one -->
+  <div class="ap-bar wl-bar">
+    <button class="pv-back" id="wlBack" aria-label="Back">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+
+    <!-- The mandala is cloned from the collection's bar at boot rather than
+         written out a third time: it is 4KB of circles, and three copies of
+         it in one file is 12KB sent to every phone to draw one mark. -->
+    <a class="brand ap-brand" href="#top" id="wlHome">
+      <i class="brand-mk-slot" aria-hidden="true"></i>
+      <span>
+        <span class="brand-n">Wishlist</span>
+        <span class="brand-s">Ray Art Gallery</span>
+      </span>
+    </a>
+
+    <button class="ap-cart" id="wlCart" aria-label="Your cart">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
+      <i class="cart-n" id="wlCartN">0</i>
+    </button>
+  </div>
+
+  <div class="ap-body wl-body">
+    <!-- The shop's own section heading, not one of its own: the flower over
+         the title, the title in the serif with a gold rule reaching out of
+         each side of it, the line under it in small caps. Bestsellers and
+         The Collection are headed exactly this way, and a page that heads
+         itself differently reads as a page from somewhere else. -->
+    <div class="best-h wl-h">
+      <span class="best-orn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+          <circle cx="12" cy="12" r="2.1"/>
+        </svg>
+      </span>
+      <h2>My Wishlist</h2>
+      <p class="best-sub">Your favourite rakhis, saved with love</p>
+      <span class="wl-count" id="wlCount" aria-live="polite"></span>
+    </div>
+
+    <!-- ── the bar that acts on several at once ──
+         Hidden while the list is empty, because every button on it would be
+         a button that does nothing. Nothing ticked means the actions read
+         the whole list; tick some and they read only those, and each one
+         says which it is about rather than leaving it to be guessed. -->
+    <div class="wl-tools" id="wlTools" hidden>
+      <label class="wl-all">
+        <input type="checkbox" id="wlAll">
+        <span class="wl-box" aria-hidden="true"></span>
+        <b id="wlAllT">Select all</b>
+      </label>
+
+      <div class="wl-acts">
+        <button class="wl-act" id="wlShare" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5.5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/>
+            <path d="M8.3 10.7 15.7 6.8M8.3 13.3l7.4 3.9"/></svg>
+          <span id="wlShareT">Share wishlist</span>
+        </button>
+        <button class="wl-act wl-act-go" id="wlBag" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
+          <span id="wlBagT">Add all to bag</span>
+        </button>
+        <button class="wl-act wl-act-x" id="wlClear" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 7h12M10 7V5.4h4V7M9 11v6M15 11v6M7 7l.9 13h8.2L17 7"/></svg>
+          <span id="wlClearT">Clear wishlist</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="wl-grid" id="wlGrid"></div>
+
+    <!-- the way on, at the foot of a list somebody has just been through, in
+         the outlined capsule every other "and then?" on the site wears -->
+    <a class="wl-go" id="wlBrowse" href="#all">
+      Browse the collection
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
 <section class="pv" id="pv" aria-label="Rakhi details" aria-hidden="true">
   <div class="pv-bar">
     <button class="pv-back" id="pvBack" aria-label="Back to the collection">
@@ -1226,5 +1332,6 @@
 <script src="js/25-address.js"></script>
 <script src="js/26-razorpay.js"></script>
 <script src="js/27-order-page.js"></script>
+<script src="js/28-wishlist-page.js"></script>
 </body>
 </html>

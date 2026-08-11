@@ -36,6 +36,24 @@ function railCard(p, o){
      collection only, which made the same rakhi two different cards depending
      on which row of the page you met it in. */
   const bare = !!o.bare;
+  /* ── the corner tag, told the truth ──
+     A non-bare card says "Bestseller" because the one row that draws them is
+     the bestseller rail, where every card on it is one. On the wishlist that
+     is not true of anything in particular — it is whatever somebody hearted —
+     so `mark` asks the rakhi rather than the row it is standing in.
+     Sold out outranks both: it is the one state that has to be read. */
+  const marked = o.mark ? !!p.best : !bare;
+  /* ── the tick ──
+     The wishlist's, and nowhere else's — an option rather than a card of its
+     own, because a saved rakhi that looked different from the same rakhi in
+     the collection would read as a different offer. The card is the card;
+     the tick rides on it.
+
+     It is the only thing the wishlist adds. Taking a rakhi off the list is
+     the heart's job — it is already on the card, it is already filled, and
+     pressing it is how it got there. A bin beside it was a second control
+     for a thing that was already one press away. */
+  const pick = !!o.pick, sel = pick && typeof wlPicked === "function" && wlPicked(p.id);
   /* ── the saving ──
      The percentage is a chip in the label row above the name; the old price
      is struck out beside the new one, in the same serif, on the line that was
@@ -56,11 +74,17 @@ function railCard(p, o){
                + (tagChips(p, off ? 1 : 2, true, true)
                   || (catName ? `<span class="tag">${esc(catName)}</span>` : ""));
   return `
-    <article class="rc" data-go="${p.id}">
+    <article class="rc${sel ? " rc-sel" : ""}" data-go="${p.id}">
       <div class="rc-shot">
         ${thumb(p)}${
         out ? `<span class="rc-tag">Sold out</span>`
-            : bare ? "" : `<span class="rc-tag">Bestseller</span>`}
+            : marked ? `<span class="rc-tag">Bestseller</span>` : ""}${
+        pick ? `
+        <label class="rc-pick">
+          <input type="checkbox" data-wpick="${esc(p.id)}"${sel ? " checked" : ""}
+                 aria-label="Select ${esc(p.name)}">
+          <span aria-hidden="true"></span>
+        </label>` : ""}
         ${heartBtn(p.id)}
       </div>
       <div class="rc-b">${

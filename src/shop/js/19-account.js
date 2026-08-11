@@ -518,7 +518,14 @@ function acctBody(){
 
   if(acctTab === "wishlist"){
     const rows = wish.map(wishCard).filter(Boolean).join("");
-    return head + `<div class="ac-pane">${rows || `<p class="ac-empty">Nothing saved yet.
+    /* The list itself lives on a page of its own now — pictures, ticks, and
+       the things that act on several at once. This pane stays as the summary
+       somebody already inside their account came here for, with the way
+       through to the full one at the top of it. */
+    return head + `<div class="ac-pane">${rows ? `
+      <button class="btn btn-ghost btn-full" id="acWishAll" type="button"
+              style="margin-bottom:12px">Open your wishlist</button>` : ""}${
+      rows || `<p class="ac-empty">Nothing saved yet.
       Tap the heart on any rakhi and it waits for you here — on this phone, and on
       any other you sign in from.</p>`}</div>`;
   }
@@ -735,6 +742,21 @@ $("#acctBody").addEventListener("click", async e => {
   if(e.target.closest("#acToBill")){
     closeAcct();
     requestAnimationFrame(() => { openCart(); $("#toBill").click(); });
+    return;
+  }
+
+  /* Open your wishlist, out of the account and onto the wishlist's own page.
+     The sheet's history entry pops asynchronously — set the hash in the same
+     tick and the pop that follows throws it away again, which is the same
+     trap View below is written around. */
+  if(e.target.closest("#acWishAll")){
+    if(isOn("#acctModal") && sheetHist){
+      addEventListener("popstate", () => openWish(), {once:true});
+      closeAcct();
+    }else{
+      closeAcct();
+      openWish();
+    }
     return;
   }
 

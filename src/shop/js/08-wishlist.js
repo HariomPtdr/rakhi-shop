@@ -68,6 +68,11 @@ function toggleWish(id){
   toast(on ? "Saved to your wishlist" : "Removed from your wishlist");
   track(on ? "wish_add" : "wish_remove", id);
   pushWish(id, on);
+  /* A heart pressed on the wishlist's own page has just taken a rakhi off
+     the page it was pressed on, so the grid behind it has to be redrawn —
+     paintHearts() only fills and empties the marks. Nowhere else is the
+     page open, and it draws nothing when it is not. */
+  if(typeof wishOpen === "function" && wishOpen()) paintWish();
 }
 
 /* delegated once, so every heart on every screen is already wired */

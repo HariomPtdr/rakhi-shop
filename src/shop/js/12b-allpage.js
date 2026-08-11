@@ -539,7 +539,10 @@ $("#chips").addEventListener("click", e => {
 $("#apBack").onclick = () => closeAll();
 $("#apHome").onclick = e => { e.preventDefault(); closeAll(); };
 $("#apCart").onclick = () => openCart();
-$("#apWish").onclick = () => openAcct("wishlist");
+/* the heart in this bar goes where the heart in the header goes: the
+   wishlist's own page. It closes this view on the way, or two full-screen
+   pages end up stacked with the hash naming only one of them. */
+$("#apWish").onclick = () => { hideAll(); openWish(); };
 
 /* Escape, and the phone's back button, both mean the same thing here as
    they do on a rakhi's own page. */
