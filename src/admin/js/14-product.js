@@ -17,7 +17,14 @@
    rewriting the description does not throw the description
    away.
    ══════════════════════════════════════════════════════════ */
-const CATS_EDIT   = ["evil-eye","pearl","traditional","kids","lumba","premium"];
+/* ── the shelves ──
+   From shared/js/05-cats.js, which is the same list the shop draws its row
+   of category cards from, files its chips by, and gives every shelf a page
+   of its own at #c/<key>. It used to be a second copy of the keys written
+   out here, and a rakhi filed under a key that copy had but the shop's did
+   not was a rakhi nobody could reach. Choose a shelf here and the rakhi is
+   on that page the moment it is saved. */
+const CATS_EDIT = SHOP_CATS.map(c => c.k);
 /* ── tags ──
    The shelf is one word and a rakhi gets exactly one. Tags are everything
    else true about it, and it may have as many as are true.
@@ -176,7 +183,11 @@ function paintPhotos(loaded){
 function paintProductPanel(){
   const p = editing;
   if(!p) return;
-  const cats = CATS_EDIT.includes(p.cat) || !p.cat ? CATS_EDIT : CATS_EDIT.concat([p.cat]);
+  /* A rakhi already filed under something this list has never heard of
+     keeps it, and says so, rather than being silently moved by opening the
+     panel — but it is the odd one out and the menu shows it as that. */
+  const stray = p.cat && !isCat(p.cat);
+  const cats  = CATS_EDIT.concat(stray ? [p.cat] : []);
 
   openPanel(p.name || p.id, `
     <div class="pgrid">
@@ -217,10 +228,13 @@ function paintProductPanel(){
       <div class="fg two">
         <div><label class="lab" for="eName">Name</label>
           <input class="inp" id="eName" value="${esc(p.name || "")}" maxlength="80"></div>
-        <div><label class="lab" for="eCat">Kind</label>
+        <div><label class="lab" for="eCat">Shelf
+            <span class="dim">— the page in the shop it goes on</span></label>
           <select class="inp" id="eCat">
+            <option value=""${p.cat ? "" : " selected"}>Not on a shelf yet</option>
             ${cats.map(c => `<option value="${esc(c)}"${
-              p.cat === c ? " selected" : ""}>${esc(c)}</option>`).join("")}
+              p.cat === c ? " selected" : ""}>${esc(catName(c) || c + " (unknown shelf)")
+              }</option>`).join("")}
           </select></div>
       </div>
       <div class="fg">
@@ -376,6 +390,13 @@ async function saveProduct(){
   };
 
   if(body.name.length < 2) return toast("Give it a name.");
+  /* Not a database rule — a rakhi with no shelf is legal, it simply cannot
+     be found by anybody browsing shelves, and that is worth one sentence
+     before it goes up rather than a week of nobody seeing it. A pack is
+     not on a shelf by design: it is sold from its own row on the home
+     page, not from the collection. */
+  if(!body.cat && p.kind !== "set")
+    return toast("Pick a shelf — it decides which page in the shop it shows on.");
   if(body.price == null || !Number.isFinite(body.price) || body.price < 0)
     return toast("A price has to be a number.");
   /* the database refuses mrp < price, and a refusal here says why */

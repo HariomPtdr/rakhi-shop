@@ -12,8 +12,8 @@
    Shop by Budget bands, which are the only controls next to it.
    `apState` is the full collection: the chips, the sort and the filter sheet,
    all of which live inside that view. Neither writes to the other. */
-let state   = { cat:"all", band:null, sort:"feat" };
-let apState = { cat:"all", band:null, sort:"feat" };
+let state   = { cat:"all", band:null, sort:"feat", tag:null, stock:false };
+let apState = { cat:"all", band:null, sort:"feat", tag:null, stock:false };
 /* catalogue numbers follow the order of the list; rebuilt if the list is
    later replaced by the one in the database */
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
@@ -29,6 +29,9 @@ $("#chips").addEventListener("click", e=>{
   apState.band=null;            /* one filter at a time; the chips are the way out */
   $$("#chips .chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.c===apState.cat)));
   paintAll();
+  /* the address follows the chip: a shelf chosen here is the same page as a
+     shelf arrived at from a category card, and it can be sent to somebody */
+  if(typeof apSyncHash === "function") apSyncHash();
 });
 /* ── the sort listbox ──────────────────────────────────────
    Replaces a native <select>, so it has to reimplement what the
@@ -153,7 +156,19 @@ function visible(st){
   return PRODUCTS
     .filter(p => st.cat === "all" || p.cat === st.cat)
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
+    /* a style, out of the tags the rakhis themselves carry */
+    .filter(p => !st.tag || (p.tags || []).map(tagKey).includes(st.tag))
+    /* sold out put away, for somebody buying today rather than asking */
+    .filter(p => !st.stock || p.stock !== 0)
     .sort(by);
+}
+/* What the rest of the filters would leave, ignoring one of them: the tag
+   buttons are drawn from the shelf somebody is on and priced-out styles are
+   not offered, but a style must not be hidden because it is the one already
+   chosen. */
+function visibleIgnoring(st, key){
+  const relaxed = Object.assign({}, st); relaxed[key] = key === "stock" ? false : null;
+  return visible(relaxed);
 }
 /* ── how much of the collection is on the shelf ──
    Building a few hundred cards in one go is a long first paint and a lot of
@@ -227,17 +242,46 @@ $("#lb").addEventListener("click", ()=>closeLb());
    when they arrive, which is also how they see how to get back
    out to everything.
    ══════════════════════════════════════════════════════════ */
+/* ── the row of shelves ──
+   One card per shelf, drawn from the one list both pages read. The row used
+   to be written out by hand, and it had drifted: the card headed Designer
+   opened Premium, and the shelf that had no card of its own had no way into
+   it from the home page at all. */
+function paintCats(){
+  const rail = $("#catRail");
+  if(!rail) return;
+  rail.innerHTML = SHOP_CATS.map(c => `
+    <a class="cat" href="#c/${c.k}" data-cat="${c.k}">
+      <span class="cat-shot">
+        <img src="../../assets/images/${c.card.img}" alt="${esc(c.card.t)} rakhi"
+             width="660" height="880" loading="lazy" decoding="async">
+      </span>
+      <span class="cat-b">
+        <span class="cat-n">${esc(c.card.t)}<br>Rakhi</span>
+        <span class="cat-rule"></span>
+        <span class="cat-s">${esc(c.card.sub)}</span>
+        <span class="cat-go" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </span>
+      </span>
+    </a>`).join("");
+}
+paintCats();
+
 /* Bound to the category rail and to the footer's Shop column, which lists
-   the same five filters: a link there that only scrolled to the collection
-   without narrowing it would be a link that lies about where it goes. */
+   the same shelves.
+
+   It used to narrow the shelf on the home page and scroll to it, which
+   answered "show me kids rakhis" with four of them and the rest of the home
+   page still underneath. Each shelf has a page of its own now — the
+   collection, opened on that shelf — and this is the way in. */
 function catJump(e){
   const a = e.target.closest("[data-cat]");
   if(!a) return;
   e.preventDefault();
-  state.cat  = a.dataset.cat;
-  state.band = null;            /* a price and a shelf at once is how you get nothing */
-  paintGrid();
-  document.getElementById("collection").scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+  openCat(a.dataset.cat);
 }
 const catRail = $("#catRail");
 if(catRail) catRail.addEventListener("click", catJump);

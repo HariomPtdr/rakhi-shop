@@ -17,16 +17,89 @@ const apEl = $("#ap");
 
 const allOpen = () => apEl.classList.contains("on");
 
-function openAll(fromHash){
-  if(allOpen()) return;
+/* ── one view, a page per shelf ──
+   #all is everything; #c/kids is the same view opened on one shelf. They
+   are the same grid, the same chips, the same sort and the same sheet —
+   what changes is the shelf it starts on and the words over it.
+
+   Built this way on purpose. A separate page per shelf would be six more
+   copies of the cart, the wishlist, the filter sheet and the card, all to
+   be kept in step, and the moment a shelf were added there would be a
+   seventh. Here a shelf added to shared/js/05-cats.js has its page the
+   same day, because the page is this one. */
+const AP_HEAD = {
+  kick: "Our collection",
+  h2:   "Handpicked Rakhis<br>for Every Bond",
+  sub:  "Explore our exclusive range<br class=\"ap-br\"> and find the perfect one."
+};
+
+function paintApHead(k){
+  const c = k && catOf(k);
+  const kick = $(".ap-kick b"), h2 = $(".ap-hero h2"), sub = $(".ap-sub");
+  if(kick && h2 && sub){
+    kick.textContent = c ? "Shop by category" : AP_HEAD.kick;
+    h2.innerHTML     = c ? `${esc(c.card.t)}<br>Rakhis` : AP_HEAD.h2;
+    sub.innerHTML    = c ? esc(c.card.sub) : AP_HEAD.sub;
+  }
+  /* ── the bar says where you are ──
+     The shop's name at the top of a shelf's own page was the one line up
+     there not telling somebody anything they did not know — they are in the
+     shop, they have been for a while. The shelf's name goes in its place
+     and the shop's drops to the line underneath, which is where the
+     wordmark's second line already was. */
+  const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
+  if(n) n.textContent  = c ? c.n : "Ray Art Gallery";
+  if(s2) s2.textContent = c ? "Ray Art Gallery" : "Handmade Rakhi";
+}
+
+/* The hash always says what is on screen, so a shelf can be sent to
+   somebody, opened again from history, or reloaded onto the same shelf.
+   Replaced rather than pushed: pressing four chips in a row should not put
+   four entries between the shop and the way back to it. */
+function apHash(){ return isCat(apState.cat) ? "#c/" + apState.cat : "#all"; }
+function apSyncHash(){
+  if(!allOpen()) return;
+  const want = apHash();
+  if(location.hash !== want) history.replaceState(null, "", want);
+  document.title = (isCat(apState.cat) ? catName(apState.cat) : "The collection")
+                 + " — Ray Art Gallery";
+  paintApHead(apState.cat);
+}
+
+/* cat: the shelf to open on. Anything that is not a shelf — including
+   nothing at all — is the whole collection. */
+function openAll(fromHash, cat){
+  const k = isCat(cat) ? cat : null;
+  if(k !== null || !allOpen()){
+    apState.cat  = k || "all";
+    apState.band = null;      /* a price and a shelf at once is how you get nothing */
+    $$("#chips .chip").forEach(c =>
+      c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
+  }
+  paintApHead(k);
+  if(allOpen()){ paintAll(); apSyncHash(); return; }
   paintAll();
   apEl.classList.add("on");
   apEl.setAttribute("aria-hidden", "false");
   document.body.classList.add("ap-on");
   apEl.scrollTop = 0;
   lock();
-  if(!fromHash && location.hash !== "#all") location.hash = "all";
-  document.title = "The collection — Ray Art Gallery";
+  const want = apHash();
+  if(!fromHash && location.hash !== want) location.hash = want.slice(1);
+  document.title = (k ? catName(k) : "The collection") + " — Ray Art Gallery";
+}
+
+/* The way in from a category card, the footer's Shop column, or anywhere
+   else that names a shelf. */
+function openCat(k, fromHash){
+  if(!isCat(k)) return openAll(fromHash);
+  if(allOpen()){
+    openAll(fromHash, k);
+    apEl.scrollTop = 0;
+    if(!fromHash) location.hash = "c/" + k;
+    return;
+  }
+  openAll(fromHash, k);
 }
 
 function hideAll(){
@@ -116,14 +189,62 @@ const paintFilterCount = () => { $("#fsheetN").textContent = visible(apState).le
    Only bands that hold something are drawn. A price filter offering an
    empty shelf is worse than one offering fewer. */
 function paintFilterSheet(){
+  /* ── shelf ──
+     Only where it means something. On a shelf's own page the question has
+     already been answered by the card that was pressed to get here, and the
+     section was the tallest thing in the sheet: seven buttons offering to
+     take somebody off the page they just asked for. */
+  const onShelf = isCat(apState.cat);
+  const shelf = $("#fsheetShelf");
+  if(shelf) shelf.hidden = onShelf;
+
   const bands = $("#fsheetBands");
   if(bands){
-    const live = BANDS.filter(b => PRODUCTS.some(p => p.price >= b.lo && p.price < b.hi));
+    /* the bands that hold something *on this page* — on the Kids shelf,
+       Above ₹300 is not a filter, it is an empty room */
+    const pool = visibleIgnoring(apState, "band");
+    const live = BANDS.filter(b => pool.some(p => p.price >= b.lo && p.price < b.hi));
     bands.innerHTML = `
       <button class="fs-b" data-band="" aria-pressed="${!apState.band}">Any price</button>` +
       live.map(b => `
       <button class="fs-b" data-band="${b.k}" aria-pressed="${apState.band === b.k}">${b.n}</button>`).join("");
   }
+
+  /* ── style ──
+     The tags the rakhis in front of somebody actually carry, counted from
+     the page rather than from a fixed list, so the buttons can never offer
+     a style this shelf does not have. Six at most: the ones the shelf has
+     most of. A shelf whose rakhis carry no tags draws nothing. */
+  const styleWrap = $("#fsheetStyleWrap"), style = $("#fsheetStyle");
+  if(styleWrap && style){
+    const pool = visibleIgnoring(apState, "tag");
+    const n = new Map();
+    pool.forEach(p => (p.tags || []).map(tagKey).filter(Boolean)
+      .forEach(t => n.set(t, (n.get(t) || 0) + 1)));
+    /* a tag every rakhi on the page carries cannot narrow it down */
+    const live = [...n.entries()].filter(([, c]) => c < pool.length)
+                   .sort((a, b) => b[1] - a[1]).slice(0, 6).map(([t]) => t);
+    styleWrap.hidden = !live.length;
+    style.innerHTML = live.length ? `
+      <button class="fs-b" data-tag="" aria-pressed="${!apState.tag}">Any style</button>` +
+      live.map(t => `
+      <button class="fs-b" data-tag="${esc(t)}" aria-pressed="${apState.tag === t}">${esc(tagLabel(t))}</button>`).join("") : "";
+  }
+
+  /* ── availability ──
+     Drawn only when there is something to put away. A shop with nothing
+     sold out offering to hide what is sold out is a button that does
+     nothing, in a sheet where every other button does something. */
+  const stockWrap = $("#fsheetStockWrap"), stock = $("#fsheetStock");
+  if(stockWrap && stock){
+    const pool = visibleIgnoring(apState, "stock");
+    const anyOut = pool.some(p => p.stock === 0);
+    stockWrap.hidden = !anyOut;
+    stock.innerHTML = anyOut ? `
+      <button class="fs-b" data-stock="0" aria-pressed="${!apState.stock}">Everything</button>
+      <button class="fs-b" data-stock="1" aria-pressed="${!!apState.stock}">In stock only</button>` : "";
+  }
+
   const sort = $("#fsheetSort");
   if(sort){
     sort.innerHTML = SORTS.map(o => `
@@ -141,6 +262,23 @@ $("#fsheetBands").addEventListener("click", e => {
     apState.cat = "all";
     $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
   }
+  paintAll();
+  apSyncHash();
+  paintFilterSheet();
+  paintFilterCount();
+});
+$("#fsheetStyle").addEventListener("click", e => {
+  const b = e.target.closest("[data-tag]");
+  if(!b) return;
+  apState.tag = b.dataset.tag || null;
+  paintAll();
+  paintFilterSheet();
+  paintFilterCount();
+});
+$("#fsheetStock").addEventListener("click", e => {
+  const b = e.target.closest("[data-stock]");
+  if(!b) return;
+  apState.stock = b.dataset.stock === "1";
   paintAll();
   paintFilterSheet();
   paintFilterCount();
@@ -161,10 +299,15 @@ $("#fsheetGo").onclick = closeFilter;
 /* the dim behind it */
 fsheet.addEventListener("click", e => { if(e.target === fsheet) closeFilter(); });
 $("#fsheetClear").onclick = () => {
-  apState.cat = "all"; apState.band = null; apState.sort = "feat";
-  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === "all")));
+  /* On a shelf's own page, Clear all clears the filters — not the shelf.
+     Somebody on Kids Rakhis pressing it wants the price and the style back
+     to anything, not to be moved to the whole shop. */
+  if(!isCat(apState.cat)) apState.cat = "all";
+  apState.band = null; apState.sort = "feat"; apState.tag = null; apState.stock = false;
+  $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   if(typeof paintSort === "function") paintSort();
   paintAll();
+  apSyncHash();
   paintFilterSheet();
   paintFilterCount();
 };
@@ -192,9 +335,13 @@ addEventListener("keydown", e => {
 });
 
 /* The hash decides which view is showing — same rule as the product page,
-   so the two can never both think they are open. */
+   so the two can never both think they are open. #c/<shelf> is the same
+   view opened on one shelf; a shelf nobody has heard of falls back to the
+   whole collection rather than an empty grid. */
 function syncAllRoute(){
-  if(location.hash === "#all") openAll(true);
+  const m = /^#c\/([\w-]+)$/.exec(location.hash);
+  if(m) openCat(m[1], true);
+  else if(location.hash === "#all") openAll(true);
   else if(allOpen()) hideAll();
 }
 addEventListener("hashchange", syncAllRoute);

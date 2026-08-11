@@ -311,88 +311,12 @@
       <p class="cats-sub">Handcrafted rakhi for every bond</p>
     </div>
 
-    <div class="cat-rail" id="catRail">
-      <a class="cat" href="#collection" data-cat="evil-eye">
-        <span class="cat-shot">
-          <img src="../../assets/images/cat-evil-eye.webp" alt="Evil Eye rakhi"
-               width="660" height="880" loading="lazy" decoding="async">
-        </span>
-        <span class="cat-b">
-          <span class="cat-n">Evil Eye<br>Rakhi</span>
-          <span class="cat-rule"></span>
-          <span class="cat-s">Kept safe from the eye</span>
-          <span class="cat-go" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </span>
-        </span>
-      </a>
-      <a class="cat" href="#collection" data-cat="lumba">
-        <span class="cat-shot">
-          <img src="../../assets/images/cat-bhaiya.webp" alt="Bhaiya Bhabhi rakhi"
-               width="660" height="880" loading="lazy" decoding="async">
-        </span>
-        <span class="cat-b">
-          <span class="cat-n">Bhaiya Bhabhi<br>Rakhi</span>
-          <span class="cat-rule"></span>
-          <span class="cat-s">Celebrate togetherness</span>
-          <span class="cat-go" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </span>
-        </span>
-      </a>
-      <a class="cat" href="#collection" data-cat="kids">
-        <span class="cat-shot">
-          <img src="../../assets/images/cat-kids.webp" alt="Kids rakhi"
-               width="660" height="880" loading="lazy" decoding="async">
-        </span>
-        <span class="cat-b">
-          <span class="cat-n">Kids<br>Rakhi</span>
-          <span class="cat-rule"></span>
-          <span class="cat-s">Made to make them smile</span>
-          <span class="cat-go" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </span>
-        </span>
-      </a>
-      <a class="cat" href="#collection" data-cat="traditional">
-        <span class="cat-shot">
-          <img src="../../assets/images/cat-religious.webp" alt="Religious rakhi"
-               width="660" height="880" loading="lazy" decoding="async">
-        </span>
-        <span class="cat-b">
-          <span class="cat-n">Religious<br>Rakhi</span>
-          <span class="cat-rule"></span>
-          <span class="cat-s">Blessed with love</span>
-          <span class="cat-go" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </span>
-        </span>
-      </a>
-      <a class="cat" href="#collection" data-cat="premium">
-        <span class="cat-shot">
-          <img src="../../assets/images/cat-designer.webp" alt="Designer rakhi"
-               width="660" height="880" loading="lazy" decoding="async">
-        </span>
-        <span class="cat-b">
-          <span class="cat-n">Designer<br>Rakhi</span>
-          <span class="cat-rule"></span>
-          <span class="cat-s">For your special ones</span>
-          <span class="cat-go" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </span>
-        </span>
-      </a>
-    </div>
+    <!-- Filled by paintCats() from shared/js/05-cats.js — the same list the
+         chips, the shelf pages and the dashboard's own menu are built from.
+         Written out by hand here, the row said Designer over a card that
+         opened Premium, and the shelf that had no card had no way in at
+         all. -->
+    <div class="cat-rail" id="catRail"></div>
   </div>
 </section>
 
@@ -831,13 +755,17 @@
                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="m6 9 6 6 6-6"/></svg>
           </summary>
+          <!-- Every shelf, and each one goes to its own page rather than to
+               the middle of the home page. Designer was missing from this
+               column for as long as it was missing from the row of cards. -->
           <ul>
-            <li><a href="#collection">All rakhis</a></li>
-            <li><a href="#collection" data-cat="lumba">Bhaiya Bhabhi</a></li>
-            <li><a href="#collection" data-cat="kids">Kids rakhi</a></li>
-            <li><a href="#collection" data-cat="traditional">Religious</a></li>
-            <li><a href="#collection" data-cat="evil-eye">Evil eye</a></li>
-            <li><a href="#collection" data-cat="premium">Premium</a></li>
+            <li><a href="#all">All rakhis</a></li>
+            <li><a href="#c/lumba" data-cat="lumba">Bhaiya Bhabhi</a></li>
+            <li><a href="#c/kids" data-cat="kids">Kids rakhi</a></li>
+            <li><a href="#c/traditional" data-cat="traditional">Religious</a></li>
+            <li><a href="#c/evil-eye" data-cat="evil-eye">Evil eye</a></li>
+            <li><a href="#c/pearl" data-cat="pearl">Designer</a></li>
+            <li><a href="#c/premium" data-cat="premium">Premium</a></li>
           </ul>
         </details>
 
@@ -1150,14 +1078,36 @@
       </div>
 
       <div class="fsheet-b">
-        <p class="fsheet-k">Shelf</p>
-        <div id="fsheetChips"></div>
+        <!-- Shelf is hidden on a shelf's own page: somebody who arrived at
+             Kids Rakhis by pressing Kids Rakhis does not need a row of
+             buttons offering to move them somewhere else, and the section
+             was the tallest thing in the sheet. -->
+        <div id="fsheetShelf">
+          <p class="fsheet-k">Shelf</p>
+          <div id="fsheetChips"></div>
+        </div>
 
         <!-- The bands are the same ones the Shop by Budget circles use, and
-             the same state.band the grid already filters on — a second idea
-             of what "under ₹100" means is a second thing to keep true. -->
+             the same band the grid already filters on — a second idea of
+             what "under ₹100" means is a second thing to keep true. -->
         <p class="fsheet-k">Price</p>
         <div class="fs-grid" id="fsheetBands"></div>
+
+        <!-- Style: the tags the rakhis on this page actually carry, counted
+             from what is in front of somebody rather than from a fixed list.
+             A shelf whose rakhis carry no tags does not draw the section. -->
+        <div id="fsheetStyleWrap" hidden>
+          <p class="fsheet-k">Style</p>
+          <div class="fs-grid" id="fsheetStyle"></div>
+        </div>
+
+        <!-- Sold out rakhis are still worth showing — somebody may want to
+             ask when it is back — but somebody buying today can put them
+             away. Drawn only when there is at least one to hide. -->
+        <div id="fsheetStockWrap" hidden>
+          <p class="fsheet-k">Availability</p>
+          <div class="fs-grid" id="fsheetStock"></div>
+        </div>
 
         <!-- Sorting lives here on a phone. The bar above carries one button
              now; a second one beside it for Featured was half the width of
@@ -1225,6 +1175,7 @@
 <script src="../shared/js/02-sb.js"></script>
 <script src="../shared/js/03-art.js"></script>
 <script src="../shared/js/04-billpdf.js"></script>
+<script src="../shared/js/05-cats.js"></script>
 
 <script src="js/01-shop.js"></script>
 <script src="js/02-supabase.js"></script>

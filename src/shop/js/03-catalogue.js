@@ -54,14 +54,16 @@ const PRODUCTS = [
    where only some of them say what they are is a row you have to read
    twice to know that they all mean rakhis.
 
-   Order matters here: the row reads left to right and Premium is what the
-   shop would rather sell, so it goes first after All. */
-const CATS = [
-  {k:"all", n:"All rakhis"}, {k:"premium", n:"Premium rakhis"},
-  {k:"lumba", n:"Bhabhi rakhis"}, {k:"kids", n:"Kids rakhis"},
-  {k:"traditional", n:"Religious rakhis"}, {k:"evil-eye", n:"Evil eye rakhis"},
-  {k:"pearl", n:"Designer rakhis"}
-];
+   The shelves themselves are in shared/js/05-cats.js, because the dashboard
+   files rakhis onto the same ones and two lists would drift apart the first
+   time one of them gained a shelf. All rakhis is not a shelf — it is the
+   way back out of one — so it is added here rather than living there.
+
+   Premium is first after All: the row is read at a glance and it is the
+   shelf the shop would rather sell. */
+const CATS = [{k:"all", n:"All rakhis"},
+  ...[...SHOP_CATS].sort((a,b) => (a.k === "premium" ? -1 : b.k === "premium" ? 1 : 0))
+                   .map(c => ({k:c.k, n:c.n}))];
 
 const SETS = [
   { id:"s2", name:"Two Rakhi Pack", price:99, was:118, best:false,
