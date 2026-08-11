@@ -760,8 +760,12 @@
           </summary>
           <!-- Every shelf, and each one goes to its own page rather than to
                the middle of the home page. Designer was missing from this
-               column for as long as it was missing from the row of cards. -->
-          <ul>
+               column for as long as it was missing from the row of cards —
+               so it is repainted by paintFootShelves() from the one list the
+               row of cards uses, narrowed to the shelves that have stock.
+               What is written out below is what a browser with no
+               JavaScript gets, and the order the painter keeps. -->
+          <ul id="footShelves">
             <li><a href="#all">All rakhis</a></li>
             <li><a href="#c/lumba" data-cat="lumba">Bhaiya Bhabhi</a></li>
             <li><a href="#c/kids" data-cat="kids">Kids rakhi</a></li>

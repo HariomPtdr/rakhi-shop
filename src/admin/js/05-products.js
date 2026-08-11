@@ -191,8 +191,12 @@ function newProduct(){
       <div class="fg two">
         <div><label class="lab" for="npCat">Kind</label>
           <select class="inp" id="npCat">
-            ${["evil-eye","pearl","traditional","kids","lumba","premium"].map(c =>
-              `<option value="${c}">${c}</option>`).join("")}
+            <!-- From SHOP_CATS, like the edit panel and the shop itself. It
+                 was a list written out here by hand, showing the raw keys —
+                 so adding a shelf meant remembering this line, and "pearl"
+                 on the menu meant Designer without saying so. -->
+            ${SHOP_CATS.map(c =>
+              `<option value="${c.k}">${esc(c.n)}</option>`).join("")}
           </select></div>
         <div><label class="lab" for="npFeat">Order in the grid</label>
           <input class="inp" id="npFeat" inputmode="numeric" value="${prodRows.length + 1}"></div>

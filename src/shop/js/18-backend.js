@@ -91,6 +91,13 @@ function applyCatalogue(rows){
 }
 function repaintCatalogue(){
   numberCatalogue();
+  /* The shelves, the chips, the footer column and the budget bands are all
+     built out of what is in stock, and until now they were built once — off
+     the fallback list in 03-catalogue.js, before the database had answered.
+     So the shop offered the sample catalogue's shelves and the sample
+     catalogue's price bands no matter what was actually for sale. They are
+     repainted here, against the real thing. */
+  paintChips(); paintCats(); paintFootShelves(); paintBudget();
   paintRail(); buildDots();
   paintGrid();
   paintHearts();

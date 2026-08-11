@@ -30,10 +30,51 @@ let apState = { page:"all", cat:"all", band:null, sort:"feat", tag:null, stock:f
 let IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]));
 const numberCatalogue = ()=>{ IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)])); };
 
+/* ── the shelves that actually have something on them ──
+   A shelf with nothing on it is a card promising a page, a chip promising
+   a narrower grid and a footer link promising both — and all three land on
+   an empty grid with no explanation. The budget row has always drawn only
+   the bands it can fill; the shelves now do the same. So a shelf added to
+   SHOP_CATS ahead of its stock is simply not offered until the stock is
+   there, and one that sells out stops being offered on its own.
+
+   Read from PRODUCTS, which is the database's catalogue by the time
+   repaintCatalogue() calls these again — so it is the real shop that
+   decides which shelves exist, not the fallback list in 03-catalogue.js. */
+const shelfStocked = k => PRODUCTS.some(p => p.cat === k);
+const stockedCats  = () => SHOP_CATS.filter(c => shelfStocked(c.k));
+/* Two shelves is the least it takes for a shelf to mean anything. With one,
+   the row of cards, the chips and the footer column are all three different
+   ways of asking a question with a single answer — the whole shop. They
+   come back on their own the day a second shelf has stock. */
+const manyShelves  = () => stockedCats().length > 1;
+
 /* The chips live inside the full collection, so they narrow that view and
-   nothing else. */
-$("#chips").innerHTML = CATS.map(c=>
-  `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
+   nothing else.
+
+   Same rule as the cards below: only the shelves with something on them.
+   CATS keeps the order — All first, Premium next — and the filter keeps
+   whichever of those are real. If the shelf the grid is currently narrowed
+   to has emptied, its chip is gone, so the narrowing goes with it rather
+   than leaving the grid stuck on a filter with no way to release it. */
+function paintChips(){
+  const el = $("#chips");
+  if(!el) return;
+  const live = CATS.filter(c => c.k === "all" || shelfStocked(c.k));
+  if(!live.some(c => c.k === apState.cat)) apState.cat = "all";
+  el.innerHTML = live.map(c=>
+    `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
+
+  /* With one shelf the row would read "All rakhis · Evil eye rakhis", two
+     buttons showing the same 49 rakhis. The row goes, and the sort control
+     is left on its own in the bar rather than at the end of an empty tray.
+     Tags are the axis that still narrows anything, and those are in the
+     filter sheet. */
+  const row = $("#apChips"), tools = $("#apTools");
+  if(row) row.hidden = !manyShelves();
+  if(tools) tools.classList.toggle("ap-tools-solo", !manyShelves());
+}
+paintChips();
 $("#chips").addEventListener("click", e=>{
   const b=e.target.closest(".chip"); if(!b) return;
   const onShelfPage = isCat(apState.page);
@@ -291,7 +332,16 @@ $("#lb").addEventListener("click", ()=>closeLb());
 function paintCats(){
   const rail = $("#catRail");
   if(!rail) return;
-  rail.innerHTML = SHOP_CATS.map(c => `
+  const cats = stockedCats();
+  /* one shelf is not a category to shop by, it is the whole shop */
+  const sec = $("#categories");
+  if(sec) sec.hidden = cats.length < 2;
+  /* emptied, not just hidden. This is painted once off the fallback list
+     before the database has answered, so returning early here left six
+     cards sitting in the DOM — five of them links to shelves with nothing
+     on them. Hidden from a reader, still there for a crawler. */
+  if(cats.length < 2){ rail.innerHTML = ""; return; }
+  rail.innerHTML = cats.map(c => `
     <a class="cat" href="#c/${c.k}" data-cat="${c.k}">
       <span class="cat-shot">
         <img src="../../assets/images/${c.card.img}" alt="${esc(c.card.t)} rakhi"
@@ -310,6 +360,19 @@ function paintCats(){
     </a>`).join("");
 }
 paintCats();
+
+/* The footer lists the same shelves, and used to list them by hand — which
+   is how Designer came to be missing from it for as long as it was missing
+   from the row of cards. It is painted from the one list now, narrowed the
+   same way, so the column cannot promise a shelf the row does not. */
+function paintFootShelves(){
+  const ul = $("#footShelves");
+  if(!ul) return;
+  ul.innerHTML = `<li><a href="#all">All rakhis</a></li>`
+    + stockedCats().map(c =>
+        `<li><a href="#c/${c.k}" data-cat="${c.k}">${esc(c.n)}</a></li>`).join("");
+}
+paintFootShelves();
 
 /* Bound to the category rail and to the footer's Shop column, which lists
    the same shelves.
@@ -361,7 +424,10 @@ function paintBudget(){
 
   /* one band left standing is not a choice, it is a label */
   $("#budget").hidden = rows.length < 2;
-  if(rows.length < 2) return;
+  /* emptied rather than only hidden, for the same reason the shelf cards
+     are: the first paint happens against the fallback catalogue's prices,
+     and its circles should not outlive it in the DOM */
+  if(rows.length < 2){ rail.innerHTML = ""; return; }
 
   rail.innerHTML = rows.map(({b, inIt}, i) => {
     /* Use promotional image if available, otherwise fall back to product thumbnail */

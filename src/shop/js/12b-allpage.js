@@ -67,9 +67,20 @@ const bandHero = b => ({
 });
 
 /* Every word the shelves already say, in tag form: the keys themselves, the
-   short names on the cards, and the full names on the chips. */
-const SHELF_WORDS = new Set(SHOP_CATS.flatMap(c =>
-  [c.k, tagKey(c.card.t), tagKey(c.n), tagKey(c.n.replace(/\s*rakhis?$/i, ""))]));
+   short names on the cards, and the full names on the chips.
+
+   Only the shelves the shop is actually offering, though, and that is the
+   whole point of it being worked out each time rather than once. The style
+   filter takes these words out so that it is not the shelf row again under
+   another heading — but a shelf that is not on screen is not saying its
+   word anywhere, and striking it out of the styles deletes the only axis
+   left. With 49 evil eye rakhis on one shelf, the fixed list removed
+   pearl, designer, premium, kids and religious — every useful way of
+   telling them apart — and left Protection, which 36 of them are. */
+const shelfWords = () => new Set(
+  (typeof manyShelves === "function" && !manyShelves() ? [] : stockedCats())
+    .flatMap(c => [c.k, tagKey(c.card.t), tagKey(c.n),
+                   tagKey(c.n.replace(/\s*rakhis?$/i, ""))]));
 
 /* every page this view can be on: the shelves, Bestsellers and the bands */
 function viewOf(k){
@@ -158,10 +169,15 @@ function paintApHead(k){
      somebody moves from Kids to Premium without going back to the row of
      cards, and on a wide screen there is room for it beside the sort. Only
      the sheet drops it on a shelf page, where it was the tallest thing in a
-     panel opened on a phone to answer a different question. */
+     panel opened on a phone to answer a different question.
+
+     Unless there is only one shelf with anything on it, in which case the
+     row is two buttons that show the same rakhis and it does not appear at
+     all — see paintChips(). */
   const chipRow = $("#apChips"), tools = $("#apTools");
-  if(chipRow) chipRow.hidden = false;
-  if(tools) tools.classList.remove("ap-tools-solo");
+  const shelves = typeof manyShelves === "function" ? manyShelves() : true;
+  if(chipRow) chipRow.hidden = !shelves;
+  if(tools) tools.classList.toggle("ap-tools-solo", !shelves);
 
   const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
   /* the bar says which room of the shop this is, not which price: the price
@@ -405,7 +421,7 @@ function paintFilterSheet(){
        useful on the card — but offered here it was the shelf row again,
        under a different heading, doing the same thing. Style is what is
        left once the shelves have had their words back. */
-    SHELF_WORDS.forEach(w => n.delete(w));
+    shelfWords().forEach(w => n.delete(w));
     /* a tag every rakhi on the page carries cannot narrow it down */
     const live = [...n.entries()].filter(([, c]) => c < pool.length)
                    .sort((a, b) => b[1] - a[1]).slice(0, 6).map(([t]) => t);
