@@ -316,6 +316,13 @@
   font-size:clamp(9.5px,2.4vw,11.5px); line-height:1.1;
   color:var(--ink-faint); text-decoration-thickness:1px;
 }
+/* ── the price, on the bestseller rail ──
+   The rail card is the widest card in the shop — 198px on a phone against
+   the collection's 157 — and a price set for the narrow one looks under-set
+   on it: the same number, on a card half again as big, reads as smaller than
+   it is. Both prices go up together, so the pair keeps its proportion. */
+.best .rc-p{font-size:clamp(17px,4.4vw,21px)}
+.best .rc-mrp{font-size:clamp(11px,2.9vw,13.5px)}
 /* Only drawn when somebody has actually left one. */
 :is(.best,.drift,.ap) .rc-r{
   display:flex; align-items:center; gap:5px; margin-top:clamp(5px,1vw,7px);
