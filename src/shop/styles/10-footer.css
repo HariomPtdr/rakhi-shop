@@ -186,8 +186,17 @@
    one sentence. Not a flex row any more: one text node and one link inside
    a flex box put a 14px gap in the middle of "Made by Hariom Patidar". */
 .foot-dev{
-  position:relative; z-index:1; text-align:center;
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center; gap:7px;
   margin-top:9px; font-size:11.5px; line-height:1.6; color:var(--ink-faint);
+}
+/* "Made by" was two words of housekeeping in front of the one thing that
+   matters, which is the name. A heart in the shop's own red says it in less
+   room than the M took, and it is drawn rather than typed: ❤️ is a different
+   shape, and on some phones a different colour, on every platform that
+   renders it. */
+.foot-dev-h{
+  flex:none; width:12px; height:12px; color:var(--rose);
 }
 .foot-dev a{
   font-family:var(--head); font-weight:600; color:var(--ink-soft);

@@ -102,12 +102,21 @@
       </svg>
       <i id="wishN" hidden>0</i>
     </button>
-    <!-- The account, exactly as before. It sits at the end of the row now
-         that the menu button beside it is gone, but it does the one thing
-         it always did.
-
-         WhatsApp is the floating button at the bottom right of every screen,
-         so the header keeps this, the heart and the cart. -->
+    <!-- The bag, next to the heart: the two things somebody collects as they
+         go round the shop stand together, and the account — which is about
+         them rather than about the rakhis — closes the row. On a phone it is
+         drawn too: the bar along the bottom only rises once something is in
+         the basket, and until then that corner was the one place with no way
+         into it. -->
+    <button class="cart-btn" id="cartOpen" aria-label="Your cart">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
+      <span class="cart-n" id="cartN" aria-live="polite">0</span>
+    </button>
+    <!-- The account, at the end of the row. WhatsApp is the floating button
+         at the bottom right of every screen, so the header keeps this, the
+         heart and the bag. -->
     <button class="nav-me" id="acctOpen" aria-label="Your account" hidden>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -115,13 +124,6 @@
         <path d="M4.8 20c.7-3.7 3.7-5.6 7.2-5.6s6.5 1.9 7.2 5.6"/>
       </svg>
       <b id="acctInitial" hidden></b>
-    </button>
-    <!-- Hidden on a phone: the sticky bar along the bottom is the cart there,
-         and it appears the moment something goes in. Kept from 720px up,
-         where that bar does not exist and this is the only way in.
-         Hidden, not removed — the count inside it is still painted. -->
-    <button class="cart-btn" id="cartOpen">
-      Cart <span class="cart-n" id="cartN" aria-live="polite">0</span>
     </button>
   </div>
 </header>
@@ -896,7 +898,10 @@
            nobody can report a fault on is a page whose faults are only ever
            found by the next customer. -->
       <p class="foot-dev">
-        Made by <a id="bugWa" href="#" target="_blank" rel="noopener">Hariom Patidar</a>
+        <svg class="foot-dev-h" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 20.7 4.3 12.9a4.8 4.8 0 0 1 6.8-6.8l.9.9.9-.9a4.8 4.8 0 0 1 6.8 6.8Z"/>
+        </svg>
+        <a id="bugWa" href="#" target="_blank" rel="noopener">Hariom Patidar</a>
       </p>
     </div>
   </div>

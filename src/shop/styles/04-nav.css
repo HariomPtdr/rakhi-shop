@@ -91,33 +91,64 @@ body.nav-solid .nav-in{
   color:var(--ink-soft); padding:9px 13px; border-radius:var(--r-full); transition:color .25s, background .25s;
 }
 .nav-l a:hover{color:var(--ink); background:rgba(185,140,46,.10)}
-.cart-btn{
-  position:relative; display:inline-flex; align-items:center; gap:9px; z-index:2;
-  font-family:var(--body); font-weight:700; font-size:11.5px; letter-spacing:1.3px; text-transform:uppercase;
-  /* The deep red the page already uses for Shop now. Plain black belonged
-     to the old palette, and the teal count on it belonged to no palette at
-     all — it was the one saturated thing up here and it was not the thing
-     you were meant to press. */
-  border:0; padding:11px 16px; border-radius:var(--r-full);
-  background:linear-gradient(160deg,#9B2226 0%,#7A1418 58%,#6A1114 100%);
-  color:#FFF6E8;
-  min-height:42px; cursor:pointer;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 12px 26px -14px rgba(106,17,20,.65);
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+/* ── the bag and the heart ──
+   The header used to carry a red capsule reading CART with a cream count in
+   it, beside an ivory disc holding a heart. The collection view carries the
+   two of them as glyphs with the count on the corner, and the same shop
+   cannot have two ideas of what its own cart button looks like. Both are
+   the glyph here too: the drawing is the button, and what sits under it is
+   only a tint when a thumb is on it. */
+.cart-btn,
+.nav-me.nav-like{
+  position:relative; z-index:2; flex:none;
+  display:inline-grid; place-items:center; width:40px; height:40px;
+  min-height:0; padding:0;
+  border:0; border-radius:12px; cursor:pointer;
+  background:none; box-shadow:none;
+  color:#7A1418;
+  transition:background .3s var(--ease), color .3s var(--ease), transform .25s var(--ease);
 }
 @media (hover:hover){
-  .cart-btn:hover{
-    transform:translateY(-1px);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 18px 34px -16px rgba(106,17,20,.75);
+  .cart-btn:hover,
+  .nav-me.nav-like:hover{
+    background:rgba(122,20,24,.06); color:#6A1114;
+    transform:none; box-shadow:none;
+  }
+  .nav-me.nav-like:hover svg{fill:currentColor}
+}
+.cart-btn:active,
+.nav-me.nav-like:active{transform:scale(.92); background:rgba(122,20,24,.06); box-shadow:none}
+/* The account, between the two of them, and signed out: a disc standing
+   between two drawings reads as the odd one out. Signed in it keeps its
+   filled circle — that is not decoration, it is the one thing on the header
+   that says whose basket this is, and a photograph belongs in a circle. */
+.nav-me:not(.nav-like):not(.in):not(.has-pic){
+  width:40px; height:40px; border-radius:12px;
+  background:none; box-shadow:none; color:#7A1418;
+}
+@media (hover:hover){
+  .nav-me:not(.nav-like):not(.in):not(.has-pic):hover{
+    background:rgba(122,20,24,.06); color:#6A1114; box-shadow:none;
   }
 }
-.cart-btn:active{transform:translateY(0)}
-/* the count reads out of the button rather than fighting it */
+/* The count as it is worn inside a capsule — the product page's bar still
+   has one of those, and it shares this class. */
 .cart-n{
   min-width:20px; height:20px; padding:0 6px; border-radius:var(--r-full);
   background:rgba(255,246,232,.94); color:#6A1114;
   font-family:var(--head); font-size:11px; font-weight:700;
   display:grid; place-items:center; line-height:1;
+}
+/* the count on the corner of a glyph, which is what the header wears now */
+.cart-btn .cart-n,
+.nav-me.nav-like i{
+  position:absolute; top:0; right:-1px;
+  min-width:16px; height:16px; padding:0 4px; border-radius:var(--r-full);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 60%,#6A1114 100%);
+  color:#FFF6E8;
+  font-family:var(--head); font-size:9.5px; font-style:normal; font-weight:700;
+  display:grid; place-items:center; line-height:1;
+  box-shadow:0 0 0 2px var(--bg);
 }
 .cart-n.bump{animation:bump .34s var(--ease)}
 @keyframes bump{0%{transform:scale(.6)}55%{transform:scale(1.32)}100%{transform:scale(1)}}
@@ -131,9 +162,12 @@ body.nav-solid .nav-in{
 
    Hidden rather than removed: the count inside it is still painted on every
    change, and the header has no room for a special case. */
-@media (max-width:719px){
-  .cart-btn{display:none}
-}
+/* It is drawn on a phone now. What was hidden there was a red capsule
+   reading CART beside a bottom bar that says the same thing louder — two
+   cart controls on a 390px header, one of them a slab. A 40px glyph is not
+   that, and the bottom bar only rises once there is something in the
+   basket: until then this was the one corner of a phone with no way into
+   it at all. */
 /* the one circle shrinks with the wordmark beside it */
 @media (max-width:360px){
   .brand-n{font-size:12px; letter-spacing:.05em}

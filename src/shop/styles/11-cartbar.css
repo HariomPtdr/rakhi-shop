@@ -1,30 +1,56 @@
 /* ── sticky cart bar — appears only when there is something in the cart ── */
+/* ── the bar, in the shop's own materials ──
+   It used to be a solid maroon slab with a cream button cut out of it: the
+   largest, darkest, most saturated object on the page, sitting over
+   photographs of rakhis and under a card whose whole palette is ivory and
+   gold. Two reds — the slab and the button it was trying to make you press —
+   cancelled each other out, and the one that won was the wrong one.
+
+   It is the same material as everything else that floats over this shop now:
+   the header's ivory glass, the gold hairline the cards and sheets wear, and
+   a single red capsule for the one thing to press. What is in the basket is
+   set in the shop's serif on the left, the way a price is set everywhere
+   else, and the red is spent where it does some work. */
 .cartbar{
-  position:fixed; left:8px; right:8px; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:46;
-  display:flex; align-items:center; gap:12px; padding:10px 10px 10px 16px;
-  /* the same deep red as Shop now and the cart button above it, so the one
-     bar that follows you down the page belongs to the shop it is for */
-  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
-  color:#FFF6E8; border-radius:var(--r-full);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 14px 34px -12px rgba(106,17,20,.6);
+  position:fixed; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:46;
+  display:flex; align-items:center; gap:12px; padding:8px 8px 8px 18px;
+  background:linear-gradient(178deg, rgba(255,254,250,.97) 0%, rgba(252,247,236,.96) 45%, rgba(249,242,227,.96) 100%);
+  -webkit-backdrop-filter:blur(16px) saturate(1.08); backdrop-filter:blur(16px) saturate(1.08);
+  color:#3B2415; border-radius:var(--r-full);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+             inset 0 0 0 1px rgba(217,184,119,.72),
+             0 18px 40px -16px rgba(60,34,8,.5);
   transform:translateY(140%); transition:transform .42s var(--ease);
 }
 .cartbar.on{transform:none}
 /* The product page covers the shop, so the bar underneath it would only
    bleed through the fade and swallow taps meant for the page. */
 body.pv-on .cartbar{transform:translateY(140%); pointer-events:none}
-.cartbar-l{display:flex; flex-direction:column; line-height:1.2; min-width:0}
-.cartbar-k{font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; opacity:.7}
-.cartbar-v{font-family:var(--display); font-size:21px}
+.cartbar-l{display:flex; flex-direction:column; line-height:1.15; min-width:0}
+.cartbar-k{
+  font-family:var(--head); font-size:8.5px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--tan-deep);
+}
+.cartbar-v{font-family:var(--display); font-weight:600; font-size:20px; color:#3B2415; margin-top:2px}
 .cartbar-b{
-  margin-left:auto; flex:none; display:inline-flex; align-items:center; gap:7px;
-  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#6A1114;
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+  margin-left:auto; flex:none; display:inline-flex; align-items:center; gap:8px;
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%);
+  color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             inset 0 0 0 1px rgba(217,184,119,.42),
+             0 12px 26px -12px rgba(106,17,20,.7);
   border:0; cursor:pointer;
-  font-family:var(--body); font-weight:700; font-size:11.5px; letter-spacing:1.3px; text-transform:uppercase;
-  padding:12px 18px; border-radius:var(--r-full); min-height:44px;
+  font-family:var(--head); font-weight:600;
+  font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  padding:0 18px; border-radius:var(--r-full); min-height:44px;
+  transition:transform .25s var(--ease), box-shadow .3s var(--ease);
 }
 .cartbar-b:active{transform:scale(.98)}
+@media (hover:hover){
+  .cartbar-b:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.24),
+                              inset 0 0 0 1px rgba(217,184,119,.5),
+                              0 18px 32px -14px rgba(106,17,20,.78)}
+}
 @media (min-width:720px){.cartbar{display:none}}
 
 /* ── floating whatsapp ── */
