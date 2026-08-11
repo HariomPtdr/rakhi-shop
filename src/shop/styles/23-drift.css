@@ -11,7 +11,7 @@
    The track holds its contents twice, so the frame it snaps
    back to is the frame it left and no seam is ever seen.
    ══════════════════════════════════════════════════════════ */
-.drift{padding:clamp(26px,5vw,44px) 0 0; overflow:hidden}
+.drift{padding:clamp(26px,5vw,44px) 0 0; overflow:hidden; --gut:clamp(18px,4vw,44px)}
 .drift[hidden]{display:none}
 
 .drift-h{text-align:center; margin-bottom:clamp(16px,3vw,26px)}
@@ -76,7 +76,6 @@
      .wrap — it has to reproduce .wrap's own left edge instead: the page
      gutter, plus whatever .wrap is holding back once the window is wider
      than 1240px. */
-  --gut:clamp(18px,4vw,44px);
   --edge:calc(var(--gut) + max(0px, (100vw - 1240px) / 2));
   padding:3px var(--edge) 8px;
   scroll-padding-left:var(--edge);
@@ -96,6 +95,27 @@
 .drift .rc{width:auto}
 @media (min-width:640px){
   .drift-track{grid-auto-columns:clamp(168px,22vw,204px)}
+}
+
+/* ── on a full screen, it stops at the margin ──
+   The bleed off both edges is a phone idea: there, the shelf is pushed with
+   a thumb and the card cut by the edge is what says keep pushing. On a
+   desktop the arrows say that already, and a row that runs under the window
+   edge while every other section on the page stops at the gutter reads as
+   the collection having escaped its column. So from here up the shelf sits
+   inside the same 1240px and the same gutter as .wrap, and a card scrolled
+   past the start is clipped at that gutter — exactly what the bestseller
+   rail does one section above. The fade goes with it: there is a hard edge
+   to stop at now, and a dissolve over the page margin only looked like the
+   cards were fading out for no reason. */
+@media (min-width:940px){
+  .drift-rows{max-width:1240px; margin:0 auto; padding:0 var(--gut)}
+  .drift-track{
+    /* 2px, not 0: the cards carry a shadow, and a scroll container clips it
+       flush at its own padding box */
+    --edge:2px;
+    -webkit-mask-image:none; mask-image:none;
+  }
 }
 
 /* ── the arrows ──
@@ -119,8 +139,11 @@
   .drift-nav:active{transform:scale(.94)}
   .drift-nav{top:50%; transform:translateY(-50%)}
   .drift-nav:active{transform:translateY(-50%) scale(.94)}
-  .drift-nav.prev{left:clamp(4px,1vw,10px)}
-  .drift-nav.next{right:clamp(4px,1vw,10px)}
+  /* Overlapping the first and last card, measured from the gutter the shelf
+     stands on now rather than from the window — the bestseller rail's own
+     -13px, one section above. */
+  .drift-nav.prev{left:calc(var(--gut) - 13px)}
+  .drift-nav.next{right:calc(var(--gut) - 13px)}
 }
 
 /* the way out, into the list that can be narrowed down */
