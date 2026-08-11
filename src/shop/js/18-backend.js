@@ -74,6 +74,9 @@ function applyCatalogue(rows){
        downstream has to ask which of the two it is looking at. */
     tags:  Array.isArray(r.tags) ? r.tags.filter(Boolean) : [],
     mrp:   r.mrp == null ? null : Number(r.mrp),
+    /* the seller's own answer to "which of these are the good ones" — the
+       tick in the dashboard, and what the Bestsellers page is made of */
+    best:  !!r.best,
     art:   (r.art && r.art.thread) ? r.art : {thread:"#C0272D", bead:"#FDFCF7", charm:"moti"}
   }));
 

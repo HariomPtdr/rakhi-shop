@@ -192,7 +192,41 @@ body.ap-on{overflow:hidden}
   margin-top:clamp(7px,1.4vw,12px);
   font-family:var(--display); font-weight:600;
   font-size:clamp(23px,5.6vw,40px); line-height:1.12; letter-spacing:-.022em;
-  color:#7A1418;
+  /* the shelf's own ink where it has one, the shop's red where it does not */
+  color:var(--ap-ink, #7A1418);
+}
+
+/* ── a shelf's own banner ──
+   The same banner, wearing the shelf: its photograph at the left-hand end
+   instead of the gift and the thali, its mark over the kicker, and — for
+   the evil eye, whose subject is a colour — its colour in the headline.
+   The mark takes the headline's ink too, so the eye at the top of Evil Eye
+   is blue and the temple at the top of Religious is not. */
+.ap-hero-cat .ap-kick svg{color:var(--ap-ink, #7A1418)}
+/* The banner's own two photographs stay as they are on every shelf: they
+   are cut for this shape at this size, and the shelf's card picture put in
+   their place went soft the moment it was stretched to it.
+
+   The gift and the thali are gone on a phone. There is no room there for a
+   photograph beside two lines of type, so it sat under them — the same
+   photograph, at the top of all eight pages, saying the same nothing on
+   each. What tells the pages apart is the mark, the words and the ink. The
+   mandala at the other end stays: it is a line drawing, it holds the
+   banner's right-hand edge, and it never fights the type. */
+@media (max-width:759px){ .ap-art-l{display:none} }
+
+/* ── the shelf's own end of the banner ──
+   From a tablet up there is room for a photograph beside two lines of type,
+   and each shelf brings its own: the picture from its card, held to the
+   left-hand end and faded into the banner's cream the way the gypsophila
+   was. Shown smaller than the file is, so it stays sharp — which is exactly
+   what it could not do on a phone, where it is not drawn at all. */
+@media (min-width:760px){
+  .ap-hero-cat .ap-art-l{
+    width:min(30%,330px);
+    background-image:var(--cat-img);
+    background-size:cover; background-position:50% 42%;
+  }
 }
 .ap-sub{
   margin-top:clamp(6px,1.2vw,11px);

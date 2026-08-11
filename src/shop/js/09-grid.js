@@ -148,13 +148,26 @@ addEventListener("error", e=>{
 }, true);
 /* Whose filter to read: the home shelf's by default, the collection's when
    that view asks. */
+/* ── the bestsellers ──
+   The seller's ticks, where there are enough of them to be a page: fewer
+   than four ticked is not a shelf of favourites, it is a shelf of one, so
+   the featured order stands in — which is exactly what the row on the home
+   page shows, and it is the same answer to the same question. */
+function bestPool(){
+  const flagged = PRODUCTS.filter(p => p.best);
+  if(flagged.length >= 4) return flagged;
+  return [...PRODUCTS].sort((a,b) => (a.feat || 999) - (b.feat || 999))
+                      .slice(0, Math.min(8, PRODUCTS.length));
+}
+
 function visible(st){
   st = st || state;
   const by={feat:(a,b)=>a.feat-b.feat, lo:(a,b)=>a.price-b.price,
             hi:(a,b)=>b.price-a.price, az:(a,b)=>a.name.localeCompare(b.name)}[st.sort];
   const band = st.band && BANDS.find(b => b.k === st.band);
+  const best = st.cat === "best" ? new Set(bestPool().map(p => p.id)) : null;
   return PRODUCTS
-    .filter(p => st.cat === "all" || p.cat === st.cat)
+    .filter(p => best ? best.has(p.id) : (st.cat === "all" || p.cat === st.cat))
     .filter(p => !band || (p.price >= band.lo && p.price < band.hi))
     /* a style, out of the tags the rakhis themselves carry */
     .filter(p => !st.tag || (p.tags || []).map(tagKey).includes(st.tag))

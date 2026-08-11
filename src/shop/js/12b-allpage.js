@@ -27,20 +27,82 @@ const allOpen = () => apEl.classList.contains("on");
    be kept in step, and the moment a shelf were added there would be a
    seventh. Here a shelf added to shared/js/05-cats.js has its page the
    same day, because the page is this one. */
+/* the lotus the whole collection is headed with, kept so that leaving a
+   shelf puts it back */
+const AP_MARK = ($(".ap-kick svg") || {}).innerHTML || "";
+/* ── the page that is not a shelf ──
+   Bestsellers is the same view again, filtered by the seller's own ticks
+   rather than by products.cat. It is deliberately not in SHOP_CATS: that
+   list is what the dashboard files rakhis onto, and "bestseller" is not a
+   place to put one — it is a tick on a rakhi that is already somewhere. */
+const AP_SPECIAL = {
+  best: {
+    n:"Bestsellers", card:{ t:"Bestsellers", sub:"Loved by thousands of families" },
+    hero:{ kick:"Loved most",
+           h:["Best","Sellers."],
+           sub:["Handpicked favourites","loved by thousands of families."],
+           mark:'<path d="M4 18h16l1.3-9.4-5 3.4L12 4.3 7.7 12l-5-3.4Z" fill="currentColor"/>'
+                +'<path d="M4.6 20.4h14.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' }
+  }
+};
+/* every page this view can be on: the shelves, and Bestsellers */
+const viewOf = k => catOf(k) || AP_SPECIAL[k] || null;
+const isView = k => !!viewOf(k);
+const viewHash = k => (k === "best" ? "#best" : "#c/" + k);
+
 const AP_HEAD = {
   kick: "Our collection",
   h2:   "Handpicked Rakhis<br>for Every Bond",
   sub:  "Explore our exclusive range<br class=\"ap-br\"> and find the perfect one."
 };
 
+/* ── the banner over a shelf ──
+   Six shelves under one banner reading "Handpicked Rakhis for Every Bond"
+   were six pages that looked like the same page arriving again. Each shelf
+   brings its own: its own mark over its own kicker, its own two lines, its
+   own sentence under them, its own photograph at the left-hand end, and —
+   where the shelf's subject is a colour — its own colour.
+
+   All of it out of shared/js/05-cats.js, so a shelf added there is a shelf
+   with a banner, not a shelf with a banner still to write. */
 function paintApHead(k){
-  const c = k && catOf(k);
-  const kick = $(".ap-kick b"), h2 = $(".ap-hero h2"), sub = $(".ap-sub");
+  const c = k && viewOf(k);
+  const hero = c && c.hero;
+  const kick = $(".ap-kick b"), h2 = $(".ap-hero h2"), sub = $(".ap-sub"),
+        mark = $(".ap-kick svg"), box = $(".ap-hero");
+
   if(kick && h2 && sub){
-    kick.textContent = c ? "Shop by category" : AP_HEAD.kick;
-    h2.innerHTML     = c ? `${esc(c.card.t)}<br>Rakhis` : AP_HEAD.h2;
-    sub.innerHTML    = c ? esc(c.card.sub) : AP_HEAD.sub;
+    kick.textContent = hero ? hero.kick : AP_HEAD.kick;
+    h2.innerHTML     = hero ? hero.h.map(esc).join("<br>") : AP_HEAD.h2;
+    sub.innerHTML    = hero ? `${hero.sub[0]}<br class="ap-br"> ${hero.sub[1]}` : AP_HEAD.sub;
   }
+  /* the mark keeps the lotus's own 24×14 box on the collection and takes a
+     24×24 one on a shelf, where the glyphs are drawn square */
+  if(mark){
+    mark.setAttribute("viewBox", hero ? "0 0 24 24" : "0 0 24 14");
+    mark.innerHTML = hero ? hero.mark : AP_MARK;
+  }
+  if(box){
+    box.classList.toggle("ap-hero-cat", !!hero);
+    /* The shop is maroon and gold. The evil eye is the one shelf whose
+       subject is itself a colour, and it gets it; everything else inherits
+       what the banner already was. */
+    box.style.setProperty("--ap-ink", (hero && hero.ink) || "#7A1418");
+  }
+  /* ── the shelf's own photograph ──
+     Handed to the stylesheet rather than set on the element, because it is
+     wanted on a wide screen and not on a phone: the picture is the card's,
+     660px across, and a phone at three times the pixel ratio asked more of
+     it than it had and went soft. On a desktop the same file is being shown
+     smaller than it is, which is where it is sharp.
+
+     The banner's own gypsophila stands in on the shelves that have no
+     picture of their own — Bestsellers is not a shelf and has none. */
+  if(box){
+    box.style.setProperty("--cat-img",
+      (c && c.card.img) ? `url("../../assets/images/${c.card.img}")` : "");
+  }
+
   /* ── the bar says where you are ──
      The shop's name at the top of a shelf's own page was the one line up
      there not telling somebody anything they did not know — they are in the
@@ -56,12 +118,12 @@ function paintApHead(k){
    somebody, opened again from history, or reloaded onto the same shelf.
    Replaced rather than pushed: pressing four chips in a row should not put
    four entries between the shop and the way back to it. */
-function apHash(){ return isCat(apState.cat) ? "#c/" + apState.cat : "#all"; }
+function apHash(){ return isView(apState.cat) ? viewHash(apState.cat) : "#all"; }
 function apSyncHash(){
   if(!allOpen()) return;
   const want = apHash();
   if(location.hash !== want) history.replaceState(null, "", want);
-  document.title = (isCat(apState.cat) ? catName(apState.cat) : "The collection")
+  document.title = ((viewOf(apState.cat) || {}).n || "The collection")
                  + " — Ray Art Gallery";
   paintApHead(apState.cat);
 }
@@ -69,13 +131,15 @@ function apSyncHash(){
 /* cat: the shelf to open on. Anything that is not a shelf — including
    nothing at all — is the whole collection. */
 function openAll(fromHash, cat){
-  const k = isCat(cat) ? cat : null;
-  if(k !== null || !allOpen()){
-    apState.cat  = k || "all";
-    apState.band = null;      /* a price and a shelf at once is how you get nothing */
-    $$("#chips .chip").forEach(c =>
-      c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
-  }
+  const k = isView(cat) ? cat : null;
+  /* Always, not only when the view is closed. Going from #best or a shelf
+     to #all left the old page's filter in place and showed one rakhi under
+     a banner reading Our collection: the address said everything and the
+     grid disagreed with it. Opening a page sets what that page is. */
+  apState.cat  = k || "all";
+  apState.band = null;        /* a price and a shelf at once is how you get nothing */
+  $$("#chips .chip").forEach(c =>
+    c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   paintApHead(k);
   if(allOpen()){ paintAll(); apSyncHash(); return; }
   paintAll();
@@ -86,21 +150,23 @@ function openAll(fromHash, cat){
   lock();
   const want = apHash();
   if(!fromHash && location.hash !== want) location.hash = want.slice(1);
-  document.title = (k ? catName(k) : "The collection") + " — Ray Art Gallery";
+  document.title = ((viewOf(k) || {}).n || "The collection") + " — Ray Art Gallery";
 }
 
 /* The way in from a category card, the footer's Shop column, or anywhere
    else that names a shelf. */
 function openCat(k, fromHash){
-  if(!isCat(k)) return openAll(fromHash);
+  if(!isView(k)) return openAll(fromHash);
   if(allOpen()){
     openAll(fromHash, k);
     apEl.scrollTop = 0;
-    if(!fromHash) location.hash = "c/" + k;
+    if(!fromHash) location.hash = viewHash(k).slice(1);
     return;
   }
   openAll(fromHash, k);
 }
+/* the way in from the row on the home page */
+const openBest = fromHash => openCat("best", fromHash);
 
 function hideAll(){
   closeFilter();
@@ -194,7 +260,7 @@ function paintFilterSheet(){
      already been answered by the card that was pressed to get here, and the
      section was the tallest thing in the sheet: seven buttons offering to
      take somebody off the page they just asked for. */
-  const onShelf = isCat(apState.cat);
+  const onShelf = isView(apState.cat);
   const shelf = $("#fsheetShelf");
   if(shelf) shelf.hidden = onShelf;
 
@@ -302,7 +368,7 @@ $("#fsheetClear").onclick = () => {
   /* On a shelf's own page, Clear all clears the filters — not the shelf.
      Somebody on Kids Rakhis pressing it wants the price and the style back
      to anything, not to be moved to the whole shop. */
-  if(!isCat(apState.cat)) apState.cat = "all";
+  if(!isView(apState.cat)) apState.cat = "all";
   apState.band = null; apState.sort = "feat"; apState.tag = null; apState.stock = false;
   $$("#chips .chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.c === apState.cat)));
   if(typeof paintSort === "function") paintSort();
@@ -341,6 +407,7 @@ addEventListener("keydown", e => {
 function syncAllRoute(){
   const m = /^#c\/([\w-]+)$/.exec(location.hash);
   if(m) openCat(m[1], true);
+  else if(location.hash === "#best") openCat("best", true);
   else if(location.hash === "#all") openAll(true);
   else if(allOpen()) hideAll();
 }
