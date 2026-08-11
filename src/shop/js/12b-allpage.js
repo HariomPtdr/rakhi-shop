@@ -169,15 +169,10 @@ function paintApHead(k){
      somebody moves from Kids to Premium without going back to the row of
      cards, and on a wide screen there is room for it beside the sort. Only
      the sheet drops it on a shelf page, where it was the tallest thing in a
-     panel opened on a phone to answer a different question.
-
-     Unless there is only one shelf with anything on it, in which case the
-     row is two buttons that show the same rakhis and it does not appear at
-     all — see paintChips(). */
+     panel opened on a phone to answer a different question. */
   const chipRow = $("#apChips"), tools = $("#apTools");
-  const shelves = typeof manyShelves === "function" ? manyShelves() : true;
-  if(chipRow) chipRow.hidden = !shelves;
-  if(tools) tools.classList.toggle("ap-tools-solo", !shelves);
+  if(chipRow) chipRow.hidden = false;
+  if(tools) tools.classList.remove("ap-tools-solo");
 
   const n = $(".ap-brand .brand-n"), s2 = $(".ap-brand .brand-s");
   /* the bar says which room of the shop this is, not which price: the price

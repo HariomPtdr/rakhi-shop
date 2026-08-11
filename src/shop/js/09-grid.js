@@ -34,19 +34,21 @@ const numberCatalogue = ()=>{ IDX = new Map(PRODUCTS.map((p,i)=>[p.id, two(i+1)]
    A shelf with nothing on it is a card promising a page, a chip promising
    a narrower grid and a footer link promising both — and all three land on
    an empty grid with no explanation. The budget row has always drawn only
-   the bands it can fill; the shelves now do the same. So a shelf added to
+   the bands it can fill; the shelves do the same. So a shelf added to
    SHOP_CATS ahead of its stock is simply not offered until the stock is
    there, and one that sells out stops being offered on its own.
+
+   The rows themselves stay on the page either way — see paintCats(). It is
+   what goes in them that is decided here, not whether they appear.
 
    Read from PRODUCTS, which is the database's catalogue by the time
    repaintCatalogue() calls these again — so it is the real shop that
    decides which shelves exist, not the fallback list in 03-catalogue.js. */
 const shelfStocked = k => PRODUCTS.some(p => p.cat === k);
 const stockedCats  = () => SHOP_CATS.filter(c => shelfStocked(c.k));
-/* Two shelves is the least it takes for a shelf to mean anything. With one,
-   the row of cards, the chips and the footer column are all three different
-   ways of asking a question with a single answer — the whole shop. They
-   come back on their own the day a second shelf has stock. */
+/* Whether the shop is arranged by shelf at all, which is the question the
+   style filter asks before it strikes the shelves' own words out of itself.
+   With one shelf on offer there is no arrangement to duplicate. */
 const manyShelves  = () => stockedCats().length > 1;
 
 /* The chips live inside the full collection, so they narrow that view and
@@ -64,15 +66,6 @@ function paintChips(){
   if(!live.some(c => c.k === apState.cat)) apState.cat = "all";
   el.innerHTML = live.map(c=>
     `<button class="chip" data-c="${c.k}" aria-pressed="${c.k===apState.cat}">${c.n}</button>`).join("");
-
-  /* With one shelf the row would read "All rakhis · Evil eye rakhis", two
-     buttons showing the same 49 rakhis. The row goes, and the sort control
-     is left on its own in the bar rather than at the end of an empty tray.
-     Tags are the axis that still narrows anything, and those are in the
-     filter sheet. */
-  const row = $("#apChips"), tools = $("#apTools");
-  if(row) row.hidden = !manyShelves();
-  if(tools) tools.classList.toggle("ap-tools-solo", !manyShelves());
 }
 paintChips();
 $("#chips").addEventListener("click", e=>{
@@ -332,15 +325,17 @@ $("#lb").addEventListener("click", ()=>closeLb());
 function paintCats(){
   const rail = $("#catRail");
   if(!rail) return;
+  /* The section stays on the page whatever is in it, down to nothing: the
+     shop's own decision, and it keeps the home page the same shape from one
+     week to the next instead of growing and losing a band of itself as
+     stock changes.
+
+     What it holds is still only the shelves with something on them. A card
+     for an empty shelf is a promise of a page with no rakhis on it, and
+     that is a different thing from a row that is short. */
   const cats = stockedCats();
-  /* one shelf is not a category to shop by, it is the whole shop */
   const sec = $("#categories");
-  if(sec) sec.hidden = cats.length < 2;
-  /* emptied, not just hidden. This is painted once off the fallback list
-     before the database has answered, so returning early here left six
-     cards sitting in the DOM — five of them links to shelves with nothing
-     on them. Hidden from a reader, still there for a crawler. */
-  if(cats.length < 2){ rail.innerHTML = ""; return; }
+  if(sec) sec.hidden = false;
   rail.innerHTML = cats.map(c => `
     <a class="cat" href="#c/${c.k}" data-cat="${c.k}">
       <span class="cat-shot">
@@ -422,12 +417,13 @@ function paintBudget(){
     return {b, inIt};
   }).filter(r => r.inIt.length);
 
-  /* one band left standing is not a choice, it is a label */
-  $("#budget").hidden = rows.length < 2;
-  /* emptied rather than only hidden, for the same reason the shelf cards
-     are: the first paint happens against the fallback catalogue's prices,
-     and its circles should not outlive it in the DOM */
-  if(rows.length < 2){ rail.innerHTML = ""; return; }
+  /* This used to come off the page when only one band could be filled —
+     "one band left standing is not a choice, it is a label". The shop would
+     rather the row stayed put and held one circle than had the home page
+     change shape with the price list, so it stays. Bands with nothing in
+     them are still not drawn: a circle promising a price nothing is sold at
+     is a dead end, which is not the same as a short row. */
+  $("#budget").hidden = false;
 
   rail.innerHTML = rows.map(({b, inIt}, i) => {
     /* Use promotional image if available, otherwise fall back to product thumbnail */
