@@ -54,7 +54,7 @@ function paintProduct(){
     p: x,
     score: (x.cat === p.cat ? 0 : 100) + Math.abs(x.price - p.price) / 10
              + (x.stock === 0 ? 500 : 0) + (x.img ? -8 : 0)
-  })).sort((a, b) => a.score - b.score).slice(0, 6).map(x => x.p);
+  })).sort((a, b) => a.score - b.score).slice(0, 10).map(x => x.p);
 
   $("#pvIn").innerHTML = `
     <!-- ── where this rakhi lives ──
@@ -108,22 +108,6 @@ function paintProduct(){
         </button>`).join("")}
     </div>` : ""}
 
-    <!-- the one line about how these are made, said where somebody is
-         deciding whether to trust a photograph of one -->
-    <div class="pv-made">
-      <span class="pv-made-i" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 9.6c-1-1.9-4.3-1.7-4.3 1 0 1.9 2.6 3.6 4.3 4.8 1.7-1.2 4.3-2.9 4.3-4.8 0-2.7-3.3-2.9-4.3-1Z"/>
-          <path d="M3 16.4c1.6-.9 3-.7 4.4.2l2.2 1.4c.7.4 1.2.5 2 .5h5.1c1.3 0 2.3.5 3.3 1.5"/>
-        </svg>
-      </span>
-      <div>
-        <b>Made by hand, to order</b>
-        <span>Every rakhi here is tied in our own workshop in ${esc(SHOP.localCity)}.</span>
-      </div>
-    </div>
-
     <div class="pv-panel">
       <div class="pv-k">Product description
         <span class="pv-k-orn" aria-hidden="true">
@@ -134,42 +118,15 @@ function paintProduct(){
         </span>
       </div>
       <p class="pv-desc">${esc(p.desc)}</p>
-      ${tagChips(p, Infinity)}
     </div>
 
-    ${etaHtml()}
-
-    <div class="pv-trust">
-      <div>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 2.8 4.6 5.4v6c0 4.2 3 8 7.4 9.8 4.4-1.8 7.4-5.6 7.4-9.8v-6Z"/>
-          <path d="M8.6 12.2l2.4 2.4 4.4-4.6"/></svg>
-        <b>Secure payments</b><span>UPI, card or on delivery</span>
-      </div>
-      <div>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M2 7.4h11.4v9.2H2z"/><path d="M13.4 10.6h3.9l3.1 3.2v2.8h-7z"/>
-          <circle cx="6.6" cy="18.4" r="1.9"/><circle cx="16.4" cy="18.4" r="1.9"/></svg>
-        <b>Pan-India delivery</b><span>About ${SHOP.awayDays} days to most pincodes</span>
-      </div>
-      <div>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3.4 11.2h17.2v9.4H3.4z"/><path d="M2.2 7.6h19.6v3.6H2.2z"/><path d="M12 7.6v13"/>
-          <path d="M12 7.6S10.9 3.4 8.4 3.4a2.1 2.1 0 0 0 0 4.2Z"/>
-          <path d="M12 7.6s1.1-4.2 3.6-4.2a2.1 2.1 0 0 1 0 4.2Z"/></svg>
-        <b>Sent as a gift</b><span>Boxed, with your message inside</span>
-      </div>
-    </div>
     </div>
 
     <!-- ── the side that does the selling ──
-         Name, what people said, what it costs, how many, and the two
-         buttons. It stays on screen while the pictures and the description
-         scroll past it, because a decision made three screens down should
-         not need scrolling back up to act on. -->
+         The name, what it costs, how many, and the two buttons. It stays
+         on screen while the pictures and the description scroll past it,
+         because a decision made three screens down should not need
+         scrolling back up to act on. -->
     <div class="pv-right">
       <div class="pv-buycard">
         <h1 class="pv-name">${esc(p.name)}</h1>
@@ -179,27 +136,10 @@ function paintProduct(){
           <span class="pv-off">${off}% OFF</span>` : ""}
         </div>
         <p class="pv-tax">Inclusive of all taxes · per piece</p>
-
-        <div class="pv-chips">
-          <span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2.8 4.6 5.4v6c0 4.2 3 8 7.4 9.8 4.4-1.8 7.4-5.6 7.4-9.8v-6Z"/>
-              <path d="M8.6 12.2l2.4 2.4 4.4-4.6"/></svg>
-            Premium<br>quality</span>
-          <span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 9.6c-1-1.9-4.3-1.7-4.3 1 0 1.9 2.6 3.6 4.3 4.8 1.7-1.2 4.3-2.9 4.3-4.8 0-2.7-3.3-2.9-4.3-1Z"/>
-              <path d="M3 16.4c1.6-.9 3-.7 4.4.2l2.2 1.4c.7.4 1.2.5 2 .5h5.1c1.3 0 2.3.5 3.3 1.5"/></svg>
-            Crafted<br>with care</span>
-          <span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2.6c1.8 2.3 1.8 5 0 7.3-1.8-2.3-1.8-5 0-7.3Zm0 18.8c-1.8-2.3-1.8-5 0-7.3 1.8 2.3 1.8 5 0 7.3ZM2.6 12c2.3-1.8 5-1.8 7.3 0-2.3 1.8-5 1.8-7.3 0Zm18.8 0c-2.3 1.8-5 1.8-7.3 0 2.3-1.8 5-1.8 7.3 0Z"/>
-              <circle cx="12" cy="12" r="1.9"/></svg>
-            Exclusive<br>designs</span>
-        </div>
+        <!-- What it is, in four words, directly under what it costs — above
+             the paragraph rather than below it, because somebody scanning
+             the page reads the labels and only then the sentence. -->
+        ${tagChips(p, Infinity)}
 
         ${out ? `
           <p class="pv-soldout">This one has gone. Ask us on WhatsApp and we
@@ -227,27 +167,76 @@ function paintProduct(){
               <path d="M13.2 2 4.6 13.4h5.2L9.4 22l8.8-11.6h-5.4Z"/></svg>
           </button>`}
 
-        <a class="pv-ask-link" id="pvAsk" href="#" target="_blank" rel="noopener">
-          <svg class="wa" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
-          Ask about this on WhatsApp</a>
       </div>
 
-      ${near.length ? `
-      <div class="pv-also">
-        <div class="pv-also-h">
-          <div class="pv-k">You may also like</div>
-          <a href="#all" id="pvAlsoAll">View all</a>
-        </div>
-        <div class="pv-also-g" id="pvRail">
-          ${near.map(x => railCard(x, {bare:true})).join("")}
-        </div>
-      </div>` : ""}
-    </div>
-    </div>`;
+    ${etaHtml()}
 
-  $("#pvAsk").href = wa(
-`Hello Ray Art Gallery, I am asking about № ${IDX.get(p.id)} — ${p.name} (${inr(p.price)}).`
-+ `\n\nHow many days will it take?`);
+    <div class="pv-trust">
+      <div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2.8 4.6 5.4v6c0 4.2 3 8 7.4 9.8 4.4-1.8 7.4-5.6 7.4-9.8v-6Z"/>
+          <path d="M8.6 12.2l2.4 2.4 4.4-4.6"/></svg>
+        <b>Secure payments</b><span>UPI, card or on delivery</span>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 7.4h11.4v9.2H2z"/><path d="M13.4 10.6h3.9l3.1 3.2v2.8h-7z"/>
+          <circle cx="6.6" cy="18.4" r="1.9"/><circle cx="16.4" cy="18.4" r="1.9"/></svg>
+        <b>Pan-India delivery</b><span>About ${SHOP.awayDays} days to most pincodes</span>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9.6c-1-1.9-4.3-1.7-4.3 1 0 1.9 2.6 3.6 4.3 4.8 1.7-1.2 4.3-2.9 4.3-4.8 0-2.7-3.3-2.9-4.3-1Z"/>
+          <path d="M3 16.4c1.6-.9 3-.7 4.4.2l2.2 1.4c.7.4 1.2.5 2 .5h5.1c1.3 0 2.3.5 3.3 1.5"/></svg>
+        <b>Crafted with care</b><span>Tied by hand in ${esc(SHOP.localCity)}</span>
+      </div>
+    </div>
+
+    </div>
+    </div>
+
+    <!-- ── you may also like ──
+         At the foot of the page rather than beside the buy panel: somebody
+         is only interested in another rakhi once they have finished with
+         this one, and a second catalogue up beside the price competes with
+         the thing the page is for.
+
+         One row that runs off the right edge and is pushed, not a grid —
+         a grid here is the shop starting again under its own product page. -->
+    ${near.length ? `
+    <div class="pv-also">
+      <div class="pv-also-h">
+        <div class="pv-k">You may also like</div>
+        <a href="#all" id="pvAlsoAll">View all</a>
+      </div>
+      <div class="pv-also-g" id="pvRail">
+        ${near.map(x => railCard(x, {bare:true})).join("")}
+      </div>
+    </div>` : ""}
+
+    <!-- ── the bar along the bottom, on a phone ──
+         The two buttons that matter, always in reach: a phone screen holds
+         about a third of this page, so the panel they used to live in was
+         off the top of it for most of the scroll — and the answer to "do I
+         want this" arrives while looking at the last photograph, not while
+         looking at the button.
+
+         The left slot is the shop's own Add button, which is why it turns
+         into a stepper the moment the rakhi is in the basket: that is what
+         every Add in this shop does, and paintCart() keeps it in step
+         without this page knowing anything about it. -->
+    <div class="pvbar">
+      <div class="pvbar-slot">${cardActs(p, {long:true})}</div>
+      ${out ? "" : `
+      <button class="pvbar-buy" type="button" data-pvbuy>
+        Buy now
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M13.2 2 4.6 13.4h5.2L9.4 22l8.8-11.6h-5.4Z"/></svg>
+      </button>`}
+    </div>`;
 
 }
 
@@ -434,16 +423,22 @@ $("#pvIn").addEventListener("click", e=>{
      replaces — silently throwing away a basket someone spent ten minutes
      filling is not a shortcut, it is a loss. The bill lists everything, so
      nothing is hidden either way. */
-  if(e.target.closest("#pvBuy")){
+  if(e.target.closest("#pvBuy") || e.target.closest("[data-pvbuy]")){
     const p = pvProduct(); if(!p) return;
     if(p.stock === 0){ toast(p.name + " is sold out"); return; }
     if(ordersPaused()){ toast(shopPauseNote || "Not taking orders right now."); return; }
     if(mustSignIn("buy this")) return;
     const row = cart.find(r => r.id === p.id && !r.note);
-    if(row) row.qty = Math.min(MAX_QTY, row.qty + pvQty);
-    else cart.push({id:p.id, name:p.name, price:p.price, qty:pvQty});
+    /* Already in the basket — from the stepper in the bar, or from a card on
+       another page — and Buy now means "take me to the bill", not "and one
+       more". It used to add regardless, so somebody who had counted out
+       three and then pressed Buy now arrived at a bill for four. */
+    if(row) track("add_cart", p.id, {qty: row.qty, via: "buy_now"});
+    else{
+      cart.push({id:p.id, name:p.name, price:p.price, qty:pvQty});
+      track("add_cart", p.id, {qty: pvQty, via: "buy_now"});
+    }
     save(); paintCart(true);
-    track("add_cart", p.id, {qty: pvQty, via: "buy_now"});
     closeProduct();
     requestAnimationFrame(() => $("#toBill").click());
     return;

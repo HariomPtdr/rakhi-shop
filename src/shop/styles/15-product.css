@@ -5,12 +5,12 @@
    rakhi gets a shareable link without the page making a single
    extra request. Back button and deep links both work.
 
-   Two columns, and they are not two halves of one thing: the
-   left is everything somebody reads — the photographs, how it
-   is made, what it is, when it arrives — and the right is the
-   one panel they act on. That panel stays on screen while the
-   left scrolls past it, because a decision reached three
-   screens down should not need scrolling back up to act on.
+   Two columns, and they are close to level on purpose: the
+   photographs and the description down the left, and what it
+   costs, how many, the two buttons, when it arrives and what is
+   promised down the right. Everything worth reading used to be
+   on one side, so one column ran three screens past the other
+   and left a gutter of nothing beside it.
 
    Everything is built from the shop's own materials: the ivory
    panel with a gold hairline that the cards wear, the maroon
@@ -84,11 +84,11 @@
   .pv-shot{order:1}
   .pv-thumbs{order:2}
   .pv-buycard{order:3; margin-top:clamp(14px,2.4vw,20px)}
-  .pv-made{order:4}
   .pv-panel{order:5}
   .pv-eta{order:6}
   .pv-trust{order:7}
   .pv-also{order:8}
+
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -204,7 +204,7 @@
    hairline, so the column reads as a set of related notes
    rather than a wall of text.
    ══════════════════════════════════════════════════════════ */
-.pv-panel,.pv-made,.pv-eta,.pv-trust{
+.pv-panel,.pv-eta,.pv-trust{
   border-radius:16px;
   background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
   box-shadow:
@@ -212,20 +212,7 @@
     inset 0 0 0 1px rgba(217,184,119,.45),
     0 12px 28px -20px rgba(120,88,22,.36);
 }
-.pv-made,.pv-panel,.pv-eta,.pv-trust{margin-top:clamp(14px,2.4vw,20px)}
-
-/* the one line about how these are made */
-.pv-made{display:flex; align-items:center; gap:14px; padding:clamp(13px,2.2vw,17px)}
-.pv-made-i{
-  display:grid; place-items:center; flex:none; width:44px; height:44px;
-  border-radius:50%; color:var(--rose); background:rgba(181,56,74,.07);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
-}
-.pv-made-i svg{width:22px; height:22px}
-.pv-made b{display:block; font-family:var(--display); font-weight:600;
-           font-size:clamp(15px,3.4vw,17px); color:#3B2415}
-.pv-made span{display:block; margin-top:3px; font-size:clamp(12.5px,2.9vw,13.5px);
-              line-height:1.55; color:var(--ink-soft)}
+.pv-panel,.pv-eta,.pv-trust{margin-top:clamp(14px,2.4vw,20px)}
 
 .pv-panel{padding:clamp(15px,2.6vw,22px)}
 
@@ -241,7 +228,15 @@
 
 .pv-desc{margin-top:12px; color:var(--ink-soft);
          font-size:clamp(13.5px,3vw,15px); line-height:1.65; max-width:52ch}
-.pv-panel .tags{margin-top:12px; flex-wrap:wrap}
+/* ── what it is, in four words ──
+   A size up from the labels on a card. There they ride in the corner of a
+   160px tile and have to give way to the price; here they are one of the
+   four things the page says about the rakhi, and they are read rather than
+   glanced at. */
+.pv-buycard .tags{margin-top:13px; flex-wrap:wrap; gap:7px}
+.pv-buycard .tag{
+  padding:5px 12px; font-size:clamp(11px,2.6vw,12.5px); letter-spacing:.01em;
+}
 
 /* how long it takes to get there */
 .pv-eta{display:flex; gap:12px; align-items:flex-start; padding:clamp(13px,2.2vw,17px)}
@@ -274,9 +269,10 @@
    costs, how many, and then the two buttons.
    ══════════════════════════════════════════════════════════ */
 .pv-right{margin-top:clamp(16px,2.6vw,20px)}
-@media (min-width:940px){
-  .pv-right{position:sticky; top:84px; margin-top:0}
-}
+/* Not sticky any more. The delivery note and the three promises moved into
+   this column, so the two are close enough in height that pinning one of
+   them only meant a long empty gutter beside whichever ran out first. */
+@media (min-width:940px){.pv-right{margin-top:0}}
 .pv-buycard{
   padding:clamp(17px,2.8vw,26px);
   border-radius:18px;
@@ -306,26 +302,11 @@
 }
 .pv-tax{margin-top:7px; font-size:12px; color:var(--ink-faint)}
 
-/* three things about every rakhi in this shop, in one row */
-.pv-chips{
-  display:grid; grid-template-columns:repeat(3,1fr); margin:clamp(15px,2.6vw,20px) 0;
-  border-radius:12px; overflow:hidden;
-  background:rgba(217,184,119,.09);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.4);
-}
-.pv-chips span{
-  display:grid; justify-items:center; gap:5px; padding:11px 6px; text-align:center;
-  font-family:var(--head); font-size:clamp(9.5px,2.1vw,10.5px); font-weight:600;
-  line-height:1.35; color:var(--ink-soft);
-}
-.pv-chips span + span{box-shadow:inset 1px 0 0 rgba(217,184,119,.4)}
-.pv-chips svg{width:20px; height:20px; color:var(--tan-deep)}
-
 /* ── how many ──
    The word above the stepper rather than beside it: a label and a control on
    one line put the control off centre in a panel where everything else runs
    the full width. */
-.pv-qty{margin-bottom:14px}
+.pv-qty{margin:clamp(15px,2.6vw,20px) 0 14px}
 .pv-qty-k{
   display:block; margin-bottom:8px;
   font-family:var(--head); font-size:10px; font-weight:600;
@@ -389,32 +370,19 @@
   font-size:13px; line-height:1.55; color:var(--ink-soft);
 }
 
-/* WhatsApp, reduced to what it is: a link */
-.pv-ask-link{
-  display:inline-flex; align-items:center; gap:8px; margin-top:14px;
-  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--ink-soft);
-  text-decoration:none; padding:6px 2px;
-}
-.pv-ask-link .wa{color:var(--wa)}
-.pv-ask-link:hover{color:#7A1418; text-decoration:underline; text-underline-offset:3px}
-
 /* ══════════════════════════════════════════════════════════
    YOU MAY ALSO LIKE
 
-   Under the panel that sells this one, because that is where
-   somebody who has decided against it is looking. The shop's
-   own card, three across on a wide screen and two on a phone —
-   the same grid the collection and the wishlist use.
+   At the foot of the page, and one row rather than a grid: a
+   grid here is the shop starting again under its own product
+   page, and somebody is only interested in another rakhi once
+   they have finished with this one.
+
+   The row runs off the right edge and is pushed — on a phone
+   with a thumb, on a desktop by dragging or with the scroll
+   wheel. A card cut by the edge is what says there is more.
    ══════════════════════════════════════════════════════════ */
-.pv-also{
-  margin-top:clamp(14px,2.4vw,20px); padding:clamp(15px,2.6vw,20px);
-  border-radius:18px;
-  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 0 0 1px rgba(217,184,119,.45),
-    0 12px 28px -20px rgba(120,88,22,.36);
-}
+.pv-also{margin-top:clamp(26px,4.4vw,46px)}
 .pv-also-h{display:flex; align-items:center; gap:12px; margin-bottom:13px}
 .pv-also-h .pv-k{margin-right:auto}
 .pv-also-h a{
@@ -423,11 +391,98 @@
 }
 @media (hover:hover){.pv-also-h a:hover{color:#6A1114; text-decoration:underline; text-underline-offset:3px}}
 .pv-also-g{
-  display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(9px,1.8vw,13px);
-  align-items:start;
+  display:flex; gap:clamp(10px,1.8vw,16px);
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  /* room for the shadow the cards carry, which a scroll container clips
+     flush at its own padding box */
+  padding:3px 2px 8px;
 }
-@media (min-width:520px){.pv-also-g{grid-template-columns:repeat(3,1fr)}}
-.pv-also-g > .rc{width:auto; height:100%}
+.pv-also-g::-webkit-scrollbar{display:none}
+.pv-also-g > .rc{flex:none; scroll-snap-align:start}
+@media (min-width:940px){.pv-also-g > .rc{width:min(232px,42vw)}}
+
+/* ══════════════════════════════════════════════════════════
+   THE BAR ALONG THE BOTTOM, ON A PHONE
+
+   A phone screen holds about a third of this page, so the panel
+   the two buttons live in is off the top of it for most of the
+   scroll — and the answer to "do I want this" arrives while
+   looking at the last photograph, not while looking at the
+   button. They come along.
+
+   The same ivory glass and gold hairline as the shop's own cart
+   bar, which this one stands in for while a rakhi is open.
+   ══════════════════════════════════════════════════════════ */
+.pvbar{display:none}
+@media (max-width:939px){
+  .pvbar{
+    position:fixed; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+    z-index:6; display:flex; align-items:center; gap:9px; padding:9px;
+    /* The bar and the two buttons in it take the page's own corner — 12px
+       on the buttons, 16 on the tray around them — rather than the capsule
+       they wore. Every control on this page is a rounded rectangle: the
+       quantity box, Add to cart, Buy now, the panels behind them. A pair of
+       pills along the bottom was the one shape from somewhere else. */
+    border-radius:16px;
+    background:linear-gradient(178deg, rgba(255,254,250,.97) 0%, rgba(252,247,236,.96) 45%, rgba(249,242,227,.96) 100%);
+    -webkit-backdrop-filter:blur(16px) saturate(1.08); backdrop-filter:blur(16px) saturate(1.08);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+               inset 0 0 0 1px rgba(217,184,119,.72),
+               0 18px 40px -16px rgba(60,34,8,.5);
+  }
+  /* the two slots share the bar evenly — one press each, the same size, so
+     neither reads as the safer of the two */
+  .pvbar-slot{flex:1; min-width:0; display:flex}
+  .pvbar-slot .btn,.pvbar-slot .qty{width:100%}
+
+  /* ── the left one ──
+     The shop's Add button, outlined rather than filled: the solid capsule in
+     this bar is Buy now, and two filled buttons side by side is a bar with
+     no answer to which one to press. */
+  .pvbar .btn-dark{
+    min-height:48px; padding:0 12px; border-radius:12px;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
+    font-family:var(--head); font-weight:600; font-size:11.5px; letter-spacing:.1em;
+  }
+  .pvbar .btn-dark[disabled]{
+    color:var(--ink-faint);
+    box-shadow:inset 0 0 0 1px rgba(217,184,119,.7);
+  }
+  /* ── and what it becomes ──
+     Once the rakhi is in the basket the button stops being a question and
+     becomes a count. It keeps the ivory it had a moment ago: a control that
+     changes colour when it changes job reads as a different control. */
+  .pvbar .qty{
+    height:48px; border-radius:12px;
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
+  }
+  .pvbar .qty button{width:52px; height:100%; color:#7A1418}
+  .pvbar .qty button:active{background:rgba(122,20,24,.09)}
+  .pvbar .qty b{font-size:16px; color:#3B2415}
+
+  .pvbar-buy{
+    flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:8px;
+    min-height:48px; padding:0 12px; border:0; border-radius:12px; cursor:pointer;
+    background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 0 0 1px rgba(217,184,119,.42),
+               0 8px 18px -10px rgba(106,17,20,.7);
+    font-family:var(--head); font-weight:600; font-size:11.5px;
+    letter-spacing:.1em; text-transform:uppercase;
+  }
+  .pvbar-buy svg{color:#F3C969; flex:none}
+  .pvbar-buy:active{transform:scale(.98)}
+
+  /* the buy panel keeps everything except the two controls the bar now
+     carries — the quantity goes with them, because the stepper in the bar is
+     the same number and two of them would disagree */
+  .pv-qty,#pvAdd,#pvBuy{display:none}
+  /* the page ends above the bar rather than under it */
+  .pv-in{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+}
 
 /* ── stars ──
    Drawn as one svg with a clip, so a half star is a half star. Used on this
