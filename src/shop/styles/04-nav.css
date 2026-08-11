@@ -162,12 +162,13 @@ body.nav-solid .nav-in{
 
    Hidden rather than removed: the count inside it is still painted on every
    change, and the header has no room for a special case. */
-/* It is drawn on a phone now. What was hidden there was a red capsule
-   reading CART beside a bottom bar that says the same thing louder — two
-   cart controls on a 390px header, one of them a slab. A 40px glyph is not
-   that, and the bottom bar only rises once there is something in the
-   basket: until then this was the one corner of a phone with no way into
-   it at all. */
+/* Not on a phone. The bar along the bottom is the cart there — two ways
+   into the same basket on one 390px screen is one too many, glyph or not.
+   Hidden rather than removed: the count inside it is still painted on every
+   change, and the header has no room for a special case. */
+@media (max-width:719px){
+  .cart-btn{display:none}
+}
 /* the one circle shrinks with the wordmark beside it */
 @media (max-width:360px){
   .brand-n{font-size:12px; letter-spacing:.05em}
