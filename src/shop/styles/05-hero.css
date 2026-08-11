@@ -57,6 +57,49 @@
   }
 }
 
+/* ── on a full screen, a panel rather than a bleed ──
+   Every other thing on this page stops at the same gutter: the header's
+   wordmark, the shelves, the offer strip, the collection. The hero alone ran
+   from window edge to window edge, so the first thing somebody saw was the
+   one thing on the site not standing in its column — and the photograph's
+   own card stock met the page's cream as a hairline the whole way across.
+
+   It is the offer strip's frame, because that panel is the page's answer to
+   "a picture with words on it": the same 24px corner, the same gold
+   hairline, the same warm shadow underneath. The picture inside is already
+   clipped by overflow:hidden, so rounding the section rounds the photograph
+   with it.
+
+   Phones keep the bleed. A 24px inset on a 390px screen costs a tenth of the
+   picture to say something the eye can already see, and the words in front
+   have nowhere else to go. */
+@media (min-width:940px){
+  .hero{
+    /* the gutter is a margin rather than padding: it has to fall outside the
+       frame, where .wrap's own gutter falls */
+    width:calc(100% - 2 * clamp(18px,4vw,44px));
+    /* .wrap's content box, not .wrap itself: 1240 less the gutter at each
+       end, which is exactly where the offer strip's panel and every card on
+       the page begin. Matching .wrap's outer 1240 instead would have put the
+       hero's frame a gutter wider than every panel under it. */
+    max-width:calc(1240px - 2 * clamp(18px,4vw,44px));
+    margin:clamp(6px,1.2vw,14px) auto 0;
+    border-radius:var(--r-xl);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.8),
+      inset 0 0 0 1px rgba(217,184,119,.55),
+      0 18px 44px -26px rgba(120,88,22,.5);
+    /* the frame's own bottom edge is now what the window has to make room
+       for, so the hint of the next section below it survives */
+    min-height:max(560px, calc(100vh - 132px));
+  }
+  /* The fade at the foot existed to hide the seam where the photograph's
+     cream met the page's. There is no seam to hide inside a frame — the
+     edge is drawn now — and a gradient stopping short of a rounded corner
+     is a band across the bottom of the picture. */
+  .hero::after{display:none}
+}
+
 /* The photograph's own card stock and the page's cream are not the same
    cream, so where the hero ended they met as a hairline — a pale rule
    across the full width that looked like a border nobody had asked for.
