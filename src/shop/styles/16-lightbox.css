@@ -1,12 +1,113 @@
-/* ── lightbox ── */
-.lb{position:fixed; inset:0; z-index:70; display:none; place-items:center; padding:26px; background:rgba(245,242,236,.94); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px)}
+/* ══════════════════════════════════════════════════════════
+   THE PHOTOGRAPH, FULL SIZE
+
+   The picture takes the room; everything else is one line
+   under it and the strip of the other photographs below that,
+   with the one showing ringed in the shop's red.
+
+   Built out of the same materials as the page it opened from —
+   ivory ground, gold hairline, the round ivory disc for a
+   control. It used to be a bare image on a grey wash with a
+   black circle in the corner, which was the last black thing
+   left in a shop made of cream and gold.
+   ══════════════════════════════════════════════════════════ */
+.lb{
+  position:fixed; inset:0; z-index:70; display:none; place-items:center;
+  padding:clamp(14px,3vw,30px);
+  background:rgba(251,246,236,.93);
+  -webkit-backdrop-filter:blur(14px) saturate(1.05); backdrop-filter:blur(14px) saturate(1.05);
+}
 .lb.on{display:grid}
-.lb-in{text-align:center; max-width:520px}
-.lb img{max-height:68vh; margin:0 auto; border-radius:var(--r-lg); box-shadow:var(--elev-3)}
-.lb svg,.lb img.art{width:min(64vw,300px); height:auto; margin:0 auto}
-.lb-n{font-family:var(--head); font-size:26px; letter-spacing:1px; text-transform:uppercase; margin-top:20px}
-.lb-p{font-family:var(--display); font-size:30px; margin-top:4px}
-.lb-x{position:absolute; top:20px; right:20px; width:42px; height:42px; border-radius:50%; border:0; cursor:pointer; background:var(--ink); color:var(--bg); font-size:17px}
+.lb-in{
+  display:flex; flex-direction:column; align-items:center; gap:clamp(11px,2vw,16px);
+  text-align:center; max-width:min(560px,92vw); max-height:100%;
+}
+
+/* the picture, in the frame the page's own gallery wears */
+.lb-frame{
+  position:relative; border-radius:var(--r-xl); overflow:hidden;
+  background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(217,184,119,.6),
+    0 26px 60px -30px rgba(120,88,22,.65);
+}
+.lb-frame img{
+  display:block; max-width:100%; max-height:min(64vh,600px);
+  width:auto; height:auto; margin:0 auto;
+}
+/* The drawing, for a rakhi with no photograph — a direct child only. Left
+   unscoped it also caught the chevrons inside the arrow buttons and blew
+   them up to 320px across the middle of the picture. */
+.lb-frame > img.art,.lb-frame > svg{width:min(64vw,320px); height:auto; margin:0 auto; padding:6%}
+
+/* ── the arrows ──
+   Where there is a pointer only, the same ivory disc the page's own gallery
+   and the shelves use. On touch the strip below is the control. */
+.lb-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+  width:42px; height:42px; display:none; place-items:center; border:0; cursor:pointer;
+  border-radius:50%;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.75), 0 10px 24px -12px rgba(120,88,22,.6);
+  transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+}
+.lb-arrow.prev{left:12px}
+.lb-arrow.next{right:12px}
+@media (hover:hover) and (min-width:900px){.lb-arrow{display:grid}}
+@media (hover:hover){
+  .lb-arrow:hover{background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8}
+}
+.lb-arrow:active{transform:translateY(-50%) scale(.94)}
+
+/* the one line under it: what it is, and what it costs */
+.lb-cap{display:grid; gap:4px}
+.lb-cap b{
+  font-family:var(--display); font-weight:600; letter-spacing:-.012em;
+  font-size:clamp(17px,4vw,22px); color:#3B2415;
+}
+.lb-cap span{
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(10px,2.2vw,11px); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--rose);
+}
+
+/* ── the other photographs ──
+   Here rather than only on the page behind, because somebody who has opened
+   one of them is looking for the one that answers a question, and closing
+   this to press a different thumbnail is the long way round. */
+.lb-thumbs{
+  display:flex; gap:9px; max-width:100%; overflow-x:auto; padding:2px 2px 4px;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.lb-thumbs::-webkit-scrollbar{display:none}
+.lb-th{
+  flex:0 0 auto; width:58px; height:58px; padding:0; border:0; cursor:pointer;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(160deg,#FFFDF8,#F5EEDF);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+  transition:box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.lb-th img{width:100%; height:100%; object-fit:cover; display:block}
+.lb-th.on{box-shadow:inset 0 0 0 2px rgba(154,34,38,.9), 0 8px 18px -12px rgba(120,88,22,.5)}
+.lb-th:active{transform:scale(.95)}
+@media (min-width:900px){.lb-th{width:64px; height:64px}}
+
+/* the way out, in the shop's own disc rather than a black circle */
+.lb-x{
+  position:absolute; top:clamp(12px,2.4vw,20px); right:clamp(12px,2.4vw,20px);
+  width:44px; height:44px; display:grid; place-items:center;
+  border-radius:50%; border:0; cursor:pointer; font-size:16px; line-height:1;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.75),
+             0 10px 24px -12px rgba(120,88,22,.6);
+  transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+}
+@media (hover:hover){
+  .lb-x:hover{background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8}
+}
+.lb-x:active{transform:scale(.94)}
 
 .toast{
   position:fixed; left:50%; bottom:26px; transform:translate(-50%,18px); z-index:80;

@@ -108,25 +108,13 @@ function paintProduct(){
         </button>`).join("")}
     </div>` : ""}
 
-    <div class="pv-panel">
-      <div class="pv-k">Product description
-        <span class="pv-k-orn" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
-            <circle cx="12" cy="12" r="2.1"/>
-          </svg>
-        </span>
-      </div>
-      <p class="pv-desc">${esc(p.desc)}</p>
     </div>
 
-    </div>
-
-    <!-- ── the side that does the selling ──
-         The name, what it costs, how many, and the two buttons. It stays
-         on screen while the pictures and the description scroll past it,
-         because a decision made three screens down should not need
-         scrolling back up to act on. -->
+    <!-- ── everything that is not a photograph ──
+         The name, what it costs, what it is, the two buttons, when it
+         arrives and what is promised — all down one side, in the order the
+         decision is made. The left is the pictures and nothing else, which
+         is what a rakhi is bought on. -->
     <div class="pv-right">
       <div class="pv-buycard">
         <h1 class="pv-name">${esc(p.name)}</h1>
@@ -143,31 +131,41 @@ function paintProduct(){
 
         ${out ? `
           <p class="pv-soldout">This one has gone. Ask us on WhatsApp and we
-             will tell you when it is back.</p>
-          <button class="btn btn-dark btn-full" id="pvAdd" disabled>Sold out</button>`
-        : `
-          <div class="pv-qty">
-            <span class="pv-qty-k">Quantity</span>
-            <span class="stp">
-              <button type="button" id="pvDown" aria-label="One less">−</button>
-              <span id="pvQty">${pvQty}</span>
-              <button type="button" id="pvUp" aria-label="One more">+</button>
-            </span>
-          </div>
+             will tell you when it is back.</p>` : ""}
 
-          <button class="pv-act pv-act-add" id="pvAdd">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5.5 8h13l-1 12.5h-11Z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
-            Add to cart
-          </button>
+        <!-- ── the two of them, on one line ──
+             Add is the shop's own Add button, which is why it becomes a
+             stepper the moment the rakhi is in the basket — that is what
+             every Add in this shop does, and paintCart() keeps it in step
+             without this page knowing. There is no separate quantity box
+             any more: it and the stepper were two counts of one thing, and
+             two counts eventually disagree.
+
+             The same pair the bar along the bottom of a phone carries. One
+             page, one answer to "how do I buy this". -->
+        <div class="pv-acts">
+          <div class="pvbar-slot">${cardActs(p, {long:true})}</div>
+          ${out ? "" : `
           <button class="pv-act pv-act-buy" id="pvBuy">
             Buy now
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M13.2 2 4.6 13.4h5.2L9.4 22l8.8-11.6h-5.4Z"/></svg>
           </button>`}
+        </div>
 
       </div>
+
+    <div class="pv-panel">
+      <div class="pv-k">Product description
+        <span class="pv-k-orn" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.4c1.5 1.9 1.5 4.2 0 6.1-1.5-1.9-1.5-4.2 0-6.1Zm0 19.2c-1.5-1.9-1.5-4.2 0-6.1 1.5 1.9 1.5 4.2 0 6.1ZM2.4 12c1.9-1.5 4.2-1.5 6.1 0-1.9 1.5-4.2 1.5-6.1 0Zm19.2 0c-1.9 1.5-4.2 1.5-6.1 0 1.9-1.5 4.2-1.5 6.1 0ZM5.2 5.2c2.4.3 4 1.9 4.3 4.3-2.4-.3-4-1.9-4.3-4.3Zm13.6 13.6c-2.4-.3-4-1.9-4.3-4.3 2.4.3 4 1.9 4.3 4.3Zm0-13.6c-.3 2.4-1.9 4-4.3 4.3.3-2.4 1.9-4 4.3-4.3ZM5.2 18.8c.3-2.4 1.9-4 4.3-4.3-.3 2.4-1.9 4-4.3 4.3Z"/>
+            <circle cx="12" cy="12" r="2.1"/>
+          </svg>
+        </span>
+      </div>
+      <p class="pv-desc">${esc(p.desc)}</p>
+    </div>
 
     ${etaHtml()}
 
@@ -307,17 +305,75 @@ function markSlide(n){
     b.setAttribute("aria-pressed", String(i === n));
   });
 }
+/* ══════════════════════════════════════════════════════════
+   THE PHOTOGRAPH, FULL SIZE
+
+   The whole point of it is the picture, so the picture takes
+   the room and everything else is a line under it: the name,
+   what it costs, and the strip of the other photographs with
+   the one showing marked.
+
+   The strip is the reason this is not simply a bigger image.
+   Somebody who has opened one photograph is looking for the
+   one that shows the thing they are unsure about, and closing
+   this to press a different thumbnail on the page behind it is
+   the long way round.
+   ══════════════════════════════════════════════════════════ */
+let lbAt = 0;
+
+function zoomHtml(p, i){
+  const g = pvGallery(p);
+  const n = Math.max(0, Math.min(i, g.length - 1));
+  lbAt = n;
+  const src = g.length ? g[n] : null;
+  return `
+    <div class="lb-frame">
+      ${src ? `<img src="${esc(src)}" alt="${esc(p.name)}">` : pvArt(p)}
+      ${g.length > 1 ? `
+        <button class="lb-arrow prev" data-lbgo="${n - 1}" aria-label="Previous photo">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <button class="lb-arrow next" data-lbgo="${n + 1}" aria-label="Next photo">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>` : ""}
+    </div>
+
+    <div class="lb-cap">
+      <b>${esc(p.name)}</b>
+      <span>${inr(p.price)}${g.length > 1 ? ` · ${n + 1} of ${g.length}` : ""}</span>
+    </div>
+
+    ${g.length > 1 ? `
+    <div class="lb-thumbs" role="group" aria-label="Photos of ${esc(p.name)}">
+      ${g.map((s, k) => `
+        <button type="button" class="lb-th${k === n ? " on" : ""}" data-lbgo="${k}"
+                aria-label="Photo ${k + 1} of ${g.length}" aria-pressed="${k === n}">
+          <img src="${esc(s)}" alt="" loading="lazy">
+        </button>`).join("")}
+    </div>` : ""}`;
+}
+
 function openZoom(i){
   const p = pvProduct(); if(!p) return;
-  const g = pvGallery(p);
-  const src = g.length ? g[Math.min(i, g.length - 1)] : null;
-  $("#lbIn").innerHTML =
-    (src ? `<img src="${src}" alt="${esc(p.name)}">` : pvArt(p)) +
-    `<div class="lb-n">№ ${IDX.get(p.id)} — ${esc(p.name)}${
-      g.length > 1 ? ` · ${i + 1} of ${g.length}` : ""}</div>` +
-    `<div class="lb-p">${inr(p.price)}</div>`;
+  $("#lbIn").innerHTML = zoomHtml(p, i);
   openSheet("#lb");
 }
+
+/* moving inside it, from the arrows or the strip. The page behind follows,
+   so closing this leaves the same photograph showing that was being looked
+   at — anything else reads as the zoom having lost your place. */
+$("#lb").addEventListener("click", e => {
+  const go = e.target.closest("[data-lbgo]");
+  if(!go) return;
+  e.stopPropagation();
+  const p = pvProduct(); if(!p) return;
+  const g = pvGallery(p);
+  const n = Math.max(0, Math.min(parseInt(go.dataset.lbgo, 10) || 0, g.length - 1));
+  $("#lbIn").innerHTML = zoomHtml(p, n);
+  if(typeof slideTo === "function") slideTo(n);
+});
 
 function openProduct(id, fromHash){
   if(!PRODUCTS.some(x=>x.id===id)) return;
@@ -393,9 +449,6 @@ $("#pvShare").onclick = async ()=>{
 
 /* one delegated handler for the whole product page */
 $("#pvIn").addEventListener("click", e=>{
-  if(e.target.closest("#pvUp")){   pvQty = Math.min(MAX_QTY, pvQty+1); $("#pvQty").textContent = pvQty; return; }
-  if(e.target.closest("#pvDown")){ pvQty = Math.max(1, pvQty-1);       $("#pvQty").textContent = pvQty; return; }
-
   const th = e.target.closest("[data-shot]");
   if(th){ slideTo(parseInt(th.dataset.shot, 10) || 0); return; }
   if(e.target.closest("#pvPrev")){ slideTo(pvShotAt - 1); return; }
@@ -444,21 +497,6 @@ $("#pvIn").addEventListener("click", e=>{
     return;
   }
 
-  const add = e.target.closest("#pvAdd");
-  if(add){
-    const p = pvProduct(); if(!p) return;   /* a stale tap while the page closes */
-    if(p.stock === 0){ toast(p.name + " is sold out"); return; }
-    /* this page fills the basket itself rather than going through addItem(),
-       because it adds pvQty at once — so it asks for the sign-in itself too */
-    if(mustSignIn("add this to your basket")) return;
-    lastBtn = add;
-    const row = cart.find(r => r.id===p.id && !r.note);
-    if(row) row.qty = Math.min(MAX_QTY, row.qty + pvQty);
-    else cart.push({id:p.id, name:p.name, price:p.price, qty:pvQty});
-    save(); paintCart(true); toast(`Added — ${p.name}`);
-    throwPetals(add);
-    return;
-  }
   if(e.target.closest("#pvZoom")){ openZoom(pvShotAt); return; }
 });
 

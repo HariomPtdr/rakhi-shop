@@ -305,7 +305,11 @@ const closeLb=fromBack=>{
 /* wrapped, not passed straight in: a click event as `fromBack` reads as
    "the back button did this" and leaves the pushed history entry behind */
 $("#lbX").onclick = ()=>closeLb();
-$("#lb").addEventListener("click", ()=>closeLb());
+/* The ground behind the photograph closes it; the photograph does not. It
+   used to close on any click at all, which was fine when there was nothing
+   in there to press — the strip of other photographs under it means a tap
+   meant for one of them would have shut the whole thing. */
+$("#lb").addEventListener("click", e => { if(e.target.id === "lb") closeLb(); });
 
 /* ══════════════════════════════════════════════════════════
    SHOP BY CATEGORY → the chips below

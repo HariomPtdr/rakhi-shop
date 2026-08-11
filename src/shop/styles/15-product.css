@@ -5,12 +5,12 @@
    rakhi gets a shareable link without the page making a single
    extra request. Back button and deep links both work.
 
-   Two columns, and they are close to level on purpose: the
-   photographs and the description down the left, and what it
-   costs, how many, the two buttons, when it arrives and what is
-   promised down the right. Everything worth reading used to be
-   on one side, so one column ran three screens past the other
-   and left a gutter of nothing beside it.
+   Two columns: the photographs down the left, and everything
+   that is not a photograph down the right, in the order the
+   decision is made — the name, the price, what it is, the two
+   buttons, when it arrives, what is promised. A rakhi is bought
+   on the picture, so the picture gets a column to itself and
+   the words do not have to be read around it.
 
    Everything is built from the shop's own materials: the ivory
    panel with a gold hairline that the cards wear, the maroon
@@ -302,35 +302,46 @@
 }
 .pv-tax{margin-top:7px; font-size:12px; color:var(--ink-faint)}
 
-/* ── how many ──
-   The word above the stepper rather than beside it: a label and a control on
-   one line put the control off centre in a panel where everything else runs
-   the full width. */
-.pv-qty{margin:clamp(15px,2.6vw,20px) 0 14px}
-.pv-qty-k{
-  display:block; margin-bottom:8px;
-  font-family:var(--head); font-size:10px; font-weight:600;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--tan-deep);
-}
-.pv-qty .stp{
-  display:inline-flex; align-items:center; min-height:48px;
-  border-radius:12px; background:#FFFDF8;
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.7);
-}
-.pv-qty .stp button{
-  width:48px; height:46px; border:0; background:none; cursor:pointer;
-  font-size:19px; line-height:1; color:#7A1418;
-  transition:background .2s var(--ease);
-}
-@media (hover:hover){.pv-qty .stp button:hover{background:rgba(122,20,24,.06)}}
-.pv-qty .stp span{
-  min-width:40px; text-align:center;
-  font-family:var(--display); font-weight:700; font-size:16px; color:#3B2415;
-}
-
-/* ── the two buttons ──
+/* ── the two of them, on one line ──
    Add is the outlined one and Buy now is filled, which is the shop's rule
-   everywhere: the solid capsule is the one that spends money. */
+   everywhere: the solid capsule is the one that spends money. Side by side
+   and the same width, because they are two answers to one question — and
+   stacked full-width they read as a sequence, as though the second were
+   what you press after the first.
+
+   Add is the shop's own Add button, so once the rakhi is in the basket it
+   becomes the stepper. It keeps the ivory it had a moment ago: a control
+   that changes colour when it changes job reads as a different control. */
+.pv-acts{display:flex; align-items:center; gap:10px; margin-top:clamp(16px,2.8vw,22px)}
+.pv-acts .pvbar-slot{flex:1; min-width:0; display:flex}
+.pv-acts .pvbar-slot .btn,.pv-acts .pvbar-slot .qty{width:100%}
+.pv-acts .btn-dark{
+  min-height:50px; padding:0 12px; border-radius:12px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
+  font-family:var(--head); font-weight:600;
+  font-size:clamp(11px,2.4vw,12px); letter-spacing:.12em; text-transform:uppercase;
+}
+.pv-acts .btn-dark[disabled]{
+  color:var(--ink-faint); box-shadow:inset 0 0 0 1px rgba(217,184,119,.7);
+}
+@media (hover:hover){
+  .pv-acts .btn-dark:not([disabled]):hover{
+    background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 0 1.6px rgba(154,34,38,.9),
+               0 12px 26px -16px rgba(122,20,24,.6);
+  }
+}
+.pv-acts .qty{
+  height:50px; border-radius:12px;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
+}
+.pv-acts .qty button{width:52px; height:100%; color:#7A1418}
+.pv-acts .qty button:active{background:rgba(122,20,24,.09)}
+@media (hover:hover){.pv-acts .qty button:hover{background:rgba(122,20,24,.07)}}
+.pv-acts .qty b{font-size:16px; color:#3B2415}
+.pv-acts .pv-act-buy{flex:1; min-width:0; margin-top:0}
 .pv-act{
   display:flex; align-items:center; justify-content:center; gap:9px;
   width:100%; min-height:50px; border:0; border-radius:12px; cursor:pointer;
@@ -340,18 +351,7 @@
              box-shadow .3s var(--ease), transform .25s var(--ease);
 }
 .pv-act:active{transform:scale(.98)}
-.pv-act-add{
-  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1.4px rgba(154,34,38,.5);
-}
-@media (hover:hover){
-  .pv-act-add:hover{
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 0 1.6px rgba(154,34,38,.9),
-               0 12px 26px -16px rgba(122,20,24,.6);
-  }
-}
 .pv-act-buy{
-  margin-top:10px;
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 0 0 1px rgba(217,184,119,.42),
              0 12px 24px -12px rgba(106,17,20,.7);
@@ -476,10 +476,9 @@
   .pvbar-buy svg{color:#F3C969; flex:none}
   .pvbar-buy:active{transform:scale(.98)}
 
-  /* the buy panel keeps everything except the two controls the bar now
-     carries — the quantity goes with them, because the stepper in the bar is
-     the same number and two of them would disagree */
-  .pv-qty,#pvAdd,#pvBuy{display:none}
+  /* the buy panel keeps everything except the two controls, which the bar
+     along the bottom carries there */
+  .pv-acts{display:none}
   /* the page ends above the bar rather than under it */
   .pv-in{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 }
