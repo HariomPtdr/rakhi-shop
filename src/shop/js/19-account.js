@@ -244,7 +244,6 @@ function orderCard(o){
   const first = items.find(i => i.product_id && catalogue(i.product_id));
   const pic   = first ? catalogue(first.product_id) : null;
   const done  = o.status === "delivered";
-  const rateable = done && first;
 
   /* A list is for recognising an order and getting on with it. Everything
      that explains — where it has got to, what is in it, where it is going,
@@ -265,8 +264,6 @@ function orderCard(o){
     <div class="ac-o-acts">
       <button class="btn btn-dark btn-sm" data-oview="${esc(o.id)}">${
         done ? "View order" : "Track order"}</button>
-      ${rateable ? `<button class="btn btn-ghost btn-sm" data-ofeed="${esc(first.product_id)}"
-        >Feedback</button>` : ""}
       ${done && first ? `<button class="btn btn-ghost btn-sm" data-oagain="${esc(o.id)}"
         >Buy again</button>` : ""}
     </div>
@@ -780,18 +777,6 @@ $("#acctBody").addEventListener("click", async e => {
 
   if(e.target.closest("#pEdit")){ detailsEditing = true; paintAcct(); return; }
   if(e.target.closest("#pCancel")){ detailsEditing = false; paintAcct(); return; }
-
-  const fb = e.target.closest("[data-ofeed]");
-  if(fb){
-    /* the review form lives on the rakhi's own page, where the database
-       has already been asked whether this person may write one */
-    const id = fb.dataset.ofeed;
-    if(isOn("#acctModal") && sheetHist){
-      addEventListener("popstate", () => openProduct(id), {once: true});
-      closeAcct();
-    }else{ closeAcct(); openProduct(id); }
-    return;
-  }
 
   const ag = e.target.closest("[data-oagain]");
   if(ag){

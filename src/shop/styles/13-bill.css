@@ -1,4 +1,14 @@
-/* ── bill ── */
+/* ══════════════════════════════════════════════════════════
+   THE SHEET, AND THE BILL ON IT
+
+   One shell, worn by the bill, the account and the menu: full
+   screen on a phone, a card in the middle of a wide one. It was
+   the shop's generic glass — white on white with a grey shadow
+   — which is a surface belonging to no particular shop. It is
+   the ivory and gold everything else here is made of now, and
+   the bill inside it is a receipt on that paper rather than a
+   grey box.
+   ══════════════════════════════════════════════════════════ */
 .modal{position:fixed; inset:0; z-index:60; display:none}
 .modal.on{display:block}
 .sheet{
@@ -11,13 +21,42 @@
 }
 @media (min-width:720px){
   .modal{overflow-y:auto; padding:clamp(12px,3vw,34px)}
-  .sheet{position:static; inset:auto; max-width:640px; margin:0 auto; display:block;
-    border-radius:var(--r-xl); border:1px solid var(--glass-border);
-    background:rgba(255,253,248,.94)}
+  .sheet{
+    position:static; inset:auto; max-width:640px; margin:0 auto; display:block;
+    border:0; border-radius:20px;
+    background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1px rgba(217,184,119,.55),
+      0 34px 70px -34px rgba(60,34,8,.55);
+  }
 }
-.sh-h{display:flex; align-items:center; gap:12px; padding:15px 18px 13px; border-bottom:1px solid var(--line); position:relative; z-index:2; flex:none}
+.sh-h{
+  display:flex; align-items:center; gap:12px; padding:15px 18px 13px;
+  box-shadow:0 1px 0 rgba(217,184,119,.5);
+  position:relative; z-index:2; flex:none;
+}
 @media (min-width:720px){.sh-h{padding:22px 24px 18px}}
-.sh-h h2{font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:-.01em}
+.sh-h h2{
+  font-family:var(--display); font-size:clamp(21px,4.6vw,25px); font-weight:600;
+  letter-spacing:-.014em; color:#3B2415;
+}
+/* the way out, in the shop's own disc — it was a black circle, which is the
+   one shape here that belongs to no part of this design */
+.sheet .x{
+  margin-left:auto; flex:none;
+  width:42px; height:42px; display:grid; place-items:center;
+  border:0; border-radius:50%; cursor:pointer; font-size:15px; line-height:1;
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.75),
+             0 8px 18px -12px rgba(120,88,22,.5);
+  transition:background .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+}
+@media (hover:hover){
+  .sheet .x:hover{background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8}
+}
+.sheet .x:active{transform:scale(.94)}
 .sh-b{
   padding:18px; position:relative; z-index:2;
   flex:1 1 auto; min-height:0; overflow-y:auto;
@@ -26,50 +65,54 @@
 @media (min-width:720px){.sh-b{padding:24px; overflow:visible}}
 .fg{display:grid; gap:15px; margin-bottom:15px}
 @media (min-width:520px){.fg.two{grid-template-columns:1fr 1fr}}
-.fld label{display:block; font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:7px}
+.fld label{display:block; font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--tan-deep); margin-bottom:7px}
 .fld label i{font-style:normal; color:var(--rose)}
 .fld input,.fld textarea{
-  width:100%; padding:13px 15px; border:0; border-radius:var(--r-md);
-  background:rgba(255,255,255,.85); box-shadow:inset 0 0 0 1px var(--line-2);
+  width:100%; padding:13px 15px; border:0; border-radius:12px;
+  background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.7);
   font-family:var(--body); font-size:16px; color:var(--ink);
+  transition:box-shadow .25s var(--ease), background .25s var(--ease);
 }
 .fld input::placeholder,.fld textarea::placeholder{color:var(--ink-faint)}
-.fld input:focus,.fld textarea:focus{box-shadow:inset 0 0 0 1.5px var(--ink); background:#fff}
+.fld input:focus,.fld textarea:focus{box-shadow:inset 0 0 0 1.6px rgba(154,34,38,.75); background:#fff}
 .fld textarea{min-height:74px; resize:vertical; line-height:1.55}
 .fld .err{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--rose); margin-top:6px; display:none}
-.fld.bad input,.fld.bad textarea{box-shadow:inset 0 0 0 1.5px var(--rose)}
+.fld.bad input,.fld.bad textarea{box-shadow:inset 0 0 0 1.6px var(--rose)}
 .fld.bad .err{display:block}
 
+/* The receipt: still set in the monospace a bill is set in, but on the
+   shop's own paper with a gold rule instead of a grey box. */
 .bill{
-  margin-top:24px; padding:clamp(20px,3vw,28px); border-radius:var(--r-md);
-  background:rgba(255,255,255,.66); box-shadow:inset 0 0 0 1px var(--line-2);
+  margin-top:24px; padding:clamp(20px,3vw,28px); border-radius:14px;
+  background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
   font-family:var(--mono); font-size:12px; line-height:1.7; color:var(--ink);
 }
-.bill-h{text-align:center; padding-bottom:14px; border-bottom:1px dashed var(--line-2); margin-bottom:14px}
-.bill-h b{display:block; font-family:var(--head); font-weight:700; font-size:17px; letter-spacing:.16em; text-transform:uppercase}
+.bill-h{text-align:center; padding-bottom:14px; border-bottom:1px dashed rgba(217,184,119,.85); margin-bottom:14px}
+.bill-h b{display:block; font-family:var(--head); font-weight:700; font-size:17px; letter-spacing:.16em; text-transform:uppercase; color:#7A1418}
 .bill-h span{font-size:9.5px; letter-spacing:1.9px; text-transform:uppercase; color:var(--ink-faint)}
 .bill-meta{display:flex; flex-wrap:wrap; gap:2px 22px; margin-bottom:14px; font-size:11px}
 .bill table{width:100%; border-collapse:collapse; font-size:11.5px}
-.bill th{text-align:left; padding:6px 4px; border-bottom:1px solid var(--ink); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:400; color:var(--ink-faint)}
+.bill th{text-align:left; padding:6px 4px; border-bottom:1px solid rgba(154,34,38,.55); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:400; color:var(--ink-faint)}
 .bill th:nth-child(n+2),.bill td:nth-child(n+2){text-align:right}
-.bill td{padding:7px 4px; border-bottom:1px dotted var(--line-2); vertical-align:top}
+.bill td{padding:7px 4px; border-bottom:1px dotted rgba(217,184,119,.8); vertical-align:top}
 .bill td:nth-child(n+2){font-variant-numeric:tabular-nums; white-space:nowrap}
 .bill tfoot td{border:0; padding:3px 4px}
 .bill tfoot tr:first-child td{padding-top:11px}
-.bill tfoot .gt td{border-top:1px solid var(--ink); padding-top:9px; font-size:14px; font-weight:600}
-.bill-to{margin-top:15px; padding-top:13px; border-top:1px dashed var(--line-2); white-space:pre-wrap; font-size:11.5px}
+.bill tfoot .gt td{border-top:1px solid rgba(154,34,38,.55); padding-top:9px; font-size:14px; font-weight:600; color:#7A1418}
+.bill-to{margin-top:15px; padding-top:13px; border-top:1px dashed rgba(217,184,119,.85); white-space:pre-wrap; font-size:11.5px}
 .bill-to b{font-size:9px; letter-spacing:1.6px; text-transform:uppercase; color:var(--ink-faint); display:block; margin-bottom:5px}
-.bill-note{margin-top:14px; padding-top:11px; border-top:1px dashed var(--line-2); font-size:10px; letter-spacing:.4px; color:var(--ink-faint); line-height:1.6}
+.bill-note{margin-top:14px; padding-top:11px; border-top:1px dashed rgba(217,184,119,.85); font-size:10px; letter-spacing:.4px; color:var(--ink-faint); line-height:1.6}
 .sh-f{
   padding:10px 18px calc(18px + env(safe-area-inset-bottom));
   display:grid; gap:9px; position:relative; z-index:2; flex:0 0 auto;
-  border-top:1px solid var(--line); background:rgba(255,253,248,.97);
+  box-shadow:0 -1px 0 rgba(217,184,119,.5);
+  background:linear-gradient(178deg, rgba(255,254,250,.98), rgba(249,242,227,.98));
 }
 .sh-tot{
   display:flex; align-items:baseline; gap:10px; padding:0 2px 2px;
 }
-.sh-tot span{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase; color:var(--ink-faint)}
-.sh-tot b{margin-left:auto; font-family:var(--display); font-weight:400; font-size:26px; line-height:1}
+.sh-tot span{font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--tan-deep)}
+.sh-tot b{margin-left:auto; font-family:var(--display); font-weight:700; font-size:26px; line-height:1; color:var(--rose)}
 .sh-hint{
   display:flex; align-items:center; gap:6px;
   font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
@@ -91,7 +134,7 @@
 .cp-row input{
   flex:1; min-width:0; font:inherit; font-size:16px; letter-spacing:.06em;
   text-transform:uppercase; padding:11px 13px; border:0; border-radius:var(--r-sm);
-  background:#fffdf8; box-shadow:inset 0 0 0 1px var(--line-2);
+  background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
 }
 .cp-row input::placeholder{letter-spacing:normal; text-transform:none}
 .cp-row .btn{flex:none; min-height:44px}
@@ -99,7 +142,7 @@
 .cp-on{
   display:flex; align-items:center; gap:12px; margin-bottom:12px;
   padding:11px 13px; border-radius:var(--r-sm);
-  background:rgba(27,132,151,.09); box-shadow:inset 0 0 0 1px rgba(27,132,151,.3);
+  background:rgba(217,184,119,.18); box-shadow:inset 0 0 0 1px rgba(217,184,119,.3);
 }
 .cp-on b{font-family:var(--mono); font-size:13px; letter-spacing:.06em}
 .cp-on span{display:block; margin-top:2px; font-size:12px; color:var(--ink-soft)}
@@ -114,8 +157,8 @@
 .pin-ask{
   display:flex; align-items:flex-start; gap:11px; width:100%; text-align:left;
   margin-bottom:12px; padding:12px 14px; border:0; cursor:pointer;
-  border-radius:var(--r-sm); background:rgba(255,255,255,.6);
-  box-shadow:inset 0 0 0 1px var(--line-2); color:var(--ink); font:inherit;
+  border-radius:var(--r-sm); background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6); color:var(--ink); font:inherit;
   transition:box-shadow .2s var(--ease);
 }
 .pin-ask:hover{box-shadow:inset 0 0 0 1px var(--tan-deep)}
@@ -126,15 +169,15 @@
 .pin-on{
   display:flex; align-items:center; gap:10px; margin-bottom:12px;
   padding:11px 13px; border-radius:var(--r-sm);
-  background:rgba(27,132,151,.08); box-shadow:inset 0 0 0 1px rgba(27,132,151,.28);
+  background:rgba(217,184,119,.16); box-shadow:inset 0 0 0 1px rgba(217,184,119,.28);
 }
-.pin-on svg{flex:none; color:var(--teal)}
+.pin-on svg{flex:none; color:var(--tan-deep)}
 .pin-on div{flex:1; min-width:0}
 .pin-on b{display:block; font-family:var(--head); font-size:13px; font-weight:600}
 .pin-on span{display:block; font-size:11.5px; color:var(--ink-faint)}
 .pin-on a, .pin-on button{
   flex:none; border:0; background:none; cursor:pointer; padding:4px 2px;
-  font-family:var(--head); font-size:12px; font-weight:600; color:var(--teal);
+  font-family:var(--head); font-size:12px; font-weight:600; color:var(--tan-deep);
 }
 .pin-on button{color:var(--ink-faint)}
 .pin-on button:hover{color:#8A2033}
@@ -148,10 +191,10 @@
 @media (min-width:520px){.pay-opts{grid-template-columns:1fr 1fr}}
 .pay-opt{
   text-align:left; border:0; cursor:pointer; padding:12px 14px; border-radius:var(--r-sm);
-  background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line-2);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
   transition:box-shadow .2s var(--ease), background .2s var(--ease); font:inherit;
 }
-.pay-opt.on{background:#fffdf8; box-shadow:inset 0 0 0 2px var(--ink)}
+.pay-opt.on{background:#FFFDF8; box-shadow:inset 0 0 0 2px var(--ink)}
 .pay-opt b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
 .pay-opt span{display:block; margin-top:3px; font-size:11.5px; color:var(--ink-faint); line-height:1.5}
 .btn.cod .wa{display:none}
@@ -164,12 +207,12 @@
 .bill-done{text-align:center; padding:26px 18px}
 .done-tick{
   width:52px; height:52px; margin:0 auto 14px; border-radius:50%; display:grid;
-  place-items:center; background:rgba(27,132,151,.12); color:var(--teal);
+  place-items:center; background:rgba(217,184,119,.12); color:var(--tan-deep);
 }
 .done-tick svg{width:26px; height:26px}
 .bill-done b{display:block; font-family:var(--display); font-size:21px; font-weight:600}
 .bill-done p{margin-top:8px; font-size:13.5px; line-height:1.65; color:var(--ink-soft)}
-.bill-done a{color:var(--teal)}
+.bill-done a{color:var(--tan-deep)}
 .done-acts{display:flex; gap:9px; justify-content:center; margin-top:16px; flex-wrap:wrap}
 
 /* ── where do I get a code? ──
@@ -181,11 +224,11 @@
   color:var(--ink-faint); font-family:var(--head); font-size:15px; font-weight:700;
   border-radius:50%; transition:color .2s var(--ease);
 }
-.cp-help:hover, .cp-help[aria-expanded="true"]{color:var(--teal)}
+.cp-help:hover, .cp-help[aria-expanded="true"]{color:var(--tan-deep)}
 .cp-note{
   margin:-4px 0 12px; padding:11px 13px; border-radius:var(--r-sm);
   font-size:12.5px; line-height:1.6; color:var(--ink-soft);
-  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.2);
+  background:rgba(217,184,119,.14); box-shadow:inset 0 0 0 1px rgba(217,184,119,.2);
 }
 
 /* ── the address they already gave us ── */
@@ -201,7 +244,7 @@
 }
 .addr-tick{
   flex:none; width:20px; height:20px; border-radius:50%; margin-top:1px;
-  display:grid; place-items:center; background:var(--ink); color:var(--bg);
+  display:grid; place-items:center; background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
 }
 .addr-card b{font-family:var(--head); font-size:14px; font-weight:600}
 .addr-card p{margin:3px 0 0; font-size:13.5px; line-height:1.5; color:var(--ink-soft)}
@@ -212,7 +255,7 @@
 .addr-alts{display:flex; flex-wrap:wrap; gap:6px 18px; margin:11px 2px 16px}
 .addr-alts button{
   border:0; background:none; padding:6px 0; cursor:pointer; font-family:var(--head);
-  font-size:12.5px; font-weight:600; color:var(--teal); text-decoration:underline;
+  font-size:12.5px; font-weight:600; color:var(--tan-deep); text-decoration:underline;
   text-underline-offset:3px; text-decoration-thickness:1px;
 }
 .addr-alts button:hover{color:var(--ink)}
@@ -220,14 +263,14 @@
 /* the second way to attach a location, for when the phone will not */
 .pin-paste{
   display:block; margin:-6px 0 12px; padding:4px 2px; border:0; background:none;
-  cursor:pointer; font-family:var(--head); font-size:12px; font-weight:600; color:var(--teal);
+  cursor:pointer; font-family:var(--head); font-size:12px; font-weight:600; color:var(--tan-deep);
 }
 .pin-paste:hover{color:var(--ink)}
 /* the promise that somebody will ring, which is what most people want to
    read after "your order is in" */
 .done-call{
   margin-top:12px; padding:11px 13px; border-radius:var(--r-sm); text-align:left;
-  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.2);
+  background:rgba(217,184,119,.14); box-shadow:inset 0 0 0 1px rgba(217,184,119,.2);
   font-size:13px; line-height:1.6;
 }
 .done-call b{display:inline; font-family:var(--head); font-size:13px}
@@ -238,7 +281,7 @@
 /* cash is off: one way to pay, stated rather than chosen */
 .pay-only{
   padding:13px 15px; border-radius:var(--r-md); margin-bottom:12px;
-  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.22);
+  background:rgba(217,184,119,.14); box-shadow:inset 0 0 0 1px rgba(217,184,119,.22);
 }
 .pay-only b{display:block; font-family:var(--head); font-size:14px; font-weight:600}
 .pay-only span{display:block; margin-top:4px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
@@ -250,5 +293,5 @@
   display:flex; align-items:center; gap:5px; margin-top:7px;
   font-size:10.5px; letter-spacing:.02em; color:var(--ink-faint);
 }
-.pay-secure svg{flex:none; color:var(--teal)}
+.pay-secure svg{flex:none; color:var(--tan-deep)}
 .pay-opt .pay-secure{margin-top:6px}

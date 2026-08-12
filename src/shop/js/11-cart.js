@@ -95,7 +95,7 @@ function thumbFor(id){
 function paintCart(bump){
   const n=nItems();
   /* both counts — the one in the header and the one on a product page */
-  for(const badge of [$("#cartN"), $("#pvCartN"), $("#apCartN"), $("#wlCartN")]){
+  for(const badge of [$("#cartN"), $("#pvCartN"), $("#apCartN"), $("#wlCartN"), $("#opCartN")]){
     badge.textContent = n;
     if(bump){ badge.classList.remove("bump"); void badge.offsetWidth; badge.classList.add("bump"); }
   }

@@ -76,15 +76,39 @@
 /* A phone has no hover, so the press itself has to be the feedback —
    a 1px nudge is too small to notice on a touchscreen. */
 .btn:active{transform:scale(.97)}
-.btn-dark{background:var(--ink); color:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink)}
-.btn-ghost{box-shadow:inset 0 0 0 1px var(--line-2); color:var(--ink-soft); background:rgba(255,255,255,.4)}
+/* ── the two buttons ──
+   The solid one spends money and the outlined one does not, and both are
+   made of what the rest of the shop is made of: the maroon capsule the card's
+   Add wears, and the raised ivory one with the gold hairline. They were black
+   and grey — the last two controls on the site still belonging to no
+   particular shop, and they turned up in every sheet. */
+.btn-dark{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),
+             inset 0 0 0 1px rgba(217,184,119,.42),
+             0 10px 22px -12px rgba(106,17,20,.7);
+}
+.btn-ghost{
+  background:linear-gradient(158deg,#FFFEFA 0%,#F8F1E1 100%); color:#7A1418;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),
+             inset 0 0 0 1px rgba(217,184,119,.8);
+}
 /* Hover must not swap the two roles. The solid button stays solid and the
    outlined one stays outlined — otherwise a dark and a ghost button sitting
    together look like the same button. Gated on a real pointer, so a tap on
    a phone cannot leave a button stuck in its hover state. */
 @media (hover:hover){
-  .btn-dark:hover{background:#fff; color:var(--ink)}     /* fills white, keeps its ink outline */
-  .btn-ghost:hover{background:#fff; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--ink)}
+  .btn-dark:hover{
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.3),
+               inset 0 0 0 1px rgba(217,184,119,.6),
+               0 16px 30px -14px rgba(106,17,20,.85);
+  }
+  .btn-ghost:hover{
+    color:#6A1114;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+               inset 0 0 0 1.4px rgba(185,140,46,1),
+               0 12px 26px -16px rgba(120,88,22,.5);
+  }
 }
 .btn-full{width:100%}
 .btn .wa{color:var(--wa); flex:none}

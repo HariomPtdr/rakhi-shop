@@ -15,16 +15,16 @@
 .op-bar{
   position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:12px;
   padding:12px clamp(14px,4vw,28px); background:rgba(251,246,236,.94);
-  border-bottom:1px solid var(--line); backdrop-filter:blur(8px);
+  box-shadow:0 1px 0 rgba(217,184,119,.5); backdrop-filter:blur(8px);
 }
-.op-in{max-width:720px; margin:0 auto; padding:clamp(16px,4vw,26px) clamp(14px,4vw,28px) 90px}
+.op-in{max-width:820px; margin:0 auto; padding:clamp(16px,3vw,26px) clamp(18px,4vw,44px) calc(60px + env(safe-area-inset-bottom))}
 
 .op-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:22px}
 .op-head > div{flex:1; min-width:0}
 .op-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.4px; color:var(--ink-faint)}
-.op-head h1{font-family:var(--display); font-size:clamp(25px,6vw,34px); font-weight:600; margin:4px 0 0}
+.op-head h1{font-family:var(--display); font-size:clamp(25px,6vw,34px); font-weight:600; margin:4px 0 0; letter-spacing:-.018em; color:#3B2415}
 .op-head p{margin-top:5px; font-size:12.5px; color:var(--ink-faint)}
-.op-total{font-family:var(--display); font-size:clamp(22px,5vw,28px); flex:none}
+.op-total{font-family:var(--display); font-weight:700; font-size:clamp(22px,5vw,28px); flex:none; color:var(--rose)}
 
 /* ── the tracker, laid out down the page rather than across it ── */
 .op-track{display:grid; gap:0; margin:0 0 24px}
@@ -37,13 +37,13 @@
   background:var(--line-2);
 }
 .op-step:last-child::before{display:none}
-.op-step.done::before{background:var(--teal)}
+.op-step.done::before{background:rgba(154,34,38,.55)}
 .op-step i{
   grid-row:1/3; width:14px; height:14px; border-radius:50%; margin-top:2px;
   background:var(--line-2); z-index:1;
 }
-.op-step.done i{background:var(--teal)}
-.op-step.now i{box-shadow:0 0 0 5px rgba(27,132,151,.16)}
+.op-step.done i{background:#7A1418}
+.op-step.now i{box-shadow:0 0 0 5px rgba(154,34,38,.14)}
 .op-step b{
   font-family:var(--head); font-size:13.5px; font-weight:600; color:var(--ink-faint);
   line-height:1.25;
@@ -57,13 +57,13 @@
 .op-track.cancelled p{margin-top:7px; font-size:13px; color:var(--ink-soft)}
 
 .op-k{
-  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--ink-faint); margin:26px 0 10px;
+  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--tan-deep); margin:26px 0 10px;
 }
 
 .op-trk{
   display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--r-md);
-  background:rgba(27,132,151,.07); box-shadow:inset 0 0 0 1px rgba(27,132,151,.2);
+  background:rgba(217,184,119,.14); box-shadow:inset 0 0 0 1px rgba(217,184,119,.2);
 }
 .op-trk div{flex:1; min-width:0}
 .op-trk b{display:block; font-family:var(--head); font-size:10px; font-weight:600;
@@ -73,12 +73,12 @@
 .op-items{display:grid; gap:10px}
 .op-item{
   display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--r-md);
-  background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
 }
 .op-item > div{flex:1; min-width:0}
 .op-item b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
 .op-item > div span{font-size:12px; color:var(--ink-faint)}
-.op-amt{font-family:var(--display); font-size:15px; flex:none}
+.op-amt{font-family:var(--display); font-weight:700; font-size:16px; flex:none; color:var(--rose)}
 .op-shot{
   width:52px; height:52px; flex:none; border-radius:var(--r-sm); overflow:hidden;
   background:rgba(217,184,119,.16); display:block;
@@ -87,29 +87,29 @@
 .op-shot img.art{object-fit:contain; padding:3px}
 
 .op-sums{margin-top:14px; padding:12px 14px; border-radius:var(--r-md);
-  background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line)}
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(217,184,119,.45), 0 12px 28px -20px rgba(120,88,22,.36)}
 .op-sums .line{display:flex; justify-content:space-between; gap:12px; font-size:13px;
   padding:5px 0; color:var(--ink-soft)}
 .op-sums .line.tot{font-family:var(--head); font-weight:600; color:var(--ink);
-  border-top:1px solid var(--line); margin-top:5px; padding-top:9px}
+  border-top:1px solid rgba(217,184,119,.5); margin-top:5px; padding-top:9px}
 
 .op-to{padding:13px 15px; border-radius:var(--r-md);
-  background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px var(--line)}
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(217,184,119,.45), 0 12px 28px -20px rgba(120,88,22,.36)}
 .op-to b{font-family:var(--head); font-size:14px; font-weight:600}
 .op-to p{margin-top:4px; font-size:13.5px; line-height:1.55; color:var(--ink-soft)}
 .op-to .mono{display:block; margin-top:5px; font-size:12.5px; color:var(--ink-faint)}
 .op-note{margin-top:8px; font-style:italic}
 .op-link{
   display:inline-block; margin-top:10px; border:0; background:none; padding:4px 0; cursor:pointer;
-  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--teal);
+  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--tan-deep);
   text-decoration:underline; text-underline-offset:3px;
 }
 .op-link:hover{color:var(--ink)}
 
 .op-msgs{display:grid; gap:10px}
 .op-msg{
-  padding:12px 14px; border-radius:var(--r-md); background:rgba(27,132,151,.07);
-  box-shadow:inset 0 0 0 1px rgba(27,132,151,.18);
+  padding:12px 14px; border-radius:var(--r-md); background:rgba(217,184,119,.14);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.18);
 }
 .op-msg p{font-size:13.5px; line-height:1.6; color:var(--ink)}
 .op-msg span{display:block; margin-top:5px; font-size:11.5px; color:var(--ink-faint)}
@@ -122,7 +122,7 @@
 .op-hist .hev::before{content:""; position:absolute; left:4px; top:12px; bottom:0; width:1.5px;
   background:var(--line-2)}
 .op-hist .hev:last-child::before{display:none}
-.op-hist .hev i{width:9px; height:9px; border-radius:50%; background:var(--teal); margin-top:4px; z-index:1}
+.op-hist .hev i{width:9px; height:9px; border-radius:50%; background:#7A1418; margin-top:4px; z-index:1}
 
 .op-acts{display:flex; flex-wrap:wrap; gap:9px; margin-top:26px}
 .ac-view{flex:none; margin-left:auto}

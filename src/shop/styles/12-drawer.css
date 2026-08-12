@@ -36,16 +36,16 @@
   margin:9px auto 0; flex:none;
 }
 @media (min-width:720px){.grab{display:none}}
-.dr-h{display:flex; align-items:center; gap:12px; padding:14px 18px 13px; border-bottom:1px solid var(--line); position:relative; z-index:2}
+.dr-h{display:flex; align-items:center; gap:12px; padding:14px 18px 13px; box-shadow:0 1px 0 rgba(217,184,119,.5); position:relative; z-index:2}
 @media (min-width:720px){.dr-h{padding:22px 22px 16px}}
 .dr-h h2{font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:-.01em}
 .x{
   margin-left:auto; width:42px; height:42px; border-radius:50%; border:0; cursor:pointer;
-  background:rgba(255,255,255,.6); box-shadow:inset 0 0 0 1px var(--line-2); color:var(--ink);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.6); color:var(--ink);
   font-size:15px; line-height:1; display:grid; place-items:center; flex:none;
 }
-.x:active{background:var(--ink); color:var(--bg)}
-@media (hover:hover){.x:hover{background:var(--ink); color:var(--bg)}}
+.x:active{background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8; transform:scale(.94)}
+@media (hover:hover){.x:hover{background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8}}
 @media (min-width:720px){.x{width:34px; height:34px}}
 .dr-b{
   flex:1 1 auto; min-height:0;        /* without min-height:0 this will not shrink */
@@ -56,13 +56,13 @@
 .dr-f{
   flex:0 0 auto;
   padding:14px 18px calc(22px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--line); position:relative; z-index:2;
-  background:rgba(255,253,248,.97);
+  border-top:1px solid rgba(217,184,119,.5); position:relative; z-index:2;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
 }
 .dr-h{flex:0 0 auto}
 @media (min-width:720px){.dr-b{padding:6px 22px} .dr-f{padding:18px 22px 22px}}
-.ci{display:flex; gap:13px; padding:16px 0; border-bottom:1px solid var(--line)}
-.ci-i{width:62px; height:62px; flex:none; border-radius:var(--r-sm); overflow:hidden; background:rgba(255,255,255,.7); box-shadow:inset 0 0 0 1px var(--line)}
+.ci{display:flex; gap:13px; padding:16px 0; box-shadow:0 1px 0 rgba(217,184,119,.5)}
+.ci-i{width:62px; height:62px; flex:none; border-radius:var(--r-sm); overflow:hidden; background:rgba(255,255,255,.7); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45)}
 .ci-i img,.ci-i svg{width:100%; height:100%; object-fit:cover}
 .ci-i img.art{object-fit:contain}
 .ci-m{flex:1; min-width:0}
@@ -71,10 +71,10 @@
 .ci-p{font-family:var(--mono); font-size:12px; color:var(--ink-soft); margin-top:5px}
 .ci-r{display:flex; align-items:center; gap:14px; margin-top:10px; flex-wrap:wrap}
 @media (min-width:720px){.ci-r{gap:11px; margin-top:9px}}
-.stp{display:inline-flex; align-items:center; border-radius:var(--r-full); background:rgba(255,255,255,.7); box-shadow:inset 0 0 0 1px var(--line-2); overflow:hidden}
+.stp{display:inline-flex; align-items:center; border-radius:var(--r-full); background:rgba(255,255,255,.7); box-shadow:inset 0 0 0 1px rgba(217,184,119,.6); overflow:hidden}
 .stp button{width:40px; height:40px; border:0; background:none; color:var(--ink); font-size:18px; cursor:pointer; line-height:1}
-.stp button:active{background:var(--ink); color:var(--bg)}
-@media (hover:hover){.stp button:hover{background:var(--ink); color:var(--bg)}}
+.stp button:active{background:rgba(122,20,24,.1); color:#6A1114}
+@media (hover:hover){.stp button:hover{background:rgba(122,20,24,.07); color:#6A1114}}
 .stp span{min-width:34px; text-align:center; font-family:var(--mono); font-size:14px}
 @media (min-width:720px){
   .stp button{width:30px; height:30px; font-size:15px}

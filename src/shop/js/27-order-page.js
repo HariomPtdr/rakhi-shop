@@ -194,15 +194,16 @@ function paintOrderPage(){
       ${items.some(i => i.product_id)
         ? `<button class="btn btn-dark" data-opagain="1">Buy these again</button>` : ""}
       <button class="btn btn-ghost" data-opbill="1">Download the bill</button>
-      ${o.status === "delivered" && items.some(i => i.product_id)
-        ? `<button class="btn btn-ghost" data-oprate="${esc(items.find(i => i.product_id).product_id)}"
-            >Rate what arrived</button>` : ""}
       <a class="btn btn-ghost" href="${esc(ask)}" target="_blank" rel="noopener">Ask about it</a>
       ${canCancel ? `<button class="btn btn-ghost op-cancel" data-cancel="${esc(o.id)}">Cancel this order</button>` : ""}
     </div>`;
 }
 
 /* ── the way in and out ── */
+/* the wordmark and the bag, doing what they do in every other bar */
+fillBrandMark("#opHome .brand-mk-slot");
+$("#opCart").onclick = () => openCart();
+$("#opHome").onclick = e => { e.preventDefault(); closeOrderPage(); };
 $("#opBack").onclick = () => {
   /* back to the orders list they came from, not to the shop */
   closeOrderPage();
@@ -219,8 +220,6 @@ $("#opIn").addEventListener("click", async e => {
   if(e.target.closest("[data-opbill]")){ downloadOrderBill(opOrder); return; }
   if(e.target.closest("[data-opagain]")){ buyTheseAgain(opOrder); return; }
 
-  const rate = e.target.closest("[data-oprate]");
-  if(rate){ closeOrderPage(); requestAnimationFrame(() => openProduct(rate.dataset.oprate)); return; }
 
   /* Changing the address, attaching a location and calling the order off all
      happen here now. The forms and the rules behind them are the ones the
