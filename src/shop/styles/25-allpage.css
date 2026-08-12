@@ -69,10 +69,12 @@ body.ap-on{overflow:hidden}
    one was louder than the shop's own name beside it. They are the glyphs
    now, in the shop's red, with the count riding the corner of the bag: the
    same two buttons, at the same size to the thumb, without the furniture. */
+/* The same size as the header's, so the bar does not shrink when a view
+   opens over it. */
 .ap-bar .ap-cart,
 .ap-bar .nav-like{
   position:relative; flex:none;
-  display:inline-grid; place-items:center; width:40px; height:40px;
+  display:inline-grid; place-items:center; width:46px; height:46px;
   border:0; border-radius:12px; cursor:pointer;
   background:none; box-shadow:none;
   color:#7A1418;
@@ -90,16 +92,16 @@ body.ap-on{overflow:hidden}
 .ap-bar .ap-cart .cart-n,
 .ap-bar .nav-like i{
   position:absolute; top:0; right:-1px;
-  min-width:16px; height:16px; padding:0 4px;
+  min-width:18px; height:18px; padding:0 5px;
   border-radius:var(--r-full);
-  font-family:var(--head); font-size:9.5px; font-style:normal; font-weight:700;
-  line-height:16px; text-align:center;
+  font-family:var(--head); font-size:10.5px; font-style:normal; font-weight:700;
+  line-height:18px; text-align:center;
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 60%,#6A1114 100%);
   color:#FFF6E8;
   box-shadow:0 0 0 2px var(--bg);
 }
 .ap-bar .ap-cart svg,
-.ap-bar .nav-like svg{width:22px; height:22px}
+.ap-bar .nav-like svg{width:25px; height:25px}
 
 /* The same gutters and the same maximum as .wrap, which is what every
    other section on the site is set in. Its own numbers meant the

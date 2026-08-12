@@ -190,9 +190,9 @@ function wishToBag(){
   if(!added){ toast(out === 1 ? "That one is sold out" : "Those are all sold out"); return; }
   toast(`${added} ${added === 1 ? "rakhi" : "rakhis"} in your bag`
         + (out ? ` · ${out} sold out` : ""));
-  /* the drawer once, after the cards have settled — the same beat a single
-     Add has, so the two do not feel like different shops */
-  setTimeout(openCart, 260);
+  /* No drawer. A single Add does not open one either — the count on the bag,
+     the bar along the bottom and this sentence have already said it, and a
+     panel over the list is a panel to close before carrying on. */
 }
 
 /* ── sending it to somebody ──

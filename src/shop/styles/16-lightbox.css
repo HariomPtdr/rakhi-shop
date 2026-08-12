@@ -109,13 +109,34 @@
 }
 .lb-x:active{transform:scale(.94)}
 
+/* ── the line that says what just happened ──
+   The shop's own ivory glass with the gold hairline, the way the cart bar
+   and the header are made, with the words in the shop's red. It was a black
+   slab — the one thing on the screen that belonged to no part of this
+   design, and it landed on top of photographs of cream and gold.
+
+   Above the cart bar rather than on it: they appear together the moment
+   something is added, and at the same height the second covered the first. */
 .toast{
-  position:fixed; left:50%; bottom:26px; transform:translate(-50%,18px); z-index:80;
-  background:var(--ink); color:var(--bg); padding:13px 22px; border-radius:var(--r-full);
+  position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom));
+  transform:translate(-50%,18px); z-index:80;
+  padding:13px 22px; border-radius:14px;
+  background:linear-gradient(178deg, rgba(255,254,250,.98) 0%, rgba(252,247,236,.97) 45%, rgba(249,242,227,.97) 100%);
+  -webkit-backdrop-filter:blur(16px) saturate(1.08); backdrop-filter:blur(16px) saturate(1.08);
+  color:#7A1418;
+  /* A firmer ring and a real shadow. This lands on whatever happens to be
+     under it — a photograph, or the footer, which is the same ivory it is —
+     and a status line that has to be looked for said nothing. */
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+             inset 0 0 0 1.4px rgba(185,140,46,.9),
+             0 20px 44px -14px rgba(60,34,8,.6),
+             0 4px 12px -4px rgba(60,34,8,.25);
   font-family:var(--head); font-size:10.5px; font-weight:600; letter-spacing:.085em; text-transform:uppercase;
-  opacity:0; pointer-events:none; transition:all .35s var(--ease); box-shadow:var(--elev-3);
+  opacity:0; pointer-events:none; transition:opacity .35s var(--ease), transform .35s var(--ease);
   max-width:88vw; text-align:center;
 }
+/* nothing is in the basket, so no bar underneath to clear */
+body:not(.hascart) .toast{bottom:calc(26px + env(safe-area-inset-bottom))}
 .toast.on{opacity:1; transform:translate(-50%,0)}
 .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 

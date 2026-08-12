@@ -79,7 +79,12 @@ function addItem(p){
   save(); paintCart(true); toast("Added — "+p.name);
   track("add_cart", p.id, {qty: (cart.find(r=>r.id===p.id) || {}).qty || 1});
   if(lastBtn) throwPetals(lastBtn);
-  setTimeout(openCart, 260);
+  /* The drawer used to slide up on every Add. It answered a question nobody
+     had asked — the button under the thumb has already become a stepper, the
+     count on the bag has jumped, the bar along the bottom says what is in
+     there and the toast says which rakhi went in. Four answers, and the
+     fourth covered the shelf somebody was still shopping. Adding a second
+     rakhi meant closing the cart first. */
 }
 function thumbFor(id){
   const p=PRODUCTS.find(x=>x.id===id);

@@ -109,7 +109,11 @@ body.nav-solid .nav-in{
 .cart-btn,
 .nav-me.nav-like{
   position:relative; z-index:2; flex:none;
-  display:inline-grid; place-items:center; width:40px; height:40px;
+  /* ── the size of the three glyphs ──
+     A drawing with no disc behind it needs to be bigger than a drawing with
+     one: the disc used to be half the target, and taking it away left three
+     small marks in a bar whose wordmark is 38px tall. */
+  display:inline-grid; place-items:center; width:46px; height:46px;
   min-height:0; padding:0;
   border:0; border-radius:12px; cursor:pointer;
   background:none; box-shadow:none;
@@ -131,7 +135,7 @@ body.nav-solid .nav-in{
    filled circle — that is not decoration, it is the one thing on the header
    that says whose basket this is, and a photograph belongs in a circle. */
 .nav-me:not(.nav-like):not(.in):not(.has-pic){
-  width:40px; height:40px; border-radius:12px;
+  width:46px; height:46px; border-radius:12px;
   background:none; box-shadow:none; color:#7A1418;
 }
 @media (hover:hover){
@@ -148,13 +152,14 @@ body.nav-solid .nav-in{
   display:grid; place-items:center; line-height:1;
 }
 /* the count on the corner of a glyph, which is what the header wears now */
+.cart-btn svg,.nav-me svg{width:25px; height:25px}
 .cart-btn .cart-n,
 .nav-me.nav-like i{
   position:absolute; top:0; right:-1px;
-  min-width:16px; height:16px; padding:0 4px; border-radius:var(--r-full);
+  min-width:18px; height:18px; padding:0 5px; border-radius:var(--r-full);
   background:linear-gradient(160deg,#9B2226 0%,#7A1418 60%,#6A1114 100%);
   color:#FFF6E8;
-  font-family:var(--head); font-size:9.5px; font-style:normal; font-weight:700;
+  font-family:var(--head); font-size:10.5px; font-style:normal; font-weight:700;
   display:grid; place-items:center; line-height:1;
   box-shadow:0 0 0 2px var(--bg);
 }
@@ -180,7 +185,7 @@ body.nav-solid .nav-in{
 /* the one circle shrinks with the wordmark beside it */
 @media (max-width:360px){
   .brand-n{font-size:12px; letter-spacing:.05em}
-  .nav-me{width:38px; height:38px}
+  .nav-me{width:42px; height:42px}
   .nav-in{gap:7px; padding:7px 8px 7px 11px}
 }
 
