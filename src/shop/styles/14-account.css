@@ -23,36 +23,6 @@
   background:rgba(181,56,74,.09); color:#8A2033; box-shadow:inset 0 0 0 1px rgba(181,56,74,.22);
 }
 .ac-msg.good{background:rgba(217,184,119,.1); color:#7A1418; box-shadow:inset 0 0 0 1px rgba(217,184,119,.24)}
-.ac-who{
-  display:flex; align-items:center; gap:12px; padding-bottom:16px; margin-bottom:18px;
-  box-shadow:0 1px 0 rgba(217,184,119,.5);
-}
-.ac-av{
-  width:46px; height:46px; border-radius:50%; flex:none; display:grid; place-items:center;
-  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), 0 8px 18px -12px rgba(106,17,20,.6);
-  font-family:var(--display); font-weight:700; font-size:19px;
-}
-/* scoped to the text block: an unscoped `.ac-who span` also matched the
-   avatar and quietly shrank the initial inside it */
-.ac-who div{min-width:0}
-.ac-who div b{display:block; font-family:var(--display); font-weight:600; font-size:17px; color:#3B2415}
-.ac-who div span{display:block; font-size:12.5px; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis}
-.ac-k{
-  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--tan-deep); margin:22px 0 10px;
-}
-.ac-k:first-child{margin-top:0}
-.ac-orders{display:grid; gap:10px}
-.ac-order{
-  padding:13px 14px; border-radius:var(--r-md);
-  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
-}
-.ac-o-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
-.ac-o-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.3px}
-.ac-o-d{font-size:11.5px; color:var(--ink-faint)}
-.ac-o-t{margin-left:auto; font-family:var(--display); font-weight:700; font-size:19px; color:var(--rose)}
-.ac-o-l{margin-top:7px; font-size:12.5px; color:var(--ink-soft); line-height:1.55}
 .ac-chip{
   display:inline-block; font-family:var(--head); font-size:8.5px; font-weight:600;
   letter-spacing:.09em; text-transform:uppercase; padding:4px 9px; border-radius:var(--r-full);
@@ -67,26 +37,6 @@
 .ac-fine{font-size:12px; color:var(--ink-faint); line-height:1.6; margin-top:16px}
 .ac-mid{text-align:center; margin-top:12px}
 .ac-fine a{color:var(--ink-soft); text-underline-offset:3px}
-
-/* ── the three numbers worth knowing about yourself ── */
-.ac-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px}
-.ac-stats div{
-  text-align:center; padding:11px 6px; border-radius:var(--r-md);
-  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
-}
-.ac-stats b{display:block; font-family:var(--display); font-weight:700; font-size:21px; line-height:1.15; color:var(--rose)}
-.ac-stats span{
-  display:block; margin-top:3px; font-family:var(--head); font-size:9px; font-weight:600;
-  letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint);
-}
-.ac-tabs-3 button{font-size:10px; letter-spacing:.7px}
-.ac-pane{display:grid; gap:10px}
-.ac-admin{
-  display:block; margin-bottom:14px; padding:11px 13px; border-radius:var(--r-md);
-  font-family:var(--head); font-size:12.5px; font-weight:600; text-decoration:none;
-  background:linear-gradient(160deg,#9B2226 0%,#7A1418 56%,#6A1114 100%); color:#FFF6E8;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.2), inset 0 0 0 1px rgba(217,184,119,.42);
-}
 
 /* ── where an order has got to ──
    Four beads on one thread, the same idea as the ordering steps on the
@@ -111,51 +61,10 @@
   text-transform:uppercase; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; display:block;
 }
 .ac-step.done b{color:var(--ink-soft)}
-.ac-o-trk{
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:11px;
-  padding:8px 10px; border-radius:var(--r-sm); background:rgba(217,184,119,.14);
-}
-.ac-o-trk span{font-family:var(--head); font-size:10px; font-weight:600;
-  letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint)}
-.ac-o-trk b{font-family:var(--mono); font-size:12.5px; letter-spacing:.4px}
-.ac-copy{
-  margin-left:auto; border:0; background:none; cursor:pointer; padding:4px 2px;
-  font-family:var(--head); font-size:11px; font-weight:600; color:var(--tan-deep);
-}
-.ac-o-foot{
-  display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:11px;
-  padding-top:10px; border-top:1px solid rgba(217,184,119,.5); font-size:11.5px; color:var(--ink-faint);
-}
-.ac-ask{margin-left:auto; color:var(--ink-soft); font-size:12px}
-
-/* ── the wishlist, laid out like the cart it is one tap from ── */
-.ac-wish{
-  display:flex; gap:12px; padding:11px; border-radius:var(--r-md);
-  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
-}
-.ac-w-i{width:60px; height:60px; flex:none; border-radius:var(--r-sm); overflow:hidden;
-  background:rgba(217,184,119,.16)}
-.ac-w-i img, .ac-w-i svg{width:100%; height:100%; object-fit:cover; display:block}
 /* a photograph fills its square; a drawing has to be shown whole, or the
    charm somebody saved the rakhi for is the part that gets cropped off */
 .ac-w-i img.art, .ac-w-i svg{object-fit:contain; padding:3px}
-.ac-w-m{min-width:0; flex:1}
-.ac-w-top{display:flex; align-items:baseline; gap:10px}
-.ac-w-n{flex:1; min-width:0; font-family:var(--head); font-size:13.5px; font-weight:600; line-height:1.35}
-.ac-w-p{flex:none; font-family:var(--display); font-size:16px}
-.ac-w-out{
-  font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.08em;
-  text-transform:uppercase; color:#8A2033; vertical-align:middle; margin-left:5px;
-}
-.ac-w-r{display:flex; align-items:center; gap:8px; margin-top:9px; flex-wrap:wrap}
 .ac-w-r .btn{padding:7px 14px; font-size:11.5px; min-height:34px}
-/* Remove sat against the far edge with a hole in the middle of the row.
-   It belongs with the other two, quieter than both. */
-.ac-w-x{
-  border:0; background:none; cursor:pointer; padding:6px 4px;
-  font-family:var(--head); font-size:11.5px; font-weight:600; color:var(--ink-faint);
-}
-.ac-w-x:hover{color:#8A2033}
 
 /* ── continue with Google ──
    Google's own mark on a white surface, as their brand terms require. It is
@@ -177,21 +86,7 @@
   text-transform:uppercase; color:var(--ink-faint);
 }
 .ac-or::before, .ac-or::after{content:""; flex:1; height:1px; background:var(--line)}
-
-/* ── the basket, inside the account ── */
-.ac-w-note{margin-top:3px; font-size:11.5px; color:var(--ink-faint)}
-.ac-w-note.ac-w-out{color:#8A2033}
-.ac-w-amt{margin-left:2px; font-family:var(--display); font-size:15px}
 .ac-tabs button i{font-style:normal; opacity:.75}
-.ac-sum{
-  padding:13px 14px; border-radius:var(--r-md); margin-top:2px;
-  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%); box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
-}
-.ac-sum > div{display:flex; justify-content:space-between; gap:12px; font-size:13px; padding:3px 0}
-.ac-sum-t{
-  margin-top:6px; padding-top:9px !important; border-top:1px solid rgba(217,184,119,.5);
-  font-family:var(--head); font-weight:600; font-size:15px !important;
-}
 
 /* ── the avatar ──
    Google's picture when there is one, the initial underneath it. The <img>
@@ -202,14 +97,6 @@
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;
 }
 .ac-av i, .nav-av i{font-style:normal; line-height:1}
-
-/* ── the tab row, once there are five of them ── */
-.ac-tabs-scroll{
-  overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
-  margin-inline:-2px; padding-inline:2px;
-}
-.ac-tabs-scroll::-webkit-scrollbar{display:none}
-.ac-tabs-scroll button{flex:0 0 auto; padding-inline:13px}
 /* Five pills hugging their own words and bunching at the left looked like
    something had failed to load. Once there is room for them they share the
    row equally, which is what a row of tabs is. */
@@ -303,35 +190,7 @@
   width:100%; text-align:center; line-height:1;
 }
 .ac-av img, .nav-av img{grid-area:1/1; z-index:1}
-
-/* where the order has got to, said in words under the dots */
-.ac-o-where{margin:9px 2px 0; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
-.ac-rates{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:9px}
-.ac-rate{
-  border:0; background:none; padding:5px 0; cursor:pointer; text-align:left;
-  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--tan-deep);
-}
-.ac-rate:hover{color:var(--ink)}
-
-/* ── where an order is going, and changing it ── */
-.ac-o-to{
-  display:flex; gap:12px; align-items:flex-start; margin-top:11px;
-  padding:10px 12px; border-radius:var(--r-sm); background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
-  box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
-}
-.ac-o-to > div{flex:1; min-width:0}
-.ac-o-to b{
-  display:block; font-family:var(--head); font-size:9px; font-weight:600;
-  letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint);
-}
-.ac-o-to span{display:block; margin-top:3px; font-size:12.5px; line-height:1.5; color:var(--ink-soft)}
-.ac-o-to i{display:block; margin-top:3px; font-style:normal; font-size:11.5px; color:var(--ink-faint)}
 .ac-o-to i.pinned{color:var(--tan-deep)}
-.ac-o-to button{
-  flex:none; border:0; background:none; cursor:pointer; padding:4px 2px;
-  font-family:var(--head); font-size:12px; font-weight:600; color:var(--tan-deep);
-}
-.ac-o-to button:hover{color:var(--ink)}
 
 .ac-addrbox{
   margin-top:12px; padding:14px; border-radius:var(--r-md);
@@ -341,6 +200,35 @@
 .ac-addrbox > p{margin:5px 0 14px; font-size:12.5px; color:var(--ink-soft); line-height:1.55}
 .ac-addrbox .fg{gap:12px; margin-bottom:12px}
 .ac-addrbox textarea{min-height:62px}
+/* ── the saved addresses offered while correcting an order ──
+   Wide, tappable, and quiet: they are a shortcut through the typing below,
+   not the decision the box is asking for, so they do not look like the Save
+   button. They scroll sideways rather than stacking, because three of them
+   above a form pushes the form off a phone. */
+.ac-usesaved{margin:2px 0 16px}
+.ac-saved-row{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px}
+.ac-saved-row::-webkit-scrollbar{display:none}
+.ac-saved-row button{
+  flex:none; max-width:230px; text-align:left; cursor:pointer;
+  padding:9px 13px; border:0; border-radius:var(--r-md);
+  background:rgba(255,255,255,.7);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+  transition:background .22s var(--ease), box-shadow .22s var(--ease);
+}
+@media (hover:hover){
+  .ac-saved-row button:hover{background:#FFFDF8; box-shadow:inset 0 0 0 1.5px var(--tan-deep)}
+}
+.ac-saved-row button:active{background:rgba(217,184,119,.2)}
+.ac-saved-row b{
+  display:block; font-family:var(--head); font-size:10px; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--tan-deep);
+}
+.ac-saved-row span{
+  display:block; margin-top:3px; font-size:12.5px; color:var(--ink-soft);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ac-saved-row button:focus-visible{outline:2px solid var(--tan-deep); outline-offset:2px}
+
 .ac-pin{
   display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
   padding:10px 12px; border-radius:var(--r-sm); background:rgba(217,184,119,.6);
@@ -363,40 +251,14 @@
   display:inline-block; margin-top:8px; font-family:var(--head); font-size:12px;
   font-weight:600; color:var(--tan-deep);
 }
-
-/* the status word on a list card, where the tracker used to be */
-.ac-o-st{
-  font-family:var(--head); font-size:9px; font-weight:600; letter-spacing:.09em;
-  text-transform:uppercase; color:var(--ink-faint); padding:5px 10px;
-  border-radius:var(--r-full); background:rgba(20,18,16,.05);
-}
 .ac-o-st.ok{background:rgba(217,184,119,.14); color:#7A1418}
 .ac-o-st.out{background:rgba(20,18,16,.85); color:var(--bg)}
 .ac-o-st.no{background:rgba(181,56,74,.12); color:#8A2033}
-
-/* ── an order in the list: what it was, where it is, what to do ── */
-.ac-order{display:flex; gap:12px; align-items:flex-start}
-.ac-o-pic{
-  width:56px; height:56px; flex:none; border-radius:var(--r-sm); overflow:hidden;
-  background:rgba(217,184,119,.16); display:block;
-}
-.ac-o-pic img{width:100%; height:100%; object-fit:cover; display:block}
 .ac-o-pic img.art{object-fit:contain; padding:3px}
-.ac-o-mid{flex:1; min-width:0}
-.ac-o-mid .ac-o-l{margin-top:5px}
-.ac-o-mid .ac-o-st{margin-top:8px; display:inline-block}
-.ac-o-acts{display:grid; gap:6px; flex:none}
 .ac-o-acts .btn{width:100%; justify-content:center; white-space:nowrap}
 @media (max-width:520px){
   .ac-order{flex-wrap:wrap}
   .ac-o-acts{width:100%; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); margin-top:4px}
-}
-
-/* the sections under the details: password, help, signing out */
-.ac-sec{margin-top:26px; padding-top:20px; border-top:1px solid rgba(217,184,119,.5)}
-.ac-sec-k{
-  font-family:var(--head); font-size:9.5px; font-weight:600; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px;
 }
 .ac-sec .ac-acts{margin-top:14px}
 .ac-acts.two{display:grid; gap:9px}

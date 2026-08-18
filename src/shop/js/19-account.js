@@ -15,13 +15,10 @@
    ══════════════════════════════════════════════════════════ */
 let acctView = "in";      // "in" · "up" · "forgot" · "reset"
 let acctNote = null;      // {text, good} shown at the top of the sheet
-let acctTab  = "orders";  // orders · updates · basket · wishlist · details
-let acctOrders = null;    // cached for this opening of the sheet
-let acctNotifs = null;    // the same, for the updates tab
+let acctNotifs = null;    // every note about an order, read by the Updates screen
 let cancelling = null;    // the order id whose "are you sure" is open
 let cancelWhy  = 0;       // which reason is picked, by index
 let editingAddr = null;   // the order id whose address is being corrected
-let detailsEditing = false;  // the saved address is being changed, not just read
 
 /* The picture Google gave us, or the first letter of their name. The
    picture is the one thing an account can show that says "this is really
@@ -84,14 +81,15 @@ function paintNavAuth(){
        behind one button called "Your orders". As chips rather than five more
        full-width rows: this menu already has the shop's five sections in it,
        and doubling its length to say the same things twice would be worse
-       than the button it replaces. Each one opens the account on that tab —
+       than the button it replaces. Each one opens the page that draws it —
        the same screens, not a second copy of them. */
     const where = [
-      ["orders",   "Orders",  ""],
-      ["updates",  "Updates", unreadCount ? String(unreadCount) : ""],
-      ["basket",   "Basket",  nItems() ? String(nItems()) : ""],
-      ["wishlist", "Saved",   wish.length ? String(wish.length) : ""],
-      ["details",  "Details", ""]
+      ["profile",   "Profile",   ""],
+      ["orders",    "Orders",    ""],
+      ["updates",   "Updates",   unreadCount ? String(unreadCount) : ""],
+      ["basket",    "Basket",    nItems() ? String(nItems()) : ""],
+      ["wishlist",  "Saved",     wish.length ? String(wish.length) : ""],
+      ["addresses", "Addresses", ""]
     ];
     box.innerHTML = `
       <div class="nav-who">
@@ -118,11 +116,20 @@ function paintNavAuth(){
 }
 
 $("#navAuth").addEventListener("click", e => {
+  /* Each chip is a page now, so the menu names the page rather than a tab
+     inside a sheet that no longer has tabs. The basket is the one exception:
+     it is a drawer and was always a drawer. */
   const tab = e.target.closest("[data-navtab]");
   if(tab){
     const which = tab.dataset.navtab;
     closeNav();
-    requestAnimationFrame(() => openAcct(which));
+    requestAnimationFrame(() => {
+      if(which === "orders")    return openOrders();
+      if(which === "wishlist")  return openWish();
+      if(which === "addresses") return openAddresses();
+      if(which === "basket")    return openCart();
+      openProfile(which === "updates" ? "updates" : "home");
+    });
     return;
   }
   const b = e.target.closest("[data-navact]");
@@ -202,72 +209,8 @@ function acctSignedOut(){
         : up ? "" : `<a href="#" data-view="forgot">Forgotten your password?</a>`}</p>
     </form>
     ${forgot ? "" : google}
-    <p class="ac-fine">We keep your name, phone and address so you do not have to type
-       them again, and nothing else. Orders are still confirmed on WhatsApp.</p>`;
-}
-
-/* ── the status of one order, drawn as the four steps it goes through ── */
-function orderTrack(o){
-  if(o.status === "cancelled"){
-    return `<div class="ac-track cancelled"><span class="ac-chip no">Cancelled</span></div>`;
-  }
-  const at = STATUS[o.status] ? STATUS[o.status].step : 0;
-  return `<div class="ac-track">${STATUS_FLOW.map((s, i) => `
-    <span class="ac-step${i <= at ? " done" : ""}${i === at ? " now" : ""}">
-      <i aria-hidden="true"></i><b>${STATUS[s].short || STATUS[s].label}</b>
-    </span>`).join("")}</div>`;
-}
-
-/* ── where it has got to, in one sentence ──
-   Four dots and a word are a picture of the process, not an answer to
-   "so where is my rakhi". This is the answer. */
-function orderWhere(o){
-  const when = dayText(o.status_at || o.created_at);
-  const line = {
-    placed:    "We confirm every order by hand — usually within a day.",
-    confirmed: o.payment === "upi" ? "Paid. Confirmed and being made."
-                                   : "Confirmed and being made.",
-    shipped:   o.courier ? "On its way with " + o.courier + "." : "On its way.",
-    out_for_delivery: "Out for delivery — it reaches you today."
-      + (o.payment === "cod" ? " Please keep " + inr(o.total) + " ready." : ""),
-    delivered: "Delivered on " + when + ".",
-    cancelled: "Cancelled on " + when + "."
-  }[o.status];
-  return line ? `<p class="ac-o-where">${esc(line)}</p>` : "";
-}
-
-function orderCard(o){
-  const items = (o.order_items || []);
-  const lines = items.map(i => `${esc(i.name)} × ${i.qty}`).join(" · ");
-  /* the first rakhi in the order is the one that makes it recognisable —
-     people remember what they bought, not what the bill was numbered */
-  const first = items.find(i => i.product_id && catalogue(i.product_id));
-  const pic   = first ? catalogue(first.product_id) : null;
-  const done  = o.status === "delivered";
-
-  /* A list is for recognising an order and getting on with it. Everything
-     that explains — where it has got to, what is in it, where it is going,
-     what has been said about it — is one tap away on the order's own page,
-     where there is room to say it properly. */
-  return `<div class="ac-order">
-    <span class="ac-o-pic">${pic ? thumb(pic) : ""}</span>
-    <div class="ac-o-mid">
-      <div class="ac-o-top">
-        <span class="ac-o-no">${esc(o.bill_no)}</span>
-        <span class="ac-o-d">${esc(dayText(o.created_at))}</span>
-        <span class="ac-o-t">${inr(o.total)}</span>
-      </div>
-      <div class="ac-o-l">${lines || "—"}</div>
-      <span class="ac-o-st ${esc((STATUS[o.status] || {}).cls || "")}">${
-        esc((STATUS[o.status] || {}).label || o.status)}</span>
-    </div>
-    <div class="ac-o-acts">
-      <button class="btn btn-dark btn-sm" data-oview="${esc(o.id)}">${
-        done ? "View order" : "Track order"}</button>
-      ${done && first ? `<button class="btn btn-ghost btn-sm" data-oagain="${esc(o.id)}"
-        >Buy again</button>` : ""}
-    </div>
-  </div>`;
+    <p class="ac-fine">We keep your name, phone and the addresses you save so you do not
+       have to type them again, and nothing else. Orders are still confirmed on WhatsApp.</p>`;
 }
 
 /* ── correcting where it is going ──
@@ -277,10 +220,32 @@ function orderCard(o){
    the seller what changed, so a label already written is never quietly
    wrong. */
 function addrForm(o){
+  /* ── the addresses they already keep ──
+     The commonest correction is not a typo in the street: it is that the
+     order went to the wrong one of the two or three addresses the account
+     already holds. Retyping a saved address to fix that is the whole
+     mistake happening a second time, so the saved ones are offered as
+     buttons that fill the boxes below. Buttons, not a swap: the fields
+     stay the thing that is submitted, so update_order_address and the rule
+     it enforces do not have to know this exists. */
+  const book = (addrBook || []).filter(a =>
+    a.address !== o.address || a.pincode !== o.pincode);   /* not the one it is already going to */
+  const pick = book.length ? `
+    <div class="ac-usesaved">
+      <span class="ac-c-lab">Send it to one you have saved</span>
+      <div class="ac-saved-row">
+        ${book.map(a => `<button type="button" data-usesaved="${esc(a.id)}">
+          <b>${esc(a.label || "Saved")}</b>
+          <span>${esc(a.full_name)} · ${esc(a.city)} ${esc(a.pincode)}</span>
+        </button>`).join("")}
+      </div>
+    </div>` : "";
+
   return `<div class="ac-addrbox">
     <b>Where should ${esc(o.bill_no)} go?</b>
     <p>You can change this until it is handed to the courier. We are told, so
        nothing goes out to the old address.</p>
+    ${pick}
     <div class="fg two">
       <div class="fld"><label for="eaName">Name</label>
         <input type="text" id="eaName" value="${esc(o.name || "")}" autocomplete="name"></div>
@@ -316,6 +281,21 @@ function addrForm(o){
       <button class="btn btn-dark ac-a-go" data-addryes="${esc(o.id)}">Save the address</button>
     </div>
   </div>`;
+}
+
+/* Fills the form above from a saved address without submitting anything.
+   They still press Save, and they can still correct a line of it first —
+   picking is a shortcut through the typing, not a decision. */
+function useSavedForOrder(addrId){
+  const a = (addrBook || []).find(x => x.id === addrId);
+  if(!a) return;
+  const map = {eaName:"full_name", eaPhone:"phone", eaAddr:"address",
+               eaCity:"city", eaPin:"pincode", eaNote:"note"};
+  for(const id in map){
+    const el = $("#" + id);
+    if(el) el.value = a[map[id]] || "";
+  }
+  toast("Filled in from " + (a.label || "your saved address"));
 }
 
 async function saveOrderAddress(id){
@@ -396,297 +376,41 @@ async function doCancel(id){
   }
 }
 
-function wishCard(id){
-  const p = catalogue(id);
-  if(!p) return "";
-  const out = p.stock === 0;
-  return `<div class="ac-wish">
-    <div class="ac-w-i">${thumbFor(p.id)}</div>
-    <div class="ac-w-m">
-      <div class="ac-w-top">
-        <span class="ac-w-n">${esc(p.name)}</span>
-        <span class="ac-w-p">${inr(p.price)}</span>
-      </div>
-      ${out ? `<div class="ac-w-note ac-w-out">Sold out just now</div>` : ""}
-      <div class="ac-w-r">
-        <button class="btn btn-dark btn-sm" data-wadd="${esc(p.id)}"${out ? " disabled" : ""}>Add</button>
-        <button class="btn btn-ghost btn-sm" data-wopen="${esc(p.id)}">View</button>
-        <button class="ac-w-x" data-wish="${esc(p.id)}"
-                aria-label="Remove ${esc(p.name)} from your saved rakhis">Remove</button>
-      </div>
-    </div>
-  </div>`;
-}
+/* ── the sheet, now that it holds one thing ──
+   Everything an account holds — orders, updates, addresses, the details,
+   the wishlist — is a page of its own. What is left in this sheet is the
+   one screen that cannot be a page, because it is what somebody sees
+   before there is an account to make a page out of: the sign-in.
 
-function acctBody(){
-  const u = SB.user();
-  const nm = (profile && profile.full_name) || (u && u.name) || "";
-  const spent = (acctOrders || [])
-    .filter(o => o.status !== "cancelled")
-    .reduce((s, o) => s + (o.total || 0), 0);
-  const nOrders = (acctOrders || []).filter(o => o.status !== "cancelled").length;
-
-  const unread = (acctNotifs || []).filter(n => !n.read_at).length;
-
-  const head = `
-    <div class="ac-who">
-      ${avatarHtml("ac-av")}
-      <div>
-        <b>${esc(nm || "Your account")}</b>
-        <span>${esc(u ? u.email : "")}</span>
-      </div>
-    </div>
-    ${profile && profile.role === "admin"
-      ? `<a class="ac-admin" href="${esc(ENV.ADMIN_PATH)}/">Open the seller dashboard →</a>` : ""}
-    <div class="ac-stats">
-      <div><b>${acctOrders ? nOrders : "—"}</b><span>${plural(nOrders, "order")}</span></div>
-      <div><b>${acctOrders ? inr(spent) : "—"}</b><span>spent</span></div>
-      <div><b>${wish.length}</b><span>saved</span></div>
-    </div>
-    ${acctNoteHtml()}
-    <div class="ac-tabs ac-tabs-3 ac-tabs-scroll" role="tablist">
-      <button role="tab" data-tab="orders"   aria-selected="${acctTab === "orders"}">Orders</button>
-      <button role="tab" data-tab="updates"  aria-selected="${acctTab === "updates"}">Updates${
-        unread ? ` <i class="dot">${unread}</i>` : ""}</button>
-      <button role="tab" data-tab="basket"   aria-selected="${acctTab === "basket"}">Basket${
-        nItems() ? ` <i>${nItems()}</i>` : ""}</button>
-      <button role="tab" data-tab="wishlist" aria-selected="${acctTab === "wishlist"}">Saved${
-        wish.length ? ` <i>${wish.length}</i>` : ""}</button>
-      <button role="tab" data-tab="details"  aria-selected="${acctTab === "details"}">Details</button>
-    </div>`;
-
-  if(acctTab === "updates"){
-    if(!acctNotifs) return head + `<div class="ac-pane"><p class="ac-empty">Loading…</p></div>`;
-    if(!acctNotifs.length){
-      return head + `<div class="ac-pane"><p class="ac-empty">Nothing yet. When an order
-        is confirmed, sent or delivered, it is written here — and the tracking
-        id comes with it. Anything Ray Art Gallery needs to tell you about an
-        order lands here too.</p></div>`;
-    }
-    /* every update is about an order, so every update is a way into it */
-    return head + `<div class="ac-pane">${acctNotifs.map(n => `
-      <div class="ac-notif${n.read_at ? "" : " unread"}${n.order_id ? " tappable" : ""}"
-           ${n.order_id ? `data-oview="${esc(n.order_id)}"` : ""}>
-        <div class="ac-n-top">
-          <b>${esc(n.title)}</b>
-          <span>${esc(agoText(n.created_at))}</span>
-        </div>
-        ${n.body ? `<p>${esc(n.body)}</p>` : ""}
-        ${n.order_id ? `<span class="ac-n-go">See the order →</span>` : ""}
-      </div>`).join("")}</div>`;
-  }
-
-  if(acctTab === "basket"){
-    if(!cart.length){
-      return head + `<div class="ac-pane"><p class="ac-empty">Your basket is empty.
-        Everything you add is kept here and on any other phone you sign in from.</p></div>`;
-    }
-    return head + `<div class="ac-pane">
-      ${cart.map((r, i) => `
-        <div class="ac-wish">
-          <div class="ac-w-i">${thumbFor(r.id)}</div>
-          <div class="ac-w-m">
-            <div class="ac-w-top">
-              <span class="ac-w-n">${esc(r.name)}</span>
-              <span class="ac-w-p">${inr(r.price * r.qty)}</span>
-            </div>
-            <div class="ac-w-note">${inr(r.price)} each${
-              r.note ? ` · ${esc(r.note)}` : ""}</div>
-            <div class="ac-w-r">
-              <span class="stp">
-                <button type="button" data-bdn="${i}" aria-label="One less">−</button>
-                <span>${r.qty}</span>
-                <button type="button" data-bup="${i}" aria-label="One more">+</button>
-              </span>
-              <button class="ac-w-x" data-brm="${i}" aria-label="Remove ${esc(r.name)}">Remove</button>
-            </div>
-          </div>
-        </div>`).join("")}
-      <div class="ac-sum">
-        <div><span>Items</span><span>${nItems()}</span></div>
-        <div><span>Subtotal</span><span>${inr(sub())}</span></div>
-        <div><span>Delivery</span><span>${ship() === 0 ? "Free" : inr(ship())}</span></div>
-        <div class="ac-sum-t"><span>Total</span><span>${inr(tot())}</span></div>
-        <p class="ac-empty" style="margin-top:8px">${shipNudge()}</p>
-      </div>
-      <button class="btn btn-dark btn-full" id="acToBill">Create the bill</button>
-    </div>`;
-  }
-
-  if(acctTab === "wishlist"){
-    const rows = wish.map(wishCard).filter(Boolean).join("");
-    /* The list itself lives on a page of its own now — pictures, ticks, and
-       the things that act on several at once. This pane stays as the summary
-       somebody already inside their account came here for, with the way
-       through to the full one at the top of it. */
-    return head + `<div class="ac-pane">${rows ? `
-      <button class="btn btn-ghost btn-full" id="acWishAll" type="button"
-              style="margin-bottom:12px">Open your wishlist</button>` : ""}${
-      rows || `<p class="ac-empty">Nothing saved yet.
-      Tap the heart on any rakhi and it waits for you here — on this phone, and on
-      any other you sign in from.</p>`}</div>`;
-  }
-
-  if(acctTab === "details"){
-    /* An address that is already saved is a fact, not a form. Five boxes
-       standing open every time say "check this", when the honest state is
-       "this is where your rakhis go, change it if that is wrong". Nothing
-       to add is a different screen again: one button, not five empty
-       boxes. */
-    const p = profile || {};
-    const hasAddr = !!(p.full_name && p.phone && p.address && p.city && p.pincode);
-
-    return head + `<div class="ac-pane">
-      <div class="ac-sec-k" style="margin-bottom:12px">Delivery address</div>
-
-      ${!detailsEditing && hasAddr ? `
-        <div class="addr-card">
-          <span class="addr-tick" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9 17.5 20 6.5"/></svg>
-          </span>
-          <div>
-            <b>${esc(p.full_name)}</b>
-            <p>${esc(p.address)}<br>${esc(p.city)} — ${esc(p.pincode)}</p>
-            <span class="addr-ph">${esc(p.phone)}</span>
-          </div>
-        </div>
-        <p class="ac-fine">Every bill fills itself in from this. Changing it does not
-          change an order already placed — open that order and change it there.</p>
-        <div class="ac-acts">
-          <button class="btn btn-ghost btn-full" id="pEdit" type="button">Change address</button>
-        </div>` : ""}
-
-      ${!detailsEditing && !hasAddr ? `
-        <p class="ac-fine" style="margin-top:0">Nothing saved yet. Add it once and every
-          bill you make fills itself in — you will not type it again.</p>
-        <div class="ac-acts">
-          <button class="btn btn-dark btn-full" id="pEdit" type="button">Add your address</button>
-        </div>` : ""}
-
-      ${detailsEditing ? `
-      <form id="acctProfile" novalidate>
-        <div class="fg two">
-          <div class="fld"><label for="pName">Full name</label>
-            <input type="text" id="pName" autocomplete="name" value="${esc(nm)}"></div>
-          <div class="fld"><label for="pPhone">Phone</label>
-            <input type="tel" id="pPhone" autocomplete="tel" inputmode="numeric" maxlength="10"
-                   value="${esc(p.phone || "")}"></div>
-        </div>
-        <div class="fg"><div class="fld"><label for="pAddr">Address</label>
-          <textarea id="pAddr" autocomplete="street-address">${esc(p.address || "")}</textarea></div></div>
-        <div class="fg two">
-          <div class="fld"><label for="pCity">City</label>
-            <input type="text" id="pCity" autocomplete="address-level2" value="${esc(p.city || "")}"></div>
-          <div class="fld"><label for="pPin">Pincode</label>
-            <input type="tel" id="pPin" autocomplete="postal-code" inputmode="numeric" maxlength="6"
-                   value="${esc(p.pincode || "")}"></div>
-        </div>
-        <div class="ac-acts two">
-          <button class="btn btn-dark" id="pSave" type="submit">${
-            hasAddr ? "Save the address" : "Save it"}</button>
-          ${hasAddr ? `<button class="btn btn-ghost" id="pCancel" type="button">Leave it</button>` : ""}
-        </div>
-      </form>` : ""}
-
-      <div class="ac-sec">
-        <div class="ac-sec-k">Password</div>
-        <form id="acctPass" novalidate>
-          <div class="fg two">
-            <div class="fld"><label for="pNew">New password</label>
-              <input type="password" id="pNew" autocomplete="new-password"
-                     placeholder="At least 8 characters"></div>
-            <div class="fld"><label for="pNew2">Again</label>
-              <input type="password" id="pNew2" autocomplete="new-password"
-                     placeholder="The same one"></div>
-          </div>
-          <p class="ac-fine">${SB.user() && SB.user().avatar
-            ? "You signed in with Google. Setting a password here lets you sign in either way."
-            : "Changing it signs you in with the new one next time. This phone stays signed in."}</p>
-          <div class="ac-acts">
-            <button class="btn btn-ghost btn-full" id="pPassSave" type="submit">Change password</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="ac-sec">
-        <div class="ac-sec-k">Help</div>
-        <p class="ac-fine" style="margin-top:0">Anything at all — a change to an order, a
-          design you cannot find, something that will not work. We answer on
-          WhatsApp, usually within the hour.</p>
-        <div class="ac-acts two">
-          <a class="btn btn-dark" href="${esc(wa("Hello Ray Art Gallery, I need some help."))}"
-             target="_blank" rel="noopener">
-            <svg class="wa" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.53 3.68 1.46 5.2L2 22l5.1-1.6a9.8 9.8 0 004.94 1.33c5.44 0 9.84-4.4 9.84-9.84S17.48 2 12.04 2zm5.7 13.9c-.24.67-1.4 1.28-1.93 1.33-.53.06-1.02.1-1.75-.16-.73-.27-2.5-.98-4.28-3.1-1.4-1.67-1.62-2.9-1.7-3.4-.07-.5.2-1.35.55-1.7.35-.36.6-.4.83-.4h.5c.2 0 .4-.03.6.47.2.5.7 1.8.76 1.93.06.13.1.28 0 .45-.1.17-.34.44-.5.6-.16.15-.3.28-.15.55.14.27.6 1.06 1.3 1.7.9.83 1.6 1.1 1.87 1.23.27.14.43.12.6-.05.16-.16.66-.75.84-1 .18-.27.36-.22.6-.13.24.1 1.5.72 1.76.85.26.13.43.2.5.3.06.12.06.66-.18 1.34z"/></svg>
-            Chat on WhatsApp</a>
-          ${SHOP.email ? `<a class="btn btn-ghost" href="mailto:${esc(SHOP.email)}">Email us</a>` : ""}
-        </div>
-      </div>
-
-      <div class="ac-sec">
-        <div class="ac-acts"><button class="btn btn-ghost btn-full" id="acOut" type="button"
-          >Sign out</button></div>
-      </div></div>`;
-  }
-
-  /* orders */
-  if(!acctOrders) return head + `<div class="ac-pane" id="acOrders"><p class="ac-empty">Loading…</p></div>`;
-  if(!acctOrders.length){
-    return head + `<div class="ac-pane"><p class="ac-empty">No orders yet. Once you send a bill
-      on WhatsApp while signed in, it appears here — with where it has got to and,
-      once it ships, its tracking id.</p></div>`;
-  }
-  return head + `<div class="ac-pane">${acctOrders.map(orderCard).join("")}</div>`;
-}
-
+   Signed in, there is nothing here to draw. Anything that still asks for
+   the sheet is asking for the account, and the account is the profile
+   page, so it is sent there. */
 function paintAcct(){
   const body = $("#acctBody");
   if(!body) return;
-  body.innerHTML = signedIn() ? acctBody() : acctSignedOut();
-  if(signedIn()) loadAcctData();
+  /* "reset" is the one screen a signed-in person still sees here: they
+     arrived on a password link, which signs them in on the way. */
+  if(signedIn() && acctView !== "reset"){ body.innerHTML = ""; return; }
+  body.innerHTML = acctSignedOut();
 }
 
-/* Orders and updates are fetched once per opening of the sheet and then
-   kept, so switching tabs is instant. Anything that changes them — placing
-   an order, cancelling one — clears the copy rather than patching it, so
-   what is shown is always what the server says. */
-function loadAcctData(){
-  if(!signedIn()) return;
-
-  if(acctTab === "orders" && !acctOrders){
-    acctOrders = [];                                  /* stops a second fetch */
-    loadOrders().then(rows => {
-      acctOrders = Array.isArray(rows) ? rows : [];
-      if(isOn("#acctModal") && signedIn()) paintAcct();
-    }).catch(() => {
-      acctOrders = null;
-      const box = $("#acOrders");
-      if(box) box.innerHTML = `<p class="ac-empty">Could not load your orders just now.</p>`;
-    });
-  }
-
-  if(acctTab === "updates" && !acctNotifs){
-    acctNotifs = [];
-    loadNotifs().then(rows => {
-      acctNotifs = Array.isArray(rows) ? rows : [];
-      if(isOn("#acctModal") && signedIn()) paintAcct();
-      /* opening the tab is reading them */
-      const unread = acctNotifs.filter(n => !n.read_at).map(n => n.id);
-      if(unread.length){
-        SB.rpc("mark_notifications_read", {p_ids: unread})
-          .then(() => { acctNotifs.forEach(n => { n.read_at = n.read_at || new Date().toISOString(); });
-                        paintAcctBtn(); })
-          .catch(() => {});
-      }
-    }).catch(() => { acctNotifs = null; });
-  }
-}
-
-function openAcct(tab){
-  detailsEditing = false;      /* a fresh look, not a half-finished edit */
+function openAcct(where){
   if(!SB_ON) return;
+  if(signedIn()){
+    /* the sheet may be the thing on screen — it closes before the page
+       under it opens, and the pop that closing causes is waited for, or
+       the page's own hash is thrown away by it */
+    const go = () => where === "orders" ? openOrders() : openProfile(where === "updates" ? "updates" : "home");
+    if(isOn("#acctModal") && sheetHist){
+      addEventListener("popstate", () => go(), {once: true});
+      closeAcct();
+    }else{
+      closeAcct();
+      go();
+    }
+    return;
+  }
   acctNote = null;
-  if(tab) acctTab = tab;
   paintAcct();
   openSheet("#acctModal");
 }
@@ -699,148 +423,26 @@ function closeAcct(fromBack){
   }
 }
 
-/* ── everything the sheet can be clicked on ── */
-$("#acctBody").addEventListener("click", async e => {
+/* ── the sheet's own clicks ──
+   Four of them, because there are four things on it: switch between signing
+   in and creating an account, ask for a password link, come back from one,
+   and Google. Everything the sheet used to catch — a wishlist row, an order,
+   a cancel, a stepper — is caught by the page that now draws it. */
+$("#acctBody").addEventListener("click", e => {
   const view = e.target.closest("[data-view]");
   if(view){ e.preventDefault(); acctView = view.dataset.view; acctNote = null; paintAcct(); return; }
-
-  const tab = e.target.closest("[data-tab]");
-  if(tab){ acctTab = tab.dataset.tab; acctNote = null; paintAcct(); return; }
-
-  if(e.target.closest("#acOut")){ signOut(); return; }
 
   if(e.target.closest("#acGoogle")){
     /* No fragment on the way out: Supabase puts the session in the fragment
        when it sends the browser back, and anything already there is lost.
-       landFromLink() opens the sheet again on arrival. */
+       landFromLink() opens the account again on arrival. */
     SB.oauth("google", location.origin + location.pathname);
-    return;
-  }
-
-  const add = e.target.closest("[data-wadd]");
-  if(add){ addItem(catalogue(add.dataset.wadd)); return; }
-
-  /* the basket tab: the same stepper and Remove as the cart drawer, so a
-     customer never has to leave their account to fix a quantity */
-  const up = e.target.closest("[data-bup]"), dn = e.target.closest("[data-bdn]"),
-        rm = e.target.closest("[data-brm]");
-  if(up || dn || rm){
-    if(up) cart[up.dataset.bup].qty = Math.min(MAX_QTY, cart[up.dataset.bup].qty + 1);
-    else if(dn){ if(--cart[dn.dataset.bdn].qty < 1) cart.splice(dn.dataset.bdn, 1); }
-    else {
-      const gone = cart[rm.dataset.brm];
-      cart.splice(rm.dataset.brm, 1);
-      if(gone) track("remove_cart", gone.id, {qty: gone.qty});
-    }
-    save(); paintCart(); paintAcct();
-    return;
-  }
-
-  if(e.target.closest("#acToBill")){
-    closeAcct();
-    requestAnimationFrame(() => { openCart(); $("#toBill").click(); });
-    return;
-  }
-
-  /* Open your wishlist, out of the account and onto the wishlist's own page.
-     The sheet's history entry pops asynchronously — set the hash in the same
-     tick and the pop that follows throws it away again, which is the same
-     trap View below is written around. */
-  if(e.target.closest("#acWishAll")){
-    if(isOn("#acctModal") && sheetHist){
-      addEventListener("popstate", () => openWish(), {once:true});
-      closeAcct();
-    }else{
-      closeAcct();
-      openWish();
-    }
-    return;
-  }
-
-  /* View, on a wishlist row.
-     Closing the sheet calls history.back() to drop the entry it pushed, and
-     that pops *asynchronously*. Setting the product's hash in the same tick
-     meant the pop landed afterwards and threw the new hash away again — so
-     the sheet closed and nothing else happened. Wait for the pop, then open. */
-  const open = e.target.closest("[data-wopen]");
-  if(open){
-    const id = open.dataset.wopen;
-    if(isOn("#acctModal") && sheetHist){
-      addEventListener("popstate", () => openProduct(id), {once:true});
-      closeAcct();
-    }else{
-      closeAcct();
-      openProduct(id);
-    }
-    return;
-  }
-
-  if(e.target.closest("#pEdit")){ detailsEditing = true; paintAcct(); return; }
-  if(e.target.closest("#pCancel")){ detailsEditing = false; paintAcct(); return; }
-
-  const ag = e.target.closest("[data-oagain]");
-  if(ag){
-    const order = (acctOrders || []).find(x => x.id === ag.dataset.oagain);
-    if(order) buyTheseAgain(order);
-    return;
-  }
-
-  const ov = e.target.closest("[data-oview]");
-  if(ov){
-    /* the sheet's history entry pops asynchronously; wait for it, or the
-       order page's hash is thrown away by the pop that follows */
-    const id = ov.dataset.oview;
-    if(isOn("#acctModal") && sheetHist){
-      addEventListener("popstate", () => openOrderPage(id), {once: true});
-      closeAcct();
-    }else{
-      closeAcct();
-      openOrderPage(id);
-    }
-    return;
-  }
-
-  const ea = e.target.closest("[data-editaddr]");
-  if(ea){ editingAddr = ea.dataset.editaddr; cancelling = null; paintAcct(); return; }
-  if(e.target.closest("[data-addrno]")){ editingAddr = null; paintAcct(); return; }
-  const ay = e.target.closest("[data-addryes]");
-  if(ay){ saveOrderAddress(ay.dataset.addryes); return; }
-  const op = e.target.closest("[data-orderpin]");
-  if(op){ pinThisOrder(op.dataset.orderpin); return; }
-  const pp = e.target.closest("[data-pastepin]");
-  if(pp){ pastePinFor(pp.dataset.pastepin); return; }
-
-  const cx = e.target.closest("[data-cancel]");
-  if(cx){ cancelling = cx.dataset.cancel; editingAddr = null; cancelWhy = 0; paintAcct(); return; }
-
-  /* picking a reason repaints only the row of reasons — repainting the whole
-     account would scroll the box they are reading out from under them */
-  const why = e.target.closest("[data-why]");
-  if(why){
-    cancelWhy = CANCEL_REASONS.indexOf(why.dataset.why);
-    [...why.parentElement.children].forEach((b, i) => {
-      b.classList.toggle("on", i === cancelWhy);
-      b.setAttribute("aria-checked", String(i === cancelWhy));
-    });
-    return;
-  }
-  if(e.target.closest("[data-cancelno]")){ cancelling = null; paintAcct(); return; }
-  const cy = e.target.closest("[data-cancelyes]");
-  if(cy){ doCancel(cy.dataset.cancelyes); return; }
-
-  const copy = e.target.closest("[data-copy]");
-  if(copy){
-    try{ await navigator.clipboard.writeText(copy.dataset.copy); toast("Tracking id copied"); }
-    catch(err){ toast(copy.dataset.copy); }
-    return;
   }
 });
 $("#acctBody").addEventListener("submit", e => {
   e.preventDefault();
-  if(e.target.id === "acctForm")    return submitAuth();
-  if(e.target.id === "acctProfile") return submitProfile();
-  if(e.target.id === "acctPass")    return changePassword();
-  if(e.target.id === "acctReset")   return submitNewPassword();
+  if(e.target.id === "acctForm")  return submitAuth();
+  if(e.target.id === "acctReset") return submitNewPassword();
 });
 
 function busy(sel, on, label){
@@ -877,7 +479,13 @@ async function submitAuth(){
     }
     if(up){
       const s = await SB.signUp(email, pass, name);
-      if(s){ await afterSignIn(); acctTab = "details"; return note("Welcome. Your details are below.", true); }
+      if(s){
+        await afterSignIn();
+        closeAcct();
+        requestAnimationFrame(() => openProfile("info"));
+        toast("Welcome");
+        return;
+      }
       /* email confirmation is on in the project: nothing to sign in with yet */
       acctView = "in";
       return note("Account created. Open the link we emailed you, then sign in.", true);
@@ -885,9 +493,11 @@ async function submitAuth(){
     await SB.signIn(email, pass);
     await afterSignIn();
     acctNote = null;
-    acctOrders = null;
-    acctTab = "orders";
-    paintAcct();
+    forgetOrders();
+    /* Closed, and nothing opened over it. Most sign-ins here happen halfway
+       through a checkout, and a profile page thrown up in front of somebody
+       who was about to pay is a page they have to find their way out of. */
+    closeAcct();
     toast("Signed in");
   }catch(err){
     const m = String(err.message || "");
@@ -908,58 +518,13 @@ async function submitNewPassword(){
   try{
     await SB.updatePassword(pass);
     await afterSignIn();
-    acctView = "in"; acctTab = "orders"; acctOrders = null;
-    paintAcct();
+    acctView = "in";
+    forgetOrders();
+    closeAcct();
     toast("Password changed");
   }catch(err){
     note(err.message || "Could not change it just now.");
   }
-}
-
-async function submitProfile(){
-  const p = {
-    full_name: ($("#pName").value  || "").trim() || null,
-    phone:     ($("#pPhone").value || "").trim() || null,
-    address:   ($("#pAddr").value  || "").trim() || null,
-    city:      ($("#pCity").value  || "").trim() || null,
-    pincode:   ($("#pPin").value   || "").trim() || null
-  };
-  if(p.phone && !/^[6-9]\d{9}$/.test(p.phone)) return note("Enter a valid 10-digit phone number.");
-  if(p.pincode && !/^\d{6}$/.test(p.pincode))  return note("Enter a valid 6-digit pincode.");
-  busy("#pSave", true, "Saving…");
-  try{
-    await saveProfile(p);
-    fillBillFromProfile();
-    paintAcctBtn();
-    detailsEditing = false;                /* back to reading it, not editing it */
-    paintAcct();
-    toast("Address saved");
-  }catch(err){
-    note(err.message || "Could not save just now.");
-  }
-}
-
-/* ── the password, from inside the account ──
-   The forgotten-password path exists for people who cannot get in. This is
-   for people who are already in and simply want a different one — or who
-   signed in with Google and would like a password as well, so they are not
-   locked out of their own orders the day they lose that account. */
-async function changePassword(){
-  const a = ($("#pNew").value  || "").trim();
-  const b = ($("#pNew2").value || "").trim();
-  if(a.length < 8)  return note("A password needs at least 8 characters.");
-  if(a !== b)       return note("Those two are not the same.");
-
-  busy("#pPassSave", true, "Changing…");
-  try{
-    await SB.updatePassword(a);
-    $("#pNew").value = ""; $("#pNew2").value = "";
-    note("Password changed. Use it the next time you sign in.", true);
-    toast("Password changed");
-  }catch(err){
-    note(err.message || "Could not change it just now.");
-  }
-  busy("#pPassSave", false, "Change password");
 }
 
 /* ── coming back from Google, or from the reset email ──
@@ -989,14 +554,16 @@ async function landFromLink(){
   }
 
   await afterSignIn();
-  acctOrders = null;
+  forgetOrders();
 
   if(kind === "recovery"){
+    /* They are signed in — openAcct() would send them to the profile, and
+       the box for choosing a new password is in the sheet. So the sheet is
+       opened directly, which is the one time anything does that. */
     acctView = "reset";
-    openAcct();
     paintAcct();
+    openSheet("#acctModal");
   }else{
-    acctTab = "orders";
     openAcct("orders");
     toast("Signed in");
   }
@@ -1010,23 +577,36 @@ if(SB_ON){
   $("#acctClose").onclick = () => closeAcct();
   $("#acctModal").addEventListener("click", e => { if(e.target.id === "acctModal") closeAcct(); });
 
-  /* #account is a real address, so "your orders" can be linked to.
+  /* #account is still a real address — every email and bookmark that ever
+     linked to it keeps working. Signed in it now means the profile page, and
+     openAcct() is what knows that, so the route asks it rather than deciding
+     for itself.
+
      A link from an email normally loads the page fresh, but if this tab is
      already open on it the fragment changes underneath us instead — so watch
      for that too rather than sitting there doing nothing. */
   const acctRoute = () => {
     if(location.hash.indexOf("access_token=") !== -1){ landFromLink(); return; }
-    if(location.hash === "#account" && !isOn("#acctModal")) openAcct();
+    if(location.hash === "#account" && !isOn("#acctModal") && !profileOpen()) openAcct();
   };
   addEventListener("hashchange", acctRoute);
 
-  (async () => {
+  /* ── why this waits for the document ──
+     Landing from a Google link or a password link now ends on a page —
+     the orders page, the profile — and those are declared in files that
+     load after this one. This file is script 19 of 31; its boot used to
+     run the moment it was parsed, which is before scripts 20 to 31 exist,
+     and reaching openOrders() from there is a ReferenceError rather than
+     a sign-in. DOMContentLoaded is after the last script tag, and the
+     scripts sit at the end of the body, so this is the first moment the
+     whole shop is defined. */
+  addEventListener("DOMContentLoaded", async () => {
     const landed = await landFromLink();
     /* which providers are on decides whether the Google button is drawn, so
        ask before the sheet can be opened, and redraw if it already is */
     SB.providers().then(() => { if(isOn("#acctModal")) paintAcct(); });
     if(!landed) acctRoute();
-  })();
+  });
 }
 
 paintGrid();

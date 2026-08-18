@@ -309,6 +309,74 @@ function fillBillFromProfile(force){
     if(el && v && (force || !el.value.trim())) el.value = v;
   }
 }
+/* ── the address book ──
+   25-addresses.sql is the source of truth; profiles keeps a copy of
+   whichever one is the default, maintained by a trigger, so everything
+   above this line — fillBillFromProfile, the seller's customer list —
+   carries on reading the columns it always read.
+
+   Held in memory for the visit like the catalogue is: the profile page,
+   the checkout picker and the address page all want the same list, and
+   fetching it three times to draw it three times is three round trips to
+   say the same thing. Anything that changes it clears the copy. */
+let addrBook = null;
+
+async function loadAddresses(force){
+  if(!SB_ON || !signedIn()) return [];
+  if(addrBook && !force) return addrBook;
+  try{
+    const rows = await SB.rest("addresses?select=*&order=is_default.desc,created_at.desc");
+    addrBook = Array.isArray(rows) ? rows : [];
+  }catch(err){
+    /* the file has not been run yet — the shop keeps working on the one
+       address profiles has always held, which is exactly what it did
+       before this existed */
+    if(/relation|404|schema cache/i.test(err.message || "")) addrBook = [];
+    else throw err;
+  }
+  return addrBook;
+}
+
+/* the one a bill fills itself in from */
+function defaultAddr(){
+  const list = addrBook || [];
+  return list.find(a => a.is_default) || list[0] || null;
+}
+
+async function saveAddress(a){
+  const row = await SB.rpc("save_address", {
+    p_id:      a.id || null,
+    p_label:   a.label || "Home",
+    p_name:    a.full_name,
+    p_phone:   a.phone,
+    p_address: a.address,
+    p_city:    a.city,
+    p_pincode: a.pincode,
+    p_note:    a.note || null,
+    p_default: !!a.is_default,
+    p_lat:     a.lat != null ? a.lat : null,
+    p_lng:     a.lng != null ? a.lng : null
+  });
+  addrBook = null;
+  await loadAddresses(true);
+  await loadProfile();          /* the trigger has just rewritten the shadow */
+  return row;
+}
+
+async function setDefaultAddress(id){
+  await SB.rpc("set_default_address", {p_id: id});
+  addrBook = null;
+  await loadAddresses(true);
+  await loadProfile();
+}
+
+async function deleteAddress(id){
+  await SB.del("addresses?id=eq." + encodeURIComponent(id));
+  addrBook = null;
+  await loadAddresses(true);
+  await loadProfile();
+}
+
 /* "last seen" is what turns a customer list into something worth reading.
    One write per visit, and never in the way of anything else. */
 function touchSeen(){
@@ -388,7 +456,13 @@ async function afterSignIn(){
 async function signOut(){
   SB.signOut();
   profile = null;
-  acctView = "in"; acctNote = null; acctTab = "orders";
+  acctView = "in"; acctNote = null;
+  /* everything held for the person who was signed in, let go of together —
+     the next account to sign in on this phone must not see any of it */
+  acctNotifs = null;
+  addrBook = null;
+  unreadCount = 0;
+  forgetOrders();
   paintAcct();
   paintAcctBtn();
   toast("Signed out");

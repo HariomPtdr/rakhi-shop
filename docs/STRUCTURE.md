@@ -16,7 +16,7 @@ rakhi-shop/
 │   ├── shop/              the shop
 │   │   ├── index.html         the markup, and the list of parts below it
 │   │   ├── styles/  02 … 17   one file per thing it dresses
-│   │   └── js/      01 … 19   one file per thing it does
+│   │   └── js/      01 … 31   one file per thing it does
 │   │
 │   └── admin/             the seller dashboard
 │       ├── index.html

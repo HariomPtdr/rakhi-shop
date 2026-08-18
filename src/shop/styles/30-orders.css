@@ -1,0 +1,171 @@
+/* ══════════════════════════════════════════════════════════
+   YOUR ORDERS
+
+   A card per order, on the cream, wearing the same ivory-to-sand
+   surface and gold hairline every raised thing on this site
+   wears. Read from the top down it answers the four questions
+   in the order they are asked: what state is it in and what did
+   it cost, what was in it, where has it got to, and what can I
+   do about it.
+
+   The chips are sticky under the bar rather than scrolling away
+   with the list. A filter you cannot see is a filter you forget
+   you set, and then twenty-five orders look like four.
+   ══════════════════════════════════════════════════════════ */
+.od{
+  position:fixed; inset:0; z-index:52;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity .32s var(--ease), transform .32s var(--ease), visibility .32s;
+}
+.od.on{opacity:1; visibility:visible; transform:none}
+body.od-on{overflow:hidden}
+
+/* ══════════ the chips ══════════
+   They scroll sideways on a phone, where six of them do not fit, and the
+   fade at the right edge is what says so. */
+.od-chips{
+  position:sticky; top:calc(66px + env(safe-area-inset-top)); z-index:3;
+  display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
+  padding:12px clamp(16px,4vw,28px);
+  max-width:760px; margin:0 auto;
+  background:linear-gradient(180deg, rgba(251,246,236,.97) 0%, rgba(251,246,236,.97) 68%, rgba(251,246,236,0) 100%);
+}
+.od-chips::-webkit-scrollbar{display:none}
+.od-chip{
+  flex:none; display:inline-flex; align-items:center; gap:6px;
+  padding:8px 15px; border:0; border-radius:var(--r-full); cursor:pointer;
+  background:rgba(255,255,255,.62); color:var(--ink-soft);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
+  font-family:var(--head); font-size:12.5px; font-weight:600; white-space:nowrap;
+  transition:background .22s var(--ease), color .22s var(--ease),
+             box-shadow .22s var(--ease), transform .2s var(--ease);
+}
+.od-chip:active{transform:scale(.96)}
+@media (hover:hover){
+  .od-chip:hover{background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.9)}
+}
+.od-chip.on{
+  background:linear-gradient(158deg,#FBF1DC 0%,#F1DEB8 100%); color:#7A1418;
+  box-shadow:inset 0 0 0 1.5px rgba(154,34,38,.4);
+}
+/* a filter with nothing behind it is still offered, just quietly: a chip
+   that vanishes when it is empty makes the row of chips change shape every
+   time an order moves along */
+.od-chip.empty{opacity:.45}
+.od-chip i{
+  font-style:normal; font-size:11px; font-weight:700; color:var(--tan-deep);
+}
+.od-chip.on i{color:#9B2226}
+
+.od-in{
+  max-width:760px; margin:0 auto;
+  padding:2px clamp(16px,4vw,28px) calc(64px + env(safe-area-inset-bottom));
+  display:grid; gap:14px;
+}
+
+/* ══════════ one order ══════════ */
+.od-card{
+  padding:16px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+.od-card.off{opacity:.82}
+
+.od-top{display:flex; align-items:center; gap:12px}
+.od-top-t{flex:1; min-width:0}
+.od-top-t b{
+  display:block; font-family:var(--display); font-size:18px; font-weight:600;
+  line-height:1.25; letter-spacing:-.005em;
+}
+.od-top-t b.out{color:#1F7A4D}          /* delivered — the one green on the page */
+.od-top-t b.no{color:#8A2033}
+.od-top-t span{
+  display:block; margin-top:2px; font-size:12px; color:var(--ink-faint);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.od-tot{
+  flex:none; font-family:var(--display); font-size:19px; font-weight:600;
+  color:var(--ink); letter-spacing:-.01em;
+}
+
+/* the parcel, with a tick on it once it has arrived */
+.od-mark{
+  position:relative; flex:none; display:grid; place-items:center;
+  width:44px; height:44px; border-radius:var(--r-full); color:#7A1418;
+  background:linear-gradient(158deg,#FBF1DC 0%,#F4E4C6 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+}
+.od-mark svg{width:23px; height:23px}
+.od-mark.off{color:#8A2033; background:linear-gradient(158deg,#FBEDEE 0%,#F5DEE1 100%);
+  box-shadow:inset 0 0 0 1px rgba(181,56,74,.3)}
+.od-mark-b{
+  position:absolute; right:-2px; bottom:-2px; width:19px; height:19px;
+  display:grid; place-items:center; border-radius:var(--r-full);
+  background:#1F7A4D; color:#fff;
+  box-shadow:0 0 0 2px var(--bg);
+}
+.od-mark-b.off{background:#8A2033}
+.od-mark-b svg{width:11px; height:11px}
+
+/* ── the rakhis themselves ── */
+.od-shots{display:flex; gap:8px; margin-top:14px}
+.od-shot{
+  flex:none; width:66px; height:66px; border-radius:var(--r-md); overflow:hidden;
+  background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.5);
+}
+.od-shot img{width:100%; height:100%; object-fit:cover}
+.od-shot.od-more{
+  display:grid; place-items:center;
+  font-family:var(--head); font-size:13px; font-weight:700; color:var(--tan-deep);
+  background:linear-gradient(158deg,#FBF1DC 0%,#F4E4C6 100%);
+}
+
+.od-names{
+  margin-top:11px; font-size:13px; color:var(--ink-soft); line-height:1.55;
+}
+
+/* the tracker, at card size */
+.od-track{margin:13px 0 0}
+
+/* "Delivered on 08 Aug" and "Cancelled on 08 Aug" are statements of fact and
+   are coloured like conclusions. Everything before them describes a process
+   still running, and that reads as ordinary prose. */
+.od-where{margin-top:10px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
+.od-where.done{color:#1F6B47; font-weight:600}
+.od-where.off{color:#8A2033; font-weight:600}
+
+.od-meta{
+  display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px;
+  font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+}
+
+/* ── the two things anybody does from a list of past orders ── */
+.od-acts{
+  display:flex; margin:14px -16px -16px; padding:0 16px;
+  box-shadow:inset 0 1px 0 rgba(217,184,119,.5);
+}
+.od-act{
+  flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:14px 6px; border:0; background:none; cursor:pointer;
+  font-family:var(--head); font-size:13px; font-weight:600; color:var(--ink-soft);
+  transition:background .2s var(--ease), color .2s var(--ease);
+}
+.od-act svg{width:17px; height:17px; flex:none}
+.od-act:active{background:rgba(217,184,119,.18)}
+@media (hover:hover){ .od-act:hover{background:rgba(255,255,255,.6); color:var(--ink)} }
+.od-act + .od-act{box-shadow:inset 1px 0 0 rgba(217,184,119,.5)}
+.od-act.od-again{color:#9B2226}
+@media (hover:hover){ .od-act.od-again:hover{color:#7A1418} }
+.od-acts .od-act:first-child{border-bottom-left-radius:var(--r-lg)}
+.od-acts .od-act:last-child{border-bottom-right-radius:var(--r-lg)}
+
+.od-none{display:grid; justify-items:center; gap:16px; padding:34px 4px; text-align:center}
+.od-in > .ac-empty{padding:30px 4px; text-align:center}
+
+@media (min-width:720px){
+  .od-in{grid-template-columns:1fr 1fr}
+  .od-card{align-content:start}
+  .od-in > .ac-empty, .od-none{grid-column:1/-1}
+}

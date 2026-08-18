@@ -19,16 +19,46 @@ second one.
 ## 2. Create the tables
 
 **SQL Editor** in the left sidebar → **New query**. Paste each file, press
-**Run**, in this order:
+**Run**, in this order. Every file below is in the `supabase/` folder.
+
+The first three are the shop. Everything after them adds one thing each, in
+the order the shop grew, and each assumes the ones before it have been run.
 
 | # | File | What it does |
 |---|---|---|
-| 1 | `supabase/01-schema.sql` | The tables, the security rules, the cart and order functions, the photo bucket. |
-| 2 | `supabase/02-admin.sql` | The seller: who you are, what you may see, and the five reports the dashboard is built from. |
-| 3 | `supabase/03-seed.sql` | The ten rakhis and two packs the site ships with, so nothing changes on screen. |
+| 1 | `01-schema.sql` | The tables, the security rules, the cart and order functions, the photo bucket. |
+| 2 | `02-admin.sql` | The seller: who you are, what you may see, and the five reports the dashboard is built from. |
+| 3 | `03-seed.sql` | The ten rakhis and two packs the site ships with, so nothing changes on screen. |
+| 4 | `04-notifications.sql` | Telling people what happened — the Updates screen, written by trigger as an order moves. |
+| 5 | `05-reviews.sql` | Reviews and ratings. The insert policy checks you actually received the rakhi. |
+| 6 | `06-coupons.sql` | Coupon codes and who has redeemed them. |
+| 7 | `07-images.sql` | More than one photo per rakhi. |
+| 8 | `08-location.sql` | Where to actually deliver — a dropped pin on a profile and on an order. |
+| 9 | `09-compare.sql` | "Is that good?" — this week against last. |
+| 10 | `10-shop.sql` | The things a shop changes: shipping, the pause, the festival dates. |
+| 11 | `11-payment.sql` | How they are paying. |
+| 12 | `12-coupon-note.sql` | The seller's answer to "where do I get a code?". |
+| 13 | `13-messages.sql` | A word from the seller, on one order. |
+| 14 | `14-address.sql` | Correcting an order, until it is handed to a courier. |
+| 15 | `15-admin.sql` | A second owner. |
+| 16 | `16-payment-mode.sql` | Who decides how it is paid for. |
+| 17 | `17-contact.sql` | The UPI id on every bill. |
+| 18 | `18-razorpay.sql` | Paying by card, UPI or netbanking. |
+| 19 | `19-discard.sql` | An order that never happened. |
+| 20 | `20-notify-on-payment.sql` | Told when the money is in. |
+| 21 | `21-out-for-delivery.sql` | The fifth step on the tracker. |
+| 22 | `22-tags.sql` | Tags on a rakhi, beyond the one shelf it lives on. |
+| 23 | `23-free-ship-qty.sql` | Free delivery on two rakhis, whatever they cost. |
+| 24 | `24-mrp.sql` | An old price on every rakhi, so the card can show the saving. |
+| 25 | `25-addresses.sql` | The address book: several addresses per account, one of them the default. |
 
 Each should end with `Success`. Running any of them a second time is harmless —
 they are written to be re-run.
+
+**If you are only catching up**, run the ones you have not yet. Nothing here is
+retired by a later file: `25-addresses.sql`, for instance, keeps writing the
+default address back onto `profiles` so everything built against those columns
+before it carries on working.
 
 ## 3. Turn off the confirmation email (recommended)
 

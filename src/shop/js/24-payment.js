@@ -270,7 +270,7 @@ function finishBillScreen(hint, buttonText){
   /* Straight to the list the order is now in. The bill closes first and the
      account opens on the next frame, because closing pops a history entry
      and opening in the same tick loses the one just pushed. */
-  const seeOrders = () => { closeBill(); requestAnimationFrame(() => openAcct("orders")); };
+  const seeOrders = () => { closeBill(); requestAnimationFrame(() => openOrders()); };
   const orders = $("#doneOrders");
   if(orders) orders.onclick = seeOrders;
   const acct = $("#doneAcct");

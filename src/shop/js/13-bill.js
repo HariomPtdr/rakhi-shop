@@ -80,6 +80,13 @@ Phone: ${esc(b.phone||"—")}${b.note?`\n\nNote: ${esc(b.note)}`:""}</div>
   $("#shTot").textContent = inr(billTotal());
   paintCouponBox();
   paintAddrBox();
+  /* The book is what the picker is made of, and the bill is often the first
+     screen of the visit to want it. Fetched once and kept, so this costs
+     nothing on the second opening — and the box is redrawn when it lands
+     rather than made to wait for it. */
+  if(typeof loadAddresses === "function"){
+    loadAddresses().then(() => { if(isOn("#billModal")) paintAddrBox(); }).catch(() => {});
+  }
   paintPinBox();
   paintPayBox();
   paintPayAction();

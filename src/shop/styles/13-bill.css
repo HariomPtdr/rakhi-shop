@@ -252,6 +252,26 @@
   display:block; margin-top:4px; font-family:var(--mono);
   font-size:12px; color:var(--ink-faint);
 }
+/* ── choosing out of the address book ──
+   The same card, twice over: the one going on the bill wears the tick and
+   the ink-black ring, the others are quiet until one is tapped. A list where
+   every row looks chosen is a list that has not answered the question. */
+.addr-pick{display:grid; gap:9px}
+.addr-pick .addr-card{cursor:pointer; transition:box-shadow .22s var(--ease), background .22s var(--ease)}
+.addr-card.plain{
+  background:rgba(255,255,255,.5);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6);
+}
+@media (hover:hover){
+  .addr-card.plain:hover{background:rgba(255,255,255,.8); box-shadow:inset 0 0 0 1.5px var(--tan-deep)}
+}
+.addr-lab{
+  display:inline-block; margin-bottom:5px; padding:2px 8px; border-radius:var(--r-full);
+  background:rgba(217,184,119,.24); color:var(--tan-deep);
+  font-family:var(--head); font-size:9.5px; font-weight:700;
+  letter-spacing:.07em; text-transform:uppercase;
+}
+
 .addr-alts{display:flex; flex-wrap:wrap; gap:6px 18px; margin:11px 2px 16px}
 .addr-alts button{
   border:0; background:none; padding:6px 0; cursor:pointer; font-family:var(--head);

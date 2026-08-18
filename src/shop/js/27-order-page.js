@@ -73,6 +73,13 @@ async function showOrderPage(id){
                           + "&order=created_at.desc") || [];
   }catch(e){ opNotes = []; }
 
+  /* the address book, so "change the address" can offer the ones they keep
+     instead of asking them to type one they have already typed. Best effort:
+     the page is about the order, and it draws with or without this. */
+  if(typeof loadAddresses === "function"){
+    try{ await loadAddresses(); }catch(e){}
+  }
+
   opBusy = false;
   paintOrderPage();
   $("#op").scrollTop = 0;      /* again: the real content is taller than "Loading…" */
@@ -207,7 +214,7 @@ $("#opHome").onclick = e => { e.preventDefault(); closeOrderPage(); };
 $("#opBack").onclick = () => {
   /* back to the orders list they came from, not to the shop */
   closeOrderPage();
-  requestAnimationFrame(() => openAcct("orders"));
+  requestAnimationFrame(() => openOrders());
 };
 
 $("#opIn").addEventListener("click", async e => {
@@ -226,6 +233,11 @@ $("#opIn").addEventListener("click", async e => {
      account already used — only the surface they are drawn on has moved. */
   const addr = e.target.closest("[data-editaddr]");
   if(addr){ editingAddr = addr.dataset.editaddr; paintOrderPage(); return; }
+
+  /* one of their saved addresses, poured into the form above rather than
+     submitted — they still press Save, and can still correct a line first */
+  const saved = e.target.closest("[data-usesaved]");
+  if(saved){ useSavedForOrder(saved.dataset.usesaved); return; }
   if(e.target.closest("[data-addrno]")){ editingAddr = null; paintOrderPage(); return; }
   const ay = e.target.closest("[data-addryes]");
   if(ay){ await saveOrderAddress(ay.dataset.addryes); return; }
@@ -255,9 +267,8 @@ $("#opIn").addEventListener("click", async e => {
    changes, so whichever it is gets repainted rather than each caller
    guessing. */
 async function orderChanged(){
-  acctOrders = null;
+  forgetOrders();
   if(orderPageOpen() && opOrder) await showOrderPage(opOrder.id);
-  if(isOn("#acctModal")){ paintAcct(); loadAcctData(); }
 }
 
 /* A cold load of #order/<id> — a shared link, a reload, a bookmark — opens

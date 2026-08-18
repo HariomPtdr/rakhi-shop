@@ -164,10 +164,9 @@ async function payForOrder(orderId, opts){
             razorpay_payment_id: r.razorpay_payment_id,
             razorpay_signature:  r.razorpay_signature
           });
-          acctOrders = null;                     /* the status has moved */
+          forgetOrders();                        /* the status has moved */
           if(typeof o.onPaid === "function") o.onPaid(done);
           else toast("Paid — your order is confirmed");
-          if(isOn("#acctModal")){ paintAcct(); loadAcctData(); }
           done(true);
         }catch(err){
           /* the money may well have gone through — never say it did not */
@@ -215,7 +214,7 @@ async function undoOrder(orderId, why){
                              + encodeURIComponent(orderId) + "&limit=1");
     const row = Array.isArray(rows) && rows[0];
     if(row && row.paid_at){
-      acctOrders = null;
+      forgetOrders();
       toast("Paid — your order is confirmed");
       return true;                       /* nothing to undo */
     }
@@ -229,7 +228,7 @@ async function undoOrder(orderId, why){
   }
   placedBill = "";                 /* so closing the bill does not empty the basket */
   lastOrderId = null;
-  acctOrders = null;
+  forgetOrders();
   if(typeof pushCart === "function") pushCart();     /* the basket, back on the server */
   paintCart();
   toast(why + " — your basket is as it was");

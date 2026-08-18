@@ -130,6 +130,7 @@ function openWish(fromHash){
 }
 
 function hideWish(){
+  if(typeof pfSentTo !== "undefined") pfSentTo = null;
   wlEl.classList.remove("on");
   wlEl.setAttribute("aria-hidden", "true");
   document.body.classList.remove("wl-on");
@@ -244,7 +245,14 @@ function wishClear(){
 /* ══════════════════════════════════════════════════════════
    WIRING
    ══════════════════════════════════════════════════════════ */
-$("#wlBack").onclick  = () => closeWish();
+/* Opened from the profile it goes back to the profile; opened from the
+   heart in the header it goes back to the shop. pfReturn is declared in
+   29-profile-page.js, one file later, so this asks whether it is there —
+   the wishlist works with or without an account page. */
+$("#wlBack").onclick  = () => {
+  if(typeof pfReturn === "function") pfReturn("wishlist", closeWish);
+  else closeWish();
+};
 $("#wlHome").onclick  = e => { e.preventDefault(); closeWish(); };
 $("#wlCart").onclick  = () => openCart();
 $("#wlShare").onclick = wishShare;

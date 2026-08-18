@@ -1,0 +1,293 @@
+/* ══════════════════════════════════════════════════════════
+   YOUR PROFILE, AND THE ADDRESS BOOK
+
+   Two pages built the way the collection and the wishlist are:
+   a full-screen ivory sheet over the shop, the same bar across
+   the top, and cards on the cream rather than rows in a box.
+
+   The look is the shop's own and nothing else's — the ivory-to-
+   sand gradient every raised surface here wears, a gold hairline
+   instead of a grey border, Spectral for anything that is a name
+   and Franklin for anything that is a label. A profile screen
+   that arrived wearing Material cards would read as a page from
+   somebody else's app bolted onto this one.
+   ══════════════════════════════════════════════════════════ */
+
+/* ══════════ the two page shells ══════════ */
+.pf, .ab{
+  position:fixed; inset:0; z-index:52;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity .32s var(--ease), transform .32s var(--ease), visibility .32s;
+}
+.pf.on, .ab.on{opacity:1; visibility:visible; transform:none}
+body.pf-on, body.ab-on{overflow:hidden}
+
+.pf-in, .ab-in{
+  max-width:660px; margin:0 auto;
+  padding:18px clamp(16px,4vw,28px) calc(64px + env(safe-area-inset-bottom));
+}
+
+/* ══════════ who you are ══════════
+   The one card on the page that is not a list. Bigger type, more air, and
+   the mandala's own gold ring around the initial: it is the only thing on
+   the screen that is about the person rather than about their orders. */
+.pf-who{
+  display:flex; align-items:center; gap:16px;
+  padding:20px 18px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+.pf-av{
+  flex:none; width:74px; height:74px; border-radius:var(--r-full);
+  display:grid; place-items:center; overflow:hidden;
+  background:linear-gradient(158deg,#FBF1DC 0%,#F3E2C0 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(217,184,119,.85),
+             inset 0 1px 0 rgba(255,255,255,.9),
+             0 10px 22px -14px rgba(120,88,22,.6);
+  font-family:var(--display); font-size:34px; font-weight:600; color:var(--tan-deep);
+}
+.pf-av i{grid-area:1/1; font-style:normal; line-height:1; width:100%; text-align:center}
+.pf-av img{grid-area:1/1; width:100%; height:100%; object-fit:cover; z-index:1}
+
+.pf-who-t{min-width:0; flex:1}
+.pf-who-t b{
+  display:block; font-family:var(--display); font-size:23px; font-weight:600;
+  line-height:1.2; letter-spacing:-.01em;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.pf-who-t > span{
+  display:block; margin-top:4px; font-size:14.5px; color:var(--ink-faint);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* A phone number is what the courier rings. Missing, it is worth one line
+   asking for it — and the line is a way to give it, not a scolding. */
+.pf-add-ph{
+  margin-top:7px; border:0; background:none; padding:0; cursor:pointer;
+  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--tan-deep);
+  text-decoration:underline; text-underline-offset:3px;
+}
+.pf-add-ph:hover{color:#7A1418}
+
+/* ══════════ the three tiles ══════════ */
+.pf-tiles{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;
+  padding:12px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+.pf-tile{
+  display:grid; justify-items:center; gap:9px; padding:16px 6px 13px;
+  border:0; border-radius:var(--r-md); cursor:pointer;
+  background:rgba(255,255,255,.55);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.4);
+  transition:background .25s var(--ease), box-shadow .25s var(--ease), transform .2s var(--ease);
+}
+.pf-tile:active{transform:scale(.97)}
+@media (hover:hover){
+  .pf-tile:hover{background:#FFFDF8; box-shadow:inset 0 0 0 1px rgba(217,184,119,.85), var(--elev-1)}
+}
+.pf-tile-i{
+  position:relative; display:grid; place-items:center;
+  width:52px; height:52px; border-radius:var(--r-full);
+  background:linear-gradient(158deg,#FBF1DC 0%,#F4E4C6 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+  color:#7A1418;
+}
+.pf-tile-i svg{width:24px; height:24px}
+/* the count on the heart, riding the corner the way the bag's does */
+.pf-tile-i i{
+  position:absolute; top:-3px; right:-3px; min-width:19px; height:19px; padding:0 5px;
+  display:grid; place-items:center; border-radius:var(--r-full);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 100%); color:#FFF6E8;
+  font-family:var(--head); font-size:10.5px; font-weight:700; font-style:normal;
+  box-shadow:0 4px 10px -5px rgba(106,17,20,.8);
+}
+.pf-tile-l{
+  font-family:var(--head); font-size:12.5px; font-weight:600; line-height:1.3;
+  color:var(--ink); text-align:center;
+}
+
+/* ══════════ the list of rows ══════════
+   One card holding all of them, hairlines between rather than around: five
+   separate cards with five shadows is five times the furniture to say the
+   same thing, and the eye reads a ruled list faster than a stack. */
+.pf-list{
+  margin-top:14px; border-radius:var(--r-lg); overflow:hidden;
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+.pf-row{
+  display:flex; align-items:center; gap:14px; width:100%;
+  padding:15px 16px; border:0; background:none; cursor:pointer; text-align:left;
+  color:var(--ink);
+  transition:background .2s var(--ease);
+}
+.pf-row + .pf-row{box-shadow:inset 0 1px 0 rgba(217,184,119,.4)}
+.pf-row:active{background:rgba(217,184,119,.16)}
+@media (hover:hover){ .pf-row:hover{background:rgba(255,255,255,.6)} }
+
+.pf-row-i{flex:none; display:grid; place-items:center; width:34px; height:34px; color:#7A1418}
+.pf-row-i svg{width:23px; height:23px}
+.pf-row-t{flex:1; min-width:0}
+.pf-row-t b{
+  display:block; font-family:var(--display); font-size:16px; font-weight:600;
+  line-height:1.3; letter-spacing:-.005em;
+}
+.pf-row-t span{
+  display:block; margin-top:2px; font-size:12.5px; color:var(--ink-faint); line-height:1.45;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* the unread count on Updates */
+.pf-row-n{
+  flex:none; min-width:21px; height:21px; padding:0 6px;
+  display:grid; place-items:center; border-radius:var(--r-full);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 100%); color:#FFF6E8;
+  font-family:var(--head); font-size:11px; font-weight:700; font-style:normal;
+}
+.pf-chev{flex:none; color:var(--tan-deep); opacity:.85}
+
+/* the plain rows on the help screen carry no icon, so the text starts at
+   the edge rather than in a column of empty circles */
+.pf-asks .pf-row{padding-left:18px}
+
+.pf-out{margin-top:20px}
+.pf-fine{margin-top:14px; font-size:12px; color:var(--ink-faint); line-height:1.6; text-align:center}
+.pf-fine a, .pf-link{
+  color:var(--tan-deep); font-weight:600; border:0; background:none; padding:0;
+  cursor:pointer; font-size:inherit; font-family:inherit;
+  text-decoration:underline; text-underline-offset:3px;
+}
+.pf-link:hover{color:#7A1418}
+
+/* ══════════ the sub-screens ══════════ */
+.pf-pane{
+  margin-top:14px; padding:18px 16px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+/* a pane that is nothing but a list of rows keeps the list's own edges */
+.pf-pane > .pf-list:first-child, .pf-pane > .pf-row:only-child{margin-top:0}
+.pf-pane > .pf-row{
+  margin:0 -16px -18px; width:calc(100% + 32px);
+  border-radius:0 0 var(--r-lg) var(--r-lg);
+}
+.pf-k{
+  font-family:var(--head); font-size:10px; font-weight:700; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px;
+}
+.pf-pane .pf-k + .pf-list{margin-top:0}
+.pf-flat b{display:block; font-family:var(--display); font-size:16px; font-weight:600}
+.pf-flat span{display:block; margin-top:5px; font-size:12.5px; color:var(--ink-faint); line-height:1.55}
+
+.pf-help-h{display:flex; gap:14px; align-items:flex-start; margin-bottom:20px}
+.pf-help-h > span{
+  flex:none; display:grid; place-items:center; width:46px; height:46px;
+  border-radius:var(--r-full); color:#7A1418;
+  background:linear-gradient(158deg,#FBF1DC 0%,#F4E4C6 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.55);
+}
+.pf-help-h svg{width:24px; height:24px}
+.pf-help-h b{display:block; font-family:var(--display); font-size:17px; font-weight:600}
+.pf-help-h p{margin-top:4px; font-size:12.5px; color:var(--ink-soft); line-height:1.55}
+
+.pf-in .ac-empty{padding:26px 4px; text-align:center}
+.pf-in .ac-msg{margin:14px 0 0}
+
+/* ══════════════════════════════════════════════════════════
+   THE ADDRESS BOOK
+   ══════════════════════════════════════════════════════════ */
+.ab-lead{font-size:12.5px; color:var(--ink-faint); line-height:1.6; margin-bottom:14px}
+.ab-list{display:grid; gap:12px}
+
+.ab-card{
+  padding:16px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.5), var(--elev-1);
+}
+/* the default one is the one a bill uses, so it is the one that looks
+   chosen — a deeper gold ring, not a different card */
+.ab-card.def{box-shadow:inset 0 0 0 1.5px rgba(154,34,38,.35), var(--elev-1)}
+
+.ab-h{display:flex; align-items:center; gap:8px; margin-bottom:9px}
+.ab-lab{
+  padding:3px 10px; border-radius:var(--r-full);
+  background:rgba(217,184,119,.24); color:var(--tan-deep);
+  font-family:var(--head); font-size:10.5px; font-weight:700;
+  letter-spacing:.07em; text-transform:uppercase;
+}
+.ab-def{
+  padding:3px 10px; border-radius:var(--r-full);
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 100%); color:#FFF6E8;
+  font-family:var(--head); font-size:10.5px; font-weight:700;
+  letter-spacing:.07em; text-transform:uppercase;
+}
+.ab-n{display:block; font-family:var(--display); font-size:17px; font-weight:600; line-height:1.3}
+.ab-a{margin-top:4px; font-size:13.5px; color:var(--ink-soft); line-height:1.55}
+.ab-ph{display:block; margin-top:5px; font-family:var(--mono); font-size:12.5px; color:var(--ink-faint)}
+.ab-note{margin-top:8px; font-size:12.5px; font-style:italic; color:var(--ink-faint); line-height:1.5}
+.ab-pin{
+  display:inline-block; margin-top:8px; font-size:12px; font-weight:600;
+  color:var(--tan-deep); text-decoration:underline; text-underline-offset:3px;
+}
+
+.ab-acts{
+  display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:14px; padding-top:12px;
+  box-shadow:inset 0 1px 0 rgba(217,184,119,.5);
+}
+.ab-act{
+  border:0; background:none; padding:6px 0; cursor:pointer;
+  font-family:var(--head); font-size:12.5px; font-weight:600; color:var(--tan-deep);
+}
+.ab-act:hover{color:var(--ink)}
+.ab-act.ab-x{margin-left:auto; color:var(--ink-faint)}
+.ab-act.ab-x:hover{color:#8A2033}
+
+.ab-sure{
+  margin-top:14px; padding-top:13px;
+  box-shadow:inset 0 1px 0 rgba(217,184,119,.5);
+}
+.ab-sure b{display:block; font-family:var(--head); font-size:13.5px; font-weight:600}
+.ab-sure p{margin-top:5px; font-size:12.5px; color:var(--ink-soft); line-height:1.55}
+
+/* ── the form ── */
+.ab-form{
+  padding:18px 16px; border-radius:var(--r-lg);
+  background:linear-gradient(158deg,#FFFEFA 0%,#FDF8EE 58%,#F8F1E1 100%);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.6), var(--elev-1);
+}
+.ab-form-h{font-family:var(--display); font-size:19px; font-weight:600; margin-bottom:16px}
+.ab-form .fg{margin-bottom:13px}
+.ab-form textarea{min-height:64px}
+
+/* Home · Work · Other, as three capsules rather than a native dropdown —
+   the same reasoning the cancel reasons are written with. */
+.ab-labs{display:flex; gap:8px; margin-bottom:16px}
+.ab-labs button{
+  flex:1; padding:9px 4px; border:0; border-radius:var(--r-full); cursor:pointer;
+  background:rgba(255,255,255,.6); color:var(--ink-faint);
+  box-shadow:inset 0 0 0 1px rgba(217,184,119,.45);
+  font-family:var(--head); font-size:12.5px; font-weight:600;
+  transition:background .22s var(--ease), color .22s var(--ease), box-shadow .22s var(--ease);
+}
+.ab-labs button.on{
+  background:linear-gradient(160deg,#9B2226 0%,#7A1418 100%); color:#FFF6E8;
+  box-shadow:0 8px 18px -12px rgba(106,17,20,.8);
+}
+.ab-labs button:focus-visible{outline:2px solid var(--tan-deep); outline-offset:2px}
+
+.ab-check{
+  display:flex; align-items:center; gap:10px; margin:4px 0 16px; cursor:pointer;
+  font-size:13px; color:var(--ink-soft);
+}
+.ab-check input{width:17px; height:17px; accent-color:#7A1418; flex:none}
+
+.ab-add{margin-top:16px}
+.ab-in .ac-empty{padding:26px 4px; text-align:center}
+.ab-in .ac-msg{margin:0 0 14px}
+
+@media (min-width:600px){
+  .ab-list{grid-template-columns:1fr 1fr}
+  .ab-list .ab-card{align-content:start}
+}

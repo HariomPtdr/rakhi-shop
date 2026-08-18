@@ -138,9 +138,9 @@ async function pinThisOrder(id){
   try{
     const at = await askDevice();
     await SB.rpc("set_order_pin", {p_order: id, p_lat: at.lat, p_lng: at.lng});
-    acctOrders = null;
+    forgetOrders();
     toast("Location attached to this order");
-    paintAcct(); loadAcctData();
+    if(orderPageOpen() && opOrder) showOrderPage(opOrder.id);
   }catch(err){
     toast(err && err.message ? err.message : pinFailure(err));
   }
@@ -158,9 +158,9 @@ async function pastePinFor(id){
   }
   try{
     await SB.rpc("set_order_pin", {p_order: id, p_lat: at.lat, p_lng: at.lng});
-    acctOrders = null;
+    forgetOrders();
     toast("Location attached to this order");
-    paintAcct(); loadAcctData();
+    if(orderPageOpen() && opOrder) showOrderPage(opOrder.id);
   }catch(err){
     toast(/function|404|schema cache/i.test(err.message || "")
       ? "This needs supabase/14-address.sql to be run first."
