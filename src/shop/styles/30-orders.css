@@ -169,3 +169,38 @@ body.od-on{overflow:hidden}
   .od-card{align-content:start}
   .od-in > .ac-empty, .od-none{grid-column:1/-1}
 }
+
+/* the tile standing in for a rakhi the shop no longer sells */
+.od-shot.od-gone{background:linear-gradient(158deg,#FCF7EC 0%,#F6EEDD 100%); opacity:.9}
+.od-shot.od-gone svg{width:100%; height:100%}
+.od-gone-note{margin-top:6px; font-size:11.5px; color:var(--ink-faint); font-style:italic}
+
+/* ══════════ on a phone ══════════
+   The card is the same card; everything in it comes down a step. A 44px
+   parcel, an 18px status and a 14px action row are proportions drawn for a
+   760px column, and on a 360px screen they read as a page zoomed in — the
+   two actions along the bottom in particular were a slab of button under
+   every order. */
+@media (max-width:520px){
+  .od-in{padding-left:14px; padding-right:14px; gap:12px}
+  .od-card{padding:14px; border-radius:var(--r-md)}
+
+  .od-mark{width:38px; height:38px}
+  .od-mark svg{width:20px; height:20px}
+  .od-mark-b{width:17px; height:17px}
+  .od-top{gap:10px}
+  .od-top-t b{font-size:16px}
+  .od-top-t span{font-size:11.5px}
+  .od-tot{font-size:17px}
+
+  .od-shots{gap:7px; margin-top:12px}
+  .od-shot{width:58px; height:58px}
+  .od-names{font-size:12.5px; margin-top:10px}
+
+  .od-acts{margin:12px -14px -14px; padding:0 14px}
+  .od-act{padding:11px 4px; font-size:12.5px; gap:6px}
+  .od-act svg{width:15px; height:15px}
+
+  .od-chips{padding:10px 14px; gap:6px}
+  .od-chip{padding:7px 13px; font-size:12px}
+}

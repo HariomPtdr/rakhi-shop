@@ -291,3 +291,67 @@ body.pf-on, body.ab-on{overflow:hidden}
   .ab-list{grid-template-columns:1fr 1fr}
   .ab-list .ab-card{align-content:start}
 }
+
+/* ══════════════════════════════════════════════════════════
+   ON A PHONE
+
+   The pages were drawn at a 660px column and then looked at on a 390px
+   one, where every proportion is a step too large: a 74px initial, 23px
+   name, 52px icon discs, and buttons at the shop's full 15px/26px capsule
+   running the width of the screen. The shop's own buttons are that size
+   because they are the ones that spend money — Sign out and Save are not,
+   and at full width they were the loudest thing on a screen made of quiet
+   rows.
+
+   Nothing changes shape here. Everything comes down one step, which is
+   what the reference is: the same page, at the size a thumb reads it.
+   ══════════════════════════════════════════════════════════ */
+@media (max-width:520px){
+  .pf-in, .ab-in{padding:14px 14px calc(52px + env(safe-area-inset-bottom))}
+
+  .pf-who{padding:16px 15px; gap:13px; border-radius:var(--r-md)}
+  .pf-av{width:60px; height:60px; font-size:27px}
+  .pf-who-t b{font-size:20px}
+  .pf-who-t > span{font-size:13.5px}
+
+  .pf-tiles{padding:10px; gap:8px; margin-top:12px; border-radius:var(--r-md)}
+  .pf-tile{padding:13px 4px 11px; gap:7px}
+  .pf-tile-i{width:44px; height:44px}
+  .pf-tile-i svg{width:21px; height:21px}
+  .pf-tile-l{font-size:11.5px}
+
+  .pf-list{margin-top:12px; border-radius:var(--r-md)}
+  .pf-row{padding:13px 14px; gap:12px}
+  .pf-row-i{width:30px; height:30px}
+  .pf-row-i svg{width:21px; height:21px}
+  .pf-row-t b{font-size:15px}
+  .pf-row-t span{font-size:12px}
+
+  .pf-pane, .ab-form{padding:15px 14px; border-radius:var(--r-md)}
+  .pf-help-h > span{width:40px; height:40px}
+  .pf-help-h svg{width:21px; height:21px}
+  .pf-help-h b{font-size:16px}
+
+  .ab-card{padding:14px; border-radius:var(--r-md)}
+  .ab-n{font-size:16px}
+  .ab-a{font-size:13px}
+  .ab-form-h{font-size:17px}
+  .ab-labs button{padding:8px 4px; font-size:12px}
+
+  /* ── the buttons ──
+     These are account buttons, not checkout buttons: Sign out, Save, Add
+     an address. They keep the shop's capsule and its colours and lose the
+     height the shop's Buy now needs. */
+  .pf-in .btn, .ab-in .btn{padding:12px 20px; font-size:11.5px; letter-spacing:.06em}
+  .pf-in .ac-acts, .ab-in .ac-acts{margin-top:16px; gap:8px}
+  .pf-out{margin-top:16px}
+  .ab-add{margin-top:13px}
+}
+
+/* the narrowest phones still in use — 320px wide, where three tiles and a
+   three-word label have to agree to share a line */
+@media (max-width:360px){
+  .pf-tile-l{font-size:11px; letter-spacing:-.01em}
+  .pf-who-t b{font-size:18.5px}
+  .pf-av{width:54px; height:54px; font-size:25px}
+}

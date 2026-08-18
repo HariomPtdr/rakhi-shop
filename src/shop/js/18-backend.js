@@ -106,6 +106,11 @@ function repaintCatalogue(){
   if(typeof productOpen === "function" && productOpen()){
     if(pvProduct()) paintProduct(); else closeProduct();
   }
+  /* The orders page draws its photographs by looking each line up in the
+     catalogue, so a list painted before the catalogue landed has no
+     pictures in it and never gets any. It is repainted here for the same
+     reason the grid is. */
+  if(typeof ordersOpen === "function" && ordersOpen()) paintOrders();
 }
 /* The catalogue is asked for twice if it has to be.
 

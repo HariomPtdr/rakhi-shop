@@ -68,15 +68,31 @@ function odMark(o){
 
 /* ── the rakhis, as photographs ──
    Four at most and then "+2", because five thumbnails on a 360px phone are
-   five things too small to recognise. Anything the shop no longer sells has
-   no picture to show, so the line of names underneath is always drawn too —
-   it is the one that is always right. */
+   five things too small to recognise.
+
+   One tile per line, always — including for a rakhi the shop no longer
+   sells. order_items.product_id is "on delete set null", so deleting a
+   product severs an old order's only link to a photograph and there is
+   genuinely nothing left to show. Skipping those lines was worse than
+   admitting them: an order of three rakhis that had all been retired drew
+   no pictures at all, which reads as the pictures being broken rather than
+   as the rakhis being gone. The gold rosette is the same mark the cart
+   uses for the same reason, and the line of names underneath is always
+   drawn too — that one is always right. */
+const OD_NOPIC = `<svg viewBox="0 0 40 40" aria-hidden="true">
+  <rect width="40" height="40" fill="rgba(217,184,119,.18)"/>
+  <circle cx="20" cy="20" r="7.5" fill="none" stroke="#a8842f" stroke-width="1.4"/>
+  <circle cx="20" cy="20" r="2.4" fill="#a8842f"/></svg>`;
+
 function odShots(items){
-  const withPic = items.map(i => (i.product_id ? catalogue(i.product_id) : null)).filter(Boolean);
-  if(!withPic.length) return "";
-  const show = withPic.slice(0, 4), rest = withPic.length - show.length;
+  if(!items.length) return "";
+  const show = items.slice(0, 4), rest = items.length - show.length;
   return `<div class="od-shots">
-    ${show.map(p => `<span class="od-shot">${thumb(p)}</span>`).join("")}
+    ${show.map(i => {
+      const p = i.product_id ? catalogue(i.product_id) : null;
+      return `<span class="od-shot${p ? "" : " od-gone"}">${
+        p ? thumb(p) : OD_NOPIC}</span>`;
+    }).join("")}
     ${rest > 0 ? `<span class="od-shot od-more">+${rest}</span>` : ""}
   </div>`;
 }
@@ -97,6 +113,10 @@ function odCard(o){
   const n = items.reduce((s, i) => s + (i.qty || 0), 0);
   const st = STATUS[o.status] || {label: o.status, cls: ""};
   const canAgain = items.some(i => i.product_id && catalogue(i.product_id));
+  /* Counted rather than assumed: an order from before a rakhi was retired
+     is still that customer's order, and the card has to say why it looks
+     thinner than the others. */
+  const gone = items.filter(i => !(i.product_id && catalogue(i.product_id))).length;
   const off = o.status === "cancelled";
 
   return `<article class="od-card${off ? " off" : ""}">
@@ -112,6 +132,9 @@ function odCard(o){
     ${odShots(items)}
 
     <p class="od-names">${names || "—"}</p>
+    ${gone ? `<p class="od-gone-note">${gone === items.length
+        ? "These are not in the shop any more."
+        : gone + " of these " + (gone === 1 ? "is" : "are") + " not in the shop any more."}</p>` : ""}
 
     ${odTrack(o)}
 
